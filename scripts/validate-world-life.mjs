@@ -58,9 +58,9 @@ assert.equal(resolveLivingAgentState({ agent: done.agents[0], tasks: done.tasks,
 assert.equal(resolveLivingAgentState({ agent: done.agents[0], tasks: done.tasks, now: Date.parse(done.tasks[0].returnUntil) + 1 }).phase, 'resting')
 
 const blocked = createWorldSnapshot(payload('blocked'), first, () => origin + 1_000, provenance)
-assert.equal(resolveLivingAgentState({ agent: blocked.agents[0], tasks: blocked.tasks, now: origin + 1_000 }).phase, 'blocked')
+assert.equal(resolveLivingAgentState({ agent: blocked.agents[0], tasks: blocked.tasks, now: origin + 1_000 }).phase, 'stuck')
 const blockedPresentation = resolveMapAgentPresentation({ agent: blocked.agents[0], tasks: blocked.tasks, now: origin + 1_000 })
-assert.equal(blockedPresentation.visualState, 'blocked')
+assert.equal(blockedPresentation.visualState, 'stuck')
 assert.ok(Number.isFinite(blockedPresentation.worldX) && Number.isFinite(blockedPresentation.worldY))
 
-console.log('World Life validation passed: journeys, polling persistence, FSM cycle, blocked state and portrait/map separation.')
+console.log('World Life validation passed: journeys, polling persistence, FSM cycle, stuck state and portrait/map separation.')

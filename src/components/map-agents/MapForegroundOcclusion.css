@@ -18,6 +18,6 @@
   display: block;
   max-width: none;
   object-fit: fill;
-  filter: saturate(0.86) brightness(0.89) contrast(0.96) hue-rotate(3deg);
+  filter: saturate(0.78) brightness(1.03) contrast(0.9) sepia(0.04);
   user-select: none;
 }

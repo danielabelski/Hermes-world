@@ -87,6 +87,23 @@
   animation: map-agent-work-ring 1.4s ease-in-out infinite;
 }
 
+.map-agent-sprite.is-waiting .map-agent-sprite__state-ring {
+  display: block;
+  border-style: dashed;
+  border-color: #8fb8c8;
+  opacity: .5;
+  animation: map-agent-waiting-ring 2.8s ease-in-out infinite;
+}
+
+.map-agent-sprite.is-stuck .map-agent-sprite__state-ring {
+  display: block;
+  border-color: #ff9a62;
+  opacity: .9;
+  animation: map-agent-stuck-ring 2.2s ease-in-out infinite;
+}
+
+@keyframes map-agent-waiting-ring { 50% { opacity: .2; } }
+@keyframes map-agent-stuck-ring { 45%, 55% { opacity: .35; transform: translateX(-50%) scaleX(1.18); } }
 .map-agent-sprite.is-blocked .map-agent-sprite__state-ring,
 .map-agent-sprite.severity-error .map-agent-sprite__state-ring,
 .map-agent-sprite.severity-critical .map-agent-sprite__state-ring {

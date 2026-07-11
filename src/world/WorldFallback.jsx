@@ -50,7 +50,7 @@ export default function WorldFallback() {
   return <div ref={viewportRef} className="fallback-world" aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
-      <HermesInfrastructureLayer />
+      <HermesInfrastructureLayer layout={mapLayout} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
       <MapAgentLayer

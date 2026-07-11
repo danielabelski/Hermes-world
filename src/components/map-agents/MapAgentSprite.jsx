@@ -22,6 +22,8 @@ function getAgentBob(visualState, frameIndex, animationPhase) {
 function statusSymbol(visualState, severity, signalState) {
   if (signalState === 'success') return '✓'
   if (visualState === 'thinking') return '?'
+  if (visualState === 'waiting') return '…'
+  if (visualState === 'stuck' || signalState === 'stuck') return '×'
   if (visualState === 'blocked' || ['critical', 'error'].includes(severity)) return '!'
   if (visualState === 'alert' || severity === 'warning') return '!'
   return ''

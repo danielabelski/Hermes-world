@@ -4,7 +4,7 @@ import { getWorldLifeJourney } from './data/roadGraph.js'
 
 export const LIVING_AGENT_PHASES = Object.freeze([
   'resting', 'walking-to-work', 'arriving', 'working', 'observing', 'carrying',
-  'walking-home', 'success', 'blocked', 'incident', 'unknown',
+  'walking-home', 'success', 'waiting', 'warning', 'stuck', 'blocked', 'incident', 'unknown',
 ])
 
 const TRANSITION_WINDOW_MS = 4_200
@@ -45,8 +45,14 @@ export function resolveLivingAgentState({ agent, tasks = [], alerts = [], now = 
   if (['critical', 'error', 'fatal'].includes(level) || task?.status === 'error') {
     return Object.freeze({ phase: 'incident', task, alert, visible: true, location: 'incident', buildingEffect: 'alarm', carryPackage: false })
   }
-  if (task?.status === 'blocked' || ['warning', 'blocked'].includes(level)) {
-    return Object.freeze({ phase: 'blocked', task, alert, visible: true, location: 'route', buildingEffect: 'attention', carryPackage: true })
+  if (task?.status === 'blocked' || ['stuck', 'blocked'].includes(String(agent.state ?? '').toLowerCase())) {
+    return Object.freeze({ phase: 'stuck', task, alert, visible: true, location: 'route', buildingEffect: 'stuck', carryPackage: true })
+  }
+  if (level === 'warning') {
+    return Object.freeze({ phase: 'warning', task, alert, visible: true, location: 'route', buildingEffect: 'attention', carryPackage: Boolean(task) })
+  }
+  if (['scheduled', 'ready', 'waiting', 'pending'].includes(String(task?.status ?? '').toLowerCase())) {
+    return Object.freeze({ phase: 'waiting', task, alert, visible: true, location: 'home', buildingEffect: 'waiting', carryPackage: false })
   }
   // Scripted demo beats and live domain events can explicitly request a
   // pedestrian transition. Resolve it before a long-running task settles at

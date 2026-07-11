@@ -40,7 +40,7 @@ const createProfile = (id) => {
     homeNode: navigation.homeNode,
     workNode: navigation.workNode,
     routeId: navigation.routeId,
-    statusMapping: freeze({ idle: 'idle', walking: 'walk', working: 'work', thinking: 'thinking', success: 'success', warning: 'alert', error: 'blocked', offline: 'offline' }),
+    statusMapping: freeze({ idle: 'idle', walking: 'walk', working: 'work', thinking: 'thinking', waiting: 'waiting', stuck: 'stuck', success: 'success', warning: 'alert', error: 'blocked', offline: 'offline' }),
   })
 }
 

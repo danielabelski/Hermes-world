@@ -189,7 +189,7 @@ test('Uczony uses the same resolver and enters the Knowledge Archive through its
   closeTo(working.worldY, 31)
 })
 
-test('Zwiadowca patrols to the watch point, observes distinctly and blocks on a safe road node', () => {
+test('Zwiadowca patrols, observes distinctly and stops as stuck on a safe road node', () => {
   const scout = {
     id: 'prospecting',
     profile: 'prospecting',
@@ -239,8 +239,8 @@ test('Zwiadowca patrols to the watch point, observes distinctly and blocks on a 
   closeTo(observing.worldY, 31.5)
 
   const blocked = resolve(START + 2_000, scout, { ...patrolTask, status: 'blocked' })
-  assert.equal(blocked.journeyStage, 'blocked')
-  assert.equal(blocked.visualState, 'blocked')
+  assert.equal(blocked.journeyStage, 'stuck')
+  assert.equal(blocked.visualState, 'stuck')
   closeTo(blocked.worldX, 58)
   closeTo(blocked.worldY, 32.5)
 })
@@ -275,7 +275,7 @@ test('Zwiadowca returns from the watch point to the lodge after success', () => 
   closeTo(home.worldY, 36.5)
 })
 
-test('map status contract separates movement, work, success, blocked, error and offline', () => {
+test('map status contract separates movement, work, success, waiting, warning, stuck, error and offline', () => {
   const moving = modelAt(START + 1_000)
   assert.equal(moving.visualState, 'walk')
   assert.equal(moving.carryPackage, true)
@@ -297,7 +297,7 @@ test('map status contract separates movement, work, success, blocked, error and 
   assert.equal(modelAt(completedAt + 1_600, doneTask).signalState, 'none')
 
   const blocked = modelAt(START + 1_000, { ...runningCoderTask, status: 'blocked' })
-  assert.equal(blocked.visualState, 'blocked')
+  assert.equal(blocked.visualState, 'stuck')
   assert.equal(blocked.severity, 'warning')
   assert.equal(blocked.isMoving, false)
 

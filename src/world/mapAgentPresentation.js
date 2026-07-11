@@ -35,7 +35,7 @@ function alertsForAgent(agent, alerts = []) {
 function severityFor({ living, agent }) {
   const raw = String(living.alert?.severity ?? living.alert?.level ?? agent.warningLevel ?? 'none').toLowerCase()
   if (living.phase === 'incident' || ['critical', 'fatal', 'error'].includes(raw)) return 'critical'
-  if (living.phase === 'blocked' || ['warning', 'blocked'].includes(raw)) return 'warning'
+  if (['warning', 'stuck', 'blocked'].includes(living.phase) || ['warning', 'blocked'].includes(raw)) return 'warning'
   return 'none'
 }
 
@@ -99,6 +99,9 @@ function visualStateForPhase(phase) {
   if (['working', 'carrying'].includes(phase)) return 'work'
   if (phase === 'observing') return 'observe'
   if (phase === 'success') return 'success'
+  if (phase === 'waiting') return 'waiting'
+  if (phase === 'warning') return 'alert'
+  if (phase === 'stuck') return 'stuck'
   if (phase === 'blocked') return 'blocked'
   if (phase === 'incident') return 'alert'
   return 'idle'
@@ -113,7 +116,7 @@ function buildBaseModel({ agent, living, task, lifecycle }) {
     phase: living.phase,
     journeyStage: living.phase,
     visualState: explicitlyOffline ? 'offline' : String(agent.state ?? '').toLowerCase().includes('thinking') ? 'thinking' : visualStateForPhase(living.phase),
-    signalState: living.phase === 'blocked' ? 'blocked' : living.phase === 'incident' ? 'error' : 'none',
+    signalState: living.phase === 'stuck' ? 'stuck' : living.phase === 'warning' ? 'warning' : living.phase === 'blocked' ? 'blocked' : living.phase === 'incident' ? 'error' : 'none',
     severity: severityFor({ living, agent }),
     direction: 'se',
     worldX: 50,
@@ -207,11 +210,15 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'return'
     visualState = 'walk'
     isMoving = true
-  } else if (living.phase === 'blocked') {
+  } else if (living.phase === 'waiting') {
+    sampled = { worldX: home.x, worldY: home.y, direction: 'se' }
+    journeyStage = 'waiting'
+    visualState = 'waiting'
+  } else if (['warning', 'stuck', 'blocked'].includes(living.phase)) {
     const safe = journey.safeBlockedPoint ?? journey.dispatchPoint
     sampled = { worldX: safe.x * 10, worldY: safe.y * 10, direction: 'se' }
-    journeyStage = 'blocked'
-    visualState = 'blocked'
+    journeyStage = living.phase
+    visualState = living.phase === 'warning' ? 'alert' : living.phase === 'stuck' ? 'stuck' : 'blocked'
   } else if (living.phase === 'incident') {
     sampled = { worldX: entrance.x, worldY: entrance.y, direction: 'se' }
     journeyStage = 'incident'
