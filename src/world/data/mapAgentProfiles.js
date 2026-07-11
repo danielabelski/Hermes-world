@@ -13,8 +13,8 @@ const SHADOW_BY_PROFILE = freeze({ coder: 1, researcher: 0.86, prospecting: 0.86
 const SPEED_BY_PROFILE = freeze({ coder: 0.86, researcher: 0.78, prospecting: 1.08, default: 1.05, outreach: 1.02, komandos: 0.9 })
 const NAVIGATION_BY_PROFILE = freeze({
   coder: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_central_south_plaza' }), workNode: freeze({ desktop: 'forge_workstation', mobile: 'mobile_forge_workstation' }), routeId: 'forge-route' }),
-  researcher: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_library_dispatch' }), workNode: freeze({ desktop: 'library_workstation', mobile: 'mobile_library_workstation' }), routeId: 'library-route' }),
-  prospecting: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_central_south_plaza' }), workNode: freeze({ desktop: 'north_wall_observation', mobile: 'mobile_east_observation_point' }), routeId: 'observation-route' }),
+  researcher: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_library_lane_junction' }), workNode: freeze({ desktop: 'library_workstation', mobile: 'mobile_library_workstation' }), routeId: 'library-route' }),
+  prospecting: freeze({ homeNode: freeze({ desktop: 'observatory_path_west', mobile: 'mobile_fountain_se_lane' }), workNode: freeze({ desktop: 'north_wall_observation', mobile: 'mobile_east_observation_point' }), routeId: 'observation-route' }),
 })
 
 const createProfile = (id) => {
@@ -40,7 +40,7 @@ const createProfile = (id) => {
     homeNode: navigation.homeNode,
     workNode: navigation.workNode,
     routeId: navigation.routeId,
-    statusMapping: freeze({ idle: 'idle', walking: 'walk', working: 'work', thinking: 'thinking', waiting: 'waiting', stuck: 'stuck', success: 'success', warning: 'alert', error: 'blocked', offline: 'offline' }),
+    statusMapping: freeze({ idle: 'idle', walking: 'walk', working: 'work', thinking: 'thinking', waiting: 'waiting', stuck: 'stuck', success: 'success', warning: 'alert', error: 'alert', offline: 'offline' }),
   })
 }
 

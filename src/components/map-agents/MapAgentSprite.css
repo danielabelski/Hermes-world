@@ -59,11 +59,11 @@
   position: absolute;
   left: 50%;
   bottom: -1px;
-  width: clamp(16px, 36%, 22px);
+  width: clamp(18px, 44%, 26px);
   height: clamp(4px, 7%, 5px);
   border-radius: 50%;
   background: radial-gradient(ellipse, rgb(2 7 6 / 0.48) 0 34%, rgb(2 7 6 / 0.24) 58%, transparent 78%);
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleX(var(--map-agent-shadow-scale, 1));
   transform-origin: center;
   pointer-events: none;
 }

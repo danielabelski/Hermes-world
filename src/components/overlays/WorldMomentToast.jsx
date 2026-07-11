@@ -15,7 +15,7 @@ const ROOT_STYLE = {
   position: 'absolute',
   zIndex: 5,
   right: 'max(14px, env(safe-area-inset-right))',
-  bottom: 'max(34px, calc(env(safe-area-inset-bottom) + 24px))',
+  bottom: 'max(62px, calc(env(safe-area-inset-bottom) + 52px))',
   left: 'max(14px, env(safe-area-inset-left))',
   display: 'flex',
   justifyContent: 'center',

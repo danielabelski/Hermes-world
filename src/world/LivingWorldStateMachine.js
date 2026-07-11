@@ -16,7 +16,17 @@ const asTime = (value, fallback) => {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
-const TASK_STATUS_RANK = Object.freeze({ error: 0, blocked: 1, running: 2, review: 3, scheduled: 4, ready: 5, done: 6 })
+const TASK_STATUS_RANK = Object.freeze({
+  error: 0,
+  blocked: 1,
+  running: 2,
+  review: 3,
+  waiting: 4,
+  pending: 4,
+  scheduled: 4,
+  ready: 4,
+  done: 6,
+})
 
 const taskFor = (agent, tasks) => tasks
   .filter((task) => task.assignee === agent.profile || task.ownerAgentId === agent.id || task.agentId === agent.profile)

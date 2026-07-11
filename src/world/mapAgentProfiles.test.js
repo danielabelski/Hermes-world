@@ -21,5 +21,6 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(profile.workNode.desktop && profile.workNode.mobile)
     assert.ok(profile.routeId)
     assert.ok(getMapAgentSpriteSet(profile.spriteProfile))
+    assert.equal(profile.statusMapping.error, 'alert')
   }
 })

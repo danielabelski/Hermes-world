@@ -78,6 +78,9 @@ function MapAgentSprite({
       '--map-agent-tail': `${transparentTail}px`,
       '--map-agent-facing': facingScale,
       '--map-agent-bob': `${bob}px`,
+      '--map-agent-accent': profile.accent,
+      '--map-agent-anchor-y-offset': `${profile.anchorCorrection.yPx}px`,
+      '--map-agent-shadow-scale': profile.shadowScale,
       '--map-agent-world-x': `${clamp(Number(worldX) || 0, -10, 110)}cqw`,
       '--map-agent-world-y': `${clamp(Number(worldY) || 0, -10, 110)}cqh`,
     }}

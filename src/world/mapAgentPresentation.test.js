@@ -216,13 +216,13 @@ test('Zwiadowca patrols, observes distinctly and stops as stuck on a safe road n
   })
 
   const lodge = resolve(START)
-  closeTo(lodge.worldX, 46)
-  closeTo(lodge.worldY, 36.5)
+  closeTo(lodge.worldX, 52)
+  closeTo(lodge.worldY, 35.5)
 
   const patrol = resolve(START + 3_500)
   assert.equal(patrol.journeyStage, 'road')
   assert.equal(patrol.isMoving, true)
-  assert.ok(patrol.worldX > 46 && patrol.worldX < 67)
+  assert.ok(patrol.worldX > 52 && patrol.worldX < 67)
 
   const watchPoint = resolve(START + 7_900)
   assert.equal(watchPoint.journeyStage, 'work')
@@ -271,8 +271,8 @@ test('Zwiadowca returns from the watch point to the lodge after success', () => 
 
   const home = resolve(completedAt + 8_501)
   assert.equal(home.journeyStage, 'idle')
-  closeTo(home.worldX, 46)
-  closeTo(home.worldY, 36.5)
+  closeTo(home.worldX, 52)
+  closeTo(home.worldY, 35.5)
 })
 
 test('map status contract separates movement, work, success, waiting, warning, stuck, error and offline', () => {
@@ -295,6 +295,27 @@ test('map status contract separates movement, work, success, waiting, warning, s
   }
   assert.equal(modelAt(completedAt + 700, doneTask).signalState, 'success')
   assert.equal(modelAt(completedAt + 1_600, doneTask).signalState, 'none')
+
+  const staleDone = { ...doneTask, id: 'stale-done', visualCompletedAt: iso(START - 30_000), completedAt: iso(START - 30_000) }
+  const waiting = resolveMapAgentPresentation({
+    agent: coder,
+    tasks: [staleDone, { ...runningCoderTask, id: 'queued', status: 'pending' }],
+    alerts: [],
+    lifecycle: { phase: 'ready', connection: 'online' },
+    now: START,
+  })
+  assert.equal(waiting.visualState, 'waiting')
+  assert.equal(waiting.severity, 'none')
+
+  const warning = resolveMapAgentPresentation({
+    agent: coder,
+    tasks: [{ ...runningCoderTask, status: 'pending' }],
+    alerts: [{ entityId: 'coder', severity: 'warning' }],
+    lifecycle: { phase: 'ready', connection: 'online' },
+    now: START,
+  })
+  assert.equal(warning.visualState, 'alert')
+  assert.equal(warning.severity, 'warning')
 
   const blocked = modelAt(START + 1_000, { ...runningCoderTask, status: 'blocked' })
   assert.equal(blocked.visualState, 'stuck')

@@ -18,7 +18,7 @@ test('map sprites have the shared canvas, foot anchor and complete runtime frame
     height: 128,
     footAnchorX: 0.5,
     footAnchorY: 0.96875,
-    renderHeight: 56,
+    renderHeight: 52,
   })
   assert.equal(assertMapAgentManifestSeparation(), true)
 

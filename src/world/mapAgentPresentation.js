@@ -5,7 +5,7 @@ import { getWorldLifeJourney } from './data/roadGraph.js'
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value))
 const point = (x, y) => ({ x: Number(x) || 0, y: Number(y) || 0 })
 
-const STATUS_RANK = Object.freeze({ error: 0, blocked: 1, running: 2, review: 3, scheduled: 4, ready: 5, done: 6 })
+const STATUS_RANK = Object.freeze({ error: 0, blocked: 1, running: 2, review: 3, waiting: 4, pending: 4, scheduled: 4, ready: 4, done: 6 })
 function asTime(value, fallback = 0) {
   if (Number.isFinite(Number(value)) && value !== null && value !== '') return Number(value)
   const parsed = Date.parse(value ?? '')
@@ -20,7 +20,7 @@ export function getPresentationTask(agent, tasks = []) {
   return tasks
     .filter((task) => taskMatchesAgent(task, agent))
     .sort((left, right) => {
-      const statusOrder = (STATUS_RANK[left?.status] ?? 99) - (STATUS_RANK[right?.status] ?? 99)
+      const statusOrder = (STATUS_RANK[String(left?.status ?? '').toLowerCase()] ?? 99) - (STATUS_RANK[String(right?.status ?? '').toLowerCase()] ?? 99)
       if (statusOrder) return statusOrder
       const leftAt = asTime(left?.visualCompletedAt ?? left?.startedAt ?? left?.createdAt, 0)
       const rightAt = asTime(right?.visualCompletedAt ?? right?.startedAt ?? right?.createdAt, 0)

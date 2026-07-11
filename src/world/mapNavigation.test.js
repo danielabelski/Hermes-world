@@ -33,6 +33,7 @@ test('every reference route uses named nodes from its current layout and returns
         assert.ok(nodes[nodeId], `${layout}/${profile}: unknown ${nodeId}`)
       }
       assert.deepEqual(journey.outboundWaypoints.at(-1), journey.entrancePoint)
+      assert.deepEqual(journey.outboundWaypoints[0], journey.homePoint)
       assert.deepEqual(journey.returnWaypoints[0], journey.entrancePoint)
       assert.deepEqual(journey.returnWaypoints.at(-1), journey.homePoint)
       assert.ok(definition.outboundNodeIds.includes(definition.safeBlockedNodeId))
