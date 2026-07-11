@@ -6,6 +6,7 @@ import {
   resolveMapAgentPresentation,
 } from './mapAgentPresentation.js'
 import { resolveLivingAgentState } from './LivingWorldStateMachine.js'
+import { getWorldLifeJourney } from './data/roadGraph.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -39,6 +40,26 @@ const modelAt = (now, task = runningCoderTask, agent = coder) => resolveMapAgent
   now,
 })
 
+test('mobile layout selects road-calibrated journeys with continuous entrances and safe points', () => {
+  for (const profile of ['coder', 'researcher', 'prospecting']) {
+    const journey = getWorldLifeJourney(profile, 'mobile')
+    assert.deepEqual(journey.outboundWaypoints.at(-1), journey.entrancePoint)
+    assert.deepEqual(journey.returnWaypoints[0], journey.entrancePoint)
+    assert.deepEqual(journey.returnWaypoints.at(-1), journey.homePoint)
+    assert.ok(journey.outboundWaypoints.some((waypoint) => waypoint.x === journey.safeBlockedPoint.x && waypoint.y === journey.safeBlockedPoint.y))
+  }
+
+  const mobileDispatch = resolveMapAgentPresentation({
+    agent: coder,
+    tasks: [runningCoderTask],
+    alerts: [],
+    lifecycle: { phase: 'ready', connection: 'online' },
+    now: START,
+    layout: 'mobile',
+  })
+  closeTo(mobileDispatch.worldX, 50)
+  closeTo(mobileDispatch.worldY, 65.5)
+})
 test('Kowal follows dispatch, road, exact Forge threshold and work anchor', () => {
   const dispatch = modelAt(START)
   assert.equal(dispatch.journeyStage, 'dispatch')

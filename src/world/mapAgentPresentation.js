@@ -6,12 +6,6 @@ const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value))
 const point = (x, y) => ({ x: Number(x) || 0, y: Number(y) || 0 })
 
 const STATUS_RANK = Object.freeze({ error: 0, blocked: 1, running: 2, review: 3, scheduled: 4, ready: 5, done: 6 })
-const SAFE_BLOCKED_POINTS = Object.freeze({
-  coder: point(3.5, 6.95),
-  researcher: point(3.4, 4.9),
-  prospecting: point(3.65, 3.35),
-})
-
 function asTime(value, fallback = 0) {
   if (Number.isFinite(Number(value)) && value !== null && value !== '') return Number(value)
   const parsed = Date.parse(value ?? '')
@@ -214,7 +208,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     visualState = 'walk'
     isMoving = true
   } else if (living.phase === 'blocked') {
-    const safe = SAFE_BLOCKED_POINTS[agent.profile] ?? journey.dispatchPoint
+    const safe = journey.safeBlockedPoint ?? journey.dispatchPoint
     sampled = { worldX: safe.x * 10, worldY: safe.y * 10, direction: 'se' }
     journeyStage = 'blocked'
     visualState = 'blocked'
@@ -240,7 +234,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
   }
 }
 
-export function resolveMapAgentPresentation({ agent, tasks = [], alerts = [], lifecycle = {}, now = Date.now() }) {
+export function resolveMapAgentPresentation({ agent, tasks = [], alerts = [], lifecycle = {}, now = Date.now(), layout = 'desktop' }) {
   const task = getPresentationTask(agent, tasks)
   const living = resolveLivingAgentState({
     agent,
@@ -248,7 +242,7 @@ export function resolveMapAgentPresentation({ agent, tasks = [], alerts = [], li
     alerts: alertsForAgent(agent, alerts),
     now,
   })
-  const journey = getWorldLifeJourney(agent.profile)
+  const journey = getWorldLifeJourney(agent.profile, layout)
   const base = buildBaseModel({ agent, living: { ...living, buildingId: agent.buildingId }, task, lifecycle })
   return Object.freeze(journey
     ? resolveJourneyModel({ base, agent, living, task, journey, now })
@@ -259,6 +253,6 @@ export function sortMapAgentPresentations(presentations = []) {
   return [...presentations].sort((left, right) => Number(left.sortY ?? left.worldY) - Number(right.sortY ?? right.worldY) || String(left.profileId).localeCompare(String(right.profileId)))
 }
 
-export function resolveMapAgentPresentations({ agents = [], tasks = [], alerts = [], lifecycle = {}, now = Date.now() }) {
-  return Object.freeze(sortMapAgentPresentations(agents.map((agent) => resolveMapAgentPresentation({ agent, tasks, alerts, lifecycle, now }))))
+export function resolveMapAgentPresentations({ agents = [], tasks = [], alerts = [], lifecycle = {}, now = Date.now(), layout = 'desktop' }) {
+  return Object.freeze(sortMapAgentPresentations(agents.map((agent) => resolveMapAgentPresentation({ agent, tasks, alerts, lifecycle, now, layout }))))
 }

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import './worldFallback.css'
 import { useWorldStore } from './store/worldStore.js'
 import citadelArtUrl from '../assets/hermes-citadel-hd-v2.png'
@@ -8,6 +9,9 @@ import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 
+const MOBILE_MAP_QUERY = '(max-width: 700px)'
+const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
+
 const BUILDINGS = [
   ['keep', 'Cytadela'], ['library', 'Biblioteka'], ['forge', 'Kuźnia'], ['research', 'Research Lab'],
   ['memory', 'Memory Hall'], ['warehouse', 'Magazyn'], ['watch', 'Wieża Obserwacji'], ['api', 'Port API'],
@@ -15,6 +19,15 @@ const BUILDINGS = [
 ]
 
 export default function WorldFallback() {
+  const [mapLayout, setMapLayout] = useState(getMapLayout)
+  useEffect(() => {
+    const query = window.matchMedia?.(MOBILE_MAP_QUERY)
+    if (!query) return undefined
+    const syncLayout = () => setMapLayout(query.matches ? 'mobile' : 'desktop')
+    syncLayout()
+    query.addEventListener?.('change', syncLayout)
+    return () => query.removeEventListener?.('change', syncLayout)
+  }, [])
   const agents = useWorldStore((state) => state.agents ?? [])
   const tasks = useWorldStore((state) => state.tasks ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
@@ -30,7 +43,7 @@ export default function WorldFallback() {
     shouldSuppressSelection,
   } = useDomWorldCamera({ zoomPreference })
   const presentationNow = usePresentationClock()
-  const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow })
+  const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
   return <div ref={viewportRef} className="fallback-world" aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
