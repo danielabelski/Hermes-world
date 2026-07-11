@@ -8,6 +8,15 @@ North Star: Hermes World jest ambientową warstwą observability, nie grą. W ci
 
 Nie implementować tych faz w oknie checkpointu. Następne okno zaczyna od pierwszej niezakończonej fazy po ponownym uruchomieniu testów i builda. Nie powtarzać zakończonych auditów produktu, sprite'ów, routingu ani map identity.
 
+Status realizacji bieżącego okna:
+
+- [x] Phase 1 — stuck vs waiting vs thinking (`8515bae`).
+- [x] Phase 2 — critical source localization (`2901879`).
+- [x] Phase 3 — agent micro-normalization audit; brak outliera, więc brak zmian skali.
+- [x] Phase 4 — reversible baseline/light/strong variants (`a525a65`).
+- [x] Phase 5 — filtered route debug (`fc0da54`).
+- [x] Phase 6 — deterministic nine-state matrix; final checkpoint w handoffie.
+
 ### Phase 1 — Stuck vs waiting vs thinking
 
 Cel: jednoznacznie rozróżnić trzy stany bez dużych aur i bez przebudowy FSM.

@@ -1,5 +1,42 @@
 ﻿# HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## IMPLEMENTATION WINDOW COMPLETE — 2026-07-11
+
+Ta sekcja zastępuje status wykonawczy niższych sekcji. Visual baseline pozostaje wiążący.
+
+### Completed phases
+
+- Phase 1: `stuck / waiting / thinking` mają osobne markery i rytmy bez zmian FSM. Stuck używa `↛`, kwadratowego markera i wolnego pulsu. Commit `8515bae`.
+- Phase 2: critical wiąże konkretny agent → subsystem przez marker, reakcję budynku i pojedynczy problem flow. Commit `2901879`.
+- Phase 3: micro-normalization audit zakończony bez zmian; żadna rola nie uzasadnia korekty ±5–8%, globalny baseline 40–46 px pozostaje.
+- Phase 4: trzy niedestrukcyjne warianty `baseline/light/strong`; default pozostaje `light`. Commit `a525a65`.
+- Phase 5: debug overlay filtruje jednego agenta i warstwy route/nodes/labels/entrances/depth; `all` jest wyłącznie świadomym pełnym auditem. Commit `fc0da54`.
+- Phase 6: deterministyczne focusy stable/working/waiting/thinking/warning/critical/stuck/success/offline na tym samym FSM i rendererze.
+
+### Validation
+
+- Tests: `26/26` passed.
+- Lint: passed.
+- World-life validator: passed.
+- Production build: passed, `816` modules.
+- Demo build: passed, `816` modules.
+- Chronione mapy, geometria, waypointy, trasy, FSM, `server.js` i `src/api.js`: bez zmian.
+
+### Manual mobile URLs
+
+- Focus matrix: `/?focus=stable|working|waiting|thinking|warning|critical|stuck|success|offline`.
+- Map variants: `&mapReadability=baseline|light|strong`.
+- Debug: `?debugRoutes=1&debugAgent=coder&debugLayers=route,nodes,labels,entrances,depth`.
+- Before scale remains available as `&agentVisual=before`, wyłącznie do porównania.
+
+### Remaining decisions, not implementation bugs
+
+- Użytkownik wybiera `light` albo `strong`; strong nie jest auto-approved.
+- Użytkownik ocenia na telefonie nowy stuck marker i critical localization.
+- Dopiero po tej ocenie dopuszczalne są korekty, bez zmiany globalnej skali i map geometry.
+
+---
+
 ## FINAL SAFE CHECKPOINT — MOBILE AGENT BASELINE LOCK
 
 Ta sekcja jest jedynym bieżącym źródłem prawdy. Niższe sekcje są historią wcześniejszych checkpointów.

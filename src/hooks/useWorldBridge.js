@@ -3,6 +3,7 @@ import { api } from '../api.js';
 import { createWorldBridge, createWorldSnapshot } from '../world/WorldBridge.js';
 import { DEMO_WORLD_PAYLOADS } from '../world/data/demoWorldData.js';
 import { getDemoScenario } from '../world/data/demoScenarios.js';
+import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from '../world/data/demoObservabilityFocus.js';
 import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
 
 const RETRY_INTERVAL_MS = 15_000;
@@ -33,11 +34,11 @@ function hasUsableHermesData(snapshot) {
  * The hook intentionally does not import Zustand: callers may pass the result
  * to any store/action, keeping the bridge testable and renderer-neutral.
  */
-export function useWorldBridge({ enabled = true, demoMode = false, demoScenario = 'healthy', retryIntervalMs = RETRY_INTERVAL_MS } = {}) {
+export function useWorldBridge({ enabled = true, demoMode = false, demoScenario = 'healthy', demoFocus = 'auto', retryIntervalMs = RETRY_INTERVAL_MS } = {}) {
   const demoSnapshotRef = useRef(null);
   if (!demoSnapshotRef.current) {
     const payloads = demoScenario === 'healthy' ? DEMO_WORLD_PAYLOADS : getDemoScenario(demoScenario);
-    demoSnapshotRef.current = createWorldSnapshot(payloads);
+    demoSnapshotRef.current = applyDemoObservabilityFocus(createWorldSnapshot(payloads), demoFocus);
   }
   const demoSnapshot = demoSnapshotRef.current;
   const bridgeRef = useRef(null);
@@ -127,7 +128,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
    * canvas all observe exactly the same agent/task story.
    */
   useEffect(() => {
-    if (!demoMode || demoScenario !== 'healthy' || !shouldRunDemoScene({ enabled, source: state.source })) return undefined;
+    if (!demoMode || demoScenario !== 'healthy' || resolveDemoObservabilityFocus(demoFocus) !== 'auto' || !shouldRunDemoScene({ enabled, source: state.source })) return undefined;
 
     const scene = createWorldSceneScript({
       baseSnapshot: demoSnapshotRef.current,
@@ -152,7 +153,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       scene.stop();
       if (sceneScriptRef.current === scene) sceneScriptRef.current = null;
     };
-  }, [demoMode, demoScenario, enabled, state.source]);
+  }, [demoFocus, demoMode, demoScenario, enabled, state.source]);
 
   return {
     ...state,

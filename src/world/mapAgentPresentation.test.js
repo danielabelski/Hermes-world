@@ -13,6 +13,7 @@ import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
 import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
+import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -434,4 +435,30 @@ test('route debug config is off by default and filters one agent and explicit la
   })
   assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=all', { availableProfiles: profiles }).profile, 'all')
   assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=missing', { availableProfiles: profiles }).profile, 'coder')
+})
+
+test('demo observability matrix produces deterministic mobile states without changing the FSM', () => {
+  const observedAt = Date.UTC(2026, 6, 11, 20, 0, 0)
+  const base = createWorldSnapshot(getDemoScenario('healthy'), null, () => observedAt, { source: 'demo', connection: 'online' })
+  const presentationFor = (focus, profile) => {
+    const snapshot = applyDemoObservabilityFocus(base, focus, observedAt)
+    return resolveMapAgentPresentation({
+      agent: snapshot.agents.find((agent) => agent.profile === profile),
+      tasks: snapshot.tasks,
+      alerts: snapshot.alerts,
+      lifecycle: snapshot.lifecycle,
+      now: observedAt,
+      layout: 'mobile',
+    })
+  }
+
+  assert.equal(resolveDemoObservabilityFocus('unknown'), 'auto')
+  assert.equal(presentationFor('working', 'coder').visualState, 'work')
+  assert.equal(presentationFor('waiting', 'developer').visualState, 'waiting')
+  assert.equal(presentationFor('thinking', 'researcher').visualState, 'thinking')
+  assert.equal(presentationFor('warning', 'coder').severity, 'warning')
+  assert.equal(presentationFor('critical', 'coder').severity, 'critical')
+  assert.equal(presentationFor('stuck', 'reviewer').visualState, 'stuck')
+  assert.equal(presentationFor('success', 'coder').signalState, 'success')
+  assert.equal(presentationFor('offline', 'coder').visualState, 'offline')
 })

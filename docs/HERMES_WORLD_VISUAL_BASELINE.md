@@ -21,7 +21,7 @@ Fantasy/AI jest językiem wizualnym. Observability jest produktem. W ciągu maks
 - Globalny health i licznik active/total pozostają głównym kanałem observability.
 - Warning jest zaakceptowanym wzorcem: bursztynowy globalny status, lokalna ikona agenta, dolna karta ostrzeżenia, bez przesadnej czerwieni.
 - Critical jest zaakceptowany globalnie: czerwony header/status, „Krytycznie”, liczba alertów i informacja o szybkiej reakcji. Lokalizacja konkretnego źródła wymaga dopracowania.
-- Stuck działa architektonicznie, ale jego marker wymaga jednoznacznego odróżnienia od waiting/thinking/idle.
+- Stuck działa architektonicznie i ma nowy kandydat wizualny: zatrzymana strzałka `↛`, kwadratowy bursztynowy marker i wolny puls. Wymaga końcowej oceny użytkownika na telefonie.
 - Success jest krótkim potwierdzeniem eventu: zielony impuls/karta, automatyczne wygaszenie, brak stałej aury.
 - Debug overlay `?debugRoutes=1` jest zachowany jako domyślnie wyłączone narzędzie developerskie.
 - Reakcje Kuźni, Biblioteki, Wieży i Core oraz semantyka przepływów pozostają częścią baseline'u.
@@ -31,7 +31,7 @@ Fantasy/AI jest językiem wizualnym. Observability jest produktem. W ciągu maks
 
 - Mniejsza skala wygrywa z wcześniejszą większą skalą: mapa, drogi i centralny plac pozostają czytelne, a ekran wygląda jak observability zamiast galerii bohaterów.
 - Warning przechodzi test 2-second observability i nie wymaga zmiany podstawowej gramatyki.
-- Globalny critical jest czytelny, ale agent i subsystem źródłowy muszą później zostać powiązane lokalnym sygnałem.
+- Globalny critical jest czytelny; kandydat lokalizacji łączy czerwony marker agenta, reakcję subsystemu i pojedynczy problem flow. Wymaga końcowej oceny użytkownika na telefonie.
 - Stuck jest nadal wizualnie niejednoznaczny; znak wielokropka nie może być jego docelową identyfikacją.
 - Success jest dobrym kierunkiem pod warunkiem krótkotrwałości.
 - Widok wszystkich nazw debug jednocześnie jest celowo chaotyczny i nigdy nie jest widokiem użytkownika.
@@ -67,4 +67,3 @@ Na widoku około 390×844 bez klikania:
 - Działający FSM i architektura statusów.
 - Nowe zróżnicowane role oraz aktualna mniejsza skala jako globalny baseline.
 - `server.js`, `src/api.js`, Hermes OS CAT i kontrakty API.
-

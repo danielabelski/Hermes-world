@@ -67,3 +67,34 @@ Checklist przy 390×844:
 4. Agent nie zasłania drogi ani wejścia i nie dominuje nad budynkiem.
 5. Cień pozostaje przy stopach, a status jest osobnym ringiem/symbolem.
 6. Ticker pomaga, ale nie jest potrzebny do wykrycia problemu.
+
+### Deterministic focus matrix
+
+Każdy focus zatrzymuje fabularną oś czasu demo i używa tego samego istniejącego FSM/renderera:
+
+- `/?focus=stable`
+- `/?focus=working`
+- `/?focus=waiting`
+- `/?focus=thinking`
+- `/?focus=warning`
+- `/?focus=critical`
+- `/?focus=stuck`
+- `/?focus=success`
+- `/?focus=offline`
+
+### Map readability variants
+
+- Zaakceptowany lekki default: `/?focus=stable&mapReadability=light`
+- Oryginalny ciemniejszy baseline: `/?focus=stable&mapReadability=baseline`
+- Mocniejszy wariant wyłącznie do porównania: `/?focus=stable&mapReadability=strong`
+
+`strong` nie jest automatycznie zatwierdzony i nie zmienia assetu mapy.
+
+### Filtered route debug
+
+- Domyślnie jeden agent: `/?debugRoutes=1`
+- Wybór roli: `debugAgent=coder|researcher|prospecting|...`
+- Pełny legacy audit: `debugAgent=all`
+- Warstwy: `debugLayers=route,nodes,labels,entrances,depth`
+
+Przykład: `/?debugRoutes=1&debugAgent=researcher&debugLayers=route,entrances,labels`.
