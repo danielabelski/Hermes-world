@@ -1,0 +1,29 @@
+.hermes-site-effect--watch em {
+  inset: auto;
+  left: 50%;
+  top: 2px;
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, rgb(165 235 205 / 0.78), transparent);
+  opacity: 0;
+  transform: rotate(-28deg);
+  transform-origin: 0 50%;
+}
+
+.hermes-site-effect--watch.site-phase--observing em {
+  opacity: .8;
+  animation: hermes-scout-scan 2.8s ease-in-out infinite;
+}
+
+.hermes-site-effect--watch.site-phase--observing b {
+  border-color: rgb(155 230 188 / 0.88);
+  box-shadow: 0 0 5px rgb(105 204 161 / 0.58);
+}
+
+@keyframes hermes-scout-scan {
+  50% { transform: rotate(22deg); opacity: .42; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hermes-site-effect--watch em { animation: none !important; }
+}

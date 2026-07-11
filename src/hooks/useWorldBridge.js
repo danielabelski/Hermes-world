@@ -1,0 +1,163 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { api } from '../api.js';
+import { createWorldBridge, createWorldSnapshot } from '../world/WorldBridge.js';
+import { DEMO_WORLD_PAYLOADS } from '../world/data/demoWorldData.js';
+import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
+
+const RETRY_INTERVAL_MS = 15_000;
+const DEMO_SCENE_TICK_MS = 250;
+const DEMO_SCENE_SPEED = 1.25;
+
+/**
+ * A snapshot made from empty API fallbacks is not a trustworthy representation
+ * of Hermes. The current api.js deliberately swallows network errors and
+ * returns empty collections, so the hook checks the raw payload rather than
+ * relying solely on rejected promises.
+ */
+function hasUsableHermesData(snapshot) {
+  if (!snapshot?.raw) return false;
+  const profiles = Array.isArray(snapshot.raw.profiles) ? snapshot.raw.profiles : [];
+  const metrics = snapshot.raw.metrics ?? {};
+  const hasMetrics = ['cpuPercent', 'memoryPercent', 'temperatureC'].some((key) =>
+    Number.isFinite(Number(metrics[key])),
+  );
+  return profiles.length > 0 || hasMetrics || snapshot.raw.tasks?.length > 0 || snapshot.raw.sessions?.length > 0;
+}
+
+/**
+ * Keeps the visual world immediately useful without pretending demo data is
+ * live data. It retries the real Hermes API in the background and swaps to the
+ * live snapshot atomically as soon as it is available.
+ *
+ * The hook intentionally does not import Zustand: callers may pass the result
+ * to any store/action, keeping the bridge testable and renderer-neutral.
+ */
+export function useWorldBridge({ enabled = true, demoMode = false, retryIntervalMs = RETRY_INTERVAL_MS } = {}) {
+  const demoSnapshotRef = useRef(null);
+  if (!demoSnapshotRef.current) demoSnapshotRef.current = createWorldSnapshot(DEMO_WORLD_PAYLOADS);
+  const demoSnapshot = demoSnapshotRef.current;
+  const bridgeRef = useRef(null);
+  const retryTimerRef = useRef(null);
+  const sceneScriptRef = useRef(null);
+  const demoSceneStartedAtRef = useRef(Date.now());
+  const mountedRef = useRef(false);
+  const [state, setState] = useState(() => ({
+    snapshot: demoMode ? demoSnapshot : null,
+    source: demoMode ? 'demo' : 'unknown',
+    connection: demoMode ? 'online' : 'connecting',
+    error: null,
+  }));
+
+  const clearRetry = useCallback(() => {
+    if (retryTimerRef.current) {
+      clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = null;
+    }
+  }, []);
+
+  const refresh = useCallback(async () => {
+    if (demoMode) return demoSnapshotRef.current;
+    if (!enabled) return null;
+    if (!bridgeRef.current) bridgeRef.current = createWorldBridge({ apiClient: api });
+
+    try {
+      const liveSnapshot = await bridgeRef.current.sync();
+      if (!mountedRef.current) return liveSnapshot;
+
+      if (hasUsableHermesData(liveSnapshot)) {
+        const source = liveSnapshot.lifecycle?.source ?? 'live';
+        setState({
+          snapshot: liveSnapshot,
+          source,
+          connection: liveSnapshot.lifecycle?.connection ?? 'online',
+          error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
+        });
+        return liveSnapshot;
+      }
+
+      const error = new Error('Hermes API is unavailable or returned no trustworthy world data.');
+      setState({ snapshot: liveSnapshot, source: liveSnapshot.lifecycle?.source ?? 'unknown', connection: liveSnapshot.lifecycle?.connection ?? 'offline', error });
+      return liveSnapshot;
+    } catch (error) {
+      if (mountedRef.current) {
+        setState((previous) => ({ ...previous, source: previous.snapshot ? 'stale' : 'unknown', connection: 'offline', error }));
+      }
+      return null;
+    }
+  }, [demoMode, enabled]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    clearRetry();
+
+    if (demoMode) {
+      setState({ snapshot: demoSnapshotRef.current, source: 'demo', connection: 'online', error: null });
+      return () => { mountedRef.current = false; };
+    }
+
+    if (!enabled) {
+      setState({ snapshot: null, source: 'unknown', connection: 'offline', error: null });
+      return () => { mountedRef.current = false; };
+    }
+
+    let cancelled = false;
+    const attempt = async () => {
+      await refresh();
+      if (!cancelled) retryTimerRef.current = setTimeout(attempt, retryIntervalMs);
+    };
+    attempt();
+
+    return () => {
+      cancelled = true;
+      mountedRef.current = false;
+      clearRetry();
+      bridgeRef.current?.stop?.();
+      bridgeRef.current = null;
+    };
+  }, [clearRetry, demoMode, enabled, refresh, retryIntervalMs]);
+
+  /**
+   * Give the offline preview an honest heartbeat: it is a deterministic
+   * fixture, never a fabricated overlay on live Hermes data. Keeping this
+   * here (rather than in Pixi) means overlays, accessibility text and the
+   * canvas all observe exactly the same agent/task story.
+   */
+  useEffect(() => {
+    if (!demoMode || !shouldRunDemoScene({ enabled, source: state.source })) return undefined;
+
+    const scene = createWorldSceneScript({
+      baseSnapshot: demoSnapshotRef.current,
+      startAt: demoSceneStartedAtRef.current,
+      speed: DEMO_SCENE_SPEED,
+      loop: true,
+      onUpdate: (snapshot) => {
+        if (!mountedRef.current) return;
+        setState((previous) => {
+          // A sync may have switched us to real telemetry between scene ticks.
+          // Returning the previous object avoids stale demo updates winning.
+          if (previous.source !== 'demo') return previous;
+          return { ...previous, snapshot };
+        });
+      },
+    });
+
+    sceneScriptRef.current = scene;
+    scene.start(DEMO_SCENE_TICK_MS);
+
+    return () => {
+      scene.stop();
+      if (sceneScriptRef.current === scene) sceneScriptRef.current = null;
+    };
+  }, [demoMode, enabled, state.source]);
+
+  return {
+    ...state,
+    isDemo: state.source === 'demo',
+    isLive: state.source === 'live',
+    isStale: state.source === 'stale',
+    isUnknown: state.source === 'unknown',
+    refresh,
+  };
+}
+
+export { hasUsableHermesData };

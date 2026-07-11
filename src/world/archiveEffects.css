@@ -1,0 +1,39 @@
+.hermes-site-effect--archive em {
+  inset: 8px 7px;
+  border: 1px solid rgb(194 224 255 / 0.58);
+  border-radius: 1px;
+  background: linear-gradient(90deg, rgb(78 101 170 / 0.52) 49%, rgb(228 211 156 / 0.72) 50%);
+  opacity: 0;
+  transform-origin: 50% 100%;
+}
+
+.hermes-site-effect--archive.site-phase--working,
+.hermes-site-effect--archive.site-phase--carrying {
+  border-color: rgb(122 164 255 / 0.84);
+  box-shadow: 0 0 7px rgb(91 121 225 / 0.62);
+}
+
+.hermes-site-effect--archive.site-phase--working b,
+.hermes-site-effect--archive.site-phase--carrying b {
+  animation: hermes-archive-rune 4.2s linear infinite;
+}
+
+.hermes-site-effect--archive.site-phase--working em,
+.hermes-site-effect--archive.site-phase--carrying em {
+  opacity: .82;
+  animation: hermes-archive-page 1.8s ease-in-out infinite;
+}
+
+@keyframes hermes-archive-rune {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hermes-archive-page {
+  45% { transform: scaleX(.36) skewY(-5deg); opacity: .48; }
+  55% { transform: scaleX(.36) skewY(5deg); opacity: .48; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hermes-site-effect--archive b,
+  .hermes-site-effect--archive em { animation: none !important; }
+}

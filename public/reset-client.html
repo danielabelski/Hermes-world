@@ -1,0 +1,33 @@
+﻿<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hermes OS cache reset</title>
+  <style>
+    html, body { height: 100%; margin: 0; background: #030604; color: #39ff14; font: 14px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    body { display: grid; place-items: center; }
+    main { width: min(360px, calc(100vw - 40px)); border: 1px solid rgba(57,255,20,.35); border-radius: 16px; padding: 24px; background: rgba(5,14,8,.82); box-shadow: 0 0 32px rgba(57,255,20,.16); }
+    strong { display: block; margin-bottom: 8px; font-size: 16px; letter-spacing: .08em; }
+  </style>
+</head>
+<body>
+  <main><strong>HERMES_OS</strong><span>Czyszczę cache aplikacji i wracam do panelu...</span></main>
+  <script>
+    (async () => {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        }
+        if ('caches' in window) {
+          const names = await caches.keys();
+          await Promise.all(names.map((name) => caches.delete(name)));
+        }
+      } finally {
+        location.replace('/?client_reset=' + Date.now());
+      }
+    })();
+  </script>
+</body>
+</html>

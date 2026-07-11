@@ -1,0 +1,128 @@
+/* A selection is a small map annotation, not another persistent panel. */
+.world-overlay .world-focus-ring {
+  z-index: 6 !important;
+  top: max(148px, calc(env(safe-area-inset-top) + 140px)) !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  bottom: auto !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  width: auto;
+  max-width: min(340px, calc(100vw - 24px)) !important;
+  min-height: 38px;
+  padding: 6px 7px 6px 6px !important;
+  border-color: rgb(242 219 154 / 34%) !important;
+  background: linear-gradient(106deg, rgb(17 48 29 / 86%), rgb(10 29 18 / 78%)) !important;
+  box-shadow: 0 9px 25px rgb(0 8 4 / 29%) !important;
+  backdrop-filter: blur(12px) saturate(115%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(115%) !important;
+  animation: selection-tooltip-arrive 180ms cubic-bezier(.2, .8, .22, 1) both;
+}
+
+.world-focus-ring::before {
+  position: absolute;
+  top: -4px;
+  left: 21px;
+  width: 8px;
+  height: 8px;
+  border-top: 1px solid rgb(242 219 154 / 34%);
+  border-left: 1px solid rgb(242 219 154 / 34%);
+  background: rgb(14 38 23 / 91%);
+  content: '';
+  transform: rotate(45deg);
+}
+
+.world-focus-ring[data-entity-type='agent'] {
+  border-color: rgb(142 207 150 / 48%) !important;
+}
+
+.world-focus-ring[data-entity-type='building'] {
+  border-color: rgb(239 197 109 / 49%) !important;
+}
+
+.world-focus-ring[data-entity-type='task'] {
+  border-color: rgb(132 183 223 / 46%) !important;
+}
+
+.world-focus-ring[data-focus-state='missing'] {
+  border-style: dashed;
+  background: rgb(57 44 18 / 88%) !important;
+}
+
+.world-focus-ring > span:nth-child(2) {
+  flex: 1 1 auto;
+}
+
+.world-focus-ring strong {
+  max-width: 100%;
+  font-size: 11px !important;
+  letter-spacing: .015em;
+}
+
+.world-focus-ring strong + span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.world-focus-ring button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  transition: color 130ms ease, border-color 130ms ease, background 130ms ease, transform 130ms ease;
+}
+
+.world-focus-ring button:hover,
+.world-focus-ring button:focus-visible {
+  border-color: rgb(242 219 154 / 36%) !important;
+  color: #fff0cf !important;
+  background: rgb(242 219 154 / 10%) !important;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+/* When a detail sheet is open it becomes the selection card. Keeping a second
+ * floating copy would cover the map and make the two surfaces compete. */
+@supports selector(body:has(.world-bottom-sheet)) {
+  body:has(.world-bottom-sheet) .world-focus-ring {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+  }
+}
+
+@media (min-width: 768px) {
+  .world-overlay .world-focus-ring {
+    top: auto !important;
+    right: auto !important;
+    bottom: max(22px, env(safe-area-inset-bottom)) !important;
+    left: max(20px, env(safe-area-inset-left)) !important;
+    width: min(310px, calc(100vw - 40px));
+  }
+
+  .world-focus-ring::before {
+    top: auto;
+    bottom: -5px;
+    transform: rotate(225deg);
+  }
+}
+
+@media (min-width: 1100px) {
+  .world-overlay .world-focus-ring {
+    z-index: 6 !important;
+    bottom: 28px !important;
+    left: 24px !important;
+    width: min(340px, calc(100vw - 408px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-overlay .world-focus-ring,
+  .world-focus-ring button { animation: none; transition: none; }
+}
+
+@keyframes selection-tooltip-arrive {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

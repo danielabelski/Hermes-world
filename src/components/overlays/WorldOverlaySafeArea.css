@@ -1,0 +1,98 @@
+/*
+ * Mobile overlay audit — keep the playable/observable centre of the world
+ * clear on iPhones with a notch, Dynamic Island, rounded corners or a home
+ * indicator. This file deliberately styles only screen-edge UI.
+ */
+:root {
+  --world-edge-top: max(10px, env(safe-area-inset-top, 0px));
+  --world-edge-right: max(12px, env(safe-area-inset-right, 0px));
+  --world-edge-bottom: max(13px, env(safe-area-inset-bottom, 0px));
+  --world-edge-left: max(12px, env(safe-area-inset-left, 0px));
+  --world-overlay-readable-size: clamp(10px, 2.65vw, 13px);
+}
+
+/* Never let top chrome drift into an iPhone sensor area. */
+.world-overlay .world-status-bar {
+  top: var(--world-edge-top);
+  left: var(--world-edge-left);
+  right: var(--world-edge-right);
+  max-width: calc(100vw - var(--world-edge-left) - var(--world-edge-right));
+}
+
+/* The lower corners intentionally remain the only persistent action areas. */
+.world-overlay .world-controls {
+  right: var(--world-edge-right);
+  bottom: var(--world-edge-bottom);
+  z-index: 7;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.world-overlay .health-ribbon {
+  bottom: var(--world-edge-bottom);
+  left: var(--world-edge-left);
+  max-width: min(242px, calc(100vw - var(--world-edge-left) - var(--world-edge-right) - 76px));
+}
+
+.world-overlay .world-bottom-sheet {
+  right: var(--world-edge-right);
+  bottom: var(--world-edge-bottom);
+  left: var(--world-edge-left);
+  max-height: min(58dvh, 520px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Text zoom must reflow in the sheet, never bleed over the map or controls. */
+.world-overlay .world-status-bar__identity,
+.world-overlay .world-status-bar__agents,
+.world-overlay .world-status-bar__health,
+.world-overlay .health-ribbon__label {
+  font-size: var(--world-overlay-readable-size);
+}
+
+@media (max-width: 420px) {
+  .world-overlay .world-status-bar {
+    grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  }
+
+  .world-overlay .world-insight-panel {
+    max-width: calc(100vw - var(--world-edge-left) - var(--world-edge-right));
+  }
+}
+
+/* Landscape iPhones have very little vertical room: retain system state and
+ * camera controls, while hiding secondary prose rather than covering the map. */
+@media (orientation: landscape) and (max-height: 560px) {
+  .world-overlay .world-status-bar {
+    min-height: 36px;
+    max-width: min(410px, calc(100vw - var(--world-edge-left) - var(--world-edge-right)));
+  }
+
+  .world-overlay .world-status-bar button { min-height: 29px; }
+  .world-overlay .world-event-ticker,
+  .world-overlay .world-insight-panel,
+  .world-overlay .world-legend { display: none !important; }
+
+  .world-overlay .health-ribbon { max-width: min(220px, 37vw); }
+  .world-overlay .world-controls { gap: 5px; }
+  .world-overlay .world-controls button { min-height: 35px; }
+
+  .world-overlay .world-bottom-sheet {
+    right: max(18vw, var(--world-edge-right));
+    left: max(18vw, var(--world-edge-left));
+    max-height: calc(100dvh - var(--world-edge-top) - var(--world-edge-bottom) - 12px);
+  }
+}
+
+/* iOS browser UI can reduce the visual viewport mid-gesture; no overlay should
+ * reserve a fixed height, hence dvh is used only as a ceiling, not layout. */
+@supports (height: 100dvh) {
+  .world-overlay .world-bottom-sheet {
+    max-height: min(58dvh, 520px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-overlay .world-bottom-sheet { scroll-behavior: auto; }
+}

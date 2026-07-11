@@ -1,0 +1,100 @@
+.world-tap-confirmation {
+  --tap-accent: #fed66a;
+  position: fixed;
+  z-index: 32;
+  left: var(--tap-x);
+  top: var(--tap-y);
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  color: #fff7d2;
+  filter: drop-shadow(0 3px 6px rgba(8, 16, 27, .78));
+}
+
+.world-tap-confirmation--building { --tap-accent: #82d9f8; }
+.world-tap-confirmation--critical { --tap-accent: #ff796c; }
+
+.world-tap-confirmation__pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--tap-accent);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  animation: world-tap-pulse 820ms cubic-bezier(.1, .72, .28, 1) both;
+}
+
+.world-tap-confirmation__icon {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--tap-accent), #fff 30%);
+  border-radius: 999px;
+  background: rgba(13, 27, 39, .92);
+  box-shadow: 0 0 0 3px rgba(9, 24, 34, .54);
+  transform: translate(-50%, -50%);
+  animation: world-tap-icon 900ms cubic-bezier(.16, .88, .29, 1) both;
+}
+
+.world-tap-confirmation__label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max-content;
+  max-width: min(70vw, 240px);
+  overflow: hidden;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--tap-accent), transparent 58%);
+  border-radius: 8px;
+  background: rgba(10, 23, 35, .92);
+  color: #fff9db;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .025em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translate(-50%, -43px);
+  animation: world-tap-label 1.35s ease-out both;
+}
+
+.world-tap-confirmation__sr {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes world-tap-pulse {
+  from { opacity: .95; transform: translate(-50%, -50%) scale(.4); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(6.2); }
+}
+
+@keyframes world-tap-icon {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.45); }
+  18%, 70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -56%) scale(.86); }
+}
+
+@keyframes world-tap-label {
+  0% { opacity: 0; transform: translate(-50%, -31px); }
+  14%, 72% { opacity: 1; transform: translate(-50%, -43px); }
+  100% { opacity: 0; transform: translate(-50%, -51px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-tap-confirmation__pulse,
+  .world-tap-confirmation__icon,
+  .world-tap-confirmation__label { animation-duration: 1ms; }
+}

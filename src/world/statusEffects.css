@@ -1,0 +1,12 @@
+.hermes-site-effect.site-phase--success {
+  animation: hermes-site-success-short .82s ease-out 1 both;
+}
+
+@keyframes hermes-site-success-short {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.42); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hermes-site-effect.site-phase--success { animation: none !important; opacity: .76; }
+}

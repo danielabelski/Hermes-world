@@ -1,0 +1,309 @@
+/*
+ * Desktop is an additive command surface over the same living world.
+ * It is deliberately absent below the wide-layout breakpoint: the bottom
+ * sheet remains the canonical, one-handed mobile detail interaction.
+ */
+.desktop-command-panel {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .desktop-command-panel {
+    --panel-border: rgb(242 219 154 / 35%);
+    --panel-text: #fff0d1;
+    --panel-muted: #c6d1bd;
+    position: absolute;
+    z-index: 4;
+    top: max(82px, calc(env(safe-area-inset-top) + 70px));
+    right: max(24px, env(safe-area-inset-right));
+    bottom: 24px;
+    display: flex;
+    width: min(336px, calc(100vw - 48px));
+    flex-direction: column;
+    gap: 18px;
+    overflow: hidden auto;
+    overscroll-behavior: contain;
+    padding: 20px;
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    color: var(--panel-text);
+    background:
+      linear-gradient(155deg, rgb(35 58 44 / 94%), rgb(11 23 17 / 93%)),
+      rgb(15 28 20 / 92%);
+    box-shadow: 0 20px 60px rgb(2 8 5 / 55%);
+    backdrop-filter: blur(18px) saturate(115%);
+    -webkit-backdrop-filter: blur(18px) saturate(115%);
+  }
+
+  .desktop-command-panel__header p,
+  .desktop-command-panel__detail > p {
+    margin: 0;
+    color: #e8c76f;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+  }
+
+  .desktop-command-panel__header h2 {
+    margin: 5px 0 10px;
+    font-family: Georgia, serif;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  .desktop-command-panel__header > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid rgb(101 173 118 / 45%);
+    border-radius: 999px;
+    color: #b9e6bd;
+    background: rgb(44 104 58 / 25%);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+
+  .desktop-command-panel__header > span[data-severity='attention'],
+  .desktop-command-panel__header > span[data-severity='warning'] {
+    border-color: rgb(235 173 76 / 55%);
+    color: #ffdc89;
+    background: rgb(160 102 21 / 26%);
+  }
+
+  .desktop-command-panel__header > span[data-severity='critical'] {
+    border-color: rgb(232 91 79 / 62%);
+    color: #ffaba2;
+    background: rgb(139 39 40 / 34%);
+  }
+
+  .desktop-command-panel__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .desktop-command-panel__summary > div {
+    min-width: 0;
+    padding: 10px 8px;
+    border: 1px solid rgb(242 219 154 / 15%);
+    border-radius: 12px;
+    background: rgb(6 17 11 / 36%);
+  }
+
+  .desktop-command-panel small,
+  .desktop-command-panel__summary small {
+    display: block;
+    overflow: hidden;
+    color: var(--panel-muted);
+    font-size: 9px;
+    letter-spacing: .08em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desktop-command-panel__summary strong {
+    display: block;
+    overflow: hidden;
+    margin-top: 4px;
+    color: var(--panel-text);
+    font-size: 14px;
+    text-overflow: ellipsis;
+  }
+
+  .desktop-command-panel__section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .desktop-command-panel__section-heading h3,
+  .desktop-command-panel__detail h3 {
+    margin: 0;
+    color: var(--panel-text);
+    font-size: 14px;
+  }
+
+  .desktop-command-panel__section-heading > span {
+    color: #b9e6bd;
+    font-size: 11px;
+  }
+
+  .desktop-command-panel__agents ul {
+    display: grid;
+    gap: 5px;
+    max-height: 240px;
+    margin: 9px 0 0;
+    padding: 0;
+    overflow: auto;
+    list-style: none;
+  }
+
+  .desktop-command-panel__agents button {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 7px 9px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: var(--panel-text);
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .desktop-command-panel__agents button:hover,
+  .desktop-command-panel__agents button:focus-visible,
+  .desktop-command-panel__agents button[data-selected='true'] {
+    border-color: rgb(242 219 154 / 38%);
+    background: rgb(242 219 154 / 10%);
+    outline: none;
+  }
+
+  .desktop-command-panel__agents button > span:nth-child(2) {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desktop-command-panel__agent-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #78917d;
+    box-shadow: 0 0 0 3px rgb(120 145 125 / 14%);
+  }
+
+  .desktop-command-panel__agent-dot[data-active='true'] {
+    background: #79c77e;
+    box-shadow: 0 0 0 3px rgb(121 199 126 / 16%), 0 0 10px rgb(121 199 126 / 66%);
+  }
+
+  .desktop-command-panel__detail {
+    padding: 13px;
+    border: 1px solid rgb(242 219 154 / 18%);
+    border-radius: 12px;
+    background: rgb(7 19 12 / 42%);
+  }
+
+  .desktop-command-panel__detail h3 {
+    margin-top: 5px;
+  }
+
+  .desktop-command-panel__detail > span {
+    display: block;
+    margin-top: 5px;
+    color: var(--panel-muted);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .desktop-command-panel__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-top: 13px;
+  }
+
+  .desktop-command-panel__actions button,
+  .desktop-command-panel__timeline button,
+  .desktop-command-panel__debug {
+    min-height: 34px;
+    padding: 7px 9px;
+    border: 1px solid rgb(242 219 154 / 35%);
+    border-radius: 8px;
+    color: var(--panel-text);
+    background: rgb(44 79 55 / 82%);
+    cursor: pointer;
+    font-size: 11px;
+  }
+
+  .desktop-command-panel__actions button:hover:not(:disabled),
+  .desktop-command-panel__actions button:focus-visible,
+  .desktop-command-panel__timeline button:hover,
+  .desktop-command-panel__timeline button:focus-visible,
+  .desktop-command-panel__debug:hover,
+  .desktop-command-panel__debug:focus-visible {
+    border-color: #f2db9a;
+    background: #3c6746;
+    outline: none;
+  }
+
+  .desktop-command-panel__actions button:disabled {
+    opacity: .43;
+    cursor: not-allowed;
+  }
+
+  .desktop-command-panel__timeline {
+    min-height: 0;
+  }
+
+  .desktop-command-panel__timeline .activity-feed {
+    max-height: 190px;
+    margin-top: 9px;
+    overflow: auto;
+  }
+
+  .desktop-command-panel__timeline button {
+    width: auto;
+    min-height: 28px;
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+
+  .desktop-command-panel__debug {
+    width: 100%;
+    margin-top: auto;
+    border-style: dashed;
+  }
+
+  /* The desktop sheet is a contextual inspector, never a second dashboard. */
+  .world-bottom-sheet {
+    z-index: 3;
+    right: auto;
+    bottom: 28px;
+    left: 24px;
+    width: min(360px, calc(100vw - 408px));
+    max-height: min(52dvh, 520px);
+    overflow: auto;
+    padding: 20px;
+  }
+
+  .world-bottom-sheet__handle {
+    display: none;
+  }
+
+  .world-bottom-sheet__close {
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 1100px) and (max-height: 760px) {
+  .desktop-command-panel {
+    top: 72px;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .desktop-command-panel__agents ul {
+    max-height: 140px;
+  }
+
+  .desktop-command-panel__timeline .activity-feed {
+    max-height: 105px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-command-panel,
+  .world-bottom-sheet {
+    scroll-behavior: auto;
+  }
+}

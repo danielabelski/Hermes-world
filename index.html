@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>HERMES_OS Control Panel</title>
+    <meta name="description" content="HERMES_OS Control Panel - Matrix AI Agent Mission Control" />
+
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#39FF14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="HERMES_OS" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body style="background-color: #090909; margin: 0; color: #39FF14; font-family: monospace;">
+    <div id="root">
+      <div style="display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column; gap:20px; background-color: #090909;">
+        <svg width="50" height="50" viewBox="0 0 50 50" style="animation: spin 1s linear infinite;">
+           <circle cx="25" cy="25" r="20" fill="none" stroke="#39FF14" stroke-width="4" stroke-dasharray="30 100" stroke-linecap="round"></circle>
+           <circle cx="25" cy="25" r="12" fill="none" stroke="#39FF14" stroke-width="2" stroke-dasharray="15 50" stroke-linecap="round" style="animation: spin-reverse 2s linear infinite; transform-origin: center;"></circle>
+        </svg>
+        <div style="font-weight:bold; font-size: 14px; letter-spacing: 2px; animation: pulse 1.5s infinite;">INITIALIZING HERMES_OS...</div>
+        <style>
+          @keyframes spin { 100% { transform: rotate(360deg); } }
+          @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+          @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        </style>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

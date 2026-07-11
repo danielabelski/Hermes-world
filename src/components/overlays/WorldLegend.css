@@ -1,0 +1,203 @@
+.world-legend {
+  position: absolute;
+  z-index: 3;
+  bottom: max(28px, calc(env(safe-area-inset-bottom) + 18px));
+  left: max(14px, env(safe-area-inset-left));
+  width: min(252px, calc(100vw - 92px));
+  color: #f5ead6;
+  font-size: 12px;
+}
+
+.world-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.world-legend__trigger,
+.world-legend__activity {
+  border: 1px solid rgb(242 219 154 / 31%);
+  color: #faebc4;
+  background: rgb(15 31 22 / 78%);
+  box-shadow: 0 8px 24px rgb(1 8 4 / 30%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.world-legend__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.world-legend__trigger > span:first-child {
+  color: #e8c76f;
+  font-size: 15px;
+}
+
+.world-legend__demo {
+  padding: 4px 6px;
+  border: 1px solid rgb(232 199 111 / 39%);
+  border-radius: 999px;
+  color: #f4d785;
+  background: rgb(75 57 19 / 61%);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.world-legend__clues {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: 0;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: grid-template-rows 180ms ease, margin-top 180ms ease, opacity 140ms ease, transform 180ms ease;
+}
+
+.world-legend[data-expanded='true'] .world-legend__clues {
+  grid-template-rows: 1fr;
+  margin-top: 8px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.world-legend__clues > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.world-legend__clues > p,
+.world-legend__clues > ul,
+.world-legend__activity {
+  visibility: hidden;
+}
+
+.world-legend[data-expanded='true'] .world-legend__clues > p,
+.world-legend[data-expanded='true'] .world-legend__clues > ul,
+.world-legend[data-expanded='true'] .world-legend__activity {
+  visibility: visible;
+}
+
+.world-legend__clues > p,
+.world-legend__clues > ul {
+  margin: 0;
+  padding: 12px 12px 0;
+  border-right: 1px solid rgb(242 219 154 / 26%);
+  border-left: 1px solid rgb(242 219 154 / 26%);
+  background: rgb(14 29 20 / 91%);
+}
+
+.world-legend__clues > p {
+  border-top: 1px solid rgb(242 219 154 / 26%);
+  border-radius: 12px 12px 0 0;
+  color: #d5dccd;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.world-legend__clues > ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 6px;
+  padding-bottom: 11px;
+  list-style: none;
+}
+
+.world-legend__clues li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #eceddc;
+  font-size: 10px;
+}
+
+.world-legend__mark {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 6px;
+  color: #d9ead2;
+  background: rgb(97 164 104 / 23%);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.world-legend__mark--task { color: #f5d58a; background: rgb(162 113 35 / 31%); }
+.world-legend__mark--alert { color: #ffc0a3; background: rgb(163 59 46 / 38%); }
+.world-legend__mark--weather { color: #c5d6ef; background: rgb(67 97 139 / 38%); }
+
+.world-legend__activity {
+  width: 100%;
+  min-height: 32px;
+  padding: 7px 10px;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+  font-size: 10px;
+  text-align: left;
+}
+
+@media (min-width: 1100px) {
+  .world-legend {
+    bottom: 24px;
+    left: 24px;
+    width: auto;
+  }
+
+  .world-legend__clues {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    width: 250px;
+    pointer-events: none;
+  }
+
+  .world-legend[data-expanded='true'] .world-legend__clues {
+    pointer-events: auto;
+  }
+
+  .world-legend__clues li {
+    position: relative;
+  }
+
+  .world-legend__clues li::after {
+    position: absolute;
+    z-index: 5;
+    bottom: calc(100% + 6px);
+    left: 0;
+    width: max-content;
+    max-width: 190px;
+    padding: 5px 7px;
+    border: 1px solid rgb(242 219 154 / 31%);
+    border-radius: 6px;
+    color: #fff0d1;
+    background: #0b1711;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 34%);
+    content: attr(data-tooltip);
+    font-size: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(3px);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+
+  .world-legend__clues li:hover::after,
+  .world-legend__clues li:focus-within::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-legend__clues,
+  .world-legend__clues li::after {
+    transition: none;
+  }
+}

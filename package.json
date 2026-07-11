@@ -1,0 +1,38 @@
+{
+  "name": "hermes-os-living-world",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "vite",
+    "dev:lan": "vite --host 0.0.0.0 --port 5175",
+    "build": "vite build",
+    "build:demo": "vite build --emptyOutDir false",
+    "test": "node --test src/world/mapAgentPresentation.test.js src/world/domCameraMath.test.js src/world/mapAgentRenderPolicy.test.js src/world/mapAgentManifest.test.js",
+    "validate:world-life": "node scripts/validate-world-life.mjs",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express": "^5.2.1",
+    "http-proxy-middleware": "^4.1.1",
+    "pixi.js": "^8.16.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "web-push": "^3.6.7",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "vite": "^8.0.12"
+  }
+}
