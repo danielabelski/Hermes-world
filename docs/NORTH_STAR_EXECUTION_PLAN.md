@@ -4,6 +4,72 @@ Ten plan nie zastępuje `NEXT_WINDOW_MAP_AGENTS.md`. Doprecyzowuje dalsze wykona
 
 North Star: Hermes World jest ambientową warstwą observability, nie grą. W ciągu dwóch sekund użytkownik ma odczytać globalny health, liczbę pracujących/czekających agentów, warning/error/stuck oraz miejsce problemu.
 
+## NEXT WINDOW — locked execution order
+
+Nie implementować tych faz w oknie checkpointu. Następne okno zaczyna od pierwszej niezakończonej fazy po ponownym uruchomieniu testów i builda. Nie powtarzać zakończonych auditów produktu, sprite'ów, routingu ani map identity.
+
+### Phase 1 — Stuck vs waiting vs thinking
+
+Cel: jednoznacznie rozróżnić trzy stany bez dużych aur i bez przebudowy FSM.
+
+- Unikalny marker stuck: blokada, czas albo zatrzymana strzałka zamiast wielokropka.
+- Wolny okresowy puls przy stopach; mocniejszy niż waiting, słabszy niż error.
+- Thinking pozostaje spokojnym symbolem analizy, waiting dyskretnym sygnałem oczekiwania.
+- Test trzech stanów na realnym tle mapy i w widoku około 390×844.
+
+Definition of done: użytkownik rozpoznaje wszystkie trzy stany bez tickera; stuck nie wygląda jak idle, waiting jak warning, a thinking jak problem.
+
+### Phase 2 — Critical source localization
+
+Cel: w ciągu dwóch sekund wskazać agenta i subsystem źródłowy.
+
+- Czerwony marker konkretnego agenta.
+- Subtelna reakcja właściwego budynku/subsystemu.
+- Opcjonalna krótka semantyczna linia wyłącznie dla aktywnego problemu.
+- Bez spaghetti, wielkich aur i nowych globalnych efektów.
+
+Definition of done: wiadomo, który agent zawiódł, który subsystem jest dotknięty i czy alert jest lokalny czy globalny.
+
+### Phase 3 — Agent micro-normalization
+
+Cel: zachować obecną mniejszą skalę jako baseline i poprawić wyłącznie outliery.
+
+- Maksymalne indywidualne korekty około ±5–8%.
+- Sprawdzić perspektywę, anchor przy stopach i cień kontaktowy.
+- Nie zmieniać waypointów, routingu ani globalnej skali.
+
+Definition of done: żadna postać nie dominuje nad mapą, role pozostają czytelne, a sylwetki nie wyglądają jak wklejone ilustracje.
+
+### Phase 4 — Non-destructive map readability variants
+
+Cel: rozjaśnić aktualną mapę bez naruszenia geometrii i mapowania.
+
+- Przygotować trzy warianty: baseline, lekki pass i trochę mocniejszy wariant testowy.
+- Używać wyłącznie CSS, compositingu, overlayów i tonalnych masek.
+- Lekko podnieść brightness/shadows, ograniczyć blue cast, ocieplić kamień/drogi i uspokoić szum tras.
+- Zachować cyan jako kolor infrastruktury AI.
+- Nie podmieniać mapy, nie zmieniać cropu, geometrii ani waypointów.
+
+Definition of done: użytkownik wybiera najmniejszą zmianę, która poprawia czytelność dróg i agentów na telefonie.
+
+### Phase 5 — Debug overlay usability
+
+Cel: zachować wartość diagnostyczną bez wyświetlania wszystkiego naraz.
+
+- Wybór jednego agenta.
+- Osobne toggle: route, labels, entrances, nodes, depth zones.
+- Debug domyślnie wyłączony i nadal dev-only.
+
+Definition of done: można sprawdzić jedną trasę bez chaosu etykiet; normalny użytkownik nigdy nie widzi overlayu.
+
+### Phase 6 — Final mobile observability matrix
+
+Przetestować około 390×844: stable, working, waiting, thinking, warning, critical, stuck, success i offline.
+
+Dla każdego stanu sprawdzić global health, active/total, lokalizację problemu, rolę, status, kontrast, brak zasłaniania przez UI i zrozumienie bez klikania.
+
+Definition of done: wszystkie dziewięć scen przechodzi product test zapisany w `HERMES_WORLD_VISUAL_BASELINE.md`.
+
 ## Bieżący checkpoint
 
 - [x] Semantyczne trasy aktualnej mapy i domyślnie wyłączony `?debugRoutes=1`.

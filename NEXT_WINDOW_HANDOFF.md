@@ -1,5 +1,101 @@
 ﻿# HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## FINAL SAFE CHECKPOINT — MOBILE AGENT BASELINE LOCK
+
+Ta sekcja jest jedynym bieżącym źródłem prawdy. Niższe sekcje są historią wcześniejszych checkpointów.
+
+### Current repository state
+
+- Branch: `main`.
+- Checkpoint parent przed dokumentacją: `178f691 add agent comparison and map readability pass`.
+- Finalny checkpoint: commit o komunikacie `checkpoint: lock mobile agent scale and observability states`; dokładny hash należy odczytać przez `git log -1 --oneline` po otwarciu następnego okna i jest podany w raporcie końcowym bieżącego okna.
+- Working tree przed finalnym commitem zawiera wyłącznie zamierzone aktualizacje dokumentacji checkpointu; po commicie ma być czyste.
+- Data checkpointu: `2026-07-11 22:59 CEST`.
+- Testy: `21/21` passed.
+- World-life smoke validator: passed.
+- Lint: passed.
+- Demo build: passed, `810` modules.
+- Production build: passed, `810` modules.
+- Repo nie posiada skryptu `typecheck`; projekt jest JavaScript/JSX, a statyczną kontrolę zapewnia ESLint i build Vite.
+
+### What was completed
+
+- Dwanaście unikalnych, zróżnicowanych ról i `108/108` wymaganych WebP; aktywnych fallbacków brak.
+- Globalny baseline skali 40–46 px oraz per-role contact shadows; największe sylwetki zmniejszone o 20–27%.
+- Wspólny foot anchor `y=124/128`, Y-sort po stopach i minimalne foreground occlusion.
+- Semantyczne waypointy oraz trasy desktop/mobile dla wszystkich ról.
+- Pełny flow Kowala, Uczonego i Zwiadowcy: droga, wejście/próg, praca/observe, wyjście i powrót.
+- Statusy idle/walking/working/thinking/waiting/success/warning/error/stuck/offline w istniejącym wspólnym systemie.
+- Warning: bursztynowy globalny health, lokalny marker i karta ostrzeżenia.
+- Critical: czytelny czerwony globalny status, alert count i scenariusz error.
+- Stuck: odrębny stan domenowy, safe point i wolny ring; jego marker nadal wymaga dopracowania.
+- Success: krótkotrwały impuls/karta bez stałej aury.
+- Reakcje Kuźni, Biblioteki, Wieży i Core oraz aktywne/waiting/problem data flows.
+- Debug routes `?debugRoutes=1`, domyślnie wyłączony.
+- Deterministyczne scenariusze `healthy/warning/critical` i live before/after `?agentVisual=before`.
+- Mobile UI polish: ograniczony tłok agentów, toast odsunięty od health ribbon, punkty z dachów/fasad poprawione przed baseline lockiem.
+- Odwracalny CSS readability pass bez modyfikacji assetu ani geometrii mapy.
+- Testy kontraktu sprite'ów, skali, statusów, routingu, wejść, return cycle i scenariuszy observability.
+
+### Accepted decisions
+
+- Aktualna mniejsza skala wygrywa i jest globalnym baseline'em. Nie wracać do większych agentów.
+- Późniejsze korekty dotyczą wyłącznie pojedynczych ról i mieszczą się około ±5–8%.
+- Nie rollbackować nowych, zróżnicowanych postaci ani nie wracać do identycznych kapturów.
+- Aktualna niebiesko-granatowa mapa pozostaje. Nie wracać do złotej mapy.
+- Mapę poprawiać wyłącznie niedestrukcyjnie przez CSS/compositing/overlaye.
+- Warning zachować bez zmiany podstawowej gramatyki.
+- Globalny critical zachować; w następnym oknie poprawić lokalizację konkretnego agenta i subsystemu.
+- Stuck odróżnić od waiting/thinking bez przebudowy FSM i bez dużych aur.
+- Success zachować jako krótki sygnał potwierdzenia.
+- Debug overlay zachować jako dev-only, domyślnie wyłączony.
+- North Star: fantasy/AI jest językiem prezentacji, observability jest produktem.
+
+### Known issues
+
+- Mapa nadal jest tonalnie gęsta, miejscami za ciemna i zbyt niebieska; istniejący lekki CSS pass jest odwracalny, ale kolejne warianty wymagają decyzji użytkownika.
+- Drogi i place wymagają dalszej oceny czytelności na realnym telefonie, nie zmiany geometrii.
+- Pojedyncze postacie mogą wymagać korekt maksymalnie około ±5–8%.
+- Critical nie wskazuje jeszcze wystarczająco bezpośrednio pary agent → budynek/subsystem.
+- Stuck jest wizualnie niejednoznaczny; symbol nie może przypominać waiting/thinking.
+- Debug overlay pokazuje wszystkie etykiety naraz i potrzebuje filtrowania po jednym agencie oraz osobnych toggli.
+- Finalna macierz mobile wymaga ręcznego product testu stable/working/waiting/thinking/warning/critical/stuck/success/offline.
+
+### Do not touch
+
+- Asset, layout, crop, proporcje i geometria aktualnej mapy.
+- Budynki, drogi, wejścia, waypointy, semantic nodes, trasy, depth zones oraz punkty `home/safe/work`, chyba że wykryto konkretny błąd.
+- Działający FSM i architektura statusów.
+- Nowe zróżnicowane role oraz aktualna mniejsza skala jako globalny baseline.
+- `server.js`, `src/api.js`, Hermes OS CAT i kontrakty API.
+- Nie generować nowej/złotej mapy, nie dodawać game mechanics, nie przebudowywać rendererów ani całej architektury.
+
+### Exact resume instructions
+
+1. Przeczytaj workspace `AGENTS.md`/instrukcje sesji.
+2. Przeczytaj `NEXT_WINDOW_HANDOFF.md` od tej sekcji.
+3. Przeczytaj `docs/HERMES_WORLD_VISUAL_BASELINE.md`.
+4. Przeczytaj `docs/NORTH_STAR_EXECUTION_PLAN.md`, sekcję `NEXT WINDOW — locked execution order`.
+5. Sprawdź `git status`, `git diff` i `git log -3 --oneline`.
+6. Uruchom poniższe testy i build.
+7. Zacznij wyłącznie od Phase 1: stuck vs waiting vs thinking.
+8. Nie powtarzaj zakończonych auditów sprite'ów, routingu, waypointów, map identity ani produktu.
+9. Nie zaczynaj ponownie planowania produktu i nie implementuj Phase 2 przed domknięciem Phase 1.
+
+### Exact commands
+
+```powershell
+npm.cmd test
+npm.cmd run validate:world-life
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run build -- --mode demo
+```
+
+Repo nie definiuje osobnego `typecheck`; nie instalować TypeScript tylko dla uzyskania dodatkowej komendy.
+
+---
+
 ## AKTUALIZACJA NORTH STAR — 2026-07-11
 
 Ta sekcja jest nadrzędna wobec historycznego checkpointu poniżej. Nie analizuj projektu od początku, nie zmieniaj kolejności planu i nie cofaj wykonanej pracy.
