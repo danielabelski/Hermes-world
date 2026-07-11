@@ -36,6 +36,20 @@ const SHADOW_BY_PROFILE = freeze({
   synthesizer: 0.74,
   verifier: 0.84,
 })
+const BEFORE_NORMALIZATION_SCALE_BY_PROFILE = freeze({
+  default: 1,
+  coder: 1.25,
+  developer: 1.23,
+  devops: 1.23,
+  komandos: 1.37,
+  orchestrator: 1.37,
+  outreach: 1.26,
+  prospecting: 1.23,
+  researcher: 1.31,
+  reviewer: 1.2,
+  synthesizer: 1.17,
+  verifier: 1.23,
+})
 const SPEED_BY_PROFILE = freeze({ coder: 0.86, researcher: 0.78, prospecting: 1.08, default: 1.05, outreach: 1.02, komandos: 0.9 })
 const NAVIGATION_BY_PROFILE = freeze({
   coder: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_central_south_plaza' }), workNode: freeze({ desktop: 'forge_workstation', mobile: 'mobile_forge_workstation' }), routeId: 'forge-route' }),
@@ -59,6 +73,7 @@ const createProfile = (id) => {
     isFallback: !hasUniqueSprite,
     behaviorType: BEHAVIOR_BY_PROFILE[id],
     renderScale: SCALE_BY_PROFILE[id] ?? 0.84,
+    beforeNormalizationScale: BEFORE_NORMALIZATION_SCALE_BY_PROFILE[id] ?? 1,
     anchorCorrection: freeze({ x: 0, yPx: 0 }),
     shadowScale: SHADOW_BY_PROFILE[id] ?? 0.8,
     movementSpeed: SPEED_BY_PROFILE[id] ?? 0.94,

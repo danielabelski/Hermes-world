@@ -46,12 +46,14 @@ function MapAgentSprite({
   hidden = false,
   label,
   lod = 'standard',
+  visualMode = 'normalized',
 }) {
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
   const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
-  const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
+  const comparisonScale = visualMode === 'before' ? profile.beforeNormalizationScale : 1
+  const renderSize = set.renderHeight * set.scale * profile.renderScale * comparisonScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
   const facingScale = getMapAgentFacingScale(direction)
@@ -65,6 +67,7 @@ function MapAgentSprite({
     `lod-${lod}`,
     selected ? 'is-selected' : '',
     hidden ? 'is-inside' : '',
+    visualMode === 'before' ? 'visual-before-normalization' : 'visual-normalized',
   ].filter(Boolean).join(' ')
 
   return <button
@@ -95,6 +98,7 @@ function MapAgentSprite({
     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
     data-lod={lod}
     data-map-agent-src={src}
+    data-visual-mode={visualMode}
     aria-label={label ?? `Agent ${profileId}`}
     aria-pressed={selected}
     onClick={onSelect}

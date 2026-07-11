@@ -14,6 +14,7 @@ import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
 const routeDebugEnabled = () => import.meta.env.VITE_ROUTE_DEBUG === 'true' || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debugRoutes') === '1')
+const getAgentVisualMode = () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('agentVisual') === 'before' ? 'before' : 'normalized'
 
 const BUILDINGS = [
   ['keep', 'Cytadela'], ['library', 'Biblioteka'], ['forge', 'Kuźnia'], ['research', 'Research Lab'],
@@ -58,6 +59,7 @@ export default function WorldFallback() {
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
         shouldSuppressSelection={shouldSuppressSelection}
+        visualMode={getAgentVisualMode()}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
       <MapForegroundOcclusion layout={mapLayout} />

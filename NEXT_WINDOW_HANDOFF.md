@@ -4,6 +4,24 @@
 
 Ta sekcja jest nadrzędna wobec historycznego checkpointu poniżej. Nie analizuj projektu od początku, nie zmieniaj kolejności planu i nie cofaj wykonanej pracy.
 
+### TARGETED NORMALIZATION + READABILITY PASS
+
+- Atomowy checkpoint normalizacji skali: `50590ef normalize map-agent visual scale`.
+- Dwanaście ról zachowuje te same assety, kolory, narzędzia, statusy, pozycje i trasy.
+- Alpha audit potwierdził wspólny foot anchor `y=124/128`; anchor correction pozostaje `0` dla wszystkich ról.
+- Efektywne wysokości środkowe są testowane w przedziale `40–46 px` zamiast wcześniejszych `46–57 px`.
+- Największe redukcje: Komandos/Kasztelan `-27%`, Uczony `-24%`, Herold `-21%`, Kowal `-20%`.
+- Wspólny łagodny profil saturation/contrast/brightness uspokaja ilustracyjność bez tintowania roli lub statusu.
+- Cień jest mniejszy, wspólny i skalowany do szerokości konkretnej sylwetki.
+- Live before/after: zwykły URL pokazuje normalizację; `?agentVisual=before` odtwarza poprzednią efektywną skalę bez zmiany world position.
+- Controlled map pass pozostaje odwracalnym CSS: lekko jaśniejsze cienie, słabszy blue cast i lokalne rozjaśnienie realnych dróg/placów.
+- Główny asset mapy, crop, geometria, wejścia, waypointy, trasy, depth zones, FSM i API są bez zmian.
+- Waiting flow jest subtelną linią przerywaną; dormant pozostaje niewidoczny, warning/error zachowują amber/red.
+- Deterministyczne mobile fixtures: `?scenario=healthy`, `?scenario=warning`, `?scenario=critical`.
+- Raport pomiarowy i checklist: `docs/AGENT_NORMALIZATION_REPORT.md`.
+- Ostatnia walidacja: `21/21` testów, world validator, lint i demo build (`810` modułów) — wszystko zielone.
+- Zakaz automatycznej serii Chrome pozostaje. Finalna ocena odbywa się na jednym preview LAN.
+
 - Checkpoint stanów i infrastruktury: `ef25ab9 refine observability states and subsystem signals`.
 - Checkpoint kompletnego rosteru: `4ea5f60 integrate semantic routes and twelve map-agent identities`.
 - Dokładny dalszy plan: `docs/NORTH_STAR_EXECUTION_PLAN.md`.

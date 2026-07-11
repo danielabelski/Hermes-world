@@ -70,7 +70,13 @@ export default function HermesInfrastructureLayer({ layout = 'desktop' }) {
   return <div className={`hermes-infrastructure hermes-infrastructure--${scenario ?? 'healthy'}`} aria-hidden="true">
     {config.conduits.map((conduit) => {
       const phase = stateByProfile.get(conduit.profile) ?? 'resting'
-      const flowState = ACTIVE_PHASES.has(phase) ? 'is-flowing' : ['warning', 'stuck', 'blocked', 'incident'].includes(phase) ? 'is-problem' : 'is-dormant'
+      const flowState = ACTIVE_PHASES.has(phase)
+        ? 'is-flowing'
+        : phase === 'waiting'
+          ? 'is-waiting'
+          : ['warning', 'stuck', 'blocked', 'incident'].includes(phase)
+            ? 'is-problem'
+            : 'is-dormant'
       return <i className={`hermes-conduit ${flowState} flow-${problemPhase(phase)}`} data-flow-type="agent-work" key={conduit.id} style={{ '--x': `${conduit.x}%`, '--y': `${conduit.y}%`, '--length': `${conduit.length}%`, '--angle': `${conduit.angle}deg` }} />
     })}
     {config.crystals.map((crystal) => <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${stateByBuilding.get(crystal.buildingId) ?? 'resting'}`} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>)}

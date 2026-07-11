@@ -23,6 +23,7 @@ import { useAmbientMode } from './hooks/useAmbientMode.js'
 const AUTH_STATUS_URL = '/api/auth/status'
 const FORCE_DEMO_WORLD = import.meta.env.VITE_DEMO_WORLD === 'true'
   || new URLSearchParams(window.location.search).get('demo') === '1'
+const DEMO_SCENARIO = new URLSearchParams(window.location.search).get('scenario') ?? 'healthy'
 const BYPASS_AUTH = import.meta.env.DEV || FORCE_DEMO_WORLD
 // The illustrated DOM world is the reliable demo baseline. Pixi is an
 // enhancement behind an explicit flag until its lifecycle is fully hardened.
@@ -32,7 +33,7 @@ const ENABLE_PIXI_ENHANCEMENT = import.meta.env.VITE_ENABLE_PIXI_WORLD === 'true
 const WorldCanvas = lazy(() => import('./world/WorldCanvas.jsx'))
 
 export default function App() {
-  const bridge = useWorldBridge({ demoMode: FORCE_DEMO_WORLD })
+  const bridge = useWorldBridge({ demoMode: FORCE_DEMO_WORLD, demoScenario: DEMO_SCENARIO })
   const applySnapshot = useWorldStore((state) => state.applySnapshot)
   const selection = useWorldStore((state) => state.selection)
   const ambientMode = useAmbientMode({ disabled: Boolean(selection) })

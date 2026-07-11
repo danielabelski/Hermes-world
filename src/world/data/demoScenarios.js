@@ -14,7 +14,7 @@ const task = (id, title, assignee, status, priority = 'normal', minute = 0) => (
   assignee,
   status,
   priority,
-  started_at: ['running', 'review', 'blocked'].includes(status) ? at(minute) : null,
+  started_at: ['running', 'review', 'blocked', 'error'].includes(status) ? at(minute) : null,
   completed_at: status === 'done' ? at(minute) : null,
 });
 
@@ -71,7 +71,7 @@ export const DEMO_WORLD_SCENARIOS = Object.freeze({
     ...base,
     profiles: { profiles: [profile('orchestrator', true), profile('coder', false, 'gpt-5-codex'), profile('devops', true), profile('komandos', true), profile('default', true, 'gpt-5-mini')] },
     metrics: { cpuPercent: 93, memoryPercent: 94, memoryUsedMb: 15401, memoryTotalMb: 16384, temperatureC: 91, temperatureSource: 'demo' },
-    tasks: { tasks: [task('critical-deploy', 'Restore deployment path', 'devops', 'running', 'urgent', 14), task('critical-coder', 'Recover failed build', 'coder', 'blocked', 'critical', 13), task('critical-response', 'Contain production incident', 'komandos', 'running', 'urgent', 14), task('critical-cron', 'Nightly cache recovery', 'default', 'scheduled', 'high', 12)] },
+    tasks: { tasks: [task('critical-deploy', 'Restore deployment path', 'devops', 'running', 'urgent', 14), task('critical-coder', 'Recover failed build', 'coder', 'error', 'critical', 13), task('critical-response', 'Contain production incident', 'komandos', 'running', 'urgent', 14), task('critical-cron', 'Nightly cache recovery', 'default', 'scheduled', 'high', 12)] },
     logs: { lines: [line(at(14), 'error', 'coder failed to compile deployment artifact'), line(at(14), 'error', 'System load critical: worker queue is saturated'), line(at(13), 'warning', 'devops is rerouting execution traffic')] },
     cronHistory: { completions: [{ job_id: 'world-heartbeat', name: 'World heartbeat', status: 'error', completed_at: at(12) }] },
     sessions: { sessions: [{ session_id: 'critical-ops', profile: 'devops', model: 'gpt-5', estimated_cost: 2.4, created_at: at(14) }, { session_id: 'critical-response', profile: 'komandos', model: 'gpt-5', estimated_cost: 1.85, created_at: at(14) }] },

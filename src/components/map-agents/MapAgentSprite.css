@@ -55,6 +55,15 @@
   pointer-events: none;
 }
 
+.map-agent-sprite.visual-before-normalization .map-agent-sprite__image {
+  filter: drop-shadow(0 1px 1px rgb(3 8 8 / 0.42));
+}
+
+.map-agent-sprite.visual-before-normalization .map-agent-sprite__shadow {
+  width: clamp(18px, 44%, 26px);
+  height: clamp(4px, 7%, 5px);
+}
+
 .map-agent-sprite__shadow {
   position: absolute;
   left: 50%;

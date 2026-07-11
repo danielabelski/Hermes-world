@@ -24,6 +24,7 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(spriteSet)
     const normalizedHeight = spriteSet.renderHeight * spriteSet.scale * profile.renderScale
     assert.ok(normalizedHeight >= 40 && normalizedHeight <= 46, `${profile.id}: normalized height ${normalizedHeight}`)
+    assert.ok(profile.beforeNormalizationScale >= 1 && profile.beforeNormalizationScale <= 1.37)
     assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
   }

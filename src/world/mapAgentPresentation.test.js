@@ -7,6 +7,8 @@ import {
 } from './mapAgentPresentation.js'
 import { resolveLivingAgentState } from './LivingWorldStateMachine.js'
 import { getWorldLifeJourney } from './data/roadGraph.js'
+import { createWorldSnapshot } from './WorldBridge.js'
+import { getDemoScenario } from './data/demoScenarios.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -354,4 +356,35 @@ test('living-world building effects prefer a real active task over stale complet
   })
   assert.equal(state.phase, 'carrying')
   assert.equal(state.buildingEffect, 'forge-fire')
+})
+
+test('mobile observability fixtures expose waiting, stuck and error as distinct agent states', () => {
+  const observedAt = Date.UTC(2026, 6, 10, 7, 15, 0)
+  const snapshotFor = (scenario) => createWorldSnapshot(
+    getDemoScenario(scenario),
+    null,
+    () => observedAt,
+    { source: 'demo', connection: 'online' },
+  )
+  const presentationFor = (snapshot, profile) => resolveMapAgentPresentation({
+    agent: snapshot.agents.find((agent) => agent.profile === profile),
+    tasks: snapshot.tasks,
+    alerts: snapshot.alerts,
+    lifecycle: snapshot.lifecycle,
+    now: observedAt,
+    layout: 'mobile',
+  })
+
+  const healthy = snapshotFor('healthy')
+  assert.equal(presentationFor(healthy, 'developer').visualState, 'waiting')
+
+  const warning = snapshotFor('warning')
+  const stuck = presentationFor(warning, 'reviewer')
+  assert.equal(stuck.visualState, 'stuck')
+  assert.equal(stuck.severity, 'warning')
+
+  const critical = snapshotFor('critical')
+  const incident = presentationFor(critical, 'coder')
+  assert.equal(incident.visualState, 'alert')
+  assert.equal(incident.severity, 'critical')
 })

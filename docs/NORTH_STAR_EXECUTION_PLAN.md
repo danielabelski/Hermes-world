@@ -15,6 +15,9 @@ North Star: Hermes World jest ambientową warstwą observability, nie grą. W ci
 - [x] Subsystemy Kuźnia/Biblioteka/Wieża/Core reagują na stan, a dormant data flows są ukryte.
 - [x] Odwracalny tonalny readability pass przez CSS; assety mapy niezmienione.
 - [x] Korekta mobile: 52 px bazowo, per-role shadows, osobny start Zwiadowcy, usunięte cztery punkty z dachów/fasad i mniejszy centralny tłok.
+- [x] Targeted normalization: indywidualne wysokości 40–46 px, największe role mniejsze o 20–27%, wspólny profil tonalny i cień bez zmiany anchorów.
+- [x] Live before/after przez `?agentVisual=before` oraz deterministyczne scenariusze `healthy/warning/critical`.
+- [x] Controlled map readability pass jako odwracalny CSS: globalna korekcja plus lokalne, subtelne rozjaśnienie dróg i placów.
 
 ## Kolejność dalszej pracy
 
@@ -77,4 +80,3 @@ Cel observability: dowód ekranowy potwierdza ten sam odczyt na wszystkich targe
 ## Po GL
 
 Kolejny etap używa wyłącznie prawdziwych danych: global health, queue/overload per subsystem oraz prosty drill-down agent/budynek. Nie rozszerzać game designu, wnętrz, questów ani losowego ruchu.
-

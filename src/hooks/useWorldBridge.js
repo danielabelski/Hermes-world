@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api.js';
 import { createWorldBridge, createWorldSnapshot } from '../world/WorldBridge.js';
 import { DEMO_WORLD_PAYLOADS } from '../world/data/demoWorldData.js';
+import { getDemoScenario } from '../world/data/demoScenarios.js';
 import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
 
 const RETRY_INTERVAL_MS = 15_000;
@@ -32,9 +33,12 @@ function hasUsableHermesData(snapshot) {
  * The hook intentionally does not import Zustand: callers may pass the result
  * to any store/action, keeping the bridge testable and renderer-neutral.
  */
-export function useWorldBridge({ enabled = true, demoMode = false, retryIntervalMs = RETRY_INTERVAL_MS } = {}) {
+export function useWorldBridge({ enabled = true, demoMode = false, demoScenario = 'healthy', retryIntervalMs = RETRY_INTERVAL_MS } = {}) {
   const demoSnapshotRef = useRef(null);
-  if (!demoSnapshotRef.current) demoSnapshotRef.current = createWorldSnapshot(DEMO_WORLD_PAYLOADS);
+  if (!demoSnapshotRef.current) {
+    const payloads = demoScenario === 'healthy' ? DEMO_WORLD_PAYLOADS : getDemoScenario(demoScenario);
+    demoSnapshotRef.current = createWorldSnapshot(payloads);
+  }
   const demoSnapshot = demoSnapshotRef.current;
   const bridgeRef = useRef(null);
   const retryTimerRef = useRef(null);
@@ -123,7 +127,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, retryInterval
    * canvas all observe exactly the same agent/task story.
    */
   useEffect(() => {
-    if (!demoMode || !shouldRunDemoScene({ enabled, source: state.source })) return undefined;
+    if (!demoMode || demoScenario !== 'healthy' || !shouldRunDemoScene({ enabled, source: state.source })) return undefined;
 
     const scene = createWorldSceneScript({
       baseSnapshot: demoSnapshotRef.current,
@@ -148,7 +152,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, retryInterval
       scene.stop();
       if (sceneScriptRef.current === scene) sceneScriptRef.current = null;
     };
-  }, [demoMode, enabled, state.source]);
+  }, [demoMode, demoScenario, enabled, state.source]);
 
   return {
     ...state,
