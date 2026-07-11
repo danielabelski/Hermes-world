@@ -175,12 +175,13 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'enter'
     visualState = 'walk'
     isMoving = true
-    isInside = routeProgress > 0.86
+    isInside = journey.workVisibility === 'inside' && routeProgress > journey.entranceVisibilityThreshold
   } else if (['working', 'carrying'].includes(living.phase)) {
     sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
     routeProgress = 1
     journeyStage = 'work'
     visualState = 'work'
+    isInside = journey.workVisibility === 'inside'
   } else if (living.phase === 'observing') {
     sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
     routeProgress = 1
@@ -196,7 +197,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
       journeyStage = 'exit'
       visualState = 'walk'
       isMoving = true
-      isInside = routeProgress < 0.18
+      isInside = journey.workVisibility === 'inside' && routeProgress < (1 - journey.entranceVisibilityThreshold)
     } else {
       sampled = { worldX: entrance.x, worldY: entrance.y, direction: 'se' }
       routeProgress = 1

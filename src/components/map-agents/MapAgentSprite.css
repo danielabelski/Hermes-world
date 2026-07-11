@@ -58,11 +58,11 @@
 .map-agent-sprite__shadow {
   position: absolute;
   left: 50%;
-  bottom: -2px;
-  width: clamp(20px, 44%, 27px);
-  height: clamp(5px, 10%, 7px);
+  bottom: -1px;
+  width: clamp(16px, 36%, 22px);
+  height: clamp(4px, 7%, 5px);
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgb(2 7 6 / 0.64) 0 34%, rgb(2 7 6 / 0.34) 58%, transparent 78%);
+  background: radial-gradient(ellipse, rgb(2 7 6 / 0.48) 0 34%, rgb(2 7 6 / 0.24) 58%, transparent 78%);
   transform: translateX(-50%);
   transform-origin: center;
   pointer-events: none;

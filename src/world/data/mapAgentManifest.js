@@ -5,7 +5,7 @@ export const MAP_AGENT_CANVAS = Object.freeze({
   height: 128,
   footAnchorX: 0.5,
   footAnchorY: 0.96875,
-  renderHeight: 64,
+  renderHeight: 56,
 })
 
 const frame = (root, name) => `${root}/${name}.webp`
@@ -42,14 +42,14 @@ const spriteSet = ({ profile, directory, renderHeight = MAP_AGENT_CANVAS.renderH
 const FALLBACK_SPRITE_SET = spriteSet({
   profile: 'fallback',
   directory: 'fallback',
-  renderHeight: 60,
+  renderHeight: 54,
   scale: 0.94,
 })
 
 export const MAP_AGENT_MANIFEST = Object.freeze({
-  coder: spriteSet({ profile: 'coder', directory: 'coder', renderHeight: 64, scale: 1.05 }),
-  researcher: spriteSet({ profile: 'researcher', directory: 'researcher', renderHeight: 64, scale: 1 }),
-  prospecting: spriteSet({ profile: 'prospecting', directory: 'prospecting', renderHeight: 64, scale: 0.96 }),
+  coder: spriteSet({ profile: 'coder', directory: 'coder', renderHeight: 56, scale: 1.05 }),
+  researcher: spriteSet({ profile: 'researcher', directory: 'researcher', renderHeight: 56, scale: 1 }),
+  prospecting: spriteSet({ profile: 'prospecting', directory: 'prospecting', renderHeight: 56, scale: 0.96 }),
   fallback: FALLBACK_SPRITE_SET,
 })
 

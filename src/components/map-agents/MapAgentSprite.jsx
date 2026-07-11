@@ -12,9 +12,9 @@ function getMapAgentFacingScale(direction) {
 }
 
 function getAgentBob(visualState, frameIndex, animationPhase) {
-  if (visualState === 'walk') return [0, -1.4, 0, -1][Math.abs(Number(frameIndex) || 0) % 4]
-  if (visualState === 'idle') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.55
-  if (visualState === 'work') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.8
+  if (visualState === 'walk') return [0, -0.7, 0, -0.5][Math.abs(Number(frameIndex) || 0) % 4]
+  if (visualState === 'idle') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.16
+  if (visualState === 'work') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.2
   return 0
 }
 

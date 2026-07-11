@@ -20,7 +20,7 @@ export const ROAD_NODES = Object.freeze({
 const point = (x, y) => Object.freeze({ x, y })
 const points = (items) => Object.freeze(items.map((item) => point(item.x, item.y)))
 
-const journey = ({ profile, buildingId, homePoint, dispatchPoint, entrancePoint, workPoint, outboundWaypoints, returnWaypoints, laneOffset = 0, walkDurationMs, arriveDurationMs = 700, workDurationMs, successDurationMs = 1_800, workEffect }) => Object.freeze({
+const journey = ({ profile, buildingId, homePoint, dispatchPoint, entrancePoint, workPoint, outboundWaypoints, returnWaypoints, laneOffset = 0, walkDurationMs, arriveDurationMs = 700, workDurationMs, successDurationMs = 1_800, workEffect, workVisibility = 'world', entranceVisibilityThreshold = 0.62 }) => Object.freeze({
   profile,
   buildingId,
   homePoint: point(homePoint.x, homePoint.y),
@@ -35,6 +35,8 @@ const journey = ({ profile, buildingId, homePoint, dispatchPoint, entrancePoint,
   workDurationMs,
   successDurationMs,
   workEffect,
+  workVisibility,
+  entranceVisibilityThreshold,
 })
 
 /**
@@ -49,7 +51,7 @@ export const WORLD_LIFE_JOURNEYS = Object.freeze({
     entrancePoint: point(2.35, 6.65), workPoint: point(2.2, 6.2),
     outboundWaypoints: [ROAD_NODES.middleHub, point(4.25, 6.84), ROAD_NODES.forgeTurn, point(2.35, 6.65)],
     returnWaypoints: [point(2.35, 6.65), ROAD_NODES.forgeTurn, ROAD_NODES.middleHub],
-    laneOffset: -0.045, walkDurationMs: 6_400, workDurationMs: 6_800, workEffect: 'forge-fire',
+    laneOffset: -0.045, walkDurationMs: 6_400, workDurationMs: 6_800, workEffect: 'forge-fire', workVisibility: 'inside',
   }),
   researcher: journey({
     profile: 'researcher', buildingId: 'library',
@@ -57,7 +59,7 @@ export const WORLD_LIFE_JOURNEYS = Object.freeze({
     entrancePoint: point(2.35, 4.65), workPoint: point(2.15, 4.15),
     outboundWaypoints: [ROAD_NODES.upperHub, point(4.25, 4.82), ROAD_NODES.libraryTurn, point(2.35, 4.65)],
     returnWaypoints: [point(2.35, 4.65), ROAD_NODES.libraryTurn, ROAD_NODES.upperHub],
-    laneOffset: 0.04, walkDurationMs: 5_900, workDurationMs: 7_200, workEffect: 'archive-pulse',
+    laneOffset: 0.04, walkDurationMs: 5_900, workDurationMs: 7_200, workEffect: 'archive-pulse', workVisibility: 'inside',
   }),
   prospecting: journey({
     profile: 'prospecting', buildingId: 'scout-lodge',
