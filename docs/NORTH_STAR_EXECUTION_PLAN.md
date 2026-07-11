@@ -155,3 +155,91 @@ Cel observability: dowód ekranowy potwierdza ten sam odczyt na wszystkich targe
 ## Po GL
 
 Kolejny etap używa wyłącznie prawdziwych danych: global health, queue/overload per subsystem oraz prosty drill-down agent/budynek. Nie rozszerzać game designu, wnętrz, questów ani losowego ruchu.
+
+## NEXT WINDOW — MAP READABILITY + OBSERVABILITY POLISH PASS
+
+Ta sekcja jest bieżącym planem wykonawczym. Nie powtarzać ukończonych faz opisanych niżej. Pracować sekwencyjnie w głównym agencie, bez nowych assetów, subagentów i zmian architektury.
+
+### Stan wejściowy i blokady
+
+- Branch `main`, checkpoint `f8239ba`; przed planowaniem working tree było czyste.
+- Testy `26/26`, lint, validator oraz build produkcyjny i demo były zielone.
+- Ukończono: osobne thinking/waiting/stuck, critical agent→subsystem, warianty mapy baseline/light/strong, debug per agent i deterministyczną macierz dziewięciu stanów.
+- Jeden preview `0.0.0.0:4175` służy ocenie telefonu. Następne okno zatrzymuje go przed implementacją i potwierdza brak listenera.
+- Nie zmieniać assetu/geometrii/cropu mapy, waypointów, routingu, depth zones, home/safe/work, globalnej skali, FSM, rendererów, `server.js`, `src/api.js`, Hermes OS CAT ani API.
+- Bez generowania assetów, serii Chrome/headless i mechanik gry.
+
+### Task 0 — Safe resume i baseline
+
+1. Przeczytać `AGENTS.md`, handoff, visual baseline i tę sekcję.
+2. Sprawdzić Git, ostatnie sześć commitów i listener preview.
+3. Zatrzymać wyłącznie preview 4175; nie zabijać niezwiązanych procesów.
+4. Uruchomić: `npm.cmd test`, `npm.cmd run validate:world-life`, `npm.cmd run lint`, `npm.cmd run build`, `npm.cmd run build -- --mode demo`.
+5. Nie tworzyć pustego checkpointu, jeśli repo jest czyste.
+
+DoD: zielony baseline i zero preview podczas implementacji.
+
+### Task 1 — Finalny non-destructive map readability pass
+
+1. Zachować warianty `baseline/light/strong` oraz asset mapy bez zmian.
+2. Porównać identyczne sceny stable/working/warning/critical na mobile.
+3. Strojenie wyłącznie przez CSS/compositing: shadows, brightness, blue cast, temperatura kamienia/dróg, saturation tła i lokalne tonalne maski.
+4. Priorytet: główna droga, plac/fontanna, wejścia Cytadeli/Kuźni/Biblioteki, stanowiska pracy i patrol.
+5. Cyan pozostaje kolorem infrastruktury. Bez spłaszczenia głębi i bez wielkich aur.
+6. Wybrać najmniejszą skuteczną zmianę; `strong` nie staje się domyślny bez GL użytkownika.
+
+DoD: lepsza czytelność dróg i agentów, słabszy blue cast, identyczne hashe assetu i geometrii.
+
+### Task 2 — Twarda hierarchia komunikatów
+
+W istniejącej prezentacji wdrożyć ranking `critical > warning > stuck > success > info`.
+
+1. Jedno źródło wyboru głównej dolnej karty, bez nowego event systemu.
+2. Critical spina kartę, global health, summary, marker agenta i subsystem; success zostaje tylko w tickerze/historii.
+3. Warning wygrywa z success; stuck wygrywa z success/info, ale nie udaje critical.
+4. Success jest krótkotrwały i nigdy nie przykrywa alertu.
+5. Testy konfliktów: critical+success, warning+success, stuck+success oraz brak alertu.
+
+DoD: brak sprzecznych głównych komunikatów na jednym ekranie.
+
+### Task 3 — Regresja statusów i critical localization
+
+Nie przeprojektowywać wykonanych stanów. Na realnym tle potwierdzić: thinking `?` bez alarmu, waiting `…` z chłodnym ringiem, stuck `↛` z bursztynowym wolnym pulsem oraz error/critical z agentem, subsystemem i jedną linią problemową. Poprawić wyłącznie wykryty błąd mobile, bez zmian FSM.
+
+DoD: trzy stany są rozpoznawalne bez tickera, a critical wskazuje agent→subsystem w 2 sekundy.
+
+### Task 4 — Debug Kowala: kolejność zamiast spamu
+
+1. Jeden agent i jedna trasa po `debugRoutes=1`.
+2. Numerować kolejne punkty `1→2→3→4…`.
+3. Na mapie krótkie etykiety; pełne nazwy w małym inspectorze/interakcji.
+4. Zachować istniejące toggles i dodać `home/safe/work` oraz `occlusion markers`.
+5. Etykiety nie zasłaniają sprite'a ani głównej drogi; debug domyślnie off.
+6. Test konfiguracji i deterministycznej kolejności.
+
+DoD: czytelna ponumerowana trasa bez technicznego chaosu.
+
+### Task 5 — Agent micro-normalization tylko przy dowodzie
+
+Sprawdzić 12 agentów: stopy, cień, drzwi/droga, depth sorting i ilustracyjność. Nie zmieniać nic bez widocznego outliera. Jeśli istnieje, tylko indywidualne ±5–8%, bez przesunięcia pozycji i waypointów.
+
+DoD: baseline 40–46 px pozostaje; każda ewentualna korekta ma konkretny powód.
+
+### Task 6 — Mobile observability matrix i before/after
+
+Na około 390×844 sprawdzić: stable, working, thinking, waiting, stuck, warning, critical, success, offline i debug route Kowala. Dla każdego: health, active/total, lokalizacja agent/subsystem, rola/status, kontrast, UI oraz brak konfliktu success z alertem. Porównać baseline/light/strong na identycznym kadrze. Bez automatycznej serii Chrome.
+
+DoD: każdy stan jest zrozumiały bez kliknięcia i tickera w maksymalnie 2 sekundy.
+
+### Task 7 — Walidacja, checkpoint i telefon
+
+1. Powtórzyć pięć komend Task 0 oraz smoke/status/route tests.
+2. Sprawdzić chronione pliki/assety, sekrety, artefakty i procesy.
+3. Zaktualizować visual baseline, raport i handoff stanem faktycznym.
+4. Commit: `checkpoint: improve map readability and observability hierarchy` lub równoważny.
+5. Dopiero po zielonym commicie dokładnie jeden preview `0.0.0.0:4175`; potwierdzić jeden listener i zero headless.
+6. Podać LAN URL-e i pozostawić decyzję `GL/RL` użytkownikowi.
+
+DoD: czysty working tree, zielone testy/buildy, aktualny handoff i jeden preview do oceny.
+
+---

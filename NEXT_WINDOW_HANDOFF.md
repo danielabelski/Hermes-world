@@ -252,3 +252,62 @@ Pracuj na aktualnym stanie repozytorium. Nie analizuj projektu od początku i ni
 - `GL`: trójka jest wzorcem; tworzyć własne sprite’y/config dla pozostałych 9 ról, potem ożywienie mapy i finalny polish.
 - `RL`: poprawić wyłącznie wskazane problemy trójki przed rozszerzaniem rosteru.
 
+## NEXT ACCOUNT / WINDOW RESUME — MAP READABILITY + OBSERVABILITY POLISH
+
+Ta sekcja jest bieżącą instrukcją wznowienia i ma pierwszeństwo przed historią niżej.
+
+### Repository state
+
+- Branch `main`; HEAD `f8239ba complete mobile observability validation matrix`.
+- Working tree przed aktualizacją dokumentów było czyste.
+- Jeden ręczny preview LAN działa na `0.0.0.0:4175`, PID 2308. Następne okno zatrzymuje go przed implementacją i nie uruchamia kolejnego do finalnej walidacji.
+- Ostatnia walidacja: testy `26/26`, lint, world-life validator, production build i demo build — zielone.
+
+### Ukończone — nie powtarzać
+
+- `8515bae`: thinking/waiting/stuck bez zmian FSM.
+- `2901879`: critical agent→subsystem i jedna linia problemowa.
+- Micro-normalization audit: brak outlierów; baseline 40–46 px.
+- `a525a65`: `mapReadability=baseline|light|strong`, default light.
+- `fc0da54`: filtrowany debug jednego agenta.
+- `f8239ba`: focusy stable/working/waiting/thinking/warning/critical/stuck/success/offline.
+- Geometria, waypointy, routing, FSM, backend/API i assety mapy nietknięte.
+
+### Pierwszy niezakończony problem
+
+Po safe resume kontynuować finalny readability pass i wdrożyć hierarchię `critical > warning > stuck > success > info`. Success nie może być główną zieloną kartą przy aktywnym critical, warning albo stuck.
+
+### Locked order
+
+0. Safe resume, wyłączenie preview i pełny baseline test/build.
+1. Finalny niedestrukcyjny readability pass; strong tylko po GL.
+2. Hierarchia komunikatów wraz z testami konfliktów.
+3. Walidacja regresyjna statusów i critical localization, bez redesignu.
+4. Debug Kowala: numery, krótkie nazwy, home/safe/work i occlusion toggles.
+5. Micro-normalization tylko przy dowodzie na konkretny outlier.
+6. Dziesięć scen mobile i baseline/light/strong before/after.
+7. Pełna walidacja, checkpoint, dokumenty i dokładnie jeden preview do GL/RL.
+
+Pełny plan i DoD: końcowa, nadrzędna sekcja `NEXT WINDOW — MAP READABILITY + OBSERVABILITY POLISH PASS` w `docs/NORTH_STAR_EXECUTION_PLAN.md`.
+
+### Hard locks
+
+- Bez rollbacku, nowej mapy/estetyki/assetów, globalnej zmiany skali, zmian FSM i architektury.
+- Bez zmian geometrii, cropu, dróg, wejść, waypointów, routingu, depth zones i home/safe/work.
+- Bez zmian `server.js`, `src/api.js`, Hermes OS CAT i API.
+- Bez subagentów, serii Chrome/headless, kilku serwerów, game mechanics i losowego ruchu.
+- Preview off podczas pracy; dokładnie jeden dopiero po zielonych testach i commicie.
+
+### Exact commands
+
+```powershell
+npm.cmd test
+npm.cmd run validate:world-life
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run build -- --mode demo
+```
+
+Repo nie ma osobnego `typecheck`; nie instalować TypeScript.
+
+---
