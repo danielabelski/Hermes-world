@@ -12,6 +12,7 @@ import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
 import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
+import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -416,4 +417,21 @@ test('map readability variants are explicit, reversible and default to the accep
   assert.equal(resolveMapReadabilityMode('?mapReadability=light'), 'light')
   assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
   assert.equal(resolveMapReadabilityMode('?mapReadability=unknown'), 'light')
+})
+
+test('route debug config is off by default and filters one agent and explicit layers', () => {
+  const profiles = ['coder', 'researcher', 'prospecting']
+  assert.equal(resolveRouteDebugConfig('', { availableProfiles: profiles }).enabled, false)
+  assert.deepEqual(resolveRouteDebugConfig('?debugRoutes=1', { availableProfiles: profiles }), {
+    enabled: true,
+    profile: 'coder',
+    layers: ['route', 'nodes', 'entrances'],
+  })
+  assert.deepEqual(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=researcher&debugLayers=route,labels,depth', { availableProfiles: profiles }), {
+    enabled: true,
+    profile: 'researcher',
+    layers: ['route', 'labels', 'depth'],
+  })
+  assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=all', { availableProfiles: profiles }).profile, 'all')
+  assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=missing', { availableProfiles: profiles }).profile, 'coder')
 })

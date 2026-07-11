@@ -10,3 +10,5 @@
 .route-debug text { fill: #fff6c7; paint-order: stroke; stroke: #07110f; stroke-width: .38; stroke-linejoin: round; font: 700 1.15px/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .02em; }
 .route-debug__agent-anchor { color: #fff; stroke: currentColor; stroke-width: .18; vector-effect: non-scaling-stroke; }
 .route-debug__agent-anchor text { stroke: #a32626; }
+.route-debug__depth-zone rect { fill: rgb(236 92 128 / .08); stroke: #ff7da0; stroke-width: .2; stroke-dasharray: .7 .5; vector-effect: non-scaling-stroke; }
+.route-debug__depth-zone text { fill: #ffd2df; stroke: #5d1629; }

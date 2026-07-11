@@ -11,10 +11,10 @@ import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
+import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
-const routeDebugEnabled = () => import.meta.env.VITE_ROUTE_DEBUG === 'true' || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debugRoutes') === '1')
 const getAgentVisualMode = () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('agentVisual') === 'before' ? 'before' : 'normalized'
 
 const BUILDINGS = [
@@ -50,6 +50,10 @@ export default function WorldFallback() {
   } = useDomWorldCamera({ zoomPreference })
   const presentationNow = usePresentationClock()
   const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
+  const routeDebug = resolveRouteDebugConfig(typeof window === 'undefined' ? '' : window.location.search, {
+    forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
+    availableProfiles: presentations.map((model) => model.profileId),
+  })
   return <div ref={viewportRef} className={`fallback-world readability-${mapReadability}`} data-map-readability={mapReadability} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
@@ -65,7 +69,7 @@ export default function WorldFallback() {
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
       <MapForegroundOcclusion layout={mapLayout} />
-      {routeDebugEnabled() ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} /> : null}
+      {routeDebug.enabled ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} config={routeDebug} /> : null}
       <div className="fallback-fountain"><i /><i /><i /></div>
     </div>
   </div>
