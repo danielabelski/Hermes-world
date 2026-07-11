@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
 import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
+import { resolveMapAgentStatusMarker } from '../../world/mapAgentStatusGrammar.js'
 import './MapAgentSprite.css'
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
@@ -17,16 +18,6 @@ function getAgentBob(visualState, frameIndex, animationPhase) {
   if (visualState === 'idle') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.16
   if (visualState === 'work') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.2
   return 0
-}
-
-function statusSymbol(visualState, severity, signalState) {
-  if (signalState === 'success') return '✓'
-  if (visualState === 'thinking') return '?'
-  if (visualState === 'waiting') return '…'
-  if (visualState === 'stuck' || signalState === 'stuck') return '×'
-  if (visualState === 'blocked' || ['critical', 'error'].includes(severity)) return '!'
-  if (visualState === 'alert' || severity === 'warning') return '!'
-  return ''
 }
 
 function MapAgentSprite({
@@ -58,7 +49,7 @@ function MapAgentSprite({
   const transparentTail = renderSize - anchoredHeight
   const facingScale = getMapAgentFacingScale(direction)
   const bob = getAgentBob(normalizedState, frameIndex, animationPhase)
-  const marker = statusSymbol(normalizedState, severity, signalState)
+  const statusMarker = resolveMapAgentStatusMarker({ visualState: normalizedState, severity, signalState })
   const className = [
     'map-agent-sprite',
     `is-${normalizedState}`,
@@ -99,6 +90,7 @@ function MapAgentSprite({
     data-lod={lod}
     data-map-agent-src={src}
     data-visual-mode={visualMode}
+    data-status-marker={statusMarker?.tone ?? 'none'}
     aria-label={label ?? `Agent ${profileId}`}
     aria-pressed={selected}
     onClick={onSelect}
@@ -109,7 +101,7 @@ function MapAgentSprite({
       <img className="map-agent-sprite__image" src={src} alt="" draggable={false} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
-    {marker ? <span className="map-agent-sprite__marker" aria-hidden="true">{marker}</span> : null}
+    {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}
   </button>
 }
 

@@ -9,6 +9,7 @@ import { resolveLivingAgentState } from './LivingWorldStateMachine.js'
 import { getWorldLifeJourney } from './data/roadGraph.js'
 import { createWorldSnapshot } from './WorldBridge.js'
 import { getDemoScenario } from './data/demoScenarios.js'
+import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -387,4 +388,12 @@ test('mobile observability fixtures expose waiting, stuck and error as distinct 
   const incident = presentationFor(critical, 'coder')
   assert.equal(incident.visualState, 'alert')
   assert.equal(incident.severity, 'critical')
+})
+
+test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'thinking' }), { symbol: '?', tone: 'thinking' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'waiting' }), { symbol: '…', tone: 'waiting' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'stuck', severity: 'warning', signalState: 'stuck' }), { symbol: '↛', tone: 'stuck' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'alert', severity: 'critical', signalState: 'error' }), { symbol: '!', tone: 'error' })
+  assert.equal(resolveMapAgentStatusMarker({ visualState: 'idle' }), null)
 })
