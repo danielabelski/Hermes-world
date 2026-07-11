@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWorldStore } from '../../world/store/worldStore.js'
-
-const SEVERITIES = Object.freeze(['warning', 'error', 'critical'])
-const ALERT_WORDS = /\b(blocked|failed|failure|error|critical|alert|zablok|błąd|awari|problem)\b/i
-const SUCCESS_WORDS = /\b(done|completed|success|sukces|ukończ|zakończ|delivered|dostarcz)\b/i
+import { classifyWorldMoment, resolveWorldMoment } from '../../world/worldMomentPriority.js'
 
 const TONE = Object.freeze({
+  info: { icon: 'i', label: 'INFO', color: '#9fc7d8', border: 'rgba(159, 199, 216, .42)', background: 'rgba(28, 52, 65, .88)' },
   success: { icon: '✓', label: 'SUKCES', color: '#9bd2a0', border: 'rgba(155, 210, 160, .42)', background: 'rgba(25, 72, 48, .88)' },
+  stuck: { icon: '↛', label: 'BRAK POSTĘPU', color: '#efbd69', border: 'rgba(239, 189, 105, .52)', background: 'rgba(76, 54, 25, .91)' },
   alert: { icon: '!', label: 'UWAGA', color: '#efc36a', border: 'rgba(239, 195, 106, .5)', background: 'rgba(79, 57, 24, .9)' },
   critical: { icon: '×', label: 'KRYTYCZNE', color: '#ff8b76', border: 'rgba(255, 117, 100, .58)', background: 'rgba(94, 35, 34, .92)' },
 })
@@ -38,12 +37,8 @@ function itemId(item, index) {
 }
 
 function toneFor(item) {
-  const severity = String(item.severity ?? item.level ?? '').toLowerCase()
-  const text = `${item.message ?? ''} ${item.title ?? ''} ${item.status ?? ''}`
-  if (severity === 'critical' || severity === 'fatal') return 'critical'
-  if (SEVERITIES.includes(severity) || ALERT_WORDS.test(text)) return 'alert'
-  if (SUCCESS_WORDS.test(text)) return 'success'
-  return 'success'
+  const tone = classifyWorldMoment(item)
+  return tone === 'warning' ? 'alert' : tone
 }
 
 /**
@@ -53,6 +48,7 @@ function toneFor(item) {
 export function WorldMomentToast() {
   const activity = useWorldStore((state) => state.activity?.items ?? state.activity ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
+  const agents = useWorldStore((state) => state.agents ?? [])
   const openSheet = useWorldStore((state) => state.openSheet)
   const [moment, setMoment] = useState(null)
   const seenRef = useRef(new Set())
@@ -71,9 +67,9 @@ export function WorldMomentToast() {
     ids.forEach((id) => seenRef.current.add(id))
     if (!fresh) return undefined
 
-    const showTimer = window.setTimeout(() => setMoment(fresh), 0)
+    const showTimer = window.setTimeout(() => setMoment(resolveWorldMoment(fresh, alerts, agents)), 0)
     return () => window.clearTimeout(showTimer)
-  }, [items])
+  }, [items, alerts, agents])
 
   useEffect(() => {
     if (!moment) return undefined

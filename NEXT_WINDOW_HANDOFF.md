@@ -254,6 +254,13 @@ Pracuj na aktualnym stanie repozytorium. Nie analizuj projektu od początku i ni
 
 ## NEXT ACCOUNT / WINDOW RESUME — MAP READABILITY + OBSERVABILITY POLISH
 
+### Progress after plan checkpoint
+
+- Task 0 baseline: preview 4175 stopped; tests, validator and lint passed. Production and demo builds passed outside the sandbox after the shared Vite cache returned a sandbox-only `EPERM`.
+- Task 2 hierarchy implemented: `critical > warning > stuck > success > info` now selects the main moment card. Active alert/stuck replaces concurrent success visually; success remains in activity history/ticker.
+- Added pure resolver `src/world/worldMomentPriority.js` and conflict tests. Current suite: `27/27`.
+- First remaining task: Task 1 final non-destructive readability tuning, then Task 3 regression and Task 4 debug numbering.
+
 Ta sekcja jest bieżącą instrukcją wznowienia i ma pierwszeństwo przed historią niżej.
 
 ### Repository state

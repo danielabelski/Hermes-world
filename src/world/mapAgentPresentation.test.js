@@ -11,6 +11,7 @@ import { createWorldSnapshot } from './WorldBridge.js'
 import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
+import { classifyWorldMoment, resolveWorldMoment } from './worldMomentPriority.js'
 import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
@@ -410,6 +411,19 @@ test('critical source localization maps only meaningful phases onto subsystem fl
   assert.deepEqual(resolveInfrastructureFlowPresentation('stuck'), { state: 'problem', tone: 'warning' })
   assert.deepEqual(resolveInfrastructureFlowPresentation('incident'), { state: 'problem', tone: 'error' })
   assert.deepEqual(resolveInfrastructureFlowPresentation('resting'), { state: 'dormant', tone: 'normal' })
+})
+
+test('world moment hierarchy keeps alerts and stuck above concurrent success', () => {
+  const success = { id: 'done', status: 'completed', message: 'Build completed successfully' }
+  const warning = { id: 'warn', severity: 'warning', message: 'Queue pressure warning' }
+  const critical = { id: 'critical', severity: 'critical', message: 'Forge failed' }
+  const stuckAgent = { id: 'scout', displayName: 'Zwiadowca', state: 'stuck' }
+
+  assert.equal(classifyWorldMoment(success), 'success')
+  assert.equal(resolveWorldMoment(success, [critical], []).id, 'critical')
+  assert.equal(resolveWorldMoment(success, [warning], []).id, 'warn')
+  assert.equal(resolveWorldMoment(success, [], [stuckAgent]).severity, 'stuck')
+  assert.equal(resolveWorldMoment(success, [], []).id, 'done')
 })
 
 test('map readability variants are explicit, reversible and default to the accepted light pass', () => {
