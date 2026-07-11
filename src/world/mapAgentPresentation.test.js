@@ -11,6 +11,7 @@ import { createWorldSnapshot } from './WorldBridge.js'
 import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
+import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -407,4 +408,12 @@ test('critical source localization maps only meaningful phases onto subsystem fl
   assert.deepEqual(resolveInfrastructureFlowPresentation('stuck'), { state: 'problem', tone: 'warning' })
   assert.deepEqual(resolveInfrastructureFlowPresentation('incident'), { state: 'problem', tone: 'error' })
   assert.deepEqual(resolveInfrastructureFlowPresentation('resting'), { state: 'dormant', tone: 'normal' })
+})
+
+test('map readability variants are explicit, reversible and default to the accepted light pass', () => {
+  assert.equal(resolveMapReadabilityMode(''), 'light')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=baseline'), 'baseline')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=light'), 'light')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=unknown'), 'light')
 })

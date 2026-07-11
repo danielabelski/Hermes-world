@@ -10,6 +10,7 @@ import MapForegroundOcclusion from '../components/map-agents/MapForegroundOcclus
 import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
+import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -23,6 +24,7 @@ const BUILDINGS = [
 ]
 
 export default function WorldFallback() {
+  const mapReadability = resolveMapReadabilityMode(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
   useEffect(() => {
     const query = window.matchMedia?.(MOBILE_MAP_QUERY)
@@ -48,7 +50,7 @@ export default function WorldFallback() {
   } = useDomWorldCamera({ zoomPreference })
   const presentationNow = usePresentationClock()
   const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
-  return <div ref={viewportRef} className="fallback-world" aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
+  return <div ref={viewportRef} className={`fallback-world readability-${mapReadability}`} data-map-readability={mapReadability} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
       <HermesInfrastructureLayer layout={mapLayout} />

@@ -7,6 +7,21 @@
   touch-action: none;
   cursor: grab;
   user-select: none;
+  --map-readability-filter: saturate(0.8) brightness(1.06) contrast(0.91) sepia(0.05);
+  --map-road-opacity: 1;
+  --map-road-brightness: 1;
+}
+
+.fallback-world.readability-baseline {
+  --map-readability-filter: saturate(0.86) brightness(0.89) contrast(0.96) hue-rotate(3deg);
+  --map-road-opacity: 0;
+  --map-road-brightness: 1;
+}
+
+.fallback-world.readability-strong {
+  --map-readability-filter: saturate(0.76) brightness(1.1) contrast(0.89) sepia(0.07);
+  --map-road-opacity: 1;
+  --map-road-brightness: 1.28;
 }
 
 .fallback-world:active { cursor: grabbing; }
@@ -34,7 +49,7 @@
 }
 
 .fallback-world__art img {
-  filter: saturate(0.8) brightness(1.06) contrast(0.91) sepia(0.05);
+  filter: var(--map-readability-filter);
 }
 
 .fallback-world::before,
@@ -56,6 +71,8 @@
     radial-gradient(ellipse 17% 10% at 35% 37%, rgb(238 213 169 / 0.065), transparent 72%),
     radial-gradient(ellipse 16% 9% at 60% 33%, rgb(226 216 185 / 0.055), transparent 72%);
   mix-blend-mode: screen;
+  opacity: var(--map-road-opacity);
+  filter: brightness(var(--map-road-brightness));
 }
 
 .fallback-agents {
