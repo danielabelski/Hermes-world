@@ -8,8 +8,34 @@ const BEHAVIOR_BY_PROFILE = freeze({
   komandos: 'patrol', orchestrator: 'monitoring', outreach: 'courier', prospecting: 'patrol',
   researcher: 'research-worker', reviewer: 'monitoring', synthesizer: 'research-worker', verifier: 'monitoring',
 })
-const SCALE_BY_PROFILE = freeze({ coder: 1, researcher: 1, prospecting: 1, orchestrator: 1.02, komandos: 1.02, default: 0.92 })
-const SHADOW_BY_PROFILE = freeze({ coder: 1, researcher: 0.86, prospecting: 0.86, default: 0.78 })
+const SCALE_BY_PROFILE = freeze({
+  default: 0.92,
+  coder: 0.84,
+  developer: 0.84,
+  devops: 0.84,
+  komandos: 0.8,
+  orchestrator: 0.8,
+  outreach: 0.82,
+  prospecting: 0.84,
+  researcher: 0.82,
+  reviewer: 0.86,
+  synthesizer: 0.88,
+  verifier: 0.84,
+})
+const SHADOW_BY_PROFILE = freeze({
+  default: 0.72,
+  coder: 1,
+  developer: 0.82,
+  devops: 0.84,
+  komandos: 0.92,
+  orchestrator: 0.8,
+  outreach: 0.74,
+  prospecting: 0.86,
+  researcher: 0.9,
+  reviewer: 0.8,
+  synthesizer: 0.74,
+  verifier: 0.84,
+})
 const SPEED_BY_PROFILE = freeze({ coder: 0.86, researcher: 0.78, prospecting: 1.08, default: 1.05, outreach: 1.02, komandos: 0.9 })
 const NAVIGATION_BY_PROFILE = freeze({
   coder: freeze({ homeNode: freeze({ desktop: 'citadel_main_gate', mobile: 'mobile_central_south_plaza' }), workNode: freeze({ desktop: 'forge_workstation', mobile: 'mobile_forge_workstation' }), routeId: 'forge-route' }),
@@ -32,9 +58,9 @@ const createProfile = (id) => {
     spriteProfile: hasUniqueSprite ? id : 'fallback',
     isFallback: !hasUniqueSprite,
     behaviorType: BEHAVIOR_BY_PROFILE[id],
-    renderScale: SCALE_BY_PROFILE[id] ?? 0.96,
+    renderScale: SCALE_BY_PROFILE[id] ?? 0.84,
     anchorCorrection: freeze({ x: 0, yPx: 0 }),
-    shadowScale: SHADOW_BY_PROFILE[id] ?? SHADOW_BY_PROFILE.default,
+    shadowScale: SHADOW_BY_PROFILE[id] ?? 0.8,
     movementSpeed: SPEED_BY_PROFILE[id] ?? 0.94,
     accent: definition.accentColor,
     homeNode: navigation.homeNode,

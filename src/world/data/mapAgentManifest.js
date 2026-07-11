@@ -51,17 +51,17 @@ const FALLBACK_SPRITE_SET = spriteSet({
 
 export const MAP_AGENT_MANIFEST = Object.freeze({
   default: spriteSet({ profile: 'default', directory: 'default', renderHeight: 50, scale: 1 }),
-  coder: spriteSet({ profile: 'coder', directory: 'coder', renderHeight: 52, scale: 1.05 }),
-  developer: spriteSet({ profile: 'developer', directory: 'developer', renderHeight: 56, scale: 1 }),
-  devops: spriteSet({ profile: 'devops', directory: 'devops', renderHeight: 56, scale: 1 }),
-  komandos: spriteSet({ profile: 'komandos', directory: 'komandos', renderHeight: 56, scale: 1 }),
-  orchestrator: spriteSet({ profile: 'orchestrator', directory: 'orchestrator', renderHeight: 56, scale: 1 }),
-  outreach: spriteSet({ profile: 'outreach', directory: 'outreach', renderHeight: 56, scale: 1 }),
-  prospecting: spriteSet({ profile: 'prospecting', directory: 'prospecting', renderHeight: 56, scale: 0.96 }),
-  researcher: spriteSet({ profile: 'researcher', directory: 'researcher', renderHeight: 56, scale: 1 }),
-  reviewer: spriteSet({ profile: 'reviewer', directory: 'reviewer', renderHeight: 56, scale: 1 }),
-  synthesizer: spriteSet({ profile: 'synthesizer', directory: 'synthesizer', renderHeight: 56, scale: 1 }),
-  verifier: spriteSet({ profile: 'verifier', directory: 'verifier', renderHeight: 56, scale: 1 }),
+  coder: spriteSet({ profile: 'coder', directory: 'coder' }),
+  developer: spriteSet({ profile: 'developer', directory: 'developer' }),
+  devops: spriteSet({ profile: 'devops', directory: 'devops' }),
+  komandos: spriteSet({ profile: 'komandos', directory: 'komandos' }),
+  orchestrator: spriteSet({ profile: 'orchestrator', directory: 'orchestrator' }),
+  outreach: spriteSet({ profile: 'outreach', directory: 'outreach' }),
+  prospecting: spriteSet({ profile: 'prospecting', directory: 'prospecting' }),
+  researcher: spriteSet({ profile: 'researcher', directory: 'researcher' }),
+  reviewer: spriteSet({ profile: 'reviewer', directory: 'reviewer' }),
+  synthesizer: spriteSet({ profile: 'synthesizer', directory: 'synthesizer' }),
+  verifier: spriteSet({ profile: 'verifier', directory: 'verifier' }),
   fallback: FALLBACK_SPRITE_SET,
 })
 

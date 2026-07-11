@@ -14,13 +14,17 @@ test('map agent config explicitly covers the canonical twelve profiles', () => {
 test('every map agent profile has renderer, navigation and behavior contracts', () => {
   for (const profile of Object.values(MAP_AGENT_PROFILES)) {
     assert.ok(['building-worker', 'research-worker', 'patrol', 'courier', 'monitoring', 'idle-ambient'].includes(profile.behaviorType))
-    assert.ok(profile.renderScale > 0.8 && profile.renderScale <= 1.05)
+    assert.ok(profile.renderScale >= 0.8 && profile.renderScale <= 0.92)
     assert.ok(profile.shadowScale >= 0.7 && profile.shadowScale <= 1)
     assert.ok(profile.movementSpeed > 0.7 && profile.movementSpeed <= 1.1)
     assert.ok(profile.homeNode.desktop && profile.homeNode.mobile)
     assert.ok(profile.workNode.desktop && profile.workNode.mobile)
     assert.ok(profile.routeId)
-    assert.ok(getMapAgentSpriteSet(profile.spriteProfile))
+    const spriteSet = getMapAgentSpriteSet(profile.spriteProfile)
+    assert.ok(spriteSet)
+    const normalizedHeight = spriteSet.renderHeight * spriteSet.scale * profile.renderScale
+    assert.ok(normalizedHeight >= 40 && normalizedHeight <= 46, `${profile.id}: normalized height ${normalizedHeight}`)
+    assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
   }
 })
