@@ -5,9 +5,8 @@ import './scoutEffects.css'
 import './statusEffects.css'
 import { useWorldStore } from './store/worldStore.js'
 import { resolveLivingWorld } from './LivingWorldStateMachine.js'
+import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
 
-const ACTIVE_PHASES = new Set(['walking-to-work', 'arriving', 'working', 'carrying', 'observing', 'walking-home'])
-const problemPhase = (phase) => phase === 'incident' ? 'error' : phase === 'warning' || phase === 'stuck' || phase === 'blocked' ? 'warning' : 'normal'
 const segment = (id, profile, from, to) => {
   const dx = to[0] - from[0]
   const dy = to[1] - from[1]
@@ -70,19 +69,25 @@ export default function HermesInfrastructureLayer({ layout = 'desktop' }) {
   return <div className={`hermes-infrastructure hermes-infrastructure--${scenario ?? 'healthy'}`} aria-hidden="true">
     {config.conduits.map((conduit) => {
       const phase = stateByProfile.get(conduit.profile) ?? 'resting'
-      const flowState = ACTIVE_PHASES.has(phase)
-        ? 'is-flowing'
-        : phase === 'waiting'
-          ? 'is-waiting'
-          : ['warning', 'stuck', 'blocked', 'incident'].includes(phase)
-            ? 'is-problem'
-            : 'is-dormant'
-      return <i className={`hermes-conduit ${flowState} flow-${problemPhase(phase)}`} data-flow-type="agent-work" key={conduit.id} style={{ '--x': `${conduit.x}%`, '--y': `${conduit.y}%`, '--length': `${conduit.length}%`, '--angle': `${conduit.angle}deg` }} />
+      const presentation = resolveInfrastructureFlowPresentation(phase)
+      return <i
+        className={`hermes-conduit is-${presentation.state} flow-${presentation.tone}`}
+        data-flow-type="agent-work"
+        data-source-profile={conduit.profile}
+        data-source-phase={phase}
+        data-flow-state={presentation.state}
+        data-flow-tone={presentation.tone}
+        key={conduit.id}
+        style={{ '--x': `${conduit.x}%`, '--y': `${conduit.y}%`, '--length': `${conduit.length}%`, '--angle': `${conduit.angle}deg` }}
+      />
     })}
-    {config.crystals.map((crystal) => <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${stateByBuilding.get(crystal.buildingId) ?? 'resting'}`} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>)}
+    {config.crystals.map((crystal) => {
+      const phase = stateByBuilding.get(crystal.buildingId) ?? 'resting'
+      return <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${phase}`} data-building-id={crystal.buildingId} data-building-phase={phase} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>
+    })}
     {config.sites.map((site) => {
       const phase = site.profile ? stateByProfile.get(site.profile) ?? 'resting' : 'ambient'
-      return <i className={`hermes-site-effect hermes-site-effect--${site.effect} site-phase--${phase}`} key={site.id} style={{ '--site-x': `${site.x}%`, '--site-y': `${site.y}%` }}><b /><em /></i>
+      return <i className={`hermes-site-effect hermes-site-effect--${site.effect} site-phase--${phase}`} data-source-profile={site.profile ?? 'system'} data-site-phase={phase} key={site.id} style={{ '--site-x': `${site.x}%`, '--site-y': `${site.y}%` }}><b /><em /></i>
     })}
   </div>
 }

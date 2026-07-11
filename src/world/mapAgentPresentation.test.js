@@ -10,6 +10,7 @@ import { getWorldLifeJourney } from './data/roadGraph.js'
 import { createWorldSnapshot } from './WorldBridge.js'
 import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
+import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -388,6 +389,8 @@ test('mobile observability fixtures expose waiting, stuck and error as distinct 
   const incident = presentationFor(critical, 'coder')
   assert.equal(incident.visualState, 'alert')
   assert.equal(incident.severity, 'critical')
+  assert.equal(incident.signalState, 'error')
+  assert.equal(incident.buildingId, 'forge')
 })
 
 test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
@@ -396,4 +399,12 @@ test('status marker grammar keeps thinking, waiting, stuck and error visually di
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'stuck', severity: 'warning', signalState: 'stuck' }), { symbol: '↛', tone: 'stuck' })
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'alert', severity: 'critical', signalState: 'error' }), { symbol: '!', tone: 'error' })
   assert.equal(resolveMapAgentStatusMarker({ visualState: 'idle' }), null)
+})
+
+test('critical source localization maps only meaningful phases onto subsystem flows', () => {
+  assert.deepEqual(resolveInfrastructureFlowPresentation('working'), { state: 'flowing', tone: 'normal' })
+  assert.deepEqual(resolveInfrastructureFlowPresentation('waiting'), { state: 'waiting', tone: 'normal' })
+  assert.deepEqual(resolveInfrastructureFlowPresentation('stuck'), { state: 'problem', tone: 'warning' })
+  assert.deepEqual(resolveInfrastructureFlowPresentation('incident'), { state: 'problem', tone: 'error' })
+  assert.deepEqual(resolveInfrastructureFlowPresentation('resting'), { state: 'dormant', tone: 'normal' })
 })

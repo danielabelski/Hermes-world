@@ -10,8 +10,12 @@
   filter: none;
 }
 .hermes-conduit.is-problem { opacity: .78; }
+.hermes-conduit.is-problem:after { opacity: 1; animation: hermes-problem-trace 2.8s ease-in-out infinite; }
 .hermes-conduit.flow-warning { background: linear-gradient(90deg,transparent,#ffb85ba8 25%,#ffe1a1 50%,#ffb85ba8 75%,transparent); }
 .hermes-conduit.flow-error { background: linear-gradient(90deg,transparent,#ff665ca8 25%,#ffd0c8 50%,#ff665ca8 75%,transparent); }
+.hermes-conduit.flow-warning:after { background: #ffe09b; box-shadow: 0 0 8px #ffb85b; }
+.hermes-conduit.flow-error:after { background: #ffd0c8; box-shadow: 0 0 9px #ff665c; }
 .site-phase--waiting { opacity: .18; }
 .site-phase--warning,.site-phase--stuck { opacity: .82; filter: hue-rotate(50deg) drop-shadow(0 0 6px #ffb95e); }
 .hermes-crystal.crystal--resting:not(.hermes-crystal--core) { opacity: .2; animation: none; }
+@keyframes hermes-problem-trace { 0% { left: 0; opacity: 0; } 18% { opacity: 1; } 82% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
