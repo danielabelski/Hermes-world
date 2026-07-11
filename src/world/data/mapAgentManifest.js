@@ -30,6 +30,7 @@ const spriteSet = ({ profile, directory, renderHeight = MAP_AGENT_CANVAS.renderH
         frame(root, 'walk-se-b-pass'),
       ]),
       work: Object.freeze([work]),
+      thinking: Object.freeze([frame(root, 'observe-se')]),
       observe: Object.freeze([frame(root, 'observe-se')]),
       alert: Object.freeze([alert]),
       blocked: Object.freeze([alert]),
@@ -47,9 +48,18 @@ const FALLBACK_SPRITE_SET = spriteSet({
 })
 
 export const MAP_AGENT_MANIFEST = Object.freeze({
+  default: spriteSet({ profile: 'default', directory: 'default', renderHeight: 54, scale: 1 }),
   coder: spriteSet({ profile: 'coder', directory: 'coder', renderHeight: 56, scale: 1.05 }),
-  researcher: spriteSet({ profile: 'researcher', directory: 'researcher', renderHeight: 56, scale: 1 }),
+  developer: spriteSet({ profile: 'developer', directory: 'developer', renderHeight: 56, scale: 1 }),
+  devops: spriteSet({ profile: 'devops', directory: 'devops', renderHeight: 56, scale: 1 }),
+  komandos: spriteSet({ profile: 'komandos', directory: 'komandos', renderHeight: 56, scale: 1 }),
+  orchestrator: spriteSet({ profile: 'orchestrator', directory: 'orchestrator', renderHeight: 56, scale: 1 }),
+  outreach: spriteSet({ profile: 'outreach', directory: 'outreach', renderHeight: 56, scale: 1 }),
   prospecting: spriteSet({ profile: 'prospecting', directory: 'prospecting', renderHeight: 56, scale: 0.96 }),
+  researcher: spriteSet({ profile: 'researcher', directory: 'researcher', renderHeight: 56, scale: 1 }),
+  reviewer: spriteSet({ profile: 'reviewer', directory: 'reviewer', renderHeight: 56, scale: 1 }),
+  synthesizer: spriteSet({ profile: 'synthesizer', directory: 'synthesizer', renderHeight: 56, scale: 1 }),
+  verifier: spriteSet({ profile: 'verifier', directory: 'verifier', renderHeight: 56, scale: 1 }),
   fallback: FALLBACK_SPRITE_SET,
 })
 

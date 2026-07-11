@@ -112,7 +112,7 @@ function buildBaseModel({ agent, living, task, lifecycle }) {
     label: agent.displayName ?? agent.role ?? agent.profile,
     phase: living.phase,
     journeyStage: living.phase,
-    visualState: explicitlyOffline ? 'offline' : visualStateForPhase(living.phase),
+    visualState: explicitlyOffline ? 'offline' : String(agent.state ?? '').toLowerCase().includes('thinking') ? 'thinking' : visualStateForPhase(living.phase),
     signalState: living.phase === 'blocked' ? 'blocked' : living.phase === 'incident' ? 'error' : 'none',
     severity: severityFor({ living, agent }),
     direction: 'se',

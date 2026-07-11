@@ -1,0 +1,146 @@
+[
+  {
+    "frame": "idle-se",
+    "sourceBBox": [
+      62,
+      83,
+      353,
+      439
+    ],
+    "finalBBox": [
+      18,
+      13,
+      109,
+      124
+    ],
+    "scale": 0.31111,
+    "opaqueRatio": 0.8971,
+    "webpBytes": 13792
+  },
+  {
+    "frame": "walk-se-a",
+    "sourceBBox": [
+      24,
+      83,
+      351,
+      441
+    ],
+    "finalBBox": [
+      13,
+      13,
+      115,
+      124
+    ],
+    "scale": 0.31111,
+    "opaqueRatio": 0.8876,
+    "webpBytes": 13616
+  },
+  {
+    "frame": "walk-se-a-pass",
+    "sourceBBox": [
+      28,
+      85,
+      335,
+      441
+    ],
+    "finalBBox": [
+      16,
+      13,
+      112,
+      124
+    ],
+    "scale": 0.31111,
+    "opaqueRatio": 0.8859,
+    "webpBytes": 12902
+  },
+  {
+    "frame": "walk-se-b-pass",
+    "sourceBBox": [
+      0,
+      86,
+      317,
+      442
+    ],
+    "finalBBox": [
+      14,
+      13,
+      113,
+      124
+    ],
+    "scale": 0.31111,
+    "opaqueRatio": 0.8913,
+    "webpBytes": 12890
+  },
+  {
+    "frame": "walk-se-b",
+    "sourceBBox": [
+      50,
+      40,
+      359,
+      400
+    ],
+    "finalBBox": [
+      16,
+      12,
+      112,
+      124
+    ],
+    "scale": 0.31111,
+    "opaqueRatio": 0.8866,
+    "webpBytes": 13522
+  },
+  {
+    "frame": "work-se",
+    "sourceBBox": [
+      72,
+      36,
+      312,
+      403
+    ],
+    "finalBBox": [
+      28,
+      12,
+      101,
+      124
+    ],
+    "scale": 0.30518,
+    "opaqueRatio": 0.9052,
+    "webpBytes": 12284
+  },
+  {
+    "frame": "alert-se",
+    "sourceBBox": [
+      45,
+      32,
+      384,
+      405
+    ],
+    "finalBBox": [
+      13,
+      12,
+      115,
+      124
+    ],
+    "scale": 0.30027,
+    "opaqueRatio": 0.8697,
+    "webpBytes": 13900
+  },
+  {
+    "frame": "success-se",
+    "sourceBBox": [
+      0,
+      24,
+      295,
+      407
+    ],
+    "finalBBox": [
+      21,
+      12,
+      107,
+      124
+    ],
+    "scale": 0.29243,
+    "opaqueRatio": 0.8856,
+    "webpBytes": 14302
+  }
+]

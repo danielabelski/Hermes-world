@@ -5,12 +5,15 @@ import citadelArtUrl from '../assets/hermes-citadel-hd-v2.png'
 import citadelMobileArtUrl from '../assets/hermes-citadel-mobile-v2.png'
 import HermesInfrastructureLayer from './HermesInfrastructureLayer.jsx'
 import MapAgentLayer from '../components/map-agents/MapAgentLayer.jsx'
+import RouteDebugOverlay from '../components/map-agents/RouteDebugOverlay.jsx'
+import MapForegroundOcclusion from '../components/map-agents/MapForegroundOcclusion.jsx'
 import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
+const routeDebugEnabled = () => import.meta.env.VITE_ROUTE_DEBUG === 'true' || (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debugRoutes') === '1')
 
 const BUILDINGS = [
   ['keep', 'Cytadela'], ['library', 'Biblioteka'], ['forge', 'Kuźnia'], ['research', 'Research Lab'],
@@ -57,6 +60,8 @@ export default function WorldFallback() {
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
+      <MapForegroundOcclusion layout={mapLayout} />
+      {routeDebugEnabled() ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} /> : null}
       <div className="fallback-fountain"><i /><i /><i /></div>
     </div>
   </div>

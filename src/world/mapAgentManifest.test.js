@@ -23,7 +23,7 @@ test('map sprites have the shared canvas, foot anchor and complete runtime frame
   assert.equal(assertMapAgentManifestSeparation(), true)
 
   for (const [profile, set] of Object.entries(MAP_AGENT_MANIFEST)) {
-    for (const state of ['idle', 'walk', 'work', 'observe', 'alert', 'blocked', 'success', 'offline']) {
+    for (const state of ['idle', 'walk', 'work', 'thinking', 'observe', 'alert', 'blocked', 'success', 'offline']) {
       assert.ok(set.frames[state]?.length, `${profile}: missing ${state}`)
       for (const url of set.frames[state]) {
         assert.equal(assertMapAgentAssetUrl(url), url)

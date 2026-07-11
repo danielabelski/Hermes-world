@@ -1,0 +1,12 @@
+.route-debug { position: absolute; inset: 0; z-index: 19; pointer-events: none; }
+.route-debug svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.route-debug__path { fill: none; stroke: var(--route-color); stroke-width: .26; vector-effect: non-scaling-stroke; }
+.route-debug__path.is-return { stroke-dasharray: 1.1 1; opacity: .55; }
+.route-debug__waypoint,.route-debug__marker circle { fill: #061612; stroke: var(--route-color); stroke-width: .22; vector-effect: non-scaling-stroke; }
+.route-debug__marker.is-entrance circle { fill: #f7d77a; }
+.route-debug__marker.is-work circle { fill: #f36f56; }
+.route-debug__marker.is-safe circle { fill: #79d6ef; }
+.route-debug__marker.is-home circle { fill: #93df94; }
+.route-debug text { fill: #fff6c7; paint-order: stroke; stroke: #07110f; stroke-width: .38; stroke-linejoin: round; font: 700 1.15px/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .02em; }
+.route-debug__agent-anchor { color: #fff; stroke: currentColor; stroke-width: .18; vector-effect: non-scaling-stroke; }
+.route-debug__agent-anchor text { stroke: #a32626; }

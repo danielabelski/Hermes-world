@@ -1,0 +1,23 @@
+.map-foreground {
+  position: absolute;
+  inset: 0;
+  z-index: 21;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.map-foreground__mask {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.map-foreground__mask img {
+  position: absolute;
+  display: block;
+  max-width: none;
+  object-fit: fill;
+  filter: saturate(0.86) brightness(0.89) contrast(0.96) hue-rotate(3deg);
+  user-select: none;
+}

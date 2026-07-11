@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
+import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
 import './MapAgentSprite.css'
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
@@ -19,7 +20,8 @@ function getAgentBob(visualState, frameIndex, animationPhase) {
 }
 
 function statusSymbol(visualState, severity, signalState) {
-  if (signalState === 'success') return '✦'
+  if (signalState === 'success') return '✓'
+  if (visualState === 'thinking') return '?'
   if (visualState === 'blocked' || ['critical', 'error'].includes(severity)) return '!'
   if (visualState === 'alert' || severity === 'warning') return '!'
   return ''
@@ -43,10 +45,11 @@ function MapAgentSprite({
   label,
   lod = 'standard',
 }) {
-  const set = getMapAgentSpriteSet(profileId)
+  const profile = getMapAgentProfile(profileId)
+  const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
-  const src = assertMapAgentAssetUrl(getMapAgentFrame(profileId, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
-  const renderSize = set.renderHeight * set.scale * clamp(Number(baseScale) || 1, 0.65, 1.45)
+  const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
+  const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
   const facingScale = getMapAgentFacingScale(direction)
@@ -77,6 +80,8 @@ function MapAgentSprite({
       '--map-agent-world-y': `${clamp(Number(worldY) || 0, -10, 110)}cqh`,
     }}
     data-profile-id={profileId}
+    data-sprite-profile={profile.spriteProfile}
+    data-fallback={profile.isFallback ? 'true' : 'false'}
     data-visual-state={normalizedState}
     data-direction={direction}
     data-signal-state={signalState}
@@ -90,6 +95,7 @@ function MapAgentSprite({
     onClick={onSelect}
   >
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
+    <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
       <img className="map-agent-sprite__image" src={src} alt="" draggable={false} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
