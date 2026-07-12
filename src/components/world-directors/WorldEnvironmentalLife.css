@@ -63,7 +63,7 @@
 .atmosphere-road-reflection b{position:absolute;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d3f7ffbf,transparent);opacity:.26;transform:rotate(-13deg);animation:road-reflection 8s ease-in-out infinite}
 .atmosphere-road-reflection b:nth-child(1){left:46%;top:63%}.atmosphere-road-reflection b:nth-child(2){left:58%;top:72%;animation-delay:4.2s}
 
-.layout-mobile .atmosphere-water{left:38%;top:57%;width:27%;height:12%}
+.layout-mobile .atmosphere-water{left:38%;top:40%;width:27%;height:11%}
 .layout-mobile .atmosphere-forge-smoke{left:30.5%;top:49.2%;width:30px;height:58px}
 .layout-mobile .atmosphere-fog{left:24%;top:28%;width:52%;height:11%}
 .layout-mobile .atmosphere-road-reflection b:nth-child(1){left:45%;top:64%}.layout-mobile .atmosphere-road-reflection b:nth-child(2){left:57%;top:73%}

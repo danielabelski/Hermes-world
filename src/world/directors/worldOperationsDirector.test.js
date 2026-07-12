@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { deriveWorldOperations, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
+import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
 
 const START = Date.parse('2026-07-13T01:00:00.000Z')
 const idle = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
@@ -12,6 +12,14 @@ test('opening three seconds contain a map-crossing transit and Citadel machine',
   assert.equal(result.operations[0].route[0].y, 94)
   assert.equal(result.operations[0].route.some((point) => point.y <= 43), true)
   assert.equal(result.majorCount, 2)
+})
+
+test('mobile water machinery is anchored to the central water core, never the dry south road', () => {
+  const result = deriveWorldOperations({ now: START + 10_000, startedAt: START, layout: 'mobile' })
+  assert.equal(result.operations.some((item) => item.type === 'water-machinery'), true)
+  const water = result.operations.find((item) => item.type === 'water-machinery')
+  assert.equal(water.type, 'water-machinery')
+  assert.deepEqual(WORLD_OPERATION_POINTS.mobile.water, WORLD_OPERATION_POINTS.mobile.citadel)
 })
 
 test('forty-eight second ambient schedule has no dead window and never exceeds two major operations', () => {

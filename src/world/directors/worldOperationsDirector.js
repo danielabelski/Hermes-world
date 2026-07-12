@@ -11,7 +11,7 @@ const AMBIENT_CYCLE_MS = 48_000
 export const WORLD_OPERATION_POINTS = freeze({
   mobile: freeze({
     gate: point(50, 94), road: point(50, 76), fountain: point(50, 60), citadel: point(50, 43),
-    forge: point(30.5, 49.2), watcher: point(65.5, 71.2), archive: point(35.5, 70.5), sanctum: point(72, 80), water: point(50, 59),
+    forge: point(30.5, 49.2), watcher: point(65.5, 71.2), archive: point(35.5, 70.5), sanctum: point(72, 80), water: point(50, 43),
   }),
   desktop: freeze({
     gate: point(50, 92), road: point(50, 69), fountain: point(50, 49), citadel: point(46, 36.5),
