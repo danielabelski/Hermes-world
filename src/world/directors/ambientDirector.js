@@ -58,7 +58,8 @@ function routeFor(profile, behavior, layout) {
       : behavior === 'train'
         ? [home, safe, safe, home]
         : [home, safe, approach, safe, home]
-  return route.map((point) => freeze({ x: point.x * 10, y: point.y * 10 }))
+  // Semantic navigation nodes already use the renderer's 0-100 world space.
+  return route.map((point) => freeze({ x: point.x, y: point.y }))
 }
 
 function converseRoutes(leftProfile, rightProfile, layout) {
@@ -68,7 +69,7 @@ function converseRoutes(leftProfile, rightProfile, layout) {
   const leftSafe = left.safeBlockedPoint ?? left.dispatchPoint
   const rightSafe = right.safeBlockedPoint ?? right.dispatchPoint
   const meeting = { x: (leftSafe.x + rightSafe.x) / 2, y: (leftSafe.y + rightSafe.y) / 2 }
-  const build = (journey, safe) => [journey.homePoint, safe, meeting, safe, journey.homePoint].map((point) => freeze({ x: point.x * 10, y: point.y * 10 }))
+  const build = (journey, safe) => [journey.homePoint, safe, meeting, safe, journey.homePoint].map((point) => freeze({ x: point.x, y: point.y }))
   return freeze({ left: freeze(build(left, leftSafe)), right: freeze(build(right, rightSafe)) })
 }
 

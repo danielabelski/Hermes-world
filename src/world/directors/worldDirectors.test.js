@@ -78,6 +78,9 @@ test('ambient director is deterministic, capped at three and schedules every 20â
   assert.ok(left.nextSelectionAt - (START + 2_400) >= AMBIENT_SELECTION_MIN_MS)
   assert.ok(left.nextSelectionAt - (START + 2_400) <= AMBIENT_SELECTION_MAX_MS)
   assert.ok(left.actions.every((action) => !['working', 'success'].includes(action.behavior)))
+  assert.ok(left.actions.every((action) => action.route.every((point) => (
+    point.x >= 0 && point.x <= 100 && point.y >= 0 && point.y <= 100
+  ))), 'ambient routes must remain inside renderer world space')
 })
 
 test('real event interrupts ambient immediately and ambient cannot override operational work', () => {
