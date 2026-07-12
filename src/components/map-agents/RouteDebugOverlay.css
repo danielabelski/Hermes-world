@@ -3,6 +3,7 @@
 .route-debug__path { fill: none; stroke: var(--route-color); stroke-width: .26; vector-effect: non-scaling-stroke; }
 .route-debug__path.is-return { stroke-dasharray: 1.1 1; opacity: .55; }
 .route-debug__waypoint,.route-debug__marker circle { fill: #061612; stroke: var(--route-color); stroke-width: .22; vector-effect: non-scaling-stroke; }
+.route-debug__number { fill: #fff; stroke: none; text-anchor: middle; font-size: .82px; }
 .route-debug__marker.is-entrance circle { fill: #f7d77a; }
 .route-debug__marker.is-work circle { fill: #f36f56; }
 .route-debug__marker.is-safe circle { fill: #79d6ef; }
@@ -12,3 +13,5 @@
 .route-debug__agent-anchor text { stroke: #a32626; }
 .route-debug__depth-zone rect { fill: rgb(236 92 128 / .08); stroke: #ff7da0; stroke-width: .2; stroke-dasharray: .7 .5; vector-effect: non-scaling-stroke; }
 .route-debug__depth-zone text { fill: #ffd2df; stroke: #5d1629; }
+.route-debug__occlusion-marker circle { fill: #ff7da0; stroke: #38101d; stroke-width: .18; vector-effect: non-scaling-stroke; }
+.route-debug__occlusion-marker text { fill: #ffd2df; stroke: #5d1629; }

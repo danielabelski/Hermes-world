@@ -1,4 +1,4 @@
-const VALID_LAYERS = Object.freeze(['route', 'nodes', 'labels', 'entrances', 'depth'])
+const VALID_LAYERS = Object.freeze(['route', 'nodes', 'labels', 'entrances', 'home', 'safe', 'work', 'depth', 'occlusion'])
 const DEFAULT_LAYERS = Object.freeze(['route', 'nodes', 'entrances'])
 
 export function resolveRouteDebugConfig(search = '', { forceEnabled = false, availableProfiles = [] } = {}) {
@@ -13,4 +13,3 @@ export function resolveRouteDebugConfig(search = '', { forceEnabled = false, ava
   const layers = Object.freeze([...new Set(requestedLayers)])
   return Object.freeze({ enabled, profile, layers })
 }
-

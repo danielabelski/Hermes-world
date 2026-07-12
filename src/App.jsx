@@ -19,12 +19,13 @@ import WorldTapConfirmation from './components/WorldTapConfirmation.jsx'
 import { useWorldBridge } from './hooks/useWorldBridge.js'
 import { useWorldStore } from './world/store/worldStore.js'
 import { useAmbientMode } from './hooks/useAmbientMode.js'
+import { resolveDemoRuntimeMode } from './world/demoRuntimeMode.js'
 
 const AUTH_STATUS_URL = '/api/auth/status'
-const FORCE_DEMO_WORLD = import.meta.env.VITE_DEMO_WORLD === 'true'
-  || new URLSearchParams(window.location.search).get('demo') === '1'
-const DEMO_SCENARIO = new URLSearchParams(window.location.search).get('scenario') ?? 'healthy'
-const DEMO_FOCUS = new URLSearchParams(window.location.search).get('focus') ?? 'auto'
+const DEMO_RUNTIME = resolveDemoRuntimeMode(window.location.search, import.meta.env.VITE_DEMO_WORLD === 'true')
+const FORCE_DEMO_WORLD = DEMO_RUNTIME.demoMode
+const DEMO_SCENARIO = DEMO_RUNTIME.scenario
+const DEMO_FOCUS = DEMO_RUNTIME.focus
 const BYPASS_AUTH = import.meta.env.DEV || FORCE_DEMO_WORLD
 // The illustrated DOM world is the reliable demo baseline. Pixi is an
 // enhancement behind an explicit flag until its lifecycle is fully hardened.

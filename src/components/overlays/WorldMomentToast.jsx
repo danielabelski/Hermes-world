@@ -72,6 +72,14 @@ export function WorldMomentToast() {
   }, [items, alerts, agents])
 
   useEffect(() => {
+    if (!initializedRef.current || !moment) return undefined
+    const escalated = resolveWorldMoment(moment, alerts, agents)
+    if (!escalated || itemId(escalated) === itemId(moment)) return undefined
+    const escalationTimer = window.setTimeout(() => setMoment(escalated), 0)
+    return () => window.clearTimeout(escalationTimer)
+  }, [alerts, agents, moment])
+
+  useEffect(() => {
     if (!moment) return undefined
     const hideTimer = window.setTimeout(() => setMoment(null), 4_800)
     return () => window.clearTimeout(hideTimer)

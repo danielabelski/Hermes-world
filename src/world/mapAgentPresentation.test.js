@@ -14,7 +14,9 @@ import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPrese
 import { classifyWorldMoment, resolveWorldMoment } from './worldMomentPriority.js'
 import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
+import { getNumberedRouteNodes, shortRouteNodeLabel } from './routeDebugPresentation.js'
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
+import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -426,6 +428,12 @@ test('world moment hierarchy keeps alerts and stuck above concurrent success', (
   assert.equal(resolveWorldMoment(success, [], []).id, 'done')
 })
 
+test('explicit observability focus enables deterministic demo runtime', () => {
+  assert.deepEqual(resolveDemoRuntimeMode('?focus=critical', false), { focus: 'critical', scenario: 'healthy', demoMode: true })
+  assert.deepEqual(resolveDemoRuntimeMode('?focus=auto', false), { focus: 'auto', scenario: 'healthy', demoMode: false })
+  assert.equal(resolveDemoRuntimeMode('?demo=1&focus=stable&scenario=warning', false).demoMode, true)
+})
+
 test('map readability variants are explicit, reversible and default to the accepted light pass', () => {
   assert.equal(resolveMapReadabilityMode(''), 'light')
   assert.equal(resolveMapReadabilityMode('?mapReadability=baseline'), 'baseline')
@@ -449,6 +457,17 @@ test('route debug config is off by default and filters one agent and explicit la
   })
   assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=all', { availableProfiles: profiles }).profile, 'all')
   assert.equal(resolveRouteDebugConfig('?debugRoutes=1&debugAgent=missing', { availableProfiles: profiles }).profile, 'coder')
+})
+
+test('route debug presentation numbers one route and shortens technical labels', () => {
+  const journey = getWorldLifeJourney('coder', 'mobile')
+  const nodes = getNumberedRouteNodes(journey)
+  assert.deepEqual(nodes.map((node) => node.number), nodes.map((_, index) => index + 1))
+  assert.equal(nodes[0].fullLabel, journey.outboundNodeIds[0])
+  assert.ok(nodes.every((node) => node.shortLabel.length < node.fullLabel.length || !node.fullLabel.includes('_')))
+  assert.equal(shortRouteNodeLabel('forge_main_entrance', 0), 'Kuźnia · wejście')
+  const config = resolveRouteDebugConfig('?debugRoutes=1&debugAgent=coder&debugLayers=route,home,safe,work,occlusion', { availableProfiles: ['coder'] })
+  assert.deepEqual(config.layers, ['route', 'home', 'safe', 'work', 'occlusion'])
 })
 
 test('demo observability matrix produces deterministic mobile states without changing the FSM', () => {
