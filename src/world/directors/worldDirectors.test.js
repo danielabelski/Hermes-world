@@ -2,12 +2,14 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { AGENT_DEFINITIONS } from '../data/agentDefinitions.js'
 import { getDemoScenario } from '../data/demoScenarios.js'
+import { getWorldLifeJourney } from '../data/roadGraph.js'
 import { createWorldSnapshot } from '../WorldBridge.js'
 import { applyWorldDirectorPresentation } from './worldDirectorPresentation.js'
-import { advanceAmbientDirector, AMBIENT_MAX_ACTIONS, AMBIENT_SELECTION_MAX_MS, AMBIENT_SELECTION_MIN_MS, createAmbientDirectorState, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
+import { advanceAmbientDirector, AMBIENT_SELECTION_MAX_MS, AMBIENT_SELECTION_MIN_MS, createAmbientDirectorState, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
 import { CHOREOGRAPHY_TIMING, createChoreographyState, deriveChoreographyPresentation, reduceChoreographyEvent } from './choreographyDirector.js'
 
 const START = Date.parse('2026-07-12T20:00:00.000Z')
+const OPENING_PROFILES_FOR_TEST = new Set(['coder', 'researcher', 'prospecting'])
 const event = (seq, state, agentId = 'default') => Object.freeze({
   eventId: `run-1:${seq}`,
   runId: 'run-1',
@@ -68,12 +70,12 @@ test('delegation wakes only the true target and keeps worker motion operational'
   assert.deepEqual(Object.keys(presentation.motionByAgent), ['orchestrator'])
 })
 
-test('ambient director is deterministic, capped at three and schedules every 20–60 seconds', () => {
+test('ambient director is deterministic, opens with two visible journeys and schedules every 20–40 seconds', () => {
   const agents = idleAgents()
   const left = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'same' }), { agents, now: START + 2_400, layout: 'mobile' })
   const right = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'same' }), { agents, now: START + 2_400, layout: 'mobile' })
   assert.deepEqual(left, right)
-  assert.ok(left.actions.length >= 1 && left.actions.length <= AMBIENT_MAX_ACTIONS)
+  assert.equal(left.actions.length, 2)
   assert.equal(left.actions.some((action) => action.behavior !== 'rest'), true)
   assert.ok(left.nextSelectionAt - (START + 2_400) >= AMBIENT_SELECTION_MIN_MS)
   assert.ok(left.nextSelectionAt - (START + 2_400) <= AMBIENT_SELECTION_MAX_MS)
@@ -81,6 +83,15 @@ test('ambient director is deterministic, capped at three and schedules every 20�
   assert.ok(left.actions.every((action) => action.route.every((point) => (
     point.x >= 0 && point.x <= 100 && point.y >= 0 && point.y <= 100
   ))), 'ambient routes must remain inside renderer world space')
+  const firstJourney = getWorldLifeJourney(left.actions[0].profileId, 'mobile')
+  assert.equal(left.actions[0].route[0].x, firstJourney.homePoint.x * 10)
+  assert.equal(left.actions[0].route[0].y, firstJourney.homePoint.y * 10)
+  assert.ok(left.actions.every((action) => OPENING_PROFILES_FOR_TEST.has(action.profileId)))
+  assert.ok(left.actions.every((action) => {
+    const xs = action.route.map((point) => point.x)
+    const ys = action.route.map((point) => point.y)
+    return Math.max(...xs) - Math.min(...xs) >= 5 || Math.max(...ys) - Math.min(...ys) >= 5
+  }), 'opening ambient actions must travel far enough to read clearly on mobile')
 })
 
 test('real event interrupts ambient immediately and ambient cannot override operational work', () => {

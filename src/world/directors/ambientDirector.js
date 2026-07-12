@@ -4,8 +4,9 @@ const freeze = Object.freeze
 export const AMBIENT_BEHAVIORS = freeze(['patrol', 'inspect', 'train', 'rest', 'converse'])
 export const AMBIENT_MAX_ACTIONS = 3
 export const AMBIENT_SELECTION_MIN_MS = 20_000
-export const AMBIENT_SELECTION_MAX_MS = 60_000
+export const AMBIENT_SELECTION_MAX_MS = 40_000
 const FIRST_SELECTION_MS = 2_400
+const OPENING_PROFILES = freeze(['coder', 'researcher', 'prospecting'])
 
 const BEHAVIORS_BY_PROFILE = freeze({
   default: freeze(['converse', 'patrol', 'rest']),
@@ -30,7 +31,7 @@ const hash = (value) => {
 const unit = (seed) => hash(seed) / 0xffffffff
 const choose = (items, seed) => items[Math.min(items.length - 1, Math.floor(unit(seed) * items.length))]
 const durationFor = (behavior, seed) => {
-  const ranges = { patrol: [14_000, 22_000], inspect: [10_000, 17_000], train: [9_000, 14_000], rest: [8_000, 15_000], converse: [12_000, 18_000] }
+  const ranges = { patrol: [22_000, 30_000], inspect: [20_000, 28_000], train: [18_000, 25_000], rest: [12_000, 18_000], converse: [20_000, 28_000] }
   const [min, max] = ranges[behavior]
   return Math.round(min + unit(seed) * (max - min))
 }
@@ -51,15 +52,11 @@ function routeFor(profile, behavior, layout) {
   const home = journey.homePoint
   const safe = journey.safeBlockedPoint ?? journey.dispatchPoint
   const approach = journey.approachPoint ?? safe
-  const route = behavior === 'patrol' && profile === 'prospecting'
-    ? [...journey.outboundWaypoints, ...journey.returnWaypoints.slice(1)]
-    : behavior === 'rest'
-      ? [home]
-      : behavior === 'train'
-        ? [home, safe, safe, home]
-        : [home, safe, approach, safe, home]
-  // Semantic navigation nodes already use the renderer's 0-100 world space.
-  return route.map((point) => freeze({ x: point.x, y: point.y }))
+  const outward = journey.outboundWaypoints.slice(0, -1)
+  const excursion = outward.length > 1 ? outward : [home, safe, approach]
+  const visibleJourney = [...excursion, ...excursion.slice(0, -1).reverse()]
+  const route = behavior === 'rest' ? [home] : visibleJourney
+  return route.map((point) => freeze({ x: point.x * 10, y: point.y * 10 }))
 }
 
 function converseRoutes(leftProfile, rightProfile, layout) {
@@ -69,7 +66,7 @@ function converseRoutes(leftProfile, rightProfile, layout) {
   const leftSafe = left.safeBlockedPoint ?? left.dispatchPoint
   const rightSafe = right.safeBlockedPoint ?? right.dispatchPoint
   const meeting = { x: (leftSafe.x + rightSafe.x) / 2, y: (leftSafe.y + rightSafe.y) / 2 }
-  const build = (journey, safe) => [journey.homePoint, safe, meeting, safe, journey.homePoint].map((point) => freeze({ x: point.x, y: point.y }))
+  const build = (journey, safe) => [journey.homePoint, safe, meeting, safe, journey.homePoint].map((point) => freeze({ x: point.x * 10, y: point.y * 10 }))
   return freeze({ left: freeze(build(left, leftSafe)), right: freeze(build(right, rightSafe)) })
 }
 
@@ -92,19 +89,23 @@ export function advanceAmbientDirector(state, { agents = [], now = Date.now(), l
   const occupied = new Set(actions.map((action) => action.profileId))
   const eligible = agents.filter((agent) => operationallyIdle(agent) && (agent.profile ?? agent.id) !== 'orchestrator' && !occupied.has(agent.profile ?? agent.id) && !interrupted.has(agent.profile ?? agent.id))
   const availableSlots = Math.max(0, AMBIENT_MAX_ACTIONS - actions.length)
-  const additions = Math.min(availableSlots, eligible.length, 1 + Math.floor(unit(`${state.seed}:slots:${state.cycle}`) * 3))
+  const additions = Math.min(availableSlots, eligible.length, state.cycle === 0 ? 2 : 1 + Math.floor(unit(`${state.seed}:slots:${state.cycle}`) * 3))
   const history = { ...state.history }
 
   for (let index = 0; index < additions; index += 1) {
-    const remaining = eligible.filter((agent) => !occupied.has(agent.profile ?? agent.id))
+    const remainingEligible = eligible.filter((agent) => !occupied.has(agent.profile ?? agent.id))
+    const openingCandidates = state.cycle === 0
+      ? remainingEligible.filter((agent) => OPENING_PROFILES.includes(agent.profile ?? agent.id))
+      : []
+    const remaining = openingCandidates.length ? openingCandidates : remainingEligible
     if (!remaining.length) break
     const agent = choose(remaining, `${state.seed}:agent:${state.cycle}:${index}`)
     const profileId = agent.profile ?? agent.id
     const allowed = BEHAVIORS_BY_PROFILE[profileId] ?? freeze(['rest'])
     const previous = history[profileId]
     const candidates = allowed.filter((behavior) => behavior !== previous)
-    const candidatePool = state.cycle === 0 && index === 0
-      ? (candidates.length ? candidates : allowed).filter((behavior) => behavior !== 'rest')
+    const candidatePool = state.cycle === 0
+      ? (candidates.length ? candidates : allowed).filter((behavior) => !['rest', 'converse'].includes(behavior))
       : (candidates.length ? candidates : allowed)
     let behavior = choose(candidatePool.length ? candidatePool : allowed, `${state.seed}:behavior:${state.cycle}:${profileId}`)
     const partnerCandidates = remaining.filter((candidate) => {
