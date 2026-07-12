@@ -53,7 +53,7 @@ export default function WorldFallback() {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
   })
-  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
+  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
       <HermesInfrastructureLayer layout={mapLayout} />

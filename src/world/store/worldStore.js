@@ -97,6 +97,7 @@ export const useWorldStore = create((set) => ({
   // The registry is intentionally iterable rather than tied to a renderer
   // slot. New Hermes profiles can be added without changing this store.
   scenario: 'unknown',
+  observabilityFocus: 'auto',
   agents: initialAgents,
   agentsById: asRecord(initialAgents, 'profile'),
   system: initialSystem,
@@ -131,6 +132,7 @@ export const useWorldStore = create((set) => ({
     const activityItems = Array.isArray(snapshot.activity) ? snapshot.activity : snapshot.activity?.items;
     return {
       scenario: scenarioFor({ scenario: snapshot.scenario, weather, system: systemInput }),
+      observabilityFocus: snapshot.observabilityFocus ?? state.observabilityFocus,
       agents,
       agentsById: asRecord(agents, 'profile'),
       tasks,

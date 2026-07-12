@@ -393,3 +393,32 @@ npm.cmd run build -- --mode demo
 ```
 
 ---
+## ACTIVE DIRECTIVE — FINISH TODAY AFTER GL
+
+Nie odkładać production integration na abstrakcyjne „następne okno”. Bieżący checkpoint ma zostać pokazany użytkownikowi do GL/RL. Po GL natychmiast kontynuować — także po przelogowaniu/limicie — aż do ukończenia production-data binding dzisiaj.
+
+### Current pre-hackathon baseline
+
+- BASELINE jest produkcyjnym defaultem; lekko poprawiono brightness/road separation bez zmiany assetu/geometrii.
+- LIGHT jest fallbackiem, STRONG opcjonalnym showcase.
+- Stable jest czysty: kontekstowy ticker i insight są ukryte w spoczynku.
+- Working ma czytelniejszy lokalny puls i aktywność.
+- Thinking ma analityczny glyph `⌬`, orbitalny marker i dotted ring.
+- Waiting ma spokojny `◷` oraz neutralny dashed rhythm.
+- Success ma krótki check/glint i rozszerzający się zielony ring.
+- Online nie jest osobnym stanem sceny; jest atrybutem `lifecycle.connection` / `data-connection`.
+- Stable/Warning/Critical/Offline/Stuck pozostają bez szerokiego redesignu.
+- Walidacja: 31/31, lint, validator, production build i demo build (820 modułów) zielone.
+
+### Mandatory action after user GL
+
+1. Wyłączyć preview i potwierdzić zero listenerów.
+2. Prześledzić prawdziwy przepływ `useWorldBridge → WorldBridge/API snapshot → worldStore → presentation`.
+3. Zbudować tabelę faktycznie dostępnych danych: global health, lifecycle/connection, agents, tasks, alerts, activity/logs, subsystem ownership.
+4. Podłączyć finalną warstwę wizualną do realnych snapshotów przez minimalne adaptery; fixtures pozostają tylko testami.
+5. Nie zmieniać `server.js`, `src/api.js` ani kontraktów API bez osobnej zgody. Brakujące dane oznaczyć jako brak kontraktu, nie symulować.
+6. Zweryfikować dziewięć stanów na danych odpowiadających live contract, reconnect/offline, alert priority i agent→subsystem.
+7. Testy, oba buildy, mobile smoke, produkcyjny checkpoint, aktualny handoff i dokładnie jeden końcowy preview.
+8. Nie kończyć samym audytem ani planem. Dowieźć działające production binding dzisiaj.
+
+---

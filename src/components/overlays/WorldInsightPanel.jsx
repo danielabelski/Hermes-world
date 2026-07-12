@@ -58,6 +58,7 @@ export function WorldInsightPanel() {
   const raw = useWorldStore((state) => state.raw)
   const explicitSource = useWorldStore((state) => state.source ?? state.lifecycle?.source)
   const openSheet = useWorldStore((state) => state.openSheet)
+  const observabilityFocus = useWorldStore((state) => state.observabilityFocus ?? 'auto')
 
   const severity = severityFor(system, lifecycle)
   const health = HEALTH[severity] ?? HEALTH.healthy
@@ -67,6 +68,9 @@ export function WorldInsightPanel() {
   const totalAgents = Number.isFinite(Number(system.totalAgentCount)) ? Number(system.totalAgentCount) : agents.length
   const alertCount = alerts.filter((alert) => ['warning', 'error', 'critical'].includes(String(alert.severity ?? '').toLowerCase())).length
   const sentence = alertCount > 0 ? `${activeAgents} agentów pracuje · ${alertCount} wymaga uwagi` : `${activeAgents} agentów pracuje · świat jest spokojny`
+  const quietStable = observabilityFocus === 'stable' || (severity === 'healthy' && activeAgents === 0 && alertCount === 0)
+
+  if (quietStable) return null
 
   return (
     <section className="world-insight-panel" data-severity={severity} data-source={sourceKey} style={PANEL_STYLE} aria-label="Szybki odczyt stanu świata">

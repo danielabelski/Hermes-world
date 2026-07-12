@@ -87,6 +87,20 @@
   animation: map-agent-work-ring 1.4s ease-in-out infinite;
 }
 
+.map-agent-sprite.is-thinking .map-agent-sprite__state-ring {
+  display: block;
+  border-style: dotted;
+  border-color: #bba8e5;
+  opacity: .58;
+  animation: map-agent-thinking-ring 2.6s linear infinite;
+}
+
+.map-agent-sprite.signal-success .map-agent-sprite__state-ring {
+  display: block;
+  border-color: #91da9a;
+  animation: map-agent-success-ring .9s ease-out 1 both;
+}
+
 .map-agent-sprite.is-work .map-agent-sprite__image {
   filter: saturate(.94) contrast(.98) brightness(1.02) sepia(.02) drop-shadow(0 1px 1px rgb(3 8 8 / .4));
 }
@@ -124,6 +138,8 @@
 @keyframes map-agent-work-ring {
   50% { opacity: .32; transform: translateX(-50%) scaleX(1.16); }
 }
+@keyframes map-agent-thinking-ring { to { transform: translateX(-50%) rotate(360deg); } }
+@keyframes map-agent-success-ring { to { opacity: 0; transform: translateX(-50%) scaleX(1.55) scaleY(1.4); } }
 .map-agent-sprite__marker {
   position: absolute;
   left: 50%;

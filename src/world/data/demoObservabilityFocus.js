@@ -24,6 +24,7 @@ export function applyDemoObservabilityFocus(snapshot, focus = 'auto', now = Date
 
   const base = {
     ...snapshot,
+    observabilityFocus: resolved,
     agents: [...(snapshot.agents ?? [])],
     tasks: [...(snapshot.tasks ?? [])],
     alerts: [...(snapshot.alerts ?? [])],

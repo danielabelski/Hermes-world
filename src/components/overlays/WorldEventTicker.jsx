@@ -41,6 +41,7 @@ function compactMessage(item) {
 export function WorldEventTicker() {
   const activity = useWorldStore((state) => state.activity?.items ?? state.activity ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
+  const observabilityFocus = useWorldStore((state) => state.observabilityFocus ?? 'auto')
   const [activeIndex, setActiveIndex] = useState(0)
   const items = useMemo(() => mergeWorldActivityItems(activity, alerts), [activity, alerts])
   const selectedIndex = items.length ? activeIndex % items.length : 0
@@ -52,7 +53,7 @@ export function WorldEventTicker() {
     return () => window.clearInterval(timer)
   }, [items.length])
 
-  if (!items.length) return null
+  if (!items.length || observabilityFocus === 'stable') return null
 
   return (
     <div className="world-event-ticker" style={TICKER_STYLE} aria-label="Ostatnie zdarzenia Cytadeli" aria-live="polite">

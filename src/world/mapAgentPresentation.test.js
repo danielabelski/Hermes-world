@@ -444,18 +444,18 @@ test('explicit observability focus enables deterministic demo runtime', () => {
   assert.equal(resolveDemoRuntimeMode('?demo=1&focus=stable&scenario=warning', false).demoMode, true)
 })
 
-test('map readability variants are explicit, reversible and default to the accepted light pass', () => {
-  assert.equal(resolveMapReadabilityMode(''), 'light')
+test('map variants are explicit, reversible and default to the accepted baseline production pass', () => {
+  assert.equal(resolveMapReadabilityMode(''), 'baseline')
   assert.equal(resolveMapReadabilityMode('?mapReadability=baseline'), 'baseline')
   assert.equal(resolveMapReadabilityMode('?mapReadability=light'), 'light')
   assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
-  assert.equal(resolveMapReadabilityMode('?mapReadability=unknown'), 'light')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=unknown'), 'baseline')
 })
 
 test('map variants have explicit production, showcase and fallback roles', () => {
-  assert.deepEqual(getMapVariant(''), { id: 'light', role: 'production', label: 'Hermes Citadel' })
+  assert.deepEqual(getMapVariant(''), { id: 'baseline', role: 'production', label: 'Hermes Citadel' })
   assert.equal(getMapVariant('?mapVariant=strong').role, 'showcase')
-  assert.equal(getMapVariant('?mapVariant=baseline').role, 'fallback')
+  assert.equal(getMapVariant('?mapVariant=light').role, 'fallback')
   assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
 })
 

@@ -85,3 +85,12 @@ Na widoku około 390×844 bez klikania:
 - Ticker pokazuje jedną pełną wiadomość naraz; alerty i activity mają wspólny priorytetowy strumień.
 - Finalna automatyczna walidacja: 31/31, lint, validator, production/demo build po 820 modułów.
 - Następna decyzja użytkownika GL/RL blokuje warstwę wizualną v1 przed audytem wiązania prawdziwych danych.
+## Final pre-hackathon base — BASELINE LOCK
+
+- BASELINE = production default.
+- LIGHT = alternate fallback.
+- STRONG = optional showcase/promo.
+- Clean stable hides contextual ticker/insight until activity or state requires them.
+- Working, Thinking, Waiting and Success received final targeted polish.
+- Online is a connection/presence attribute, not a competing scene state.
+- After GL the only remaining milestone is real production-data binding and final live validation; no further visual redesign.
