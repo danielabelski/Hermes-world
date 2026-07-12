@@ -463,3 +463,50 @@ Required order:
 - No game mechanics, asset generation, Chrome/headless screenshot series or multiple servers.
 
 ---
+## PRODUCTION CITADEL COMPLETE — HACKATHON BASE
+
+This section supersedes earlier active-milestone instructions.
+
+### Final state
+
+- Visual V1 GL remains locked: BASELINE production default, LIGHT fallback, STRONG showcase.
+- Production data skeleton was confirmed to have existed since `3b6754a`; there was no hidden finished branch or Cat patch to cherry-pick.
+- Cat `server.js` and Citadel `server.js` are byte-identical. Citadel `api.js` is the safer Cat-compatible version with strict reads and domain-aware failures.
+- Default `/` is live. Fixtures require explicit demo/focus configuration.
+- Login callback bug fixed; successful password login enters Citadel with the authenticated same-origin cookie.
+- Metrics sync every 5s; 15s/60s domains retain independent caches.
+- Blocked tasks localize to agent/building; failed cron localizes to Clock Tower.
+- Sessions count as active only when streaming/recent. Skills are global capability data; per-agent skill ownership remains unknown instead of fabricated.
+- Unknown Hermes profiles are counted but not rendered with invented identities.
+- Cat-shaped live payload and stale→recovery integration tests added.
+- New Citadel-specific login/start screen and lightweight SVG PWA mark replace Cat/Matrix branding.
+
+### Verification
+
+- Tests: `33/33` passed.
+- Lint: passed.
+- World-life validator: passed.
+- Production build: passed, `812` modules; built last into `dist`.
+- Demo build: passed, `812` modules.
+- Production server smoke on `0.0.0.0:4175`: root, manifest, icon, auth status and real host metrics HTTP 200.
+- Real metrics returned CPU, RAM and Core Temp sensor data.
+- Profiles/tasks/logs/crons/sessions/skills/models correctly returned 401 before login, proving auth boundary rather than silent demo fallback.
+- Exactly one production listener left running for phone verification.
+- Protected map assets/geometries/routes/FSM and `server.js`/`src/api.js` unchanged.
+
+### Commits
+
+- Visual pre-hackathon GL: `b80a453`.
+- GL/hackathon milestone lock: `47a7ac0`.
+- Production telemetry/onboarding implementation: `e2230c2`.
+- Final documentation checkpoint: read `git log -1` after this document commit.
+
+### Data contract
+
+Read `docs/HACKATHON_PRODUCTION_DATA_MAP.md`. It is the canonical source→adapter→visual mapping and lists telemetry that must remain unavailable rather than simulated.
+
+### Remaining work after this checkpoint
+
+Only authenticated phone verification and targeted defects found there. Do not restart map/status/UI design. Future post-baseline APIs may add queue/RAG/latency/tracing, but they are not authorized or required for this hackathon base.
+
+---
