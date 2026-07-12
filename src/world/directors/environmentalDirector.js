@@ -40,6 +40,17 @@ export const ENVIRONMENT_DATA_ROUTES = freeze({
   archiveToSanctum: freeze({ desktop: freeze([point(28.5, 36.5), point(35, 58), point(39, 76)]), mobile: freeze([point(35.5, 70.5), point(52, 76), point(72, 80)]) }),
 })
 
+export const ENVIRONMENT_VISUAL_STEPS = freeze([
+  freeze({ id: 'citadel-pulse', label: 'Citadel pulse', points: freeze({ desktop: point(46, 36.5), mobile: point(50, 43) }) }),
+  freeze({ id: 'forge-smoke', label: 'Forge smoke', points: freeze({ desktop: point(84, 40), mobile: point(28, 41) }) }),
+  freeze({ id: 'watcher-scan', label: 'Watcher scan', points: freeze({ desktop: point(67, 31.5), mobile: point(65.5, 71.2) }) }),
+  freeze({ id: 'archive-lights', label: 'Archive lights', points: freeze({ desktop: point(28.5, 36.5), mobile: point(35.5, 70.5) }) }),
+  freeze({ id: 'sanctum-particles', label: 'Sanctum particles', points: freeze({ desktop: point(39, 76), mobile: point(72, 80) }) }),
+  freeze({ id: 'data-pulse', label: 'Data pulse', points: freeze({ desktop: point(53, 52), mobile: point(48, 63) }) }),
+  freeze({ id: 'water-reflection', label: 'Water reflection', points: freeze({ desktop: point(49, 59), mobile: point(50, 62) }) }),
+  freeze({ id: 'fog', label: 'Fog', points: freeze({ desktop: point(27, 29), mobile: point(47, 32) }) }),
+])
+
 const PROFILE_BUILDINGS = freeze({ orchestrator: 'citadel', default: 'citadel', coder: 'forge', prospecting: 'watcher', researcher: 'archive' })
 const STATE_PRIORITY = freeze({ critical: 6, error: 6, warning: 5, alerted: 5, working: 3, work: 3, thinking: 2, waiting: 1, idle: 0, resting: 0 })
 const normalizeState = (model = {}) => String(model.severity === 'critical' || model.severity === 'error' ? 'critical' : model.severity === 'warning' ? 'warning' : model.phase ?? model.visualState ?? 'idle').toLowerCase()
@@ -78,7 +89,7 @@ function pulseRouteFor(response) {
   return 'gateToCitadel'
 }
 
-export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, layout = 'desktop', choreography = {}, operationalPresentations = [] } = {}) {
+export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [] } = {}) {
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
   const elapsed = Math.max(0, now - startedAt)
   const cycle = Math.floor(elapsed / 12_000)
@@ -92,7 +103,7 @@ export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = 
   const routeIds = Object.keys(ENVIRONMENT_DATA_ROUTES)
   const ambientPulses = freeze(Array.from({ length: ambientPulseCount }, (_, index) => {
     const routeId = routeIds[(cycle + index) % routeIds.length]
-    return freeze({ id: `ambient-${cycle}-${index}`, mode: 'ambient', routeId, points: ENVIRONMENT_DATA_ROUTES[routeId][normalizedLayout], delay: index * 2.1, duration: 8 + index * 1.4 })
+    return freeze({ id: `ambient-${cycle}-${index}`, mode: 'ambient', routeId, points: ENVIRONMENT_DATA_ROUTES[routeId][normalizedLayout], delay: index * 2.1, duration: 6.8 + index * 1.3 })
   }))
   const responsePulse = response && visible ? freeze({
     id: `event-${response.evidenceEventId ?? response.buildingId}-${response.cue}`, mode: 'event', routeId: pulseRouteFor(response),
@@ -100,12 +111,15 @@ export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = 
     evidenceEventId: response.evidenceEventId, duration: alerting ? 1.15 : 1.8,
   }) : null
   const intensity = !visible ? 0 : alerting ? 0.28 : response ? 0.52 : 1
+  const visualElapsed = Math.max(0, elapsed)
+  const visualStepIndex = visualDebug && visualElapsed < 15_000 ? Math.min(ENVIRONMENT_VISUAL_STEPS.length - 1, Math.floor(visualElapsed / (15_000 / ENVIRONMENT_VISUAL_STEPS.length))) : -1
+  const visualVerification = visualStepIndex >= 0 ? freeze({ ...ENVIRONMENT_VISUAL_STEPS[visualStepIndex], index: visualStepIndex, point: ENVIRONMENT_VISUAL_STEPS[visualStepIndex].points[normalizedLayout] }) : null
   return freeze({
     running: visible, visible, reducedMotion, layout: normalizedLayout, entryActive: elapsed < 5_000, elapsed,
     ambientBuildingIds, activeBuildingIds: freeze([...new Set([...ambientBuildingIds, response?.buildingId].filter(Boolean))]),
     ambientPulses, responsePulse, response, ambientIntensity: intensity,
     particleCount: reducedMotion || !visible ? 0 : normalizedLayout === 'mobile' ? 8 : 10,
-    performanceStatus: reducedMotion || !visible ? 'paused' : 'bounded',
+    performanceStatus: reducedMotion || !visible ? 'paused' : 'bounded', visualVerification,
   })
 }
 

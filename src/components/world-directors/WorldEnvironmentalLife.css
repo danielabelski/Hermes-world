@@ -3,7 +3,8 @@
 .building-life-layer,.atmosphere-life-layer,.data-pulse-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .building-life-layer{z-index:2}.data-pulse-layer{z-index:3;overflow:visible}.atmosphere-life-layer{z-index:1}
 
-.building-life{position:absolute;left:var(--building-x);top:var(--building-y);width:1px;height:1px;opacity:.3;animation-delay:var(--building-offset);transform:translateZ(0)}
+.building-life{position:absolute;left:var(--building-x);top:var(--building-y);width:1px;height:1px;opacity:.38;animation-delay:var(--building-offset);transform:translateZ(0)}
+.building-life::before{content:"";position:absolute;left:0;top:0;width:30px;height:24px;border-radius:50%;background:radial-gradient(ellipse,#04101870 0 28%,#04101830 48%,transparent 72%);transform:translate(-50%,-50%);opacity:.36}
 .building-life.is-ambient-active{opacity:calc(.58 + var(--building-intensity)*.32)}
 .building-life:not(.is-ambient-active):not(.has-event-response) *{animation-play-state:paused!important}
 .building-life__core,.building-life__wave,.building-life__mechanism,.building-life__particles{position:absolute;left:0;top:0;display:block;transform:translate(-50%,-50%)}
@@ -14,23 +15,24 @@
 .building-life__particles b{position:absolute;width:3px;height:3px;border-radius:50%;background:#a8eeff;opacity:0;animation:building-mote 7s ease-out infinite;animation-delay:calc(var(--building-offset) + var(--particle-delay,0s))}
 .building-life__particles b:nth-child(1){left:5px;top:17px;--particle-delay:0s}.building-life__particles b:nth-child(2){left:18px;top:20px;--particle-delay:2.1s}.building-life__particles b:nth-child(3){left:12px;top:22px;--particle-delay:4.3s}
 
-.building-life--citadel .building-life__core{width:11px;height:11px;background:#a7efffd0;box-shadow:0 0 10px #63dfff99}
+.building-life--citadel .building-life__core{width:14px;height:14px;background:#c1f6ffe0;box-shadow:0 0 8px #63dfff99}
+.building-life--citadel .building-life__wave{width:34px;height:17px;opacity:.08}
 .building-life--citadel .building-life__mechanism{display:none}
-.building-life--forge .building-life__core{width:12px;height:7px;background:#ffb04bcf;box-shadow:0 0 9px #ff7b2c99;border-radius:45%}
+.building-life--forge .building-life__core{width:12px;height:7px;background:#ffc05bc9;box-shadow:0 0 7px #ff9a3c82;border-radius:45%}
 .building-life--forge .building-life__wave{border-color:#ffb45f88;width:20px;height:7px}
 .building-life--forge .building-life__mechanism{display:block;border-color:#ffc06eaa;animation-duration:13s}
-.building-life--forge .building-life__particles{display:block}
+.building-life--forge.has-event-response[data-response-cue="working"] .building-life__particles,.building-life--forge.has-event-response[data-response-cue="work"] .building-life__particles,.building-life--forge.has-event-response[data-response-cue="warning"] .building-life__particles,.building-life--forge.has-event-response[data-response-cue="critical"] .building-life__particles{display:block}
 .building-life--forge .building-life__particles b{background:#ffca6b;animation-duration:5.8s}
-.building-life--watcher .building-life__core{width:7px;height:7px;background:#84e8ff}
-.building-life--watcher .building-life__wave{width:28px;height:13px;border-top-color:#9defff;border-bottom-color:transparent;animation:watcher-scan 7.6s ease-in-out infinite}
+.building-life--watcher .building-life__core{width:9px;height:9px;background:#a9f2ff}
+.building-life--watcher .building-life__wave{width:52px;height:24px;border-top-color:#b9f4ff;border-bottom-color:transparent;animation:watcher-scan 7.6s ease-in-out infinite}
 .building-life--watcher .building-life__mechanism{width:21px;height:6px;border-style:solid;border-color:#81e7ff55 transparent transparent;animation-duration:11s}
 .building-life--watcher .building-life__particles{display:none}
-.building-life--archive .building-life__core{width:16px;height:7px;border-radius:2px;background:linear-gradient(90deg,#f1d78588,#fff0ad,#f1d78588);box-shadow:0 0 7px #e9ca6f77;animation:archive-windows 8s steps(3,end) infinite}
+.building-life--archive .building-life__core{width:26px;height:10px;border-radius:2px;background:repeating-linear-gradient(90deg,#6b572d 0 3px,#fff0ad 3px 6px,#8b7137 6px 9px);box-shadow:0 0 6px #e9ca6f77;animation:archive-windows 6.8s steps(4,end) infinite}
 .building-life--archive .building-life__wave,.building-life--archive .building-life__mechanism{border-color:#efd88975}
 .building-life--archive .building-life__particles{display:block}
 .building-life--archive .building-life__particles b{background:#ffe6a0}
-.building-life--sanctum .building-life__core{width:10px;height:7px;background:#72ebbfaa;box-shadow:0 0 8px #4ee8bd88}
-.building-life--sanctum .building-life__wave{width:23px;height:11px;border-color:#6ce8c482;animation-duration:11s}
+.building-life--sanctum .building-life__core{width:16px;height:11px;background:#91f3d2c2;box-shadow:0 0 7px #4ee8bd82}
+.building-life--sanctum .building-life__wave{width:36px;height:18px;border-color:#87f0d19c;animation-duration:9.5s}
 .building-life--sanctum .building-life__mechanism{display:none}
 .building-life--sanctum .building-life__particles{display:block}
 .building-life--sanctum .building-life__particles b{background:#85f4d2}
@@ -43,27 +45,27 @@
 .building-life[data-response-cue="working"] .building-life__mechanism,.building-life[data-response-cue="work"] .building-life__mechanism{animation-duration:5s}
 .building-life[data-response-cue="waiting"]{opacity:.64}
 
-.data-pulse__trail{fill:none;stroke:#7cdfff;stroke-width:.5;stroke-dasharray:1 4;opacity:.16}
-.data-pulse__packet{fill:#9ceaff;opacity:.54}
+.data-pulse__trail{fill:none;stroke:#a5efff;stroke-width:.82;stroke-dasharray:2 3;opacity:.38}
+.data-pulse__packet{fill:#d1f8ff;stroke:#6edfff;stroke-width:.18;opacity:.76}
 .data-pulse--event .data-pulse__trail{stroke-width:1.05;stroke-dasharray:2 2;opacity:.72}
 .data-pulse--event .data-pulse__packet{fill:#d8f8ff;opacity:1}
 .data-pulse--record .data-pulse__trail,.data-pulse--record .data-pulse__packet{stroke:#f5d979;fill:#ffe49d}
 .data-pulse--warning .data-pulse__trail,.data-pulse--warning .data-pulse__packet{stroke:#f4a844;fill:#ffc35e}
 .data-pulse--critical .data-pulse__trail,.data-pulse--critical .data-pulse__packet,.data-pulse--error .data-pulse__trail,.data-pulse--error .data-pulse__packet{stroke:#ff5d58;fill:#ff716b}
 
-.atmosphere-water{position:absolute;left:42%;top:54%;width:17%;height:12%;opacity:.32;transform:skewX(-15deg);overflow:hidden}
-.atmosphere-water b{position:absolute;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,#8fe9ff99,transparent);animation:water-reflection 6.5s ease-in-out infinite}
+.atmosphere-water{position:absolute;left:40%;top:54%;width:25%;height:13%;opacity:.5;transform:skewX(-15deg);overflow:hidden;background:radial-gradient(ellipse at center,#03111d55,transparent 70%)}
+.atmosphere-water b{position:absolute;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#c9f7ffc7,transparent);animation:water-reflection 6.1s ease-in-out infinite}
 .atmosphere-water b:nth-child(1){top:35%}.atmosphere-water b:nth-child(2){top:67%;animation-delay:3.1s}
-.atmosphere-forge-smoke{position:absolute;left:81%;top:40%;width:24px;height:40px}
-.atmosphere-forge-smoke b{position:absolute;bottom:0;width:7px;height:11px;border-radius:50%;background:#d6e2e555;opacity:0;animation:forge-smoke 7s ease-out infinite}
+.atmosphere-forge-smoke{position:absolute;left:84%;top:49%;width:34px;height:64px;transform:translate(-50%,-100%)}
+.atmosphere-forge-smoke b{position:absolute;left:12px;bottom:0;width:10px;height:16px;border-radius:50%;background:linear-gradient(180deg,#e9f0ef99,#71808a66);opacity:0;animation:forge-smoke 6.4s ease-out infinite;animation-delay:2.5s}
 .atmosphere-forge-smoke b:nth-child(2){left:8px;animation-delay:3.4s}
-.atmosphere-fog{position:absolute;left:13%;top:25%;width:38%;height:12%;opacity:.14;background:linear-gradient(90deg,transparent,#d5ecff55,transparent);border-radius:50%;animation:fog-drift 18s ease-in-out infinite}
-.atmosphere-road-reflection b{position:absolute;width:22px;height:2px;background:linear-gradient(90deg,transparent,#b9efff88,transparent);opacity:.18;transform:rotate(-13deg);animation:road-reflection 9s ease-in-out infinite}
+.atmosphere-fog{position:absolute;left:12%;top:24%;width:50%;height:11%;opacity:.2;background:linear-gradient(90deg,transparent,#d5ecff52,transparent);border-radius:50%;animation:fog-drift 16s ease-in-out infinite}
+.atmosphere-road-reflection b{position:absolute;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d3f7ffbf,transparent);opacity:.26;transform:rotate(-13deg);animation:road-reflection 8s ease-in-out infinite}
 .atmosphere-road-reflection b:nth-child(1){left:46%;top:63%}.atmosphere-road-reflection b:nth-child(2){left:58%;top:72%;animation-delay:4.2s}
 
-.layout-mobile .atmosphere-water{left:43%;top:58%;width:20%;height:10%}
-.layout-mobile .atmosphere-forge-smoke{left:28%;top:41%}
-.layout-mobile .atmosphere-fog{left:28%;top:30%;width:48%}
+.layout-mobile .atmosphere-water{left:38%;top:57%;width:27%;height:12%}
+.layout-mobile .atmosphere-forge-smoke{left:30.5%;top:49.2%;width:30px;height:58px}
+.layout-mobile .atmosphere-fog{left:24%;top:28%;width:52%;height:11%}
 .layout-mobile .atmosphere-road-reflection b:nth-child(1){left:45%;top:64%}.layout-mobile .atmosphere-road-reflection b:nth-child(2){left:57%;top:73%}
 .is-entry-active .building-life--citadel .building-life__core{animation-name:entry-core-pulse;animation-duration:2.4s}
 .is-entry-active .building-life--forge .building-life__core{animation-name:entry-forge-wake;animation-duration:3.2s}
@@ -74,14 +76,22 @@
 @keyframes building-wave{0%,72%{opacity:0;transform:translate(-50%,-50%) scale(.55)}82%{opacity:.62}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
 @keyframes building-mechanism{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes building-mote{0%,58%{opacity:0;transform:translateY(4px)}70%{opacity:.64}100%{opacity:0;transform:translateY(-17px)}}
-@keyframes watcher-scan{0%,100%{opacity:.12;transform:translate(-50%,-50%) rotate(-20deg) scaleX(.65)}50%{opacity:.74;transform:translate(-50%,-50%) rotate(24deg) scaleX(1.2)}}
-@keyframes archive-windows{0%,100%{opacity:.34}35%{opacity:.9}68%{opacity:.55}}
-@keyframes water-reflection{0%,100%{opacity:.12;transform:translateX(-18%)}50%{opacity:.72;transform:translateX(20%)}}
-@keyframes forge-smoke{0%{opacity:0;transform:translate(0,5px) scale(.65)}22%{opacity:.35}100%{opacity:0;transform:translate(8px,-27px) scale(1.25)}}
-@keyframes fog-drift{0%,100%{opacity:.08;transform:translateX(-5%)}50%{opacity:.18;transform:translateX(8%)}}
-@keyframes road-reflection{0%,100%{opacity:.06;transform:rotate(-13deg) translateX(-6px)}50%{opacity:.34;transform:rotate(-13deg) translateX(10px)}}
-@keyframes entry-core-pulse{0%{opacity:.35;transform:translate(-50%,-50%) scale(.6)}36%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}70%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.92)}}
+@keyframes watcher-scan{0%,100%{opacity:.18;transform:translate(-50%,-50%) rotate(-48deg) scaleX(.68)}50%{opacity:.78;transform:translate(-50%,-50%) rotate(52deg) scaleX(1.15)}}
+@keyframes archive-windows{0%,100%{opacity:.4}25%{opacity:1}52%{opacity:.58}78%{opacity:.9}}
+@keyframes water-reflection{0%,100%{opacity:.18;transform:translateX(-30%)}50%{opacity:.82;transform:translateX(34%)}}
+@keyframes forge-smoke{0%{opacity:0;transform:translate(0,6px) scale(.65)}20%{opacity:.48}100%{opacity:0;transform:translate(16px,-52px) scale(1.35)}}
+@keyframes fog-drift{0%,100%{opacity:.14;transform:translateX(-14%)}50%{opacity:.28;transform:translateX(16%)}}
+@keyframes road-reflection{0%,100%{opacity:.12;transform:rotate(-13deg) translateX(-10px)}50%{opacity:.52;transform:rotate(-13deg) translateX(16px)}}
+@keyframes entry-core-pulse{0%{opacity:.45;transform:translate(-50%,-50%) scale(.66)}36%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}70%,100%{opacity:.76;transform:translate(-50%,-50%) scale(.96)}}
 @keyframes entry-forge-wake{0%,22%{opacity:.25;transform:translate(-50%,-50%) scale(.7)}55%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{opacity:.68;transform:translate(-50%,-50%) scale(.92)}}
 
-@media(max-width:700px){.data-pulse__trail{stroke-width:.38}.data-pulse--event .data-pulse__trail{stroke-width:.78}.building-life__wave{transform:translate(-50%,-50%) scale(.86)}.atmosphere-road-reflection b:nth-child(2),.atmosphere-water b:nth-child(2),.atmosphere-forge-smoke b:nth-child(2){display:none}.building-life__particles b:nth-child(3){display:none}.environment-debug-panel{font-size:10px}}
+.environment-visual-verification{position:absolute;left:var(--visual-x);top:var(--visual-y);z-index:7;transform:translate(-50%,-50%);pointer-events:none}
+.environment-visual-verification i{position:absolute;left:50%;top:50%;width:46px;height:34px;border:1px solid #d8f8ffcc;border-radius:50%;background:radial-gradient(ellipse,#020b12a8 0 38%,transparent 70%);transform:translate(-50%,-50%);animation:visual-verification-ring 1s ease-in-out infinite}
+.environment-visual-verification span{position:absolute;left:50%;top:22px;transform:translateX(-50%);white-space:nowrap;padding:3px 7px;border:1px solid #9eeaff99;border-radius:999px;background:#07141ce8;color:#e8fbff;font:700 10px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.02em}
+.world-environmental-life[data-visual-effect="citadel-pulse"] .building-life--citadel,.world-environmental-life[data-visual-effect="watcher-scan"] .building-life--watcher,.world-environmental-life[data-visual-effect="archive-lights"] .building-life--archive,.world-environmental-life[data-visual-effect="sanctum-particles"] .building-life--sanctum{opacity:1!important}
+.world-environmental-life[data-visual-effect="citadel-pulse"] .building-life--citadel *,.world-environmental-life[data-visual-effect="watcher-scan"] .building-life--watcher *,.world-environmental-life[data-visual-effect="archive-lights"] .building-life--archive *,.world-environmental-life[data-visual-effect="sanctum-particles"] .building-life--sanctum *{animation-play-state:running!important}
+.world-environmental-life[data-visual-effect="forge-smoke"] .atmosphere-forge-smoke,.world-environmental-life[data-visual-effect="water-reflection"] .atmosphere-water,.world-environmental-life[data-visual-effect="fog"] .atmosphere-fog,.world-environmental-life[data-visual-effect="data-pulse"] .data-pulse-layer{opacity:1!important}
+@keyframes visual-verification-ring{50%{opacity:.48;transform:translate(-50%,-50%) scale(1.16)}}
+
+@media(max-width:700px){.data-pulse__trail{stroke-width:.58}.data-pulse--event .data-pulse__trail{stroke-width:1}.building-life__wave{transform:translate(-50%,-50%) scale(.9)}.atmosphere-road-reflection b:nth-child(2),.atmosphere-water b:nth-child(2),.atmosphere-forge-smoke b:nth-child(2){display:none}.building-life__particles b:nth-child(3){display:none}.environment-debug-panel{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.world-environmental-life *{animation:none!important}.data-pulse-layer{display:none}.building-life{opacity:.32}.building-life__core{opacity:.3;box-shadow:none}.building-life__wave,.building-life__mechanism,.building-life__particles,.atmosphere-forge-smoke,.atmosphere-fog,.atmosphere-road-reflection{display:none}.atmosphere-water{opacity:.18}}

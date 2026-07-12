@@ -43,3 +43,13 @@ Priority is operational alert/work → evidence-backed choreography → ambient.
 - Ambient: `/?demo=1&scenario=ambient`
 - Debug: `/?demo=1&scenario=ambient&worldDebug=1`
 - LIGHT fallback: `/?demo=1&scenario=ambient&mapVariant=light`
+- Visual verification: `/?demo=1&scenario=ambient&worldDebug=visual` (15 seconds, eight labeled existing effects).
+
+## Mobile visibility calibration
+
+- The first five seconds now expose Citadel pulse, an inbound data packet, Forge wake/smoke and directional water/fog movement at the same time.
+- Ambient packets use a larger 0.7 world-unit core, higher-contrast dashed trail and a 6.8 second opening route.
+- Forge smoke is attached to the real Forge anchor and travels more than 50 CSS pixels; neutral Forge sparks remain hidden unless real work or an alert provides evidence.
+- Watcher sweep spans roughly 100 degrees, Archive windows sequence at four distinct luminance steps, and Sanctum uses a larger local turquoise breath.
+- Local dark backplates improve contrast only beneath each landmark; there is no global map glow.
+- Global Healthy plus a local Critical is rendered as `System stabilny · 1 incydent lokalny`, while the global severity remains Healthy and the local marker remains Critical.

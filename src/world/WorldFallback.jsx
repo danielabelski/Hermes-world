@@ -62,7 +62,9 @@ export default function WorldFallback() {
   const presentationNow = usePresentationClock()
   const directors = useWorldDirectors({ agents, now: presentationNow, layout: mapLayout })
   const operationalPresentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
-  const environment = useEnvironmentalDirector({ now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations })
+  const worldDebugParam = typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('worldDebug')
+  const worldDebug = worldDebugParam === 'visual' ? 'visual' : worldDebugParam === '1' ? 'panel' : 'off'
+  const environment = useEnvironmentalDirector({ now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations, visualDebug: worldDebug === 'visual' })
   const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
   const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
   const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
@@ -70,7 +72,6 @@ export default function WorldFallback() {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
   })
-  const worldDebug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('worldDebug') === '1'
   return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>

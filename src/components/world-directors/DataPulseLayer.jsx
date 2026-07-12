@@ -6,7 +6,7 @@ function Pulse({ pulse }) {
   const path = pathData(pulse.points)
   return <g className={`data-pulse data-pulse--${pulse.mode} data-pulse--${pulse.cue ?? 'ambient'} data-pulse--${pulse.state ?? 'normal'}`} data-pulse-id={pulse.id} data-pulse-mode={pulse.mode} data-evidence-event-id={pulse.evidenceEventId ?? ''}>
     <path className="data-pulse__trail" d={path} vectorEffect="non-scaling-stroke" />
-    <circle className="data-pulse__packet" r={pulse.mode === 'event' ? 0.82 : 0.48}>
+    <circle className="data-pulse__packet" r={pulse.mode === 'event' ? 1.05 : 0.7}>
       <animateMotion path={path} dur={`${pulse.duration}s`} begin={`${pulse.delay ?? 0}s`} repeatCount={pulse.mode === 'event' ? '2' : 'indefinite'} />
     </circle>
   </g>

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { deriveEnvironmentalPresentation, ENVIRONMENT_BUILDINGS } from './environmentalDirector.js'
+import { countLocalCriticalIncidents, resolveHealthSummaryLabel } from '../healthSummary.js'
 
 const START = Date.parse('2026-07-13T00:22:00.000Z')
 const idleModel = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
@@ -80,4 +81,23 @@ test('building configuration is centralized, complete and individually timed', (
   assert.deepEqual(Object.keys(ENVIRONMENT_BUILDINGS), ['citadel', 'forge', 'watcher', 'archive', 'sanctum'])
   assert.equal(new Set(Object.values(ENVIRONMENT_BUILDINGS).map((config) => config.timingOffset)).size, 5)
   assert.ok(Object.values(ENVIRONMENT_BUILDINGS).every((config) => config.ambientEffects.length >= 2 && config.eventResponses.length >= 3))
+})
+
+test('visual verification walks all eight existing effects over exactly fifteen seconds', () => {
+  const labels = []
+  for (let index = 0; index < 8; index += 1) {
+    const environment = deriveEnvironmentalPresentation({ now: START + index * 1_875 + 100, startedAt: START, visualDebug: true, layout: 'mobile' })
+    labels.push(environment.visualVerification?.label)
+  }
+  assert.deepEqual(labels, ['Citadel pulse', 'Forge smoke', 'Watcher scan', 'Archive lights', 'Sanctum particles', 'Data pulse', 'Water reflection', 'Fog'])
+  assert.equal(deriveEnvironmentalPresentation({ now: START + 15_001, startedAt: START, visualDebug: true }).visualVerification, null)
+  assert.equal(deriveEnvironmentalPresentation({ now: START + 1_000, startedAt: START, visualDebug: false }).visualVerification, null)
+})
+
+test('healthy global state and local critical incident produce one consistent summary', () => {
+  const alerts = [{ severity: 'critical' }, { severity: 'info' }]
+  const criticalCount = countLocalCriticalIncidents(alerts)
+  assert.equal(criticalCount, 1)
+  assert.equal(resolveHealthSummaryLabel({ severity: 'healthy', baseLabel: 'Świat działa spokojnie', criticalCount }), 'System stabilny · 1 incydent lokalny')
+  assert.equal(resolveHealthSummaryLabel({ severity: 'critical', baseLabel: 'Wymagana szybka reakcja', criticalCount }), 'Wymagana szybka reakcja')
 })
