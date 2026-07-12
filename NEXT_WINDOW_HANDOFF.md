@@ -570,3 +570,35 @@ node server.js
 Do not reopen visual direction or replace the map. Any later work must begin from a measured user-facing defect or a hackathon requirement. Preserve real telemetry as the source of truth and keep demo fixtures explicit.
 
 ---
+
+## REMOTE PRODUCTION ACCESS — TAILSCALE FUNNEL LOCK
+
+The Citadel is not a LAN-only application. The production operating model is: the Windows laptop remains powered and logged in, a single Node server listens on port `4175`, and Tailscale exposes it through a persistent public HTTPS Funnel.
+
+### Canonical public URL
+
+`https://hermes-os-panel.tail03d525.ts.net:10000/`
+
+This endpoint works outside the home network, including LTE. It is separate from the existing Hermes OS endpoints on HTTPS 443/8443 and does not replace or modify them.
+
+### Persistent host configuration
+
+- Windows Scheduled Task: `Hermes Citadel Production V1`.
+- Action: the Hermes-managed `node.exe` runs `server.js` directly in the Citadel project directory.
+- Start trigger: Windows user logon.
+- Watchdog trigger: every minute with `IgnoreNew`; a healthy running Node instance is not duplicated, while a missing process is recreated within one minute.
+- `server.js` defaults to port `4175` when `PORT` is not explicitly set.
+- Tailscale Funnel: HTTPS port `10000` → `http://127.0.0.1:4175`.
+- Reprovisioning script: `scripts/configure-citadel-remote.ps1`.
+
+### Verified failure recovery
+
+- The managed Node process was deliberately terminated.
+- The watchdog created a new PID automatically.
+- Local `/api/auth/status` returned HTTP 200 after recovery.
+- Public Funnel `/api/auth/status` returned HTTP 200 after recovery.
+- Exactly one listener remained on port 4175.
+
+Do not give the user a `192.168.x.x` URL as the primary application address. That address is only a LAN diagnostic fallback. The canonical user-facing address is the Tailscale HTTPS URL above.
+
+---
