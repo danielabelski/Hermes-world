@@ -86,7 +86,9 @@ const PORT = process.env.PORT || 4175;
 const worldEventHub = createWorldEventHub();
 
 app.disable('x-powered-by');
-app.use(compression());
+app.use(compression({
+  filter: (req, res) => req.path === '/api/world/events/stream' ? false : compression.filter(req, res),
+}));
 
 
 app.use((req, res, next) => {

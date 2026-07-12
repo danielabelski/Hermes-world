@@ -51,6 +51,10 @@ function MapAgentLayer({
         carryPackage={model.carryPackage}
         hidden={model.isInside}
         label={model.label}
+        presentationSource={model.presentationSource}
+        choreographyState={model.choreographyState}
+        ambientState={model.ambientState}
+        evidenceEventId={model.evidenceEventId}
         lod={getMapAgentLod(model, selectedId)}
         onSelect={(event) => {
           if (shouldSuppressSelection?.()) {

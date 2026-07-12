@@ -37,6 +37,10 @@ function MapAgentSprite({
   hidden = false,
   label,
   lod = 'standard',
+  presentationSource = 'operational',
+  choreographyState = null,
+  ambientState = null,
+  evidenceEventId = null,
 }) {
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
@@ -89,6 +93,10 @@ function MapAgentSprite({
     data-map-agent-src={src}
     data-visual-mode="production"
     data-status-marker={statusMarker?.tone ?? 'none'}
+    data-presentation-source={presentationSource ?? 'operational'}
+    data-choreography-state={choreographyState ?? 'none'}
+    data-ambient-state={ambientState ?? 'none'}
+    data-evidence-event-id={evidenceEventId ?? ''}
     aria-label={label ?? `Agent ${profileId}`}
     aria-pressed={selected}
     onClick={onSelect}

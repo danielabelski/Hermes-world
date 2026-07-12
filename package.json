@@ -9,7 +9,7 @@
     "dev:lan": "vite --host 0.0.0.0 --port 5175",
     "build": "vite build",
     "build:demo": "vite build --emptyOutDir false",
-    "test": "node --test src/world/mapAgentPresentation.test.js src/world/domCameraMath.test.js src/world/mapAgentRenderPolicy.test.js src/world/mapAgentManifest.test.js src/world/mapNavigation.test.js src/world/mapAgentProfiles.test.js src/world/events/worldEvents.test.js",
+    "test": "node --test src/world/mapAgentPresentation.test.js src/world/domCameraMath.test.js src/world/mapAgentRenderPolicy.test.js src/world/mapAgentManifest.test.js src/world/mapNavigation.test.js src/world/mapAgentProfiles.test.js src/world/events/worldEvents.test.js src/world/directors/worldDirectors.test.js",
     "validate:world-life": "node scripts/validate-world-life.mjs",
     "lint": "eslint .",
     "preview": "vite preview"

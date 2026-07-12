@@ -1,5 +1,19 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## ACTIVE DEMO GATE — WORLD CHOREOGRAPHY + AMBIENT DIRECTOR
+
+- Scope: branch `demo` only. Production is frozen until explicit GL.
+- Added separate `choreographyState` and `ambientState`; operational state remains owned exclusively by the existing event reducer.
+- Chat: message pulse → Kasztelan route → command core → evidence-backed thinking/success → Archive confirmation → return.
+- Delegation: Kasztelan → target district signal → only real assigned worker/FSM → existing building response → return.
+- Ambient Director: deterministic, 20–60 second selection, max 3 actions, role behaviors, paired conversations, no repeated behavior, immediate event/poll interruption.
+- Environmental life reuses existing Forge/core effects and adds only faint runes, lights and path wisps.
+- Honest visual fixture: `?demo=1&scenario=ambient` has 12 agents, 0 tasks and 0 active agents.
+- Hard invariant: ambient never emits work, success, alerts, status rings or active-agent increments.
+- Full implementation notes and acceptance evidence: `docs/HERMES_WORLD_CHOREOGRAPHY_AMBIENT_DEMO.md`.
+- Next action after checkpoint: user RL/GL. Do not copy to production automatically.
+
+
 ## ACTIVE DEMO GATE — REAL HERMES EVENT PIPELINE (2026-07-12)
 
 - Nadrzędna zasada: wszystkie bieżące zmiany są wyłącznie w worktree `hermes-os-living-world-demo`, branch `demo`. Produkcja pozostaje nietknięta do jawnego GL użytkownika.

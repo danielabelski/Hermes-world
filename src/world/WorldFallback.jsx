@@ -12,6 +12,10 @@ import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 import { getMapVariant } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
+import { useWorldDirectors } from './directors/useWorldDirectors.js'
+import { applyWorldDirectorPresentation } from './directors/worldDirectorPresentation.js'
+import WorldChoreographyLayer from '../components/world-directors/WorldChoreographyLayer.jsx'
+import WorldEnvironmentalLife from '../components/world-directors/WorldEnvironmentalLife.jsx'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -55,7 +59,9 @@ export default function WorldFallback() {
     shouldSuppressSelection,
   } = useDomWorldCamera({ zoomPreference })
   const presentationNow = usePresentationClock()
-  const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
+  const directors = useWorldDirectors({ agents, now: presentationNow, layout: mapLayout })
+  const operationalPresentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
+  const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
   const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
   const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
   const routeDebug = resolveRouteDebugConfig(typeof window === 'undefined' ? '' : window.location.search, {
@@ -65,9 +71,11 @@ export default function WorldFallback() {
   return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
+      <WorldEnvironmentalLife layout={mapLayout} />
       <HermesInfrastructureLayer layout={mapLayout} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
+      <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} />
       <MapAgentLayer
         presentations={groundPresentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}

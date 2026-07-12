@@ -27,6 +27,20 @@ const base = {
 const freezePayload = (payload) => Object.freeze(payload);
 
 export const DEMO_WORLD_SCENARIOS = Object.freeze({
+  ambient: freezePayload({
+    ...base,
+    profiles: { profiles: [
+      profile('orchestrator', false), profile('coder', false, 'gpt-5-codex'), profile('researcher', false, 'gpt-5-mini'),
+      profile('developer', false), profile('synthesizer', false, 'gpt-5-mini'), profile('devops', false),
+      profile('komandos', false), profile('outreach', false), profile('prospecting', false),
+      profile('reviewer', false), profile('verifier', false), profile('default', false, 'gpt-5-mini'),
+    ] },
+    metrics: { cpuPercent: 18, memoryPercent: 37, memoryUsedMb: 6062, memoryTotalMb: 16384, temperatureC: 52, temperatureSource: 'demo' },
+    tasks: { tasks: [] },
+    logs: { lines: [] },
+    cronHistory: { completions: [{ job_id: 'world-heartbeat', name: 'World heartbeat', status: 'ok', completed_at: at(0) }] },
+    sessions: { sessions: [] },
+  }),
   healthy: freezePayload({
     ...base,
     // The healthy opening scene deliberately shows a small working community,

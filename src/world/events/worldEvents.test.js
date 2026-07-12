@@ -74,6 +74,7 @@ test('event hub deduplicates and rejects old sequence numbers', () => {
   const first = normalizeHermesWorldEvent(raw(1, 'reasoning'))
   const duplicateId = hub.publish(first)
   assert.equal(duplicateId.accepted, true)
+  assert.ok(Number.isFinite(Date.parse(duplicateId.event.publishedAt)))
   assert.equal(hub.publish(first).reason, 'duplicate')
   const older = normalizeHermesWorldEvent({ ...raw(0, 'run_started'), event_id: 'watcher-run:older' })
   assert.equal(hub.publish(older).reason, 'out_of_order')
