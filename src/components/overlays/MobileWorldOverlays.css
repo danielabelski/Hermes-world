@@ -12,9 +12,9 @@
   display: grid;
   grid-template-columns: 36px minmax(0, 1fr) auto auto;
   align-items: center;
-  min-height: 42px;
+  min-height: 38px;
   gap: 5px;
-  padding: 4px 6px 4px 4px;
+  padding: 3px 6px 3px 4px;
   border: 1px solid rgb(246 220 154 / 28%);
   border-radius: 15px;
   color: #f6ecd6;
@@ -170,16 +170,36 @@
   width: min(402px, calc(100vw - 52px)) !important;
 }
 
-.world-event-ticker > div {
-  min-height: 25px !important;
-  padding: 3px 8px !important;
+.world-event-ticker__surface {
+  min-height: 28px !important;
+  padding: 4px 9px !important;
   border-color: rgb(242 219 154 / 15%) !important;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 13px;
   background: rgb(10 28 18 / 60%) !important;
   box-shadow: 0 5px 15px rgb(1 8 4 / 17%) !important;
+  backdrop-filter: blur(8px);
 }
 
-.world-event-ticker li { max-width: 64px !important; }
-.world-event-ticker li:first-child { max-width: 224px !important; }
+.world-event-ticker__message {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  color: #f5ead6;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.world-event-ticker__message > span:nth-child(2) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.world-event-ticker__message small { color: #91a295; font-size: 8px; font-variant-numeric: tabular-nums; }
 
 .world-overlay .world-insight-panel {
   z-index: 5 !important;
@@ -211,8 +231,12 @@
   .world-status-bar__weather { width: 29px; }
   .world-status-bar__health { display: none; }
   .world-overlay .world-event-ticker { width: calc(100vw - 34px) !important; }
-  .world-event-ticker li:not(:first-child) { display: none !important; }
   .world-overlay .world-insight-panel { width: min(258px, calc(100vw - 24px)) !important; }
+}
+
+@media (max-width: 700px) {
+  .world-overlay .world-insight-panel { padding: 6px 8px !important; }
+  .world-insight-panel__details { display: none !important; }
 }
 
 @media (min-width: 768px) {

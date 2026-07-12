@@ -12,11 +12,12 @@ import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
 import { classifyWorldMoment, resolveWorldMoment } from './worldMomentPriority.js'
-import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
+import { getMapVariant, resolveMapReadabilityMode } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 import { getNumberedRouteNodes, shortRouteNodeLabel } from './routeDebugPresentation.js'
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
 import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
+import { mergeWorldActivityItems } from './worldActivityItems.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -400,10 +401,11 @@ test('mobile observability fixtures expose waiting, stuck and error as distinct 
 })
 
 test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
-  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'thinking' }), { symbol: '?', tone: 'thinking' })
-  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'waiting' }), { symbol: '…', tone: 'waiting' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'thinking' }), { symbol: '⌬', tone: 'thinking' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'waiting' }), { symbol: '◷', tone: 'waiting' })
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'stuck', severity: 'warning', signalState: 'stuck' }), { symbol: '↛', tone: 'stuck' })
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'alert', severity: 'critical', signalState: 'error' }), { symbol: '!', tone: 'error' })
+  assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'success', severity: 'critical', signalState: 'success' }), { symbol: '!', tone: 'error' })
   assert.equal(resolveMapAgentStatusMarker({ visualState: 'idle' }), null)
 })
 
@@ -428,6 +430,14 @@ test('world moment hierarchy keeps alerts and stuck above concurrent success', (
   assert.equal(resolveWorldMoment(success, [], []).id, 'done')
 })
 
+test('activity stream keeps alerts visible even when ordinary activity exists', () => {
+  const items = mergeWorldActivityItems(
+    [{ id: 'success', severity: 'info', message: 'Build completed', createdAt: '2026-07-12T01:00:00Z' }],
+    [{ id: 'critical', severity: 'critical', message: 'Forge failed' }],
+  )
+  assert.deepEqual(items.map((item) => item.id), ['critical', 'success'])
+})
+
 test('explicit observability focus enables deterministic demo runtime', () => {
   assert.deepEqual(resolveDemoRuntimeMode('?focus=critical', false), { focus: 'critical', scenario: 'healthy', demoMode: true })
   assert.deepEqual(resolveDemoRuntimeMode('?focus=auto', false), { focus: 'auto', scenario: 'healthy', demoMode: false })
@@ -440,6 +450,13 @@ test('map readability variants are explicit, reversible and default to the accep
   assert.equal(resolveMapReadabilityMode('?mapReadability=light'), 'light')
   assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
   assert.equal(resolveMapReadabilityMode('?mapReadability=unknown'), 'light')
+})
+
+test('map variants have explicit production, showcase and fallback roles', () => {
+  assert.deepEqual(getMapVariant(''), { id: 'light', role: 'production', label: 'Hermes Citadel' })
+  assert.equal(getMapVariant('?mapVariant=strong').role, 'showcase')
+  assert.equal(getMapVariant('?mapVariant=baseline').role, 'fallback')
+  assert.equal(resolveMapReadabilityMode('?mapReadability=strong'), 'strong')
 })
 
 test('route debug config is off by default and filters one agent and explicit layers', () => {

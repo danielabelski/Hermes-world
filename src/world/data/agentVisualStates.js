@@ -25,6 +25,9 @@ export const AGENT_VISUAL_STATES = Object.freeze({
   walking: cue({ animationKey: 'walk', motionCue: 'patrol', transitionMs: 160, frameRate: 10, speedMultiplier: 0.72 }),
   working: cue({ animationKey: 'working', motionCue: 'work-loop', effectCue: 'work-sparks', transitionMs: 180, frameRate: 12, speedMultiplier: 0.45 }),
   thinking: cue({ animationKey: 'thinking', motionCue: 'look-around', effectCue: 'thought-pulse', transitionMs: 280, frameRate: 7, speedMultiplier: 0.1, pauseMs: 900 }),
+  waiting: cue({ animationKey: 'idle', motionCue: 'wait', effectCue: 'waiting-pulse', transitionMs: 320, frameRate: 5, speedMultiplier: 0, pauseMs: 1_200 }),
+  stuck: cue({ animationKey: 'idle', motionCue: 'halted', effectCue: 'stuck-beacon', transitionMs: 120, frameRate: 5, speedMultiplier: 0, pauseMs: 1_400 }),
+  warning: cue({ animationKey: 'idle', motionCue: 'alert', effectCue: 'warning-beacon', transitionMs: 120, frameRate: 7, speedMultiplier: 0, pauseMs: 700 }),
   success: cue({ animationKey: 'success', motionCue: 'celebrate', effectCue: 'success-glint', loop: false, durationMs: 1_600, transitionMs: 120, frameRate: 12, speedMultiplier: 0.2, pauseMs: 600 }),
   error: cue({ animationKey: 'error', motionCue: 'stumble', effectCue: 'error-smoke', loop: true, transitionMs: 90, frameRate: 8, speedMultiplier: 0, pauseMs: 700 }),
   sleeping: cue({ animationKey: 'sleeping', motionCue: 'rest', effectCue: 'sleep-zzz', transitionMs: 700, frameRate: 4, speedMultiplier: 0, pauseMs: 1_800 }),
@@ -51,8 +54,12 @@ const STATE_ALIASES = Object.freeze({
   inspect: 'thinking',
   inspecting: 'thinking',
   thinking: 'thinking',
+  wait: 'waiting',
+  waiting: 'waiting',
+  blocked: 'stuck',
+  stuck: 'stuck',
   alerted: 'error',
-  warning: 'error',
+  warning: 'warning',
   error: 'error',
   failed: 'error',
   success: 'success',
@@ -83,4 +90,3 @@ export function getAgentVisualCue(agent = {}) {
     animationKey: agent.animationKeys?.[state] ?? agent.animationKey ?? `${profileKey}.${base.animationKey}`,
   });
 }
-

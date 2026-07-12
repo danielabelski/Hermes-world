@@ -16,6 +16,9 @@ const DEFAULT_AGENT_PALETTE = Object.freeze({
   walking: '#75A7C8',
   working: '#E5A74E',
   thinking: '#A591D1',
+  waiting: '#7FA7B8',
+  stuck: '#E1A15A',
+  warning: '#E7B45F',
   success: '#86C973',
   error: '#E35E58',
   sleeping: '#6D7DAB',
@@ -36,6 +39,9 @@ const EFFECTS_BY_STATE = Object.freeze({
   walking: Object.freeze(['footsteps']),
   working: Object.freeze(['work-sparks']),
   thinking: Object.freeze(['thought-pulse']),
+  waiting: Object.freeze(['waiting-pulse']),
+  stuck: Object.freeze(['stuck-beacon']),
+  warning: Object.freeze(['warning-beacon']),
   success: Object.freeze(['success-glint']),
   error: Object.freeze(['error-smoke', 'error-beacon']),
   sleeping: Object.freeze(['sleep-zzz']),
@@ -54,6 +60,11 @@ const hasWarning = (item = {}) => {
   return item.warning === true || item.blocked === true || ['warning', 'warn', 'blocked', 'degraded'].includes(level);
 };
 
+const hasBlocked = (item = {}) => {
+  const level = asKey(item.level ?? item.severity ?? item.status);
+  return item.blocked === true || ['blocked', 'stuck'].includes(level);
+};
+
 export function getVisualPriority(value) {
   if (typeof value === 'number' && Number.isFinite(value)) return Math.max(0, Math.min(4, Math.round(value)));
   return PRIORITY_WEIGHT[asKey(value)] ?? PRIORITY_WEIGHT.normal;
@@ -70,7 +81,8 @@ export function resolveAgentState(agent = {}, context = {}) {
   const alerts = [...(context.alerts ?? []), ...(agent.alerts ?? [])];
 
   if (hasFault(agent) || hasFault(task) || alerts.some(hasFault)) return 'error';
-  if (hasWarning(agent) || hasWarning(task) || alerts.some(hasWarning)) return 'thinking';
+  if (hasBlocked(agent) || hasBlocked(task) || alerts.some(hasBlocked)) return 'stuck';
+  if (hasWarning(agent) || hasWarning(task) || alerts.some(hasWarning)) return 'warning';
 
   if (explicit != null && asKey(explicit)) return normalizeAgentVisualState(explicit);
   if (task.status === 'done' || task.completedAt || task.completed_at) return 'success';

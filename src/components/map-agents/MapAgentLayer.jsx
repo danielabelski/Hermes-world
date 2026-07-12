@@ -11,7 +11,6 @@ function MapAgentLayer({
   onSelect,
   shouldSuppressSelection,
   animationNow = 0,
-  visualMode = 'normalized',
 }) {
   const sorted = selectMapAgentRenderSet(
     presentations.filter((model) => Number.isFinite(Number(model?.worldX)) && Number.isFinite(Number(model?.worldY))),
@@ -47,7 +46,6 @@ function MapAgentLayer({
         hidden={model.isInside}
         label={model.label}
         lod={getMapAgentLod(model, selectedId)}
-        visualMode={visualMode}
         onSelect={(event) => {
           if (shouldSuppressSelection?.()) {
             event.preventDefault()

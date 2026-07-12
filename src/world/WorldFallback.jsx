@@ -10,12 +10,11 @@ import MapForegroundOcclusion from '../components/map-agents/MapForegroundOcclus
 import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
 import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
-import { resolveMapReadabilityMode } from './mapReadabilityMode.js'
+import { getMapVariant } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
-const getAgentVisualMode = () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('agentVisual') === 'before' ? 'before' : 'normalized'
 
 const BUILDINGS = [
   ['keep', 'Cytadela'], ['library', 'Biblioteka'], ['forge', 'Kuźnia'], ['research', 'Research Lab'],
@@ -24,7 +23,7 @@ const BUILDINGS = [
 ]
 
 export default function WorldFallback() {
-  const mapReadability = resolveMapReadabilityMode(typeof window === 'undefined' ? '' : window.location.search)
+  const mapVariant = getMapVariant(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
   useEffect(() => {
     const query = window.matchMedia?.(MOBILE_MAP_QUERY)
@@ -54,7 +53,7 @@ export default function WorldFallback() {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
   })
-  return <div ref={viewportRef} className={`fallback-world readability-${mapReadability}`} data-map-readability={mapReadability} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
+  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
       <HermesInfrastructureLayer layout={mapLayout} />
@@ -65,7 +64,6 @@ export default function WorldFallback() {
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
         shouldSuppressSelection={shouldSuppressSelection}
-        visualMode={getAgentVisualMode()}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
       <MapForegroundOcclusion layout={mapLayout} />

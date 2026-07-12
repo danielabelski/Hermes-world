@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWorldStore } from '../../world/store/worldStore.js'
 import { classifyWorldMoment, resolveWorldMoment } from '../../world/worldMomentPriority.js'
+import { mergeWorldActivityItems } from '../../world/worldActivityItems.js'
 
 const TONE = Object.freeze({
   info: { icon: 'i', label: 'INFO', color: '#9fc7d8', border: 'rgba(159, 199, 216, .42)', background: 'rgba(28, 52, 65, .88)' },
@@ -26,12 +27,6 @@ const shorten = (value, max = 86) => {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text
 }
 
-function normalizeItems(activity, alerts) {
-  const source = Array.isArray(activity) && activity.length ? activity : alerts
-  if (!Array.isArray(source)) return []
-  return source.filter(Boolean).slice().sort((a, b) => String(b.createdAt ?? b.timestamp ?? '').localeCompare(String(a.createdAt ?? a.timestamp ?? '')))
-}
-
 function itemId(item, index) {
   return String(item.id ?? `${item.createdAt ?? item.timestamp ?? 'event'}-${item.message ?? index}`)
 }
@@ -53,7 +48,7 @@ export function WorldMomentToast() {
   const [moment, setMoment] = useState(null)
   const seenRef = useRef(new Set())
   const initializedRef = useRef(false)
-  const items = useMemo(() => normalizeItems(activity, alerts), [activity, alerts])
+  const items = useMemo(() => mergeWorldActivityItems(activity, alerts), [activity, alerts])
 
   useEffect(() => {
     const ids = items.map(itemId)

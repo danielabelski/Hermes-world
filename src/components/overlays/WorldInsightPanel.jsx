@@ -70,7 +70,7 @@ export function WorldInsightPanel() {
 
   return (
     <section className="world-insight-panel" data-severity={severity} data-source={sourceKey} style={PANEL_STYLE} aria-label="Szybki odczyt stanu świata">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 9 }}>
+      <div className="world-insight-panel__headline" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 9 }}>
         <div style={{ display: 'flex', alignItems: 'center', minWidth: 0, gap: 7 }}>
           <span aria-hidden="true" style={{ color: health.color, fontSize: 14, fontWeight: 800 }}>{health.icon}</span>
           <strong style={{ color: health.color, fontSize: 11, letterSpacing: '.04em' }}>{health.label}</strong>
@@ -78,7 +78,7 @@ export function WorldInsightPanel() {
         </div>
         <span title={sourceKey === 'demo' ? 'Scena demonstracyjna' : 'Źródło danych'} style={{ flex: '0 0 auto', color: source.color, fontSize: 9, fontWeight: 800, letterSpacing: '.1em' }}>{source.label}</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 7, color: '#b9c7bb', fontSize: 10 }}>
+      <div className="world-insight-panel__details" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 7, color: '#b9c7bb', fontSize: 10 }}>
         <span><b style={{ color: '#f5ead6' }}>{activeAgents}</b> / {totalAgents} w ruchu</span>
         <span aria-hidden="true" style={{ opacity: .5 }}>·</span>
         <button type="button" onClick={() => openSheet?.('activity')} aria-label={alertCount ? `Otwórz ${alertCount} alertów` : 'Otwórz aktywność'} style={{ padding: 0, border: 0, color: alertCount ? '#efc36a' : '#b9c7bb', background: 'transparent', cursor: 'pointer', fontSize: 10 }}>{alertCount ? `${alertCount} alert${alertCount === 1 ? '' : 'ów'}` : 'brak alertów'}</button>

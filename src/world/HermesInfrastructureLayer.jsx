@@ -16,10 +16,10 @@ const segment = (id, profile, from, to) => {
 const LAYOUT = Object.freeze({
   desktop: Object.freeze({
     crystals: Object.freeze([
-      { id: 'core', buildingId: 'keep', x: 46, y: 34, scale: 1.05 },
-      { id: 'archive', buildingId: 'library', x: 27, y: 31, scale: 0.7 },
-      { id: 'forge', buildingId: 'forge', x: 84, y: 46.5, scale: 0.72 },
-      { id: 'observatory', buildingId: 'scout-lodge', x: 67, y: 31.5, scale: 0.68 },
+      { id: 'core', buildingId: 'keep', systemRole: 'orchestration-command', x: 46, y: 34, scale: 1.05 },
+      { id: 'archive', buildingId: 'library', systemRole: 'logs-memory-records', x: 27, y: 31, scale: 0.7 },
+      { id: 'forge', buildingId: 'forge', systemRole: 'build-load-throughput', x: 84, y: 46.5, scale: 0.72 },
+      { id: 'observatory', buildingId: 'scout-lodge', systemRole: 'monitoring-observability', x: 67, y: 31.5, scale: 0.68 },
     ]),
     conduits: Object.freeze([
       segment('core-forge', 'coder', [46, 37], [84, 49]),
@@ -27,19 +27,19 @@ const LAYOUT = Object.freeze({
       segment('core-observatory', 'prospecting', [46, 37], [67, 31.5]),
     ]),
     sites: Object.freeze([
-      { id: 'forge', profile: 'coder', effect: 'forge', x: 84, y: 46.5 },
-      { id: 'archive', profile: 'researcher', effect: 'archive', x: 27, y: 31 },
-      { id: 'watch', profile: 'prospecting', effect: 'watch', x: 67, y: 31.5 },
-      { id: 'core-heartbeat', profile: 'orchestrator', effect: 'core', x: 46, y: 34 },
+      { id: 'forge', profile: 'coder', effect: 'forge', systemRole: 'build-load-throughput', x: 84, y: 46.5 },
+      { id: 'archive', profile: 'researcher', effect: 'archive', systemRole: 'logs-memory-records', x: 27, y: 31 },
+      { id: 'watch', profile: 'prospecting', effect: 'watch', systemRole: 'monitoring-observability', x: 67, y: 31.5 },
+      { id: 'core-heartbeat', profile: 'orchestrator', effect: 'core', systemRole: 'orchestration-command', x: 46, y: 34 },
       { id: 'fountain-health', profile: null, effect: 'fountain', x: 50, y: 51 },
     ]),
   }),
   mobile: Object.freeze({
     crystals: Object.freeze([
-      { id: 'core', buildingId: 'keep', x: 50, y: 43, scale: 1.05 },
-      { id: 'archive', buildingId: 'library', x: 24.5, y: 65.5, scale: 0.7 },
-      { id: 'forge', buildingId: 'forge', x: 23.5, y: 44.5, scale: 0.72 },
-      { id: 'observatory', buildingId: 'scout-lodge', x: 65.5, y: 71.2, scale: 0.68 },
+      { id: 'core', buildingId: 'keep', systemRole: 'orchestration-command', x: 50, y: 43, scale: 1.05 },
+      { id: 'archive', buildingId: 'library', systemRole: 'logs-memory-records', x: 24.5, y: 65.5, scale: 0.7 },
+      { id: 'forge', buildingId: 'forge', systemRole: 'build-load-throughput', x: 23.5, y: 44.5, scale: 0.72 },
+      { id: 'observatory', buildingId: 'scout-lodge', systemRole: 'monitoring-observability', x: 65.5, y: 71.2, scale: 0.68 },
     ]),
     conduits: Object.freeze([
       segment('core-forge', 'coder', [50, 43], [30.5, 49.2]),
@@ -47,10 +47,10 @@ const LAYOUT = Object.freeze({
       segment('core-observatory', 'prospecting', [50, 43], [65.5, 71.2]),
     ]),
     sites: Object.freeze([
-      { id: 'forge', profile: 'coder', effect: 'forge', x: 23.5, y: 44.5 },
-      { id: 'archive', profile: 'researcher', effect: 'archive', x: 24.5, y: 65.5 },
-      { id: 'watch', profile: 'prospecting', effect: 'watch', x: 65.5, y: 71.2 },
-      { id: 'core-heartbeat', profile: 'orchestrator', effect: 'core', x: 50, y: 43 },
+      { id: 'forge', profile: 'coder', effect: 'forge', systemRole: 'build-load-throughput', x: 23.5, y: 44.5 },
+      { id: 'archive', profile: 'researcher', effect: 'archive', systemRole: 'logs-memory-records', x: 24.5, y: 65.5 },
+      { id: 'watch', profile: 'prospecting', effect: 'watch', systemRole: 'monitoring-observability', x: 65.5, y: 71.2 },
+      { id: 'core-heartbeat', profile: 'orchestrator', effect: 'core', systemRole: 'orchestration-command', x: 50, y: 43 },
       { id: 'fountain-health', profile: null, effect: 'fountain', x: 50, y: 56 },
     ]),
   }),
@@ -83,11 +83,11 @@ export default function HermesInfrastructureLayer({ layout = 'desktop' }) {
     })}
     {config.crystals.map((crystal) => {
       const phase = stateByBuilding.get(crystal.buildingId) ?? 'resting'
-      return <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${phase}`} data-building-id={crystal.buildingId} data-building-phase={phase} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>
+      return <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${phase}`} data-building-id={crystal.buildingId} data-building-phase={phase} data-system-role={crystal.systemRole} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>
     })}
     {config.sites.map((site) => {
       const phase = site.profile ? stateByProfile.get(site.profile) ?? 'resting' : 'ambient'
-      return <i className={`hermes-site-effect hermes-site-effect--${site.effect} site-phase--${phase}`} data-source-profile={site.profile ?? 'system'} data-site-phase={phase} key={site.id} style={{ '--site-x': `${site.x}%`, '--site-y': `${site.y}%` }}><b /><em /></i>
+      return <i className={`hermes-site-effect hermes-site-effect--${site.effect} site-phase--${phase}`} data-source-profile={site.profile ?? 'system'} data-site-phase={phase} data-system-role={site.systemRole ?? 'system-health'} key={site.id} style={{ '--site-x': `${site.x}%`, '--site-y': `${site.y}%` }}><b /><em /></i>
     })}
   </div>
 }

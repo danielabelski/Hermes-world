@@ -10,7 +10,10 @@ const isInWorldBounds = (model) => (
 const importance = (model, selectedId) => {
   if (model.profileId === selectedId) return 1_000
   if (['critical', 'error'].includes(model.severity)) return 900
-  if (model.severity === 'warning' || model.signalState === 'success') return 800
+  if (model.signalState === 'warning' || model.visualState === 'alert') return 850
+  if (model.signalState === 'stuck' || model.visualState === 'stuck') return 825
+  if (model.severity === 'warning') return 850
+  if (model.signalState === 'success') return 750
   if (model.isMoving || model.visualState === 'work' || model.visualState === 'observe') return 600
   return 100
 }
