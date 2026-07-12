@@ -7,21 +7,24 @@
   touch-action: none;
   cursor: grab;
   user-select: none;
-  --map-readability-filter: saturate(0.8) brightness(1.06) contrast(0.91) sepia(0.05);
-  --map-road-opacity: 1;
-  --map-road-brightness: 1;
+  --map-readability-filter: saturate(0.79) brightness(1.075) contrast(0.92) sepia(0.065);
+  --map-road-opacity: .82;
+  --map-road-brightness: 1.08;
+  --map-road-warmth: 246 222 175;
 }
 
 .fallback-world.readability-baseline {
   --map-readability-filter: saturate(0.86) brightness(0.89) contrast(0.96) hue-rotate(3deg);
   --map-road-opacity: 0;
   --map-road-brightness: 1;
+  --map-road-warmth: 246 222 175;
 }
 
 .fallback-world.readability-strong {
   --map-readability-filter: saturate(0.76) brightness(1.1) contrast(0.89) sepia(0.07);
   --map-road-opacity: 1;
   --map-road-brightness: 1.28;
+  --map-road-warmth: 250 224 174;
 }
 
 .fallback-world:active { cursor: grabbing; }
@@ -65,11 +68,11 @@
   display: block;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 10% 30% at 47% 66%, rgb(246 222 175 / 0.1), transparent 74%),
-    radial-gradient(ellipse 20% 12% at 51% 51%, rgb(246 222 175 / 0.09), transparent 72%),
-    radial-gradient(ellipse 20% 11% at 70% 51%, rgb(238 213 169 / 0.07), transparent 72%),
-    radial-gradient(ellipse 17% 10% at 35% 37%, rgb(238 213 169 / 0.065), transparent 72%),
-    radial-gradient(ellipse 16% 9% at 60% 33%, rgb(226 216 185 / 0.055), transparent 72%);
+    radial-gradient(ellipse 10% 30% at 47% 66%, rgb(var(--map-road-warmth) / 0.1), transparent 74%),
+    radial-gradient(ellipse 20% 12% at 51% 51%, rgb(var(--map-road-warmth) / 0.09), transparent 72%),
+    radial-gradient(ellipse 20% 11% at 70% 51%, rgb(var(--map-road-warmth) / 0.07), transparent 72%),
+    radial-gradient(ellipse 17% 10% at 35% 37%, rgb(var(--map-road-warmth) / 0.065), transparent 72%),
+    radial-gradient(ellipse 16% 9% at 60% 33%, rgb(var(--map-road-warmth) / 0.055), transparent 72%);
   mix-blend-mode: screen;
   opacity: var(--map-road-opacity);
   filter: brightness(var(--map-road-brightness));
@@ -94,10 +97,12 @@
 
   .fallback-roads {
     background:
-      radial-gradient(ellipse 10% 29% at 50% 78%, rgb(246 222 175 / 0.11), transparent 74%),
-      radial-gradient(ellipse 23% 12% at 50% 62%, rgb(246 222 175 / 0.1), transparent 72%),
-      radial-gradient(ellipse 18% 10% at 38% 54%, rgb(238 213 169 / 0.075), transparent 72%),
-      radial-gradient(ellipse 18% 10% at 38% 69%, rgb(238 213 169 / 0.075), transparent 72%),
-      radial-gradient(ellipse 17% 10% at 65% 69%, rgb(226 216 185 / 0.065), transparent 72%);
+      linear-gradient(90deg, transparent 43%, rgb(var(--map-road-warmth) / 0.055) 48%, rgb(var(--map-road-warmth) / 0.075) 50%, rgb(var(--map-road-warmth) / 0.055) 52%, transparent 57%),
+      radial-gradient(ellipse 11% 20% at 50% 81%, rgb(var(--map-road-warmth) / 0.115), transparent 74%),
+      radial-gradient(ellipse 24% 11% at 50% 72%, rgb(var(--map-road-warmth) / 0.105), transparent 72%),
+      radial-gradient(ellipse 23% 11% at 50% 57%, rgb(var(--map-road-warmth) / 0.095), transparent 72%),
+      radial-gradient(ellipse 18% 9% at 38% 54%, rgb(var(--map-road-warmth) / 0.072), transparent 72%),
+      radial-gradient(ellipse 18% 9% at 38% 69%, rgb(var(--map-road-warmth) / 0.072), transparent 72%),
+      radial-gradient(ellipse 17% 9% at 65% 69%, rgb(var(--map-road-warmth) / 0.062), transparent 72%);
   }
 }
