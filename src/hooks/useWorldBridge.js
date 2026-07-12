@@ -6,7 +6,9 @@ import { getDemoScenario } from '../world/data/demoScenarios.js';
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from '../world/data/demoObservabilityFocus.js';
 import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
 
-const RETRY_INTERVAL_MS = 15_000;
+// sync() runs every 5s so metrics stay live; WorldBridge independently reuses
+// 15s/60s domain caches for profiles, tasks and slower inventories.
+const RETRY_INTERVAL_MS = 5_000;
 const DEMO_SCENE_TICK_MS = 250;
 const DEMO_SCENE_SPEED = 1.25;
 

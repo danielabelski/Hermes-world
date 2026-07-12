@@ -129,11 +129,14 @@ function normaliseTask(task, previousTask = null, observedAt = Date.now()) {
 function normaliseAgent(profile, tasks, skills, logs) {
   const definition = getAgentDefinition(profile.name);
   if (!definition) return null;
-  const task = tasks.find((item) => item.assignee === profile.name && ['running', 'blocked'].includes(item.status));
+  const task = tasks.find((item) => item.assignee === profile.name && ['running', 'blocked', 'review'].includes(item.status));
   const errorLog = logs.find((entry) => String(entry.level).toLowerCase() === 'error' && profileForLog(entry) === profile.name);
   const warningLog = logs.find((entry) => String(entry.level).toLowerCase() === 'warning' && profileForLog(entry) === profile.name);
-  const skillEnabled = skills.length === 0 || skills.some((skill) => !skill.disabled);
-  const state = errorLog ? 'error' : task?.status === 'blocked' ? 'alerted' : task?.status === 'running' ? 'carrying-package' : profile.is_active ? 'working' : 'idle';
+  // The current Hermes API exposes a global skills inventory, not per-profile
+  // ownership. Keep this unknown instead of claiming every agent owns any
+  // enabled skill.
+  const skillEnabled = null;
+  const state = errorLog ? 'error' : task?.status === 'blocked' ? 'alerted' : task?.status === 'running' ? 'carrying-package' : task?.status === 'review' ? 'thinking' : profile.is_active ? 'working' : 'idle';
   return {
     ...definition,
     isActive: Boolean(profile.is_active),
@@ -170,7 +173,8 @@ function buildActivity({ logs, tasks, crons, previousSnapshot, now }) {
 
 function buildAlerts({ logs, tasks, crons, health, now }) {
   const taskAlerts = tasks.filter((task) => task.status === 'blocked').map((task) => ({
-    id: `task-blocked-${task.id}`, source: 'task', entityType: 'task', entityId: task.id,
+    id: `task-blocked-${task.id}`, source: 'task', entityType: task.ownerAgentId ? 'agent' : 'task', entityId: task.ownerAgentId ?? task.id,
+    agentId: task.ownerAgentId, taskId: task.id, buildingId: task.sourceBuildingId,
     message: `${task.title} is blocked`, createdAt: task.startedAt ?? now, ...getAlertVisual('warning'),
   }));
   const logAlerts = logs.filter((entry) => ['warning', 'error', 'critical', 'fatal'].includes(String(entry.level ?? '').toLowerCase())).slice(-10).map((entry) => {
@@ -181,7 +185,7 @@ function buildAlerts({ logs, tasks, crons, health, now }) {
     };
   });
   const cronAlerts = crons.filter((cron) => cron.lastCompletionStatus === 'error').map((cron) => ({
-    id: `cron-alert-${cron.id}-${cron.lastRunAt ?? ''}`, source: 'cron', entityType: 'cron', entityId: cron.id,
+    id: `cron-alert-${cron.id}-${cron.lastRunAt ?? ''}`, source: 'cron', entityType: 'building', entityId: 'clock-tower', buildingId: 'clock-tower', cronId: cron.id,
     message: `${cron.name} failed`, createdAt: cron.lastRunAt ?? now, ...getAlertVisual('error'),
   }));
   const healthAlerts = health.severity === 'critical' ? [{
@@ -192,9 +196,16 @@ function buildAlerts({ logs, tasks, crons, health, now }) {
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 
-function buildTokenRiver(sessions) {
+function isSessionActive(session, nowMs) {
+  if (session?.is_streaming === true) return true;
+  const raw = Number(session?.updated_at);
+  const updatedAt = Number.isFinite(raw) ? (raw < 1e12 ? raw * 1000 : raw) : timestampMs(session?.updated_at);
+  return Number.isFinite(updatedAt) && nowMs - updatedAt >= 0 && nowMs - updatedAt <= 5 * 60_000;
+}
+
+function buildTokenRiver(sessions, nowMs) {
   const totalEstimatedCost = sessions.reduce((total, session) => total + finite(session.estimated_cost), 0);
-  const activeSessionCount = sessions.length;
+  const activeSessionCount = sessions.filter((session) => isSessionActive(session, nowMs)).length;
   const intensity = Math.min(1, totalEstimatedCost / 3);
   return {
     totalEstimatedCost,
@@ -245,7 +256,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
   const sessions = list(payloads.sessions, 'sessions');
   const modelGroups = list(payloads.models, 'groups');
   const modelSources = buildCrystalSources(modelGroups, sessions, rawProfiles);
-  const tokenRiver = buildTokenRiver(sessions);
+  const tokenRiver = buildTokenRiver(sessions, observedAt);
   const buildingStates = Object.values(BUILDING_DEFINITIONS).map((definition) => {
     const agent = agents.find((item) => item.buildingId === definition.id);
     const assigned = tasks.filter((task) => task.sourceBuildingId === definition.id);
@@ -262,7 +273,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
       connection: provenance.connection ?? 'unknown',
       domains: provenance.domains ?? {},
     },
-    system: { cpuPercent: optionalFinite(metrics?.cpuPercent), memoryPercent: optionalFinite(metrics?.memoryPercent), memoryUsedMb: optionalFinite(metrics?.memoryUsedMb), memoryTotalMb: optionalFinite(metrics?.memoryTotalMb), temperatureC: optionalFinite(metrics?.temperatureC), temperatureSource: metrics?.temperatureSource ?? null, health, activeAgentCount: agents.filter((agent) => agent.isActive).length, totalAgentCount: agents.length, activeSessionCount: sessions.length, totalEstimatedCost: tokenRiver.totalEstimatedCost, weather: deriveWeather(metrics?.cpuPercent, metrics?.temperatureC) },
+    system: { cpuPercent: optionalFinite(metrics?.cpuPercent), memoryPercent: optionalFinite(metrics?.memoryPercent), memoryUsedMb: optionalFinite(metrics?.memoryUsedMb), memoryTotalMb: optionalFinite(metrics?.memoryTotalMb), temperatureC: optionalFinite(metrics?.temperatureC), temperatureSource: metrics?.temperatureSource ?? null, health, activeAgentCount: agents.filter((agent) => agent.isActive).length, totalAgentCount: agents.length, unmappedProfileCount: Math.max(0, rawProfiles.length - knownProfiles.length), activeSessionCount: tokenRiver.activeSessionCount, totalEstimatedCost: tokenRiver.totalEstimatedCost, weather: deriveWeather(metrics?.cpuPercent, metrics?.temperatureC) },
     agents,
     tasks,
     buildings: buildingStates,

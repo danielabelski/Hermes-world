@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import HermesMascot from './HermesMascot';
+import './LoginScreen.css';
 
 export default function LoginScreen({ onLoginSuccess }) {
   const [password, setPassword] = useState('');
@@ -32,34 +32,34 @@ export default function LoginScreen({ onLoginSuccess }) {
   };
 
   return (
-    <div className="login-shell">
-      <div className="login-panel">
-        <div className="login-mascot">
-          <HermesMascot state="online" size={88} />
-        </div>
-        <div className="login-kicker">&gt;_ SECURE OPERATOR ACCESS</div>
-        <h1>HERMES_OS</h1>
-        <p>Agent Mission Control</p>
+    <main className="citadel-login">
+      <section className="citadel-login__panel" aria-labelledby="citadel-login-title">
+        <img className="citadel-login__mark" src="/citadel-mark.svg" alt="" />
+        <div className="citadel-login__eyebrow">Ambient Agent Observatory</div>
+        <h1 id="citadel-login-title">Hermes Citadel</h1>
+        <p className="citadel-login__subtitle">Wejdź do centrum dowodzenia agentów</p>
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleLogin} className="citadel-login__form">
           <label>
-            ACCESS KEY
+            Klucz dostępu
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="Enter authorization phrase..."
+              placeholder="Wpisz frazę autoryzacyjną"
+              autoComplete="current-password"
               autoFocus
             />
           </label>
 
-          {error && <div className="login-error">{error}</div>}
+          {error && <div className="citadel-login__error" role="alert">{error}</div>}
 
           <button type="submit" disabled={loading || !password}>
-            {loading ? 'AUTHORIZING...' : 'ENTER SYSTEM'}
+            {loading ? 'OTWIERANIE BRAMY…' : 'WEJDŹ DO CYTADELI'}
           </button>
         </form>
-      </div>
-    </div>
+        <div className="citadel-login__status">Bezpieczne połączenie z Hermes OS</div>
+      </section>
+    </main>
   );
 }

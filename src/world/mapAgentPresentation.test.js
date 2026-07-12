@@ -7,7 +7,7 @@ import {
 } from './mapAgentPresentation.js'
 import { resolveLivingAgentState } from './LivingWorldStateMachine.js'
 import { getWorldLifeJourney } from './data/roadGraph.js'
-import { createWorldSnapshot } from './WorldBridge.js'
+import { createWorldBridge, createWorldSnapshot } from './WorldBridge.js'
 import { getDemoScenario } from './data/demoScenarios.js'
 import { resolveMapAgentStatusMarker } from './mapAgentStatusGrammar.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
@@ -398,6 +398,88 @@ test('mobile observability fixtures expose waiting, stuck and error as distinct 
   assert.equal(incident.severity, 'critical')
   assert.equal(incident.signalState, 'error')
   assert.equal(incident.buildingId, 'forge')
+})
+
+test('Cat-shaped live payload maps real telemetry without demo fallbacks', () => {
+  const observedAt = Date.UTC(2026, 6, 12, 4, 30, 0)
+  const snapshot = createWorldSnapshot({
+    profiles: { profiles: [
+      { name: 'coder', is_active: true, model: 'gpt-live', provider: 'openai', has_env: true },
+      { name: 'researcher', is_active: false, model: 'gpt-live', provider: 'openai' },
+      { name: 'future-agent', is_active: false },
+    ] },
+    metrics: { ok: true, cpuPercent: 42, memoryPercent: 63, memoryUsedMb: 10_000, memoryTotalMb: 16_000, temperatureC: 58, temperatureSource: 'hardware' },
+    tasks: { tasks: [
+      { id: 'blocked-build', title: 'Release build', assignee: 'coder', status: 'blocked', priority: 'high', started_at: iso(observedAt - 30_000) },
+      { id: 'review-report', title: 'Review report', assignee: 'researcher', status: 'review', priority: 'normal' },
+    ] },
+    logs: { lines: [] },
+    crons: { jobs: [{ id: 'nightly', name: 'Nightly sync', enabled: true, last_run_at: iso(observedAt - 60_000) }] },
+    cronHistory: { completions: [{ job_id: 'nightly', status: 'error', completed_at: iso(observedAt - 60_000) }] },
+    sessions: { sessions: [
+      { id: 'live-session', is_streaming: true, estimated_cost: 0.5, updated_at: observedAt / 1000 },
+      { id: 'old-session', is_streaming: false, estimated_cost: 0.25, updated_at: (observedAt - 3_600_000) / 1000 },
+    ] },
+    skills: { skills: [{ name: 'browser', disabled: false }] },
+    models: { groups: [{ provider: 'openai', models: [{ id: 'gpt-live' }] }] },
+  }, null, () => observedAt, { source: 'live', connection: 'online', lastSuccessfulAt: iso(observedAt) })
+
+  assert.equal(snapshot.lifecycle.source, 'live')
+  assert.equal(snapshot.lifecycle.connection, 'online')
+  assert.equal(snapshot.system.cpuPercent, 42)
+  assert.equal(snapshot.system.memoryPercent, 63)
+  assert.equal(snapshot.system.temperatureC, 58)
+  assert.equal(snapshot.system.unmappedProfileCount, 1)
+  assert.equal(snapshot.system.activeSessionCount, 1)
+  assert.equal(snapshot.system.totalEstimatedCost, 0.75)
+  assert.equal(snapshot.agents[0].skillEnabled, null)
+  assert.equal(snapshot.agents.find((agent) => agent.profile === 'researcher').state, 'thinking')
+  assert.equal(snapshot.alerts.find((alert) => alert.taskId === 'blocked-build').agentId, 'coder')
+  assert.equal(snapshot.alerts.find((alert) => alert.taskId === 'blocked-build').buildingId, 'forge')
+  assert.equal(snapshot.alerts.find((alert) => alert.cronId === 'nightly').buildingId, 'clock-tower')
+})
+
+test('production bridge keeps domain cadence and exposes stale recovery honestly', async () => {
+  let now = Date.UTC(2026, 6, 12, 5, 0, 0)
+  let failMetrics = false
+  const calls = { metrics: 0, profiles: 0 }
+  const apiClient = {
+    async getProfiles() { calls.profiles += 1; return { profiles: [{ name: 'coder', is_active: false }] } },
+    async getSystemMetrics() { calls.metrics += 1; if (failMetrics) throw new Error('sensor offline'); return { ok: true, cpuPercent: 30, memoryPercent: 50, temperatureC: 55 } },
+    async getKanbanTasks() { return { tasks: [] } },
+    async getLogs() { return { lines: [] } },
+    async getCrons() { return { jobs: [] } },
+    async getCronHistory() { return { completions: [] } },
+    async getSessions() { return { sessions: [] } },
+    async getSkills() { return { skills: [] } },
+    async getModels() { return { groups: [] } },
+  }
+  const bridge = createWorldBridge({ apiClient, now: () => now })
+  const initial = await bridge.sync()
+  assert.equal(initial.lifecycle.source, 'live')
+  assert.equal(calls.metrics, 1)
+  assert.equal(calls.profiles, 1)
+
+  now += 5_000
+  const metricsRefresh = await bridge.sync()
+  assert.equal(metricsRefresh.lifecycle.source, 'live')
+  assert.equal(calls.metrics, 2)
+  assert.equal(calls.profiles, 1)
+
+  failMetrics = true
+  now += 5_000
+  const stale = await bridge.sync()
+  assert.equal(stale.lifecycle.source, 'stale')
+  assert.equal(stale.lifecycle.connection, 'degraded')
+  assert.equal(stale.lifecycle.domains.metrics.state, 'stale')
+  assert.equal(stale.system.cpuPercent, 30)
+
+  failMetrics = false
+  now += 5_000
+  const recovered = await bridge.sync()
+  assert.equal(recovered.lifecycle.source, 'live')
+  assert.equal(recovered.lifecycle.connection, 'online')
+  assert.equal(recovered.lifecycle.domains.metrics.state, 'live')
 })
 
 test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
