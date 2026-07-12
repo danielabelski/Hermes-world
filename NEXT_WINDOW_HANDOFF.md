@@ -584,12 +584,12 @@ This endpoint works outside the home network, including LTE. It is separate from
 ### Persistent host configuration
 
 - Windows Scheduled Task: `Hermes Citadel Production V1`.
-- Action: the Hermes-managed `node.exe` runs `server.js` directly in the Citadel project directory.
+- Action: one hidden PowerShell task runs `scripts/run-citadel-service.ps1`, which starts the Hermes-managed `node.exe` in the Citadel project directory.
 - Start trigger: Windows user logon.
-- Watchdog trigger: every minute with `IgnoreNew`; a healthy running Node instance is not duplicated, while a missing process is recreated within one minute.
+- Recovery: the hidden service wrapper restarts Node after a crash; the task itself has `RestartOnFailure`, `ExecutionTimeLimit=0`, `StopOnIdleEnd=false` and `MultipleInstancesPolicy=IgnoreNew`.
 - `server.js` defaults to port `4175` when `PORT` is not explicitly set.
 - Tailscale Funnel: HTTPS port `10000` → `http://127.0.0.1:4175`.
-- Reprovisioning script: `scripts/configure-citadel-remote.ps1`.
+- Reprovisioning script: `scripts/configure-citadel-remote.ps1`; service runner: `scripts/run-citadel-service.ps1`.
 
 ### Verified failure recovery
 

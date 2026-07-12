@@ -3,19 +3,14 @@ $ErrorActionPreference = 'Stop'
 $taskName = 'Hermes Citadel Production V1'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $tailscale = 'C:\Program Files\Tailscale\tailscale.exe'
-$node = (Get-Command node.exe -ErrorAction Stop).Source
+$serviceScript = Join-Path $projectRoot 'scripts\run-citadel-service.ps1'
 $userId = "$env:USERDOMAIN\$env:USERNAME"
 
 $action = New-ScheduledTaskAction `
-  -Execute $node `
-  -Argument 'server.js' `
-  -WorkingDirectory $projectRoot
+  -Execute 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' `
+  -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$serviceScript`""
 
 $logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $userId
-$watchdogTrigger = New-ScheduledTaskTrigger `
-  -Once `
-  -At (Get-Date).AddMinutes(1) `
-  -RepetitionInterval (New-TimeSpan -Minutes 1)
 
 $settings = New-ScheduledTaskSettingsSet `
   -AllowStartIfOnBatteries `
@@ -25,7 +20,8 @@ $settings = New-ScheduledTaskSettingsSet `
   -RestartCount 999 `
   -RestartInterval (New-TimeSpan -Minutes 1) `
   -ExecutionTimeLimit ([TimeSpan]::Zero) `
-  -MultipleInstances IgnoreNew
+  -MultipleInstances IgnoreNew `
+  -Hidden
 
 $principal = New-ScheduledTaskPrincipal `
   -UserId $userId `
@@ -35,7 +31,7 @@ $principal = New-ScheduledTaskPrincipal `
 Register-ScheduledTask `
   -TaskName $taskName `
   -Action $action `
-  -Trigger @($logonTrigger, $watchdogTrigger) `
+  -Trigger $logonTrigger `
   -Settings $settings `
   -Principal $principal `
   -Description 'Hermes Citadel V1 on port 4175 with a one-minute watchdog for Tailscale Funnel.' `
