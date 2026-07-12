@@ -422,3 +422,44 @@ Nie odkładać production integration na abstrakcyjne „następne okno”. Bie�
 8. Nie kończyć samym audytem ani planem. Dowieźć działające production binding dzisiaj.
 
 ---
+## HACKATHON PRODUCT HANDOFF — VISUAL V1 GL / PRODUCTION INTEGRATION ACTIVE
+
+### Binding decision
+
+- User GL: final visual pre-hackathon base approved on 2026-07-12.
+- BASELINE is locked as the production default.
+- LIGHT remains an alternate fallback; STRONG remains optional showcase only.
+- Working/Thinking/Waiting/Success polish, clean Stable view, state hierarchy, mobile ticker/UI and one-renderer agent system are accepted.
+- Do not reopen map identity, map geometry, global sprite scale, renderer choice or the state art direction without a concrete regression.
+
+### Product truth for the hackathon
+
+Hermes Citadel / Hermes Heroes is an ambient observability interface for the real Hermes agent system. Real profiles, tasks, logs, metrics, cron state, sessions, models and skills are the source of truth. The map, agents, buildings, flows and effects are presentations of that telemetry. Demo fixtures exist only for deterministic testing and screenshots.
+
+### Active milestone — must finish today
+
+Move the accepted visual layer onto the real production data path. Start by reading the existing Hermes OS Cat implementation and its handoff because CPU, temperature, profiles/agents and other data mappings already exist there. Do not redesign contracts or invent replacements before verifying that implementation.
+
+Required order:
+
+1. Stop preview; keep zero servers during implementation.
+2. Audit Hermes OS Cat data sources, endpoints, response shapes, auth/proxy behavior and refresh cadence.
+3. Audit existing Citadel `api.js → useWorldBridge → WorldBridge → worldStore → presentation` against Cat.
+4. Produce an exact source-to-world mapping and classify: ready / adapter needed / unavailable.
+5. Implement only missing adapters and integration glue; reuse the established Cat contract.
+6. Default URL without `demo=1` and without `focus=` must use real data and clearly expose live/stale/offline provenance.
+7. Never silently replace failed live telemetry with demo data. Demo must remain explicit.
+8. Verify global health, CPU, memory, temperature, profiles, tasks, logs/alerts, crons, sessions/cost, models, skills, connection/reconnect and agent→subsystem ownership.
+9. Validate all nine visual states on live-shaped contract fixtures and available real endpoints.
+10. Full tests/lint/validator/builds, protected diff, production checkpoint and exactly one final LAN preview.
+
+### Hard constraints
+
+- Preserve accepted BASELINE visual GL.
+- Do not modify map assets, geometry, crop, waypoint graph, routes, anchors or global agent scale.
+- Do not enable a second agent renderer.
+- Do not fabricate missing telemetry.
+- Do not modify `server.js`, `src/api.js` or API contracts until the Cat audit proves a minimal change is required; document and request authority if it is materially broader.
+- No game mechanics, asset generation, Chrome/headless screenshot series or multiple servers.
+
+---
