@@ -329,3 +329,67 @@ npm.cmd run build -- --mode demo
 Repo nie ma osobnego `typecheck`; nie instalować TypeScript.
 
 ---
+## FINAL MOBILE BASE CHECKPOINT — 2026-07-12
+
+Ta sekcja jest nadrzędnym źródłem prawdy dla następnego okna.
+
+### Repository
+
+- Branch: `main`.
+- Kod produktu: `f0ad1c1 feat: finalize mobile Hermes Citadel presentation`.
+- Working tree przed dokumentacyjnym checkpointem: czyste.
+- Testy: `31/31`.
+- Lint: passed.
+- World-life validator: passed.
+- Production build: passed, `820` modules.
+- Demo build: passed, `820` modules.
+
+### Completed in this window
+
+- Mapa: jawne presety `light=production`, `strong=showcase`, `baseline=fallback`; `mapVariant` jest nazwą docelową, stare `mapReadability` pozostaje kompatybilne.
+- Tożsamość: Cytadela/Archiwum/Kuźnia/Wieża mają jawne role systemowe. Kuźnia to `build-load-throughput` z neutralnym żarem oraz working/warning-stuck/critical.
+- Postacie: jeden produkcyjny renderer `WorldFallback → MapAgentLayer → MapAgentSprite`; Pixi ma `renderAgents=false`. Usunięto tymczasowy `agentVisual=before`. Wszystkie postacie są transparentnymi WebP z manifestu map-agents.
+- Stany: thinking `⌬` z orbitą, waiting `◷`, stuck `↛`, working aktywny ring, warning/critical zachowane, success krótkotrwały, offline wyciszony. Lokalny priorytet nie pozwala success przykryć alertu.
+- UI mobile: lżejszy header, kompaktowy insight panel, ticker pokazuje jedną wiadomość w dwóch liniach bez losowego truncation.
+- Integracja: activity i alerts korzystają ze wspólnego deduplikowanego strumienia z rankingiem `critical > warning > stuck > success > info`.
+- Cleanup: culling respektuje tę samą hierarchię; compatibility Pixi nie mapuje warning/stuck na thinking.
+- Chronione assety mapy, geometria, waypointy, routing, FSM, `server.js`, `src/api.js`, Hermes OS CAT i API: bez zmian.
+
+### Accepted production setup
+
+- Default: `?mapVariant=light` lub brak parametru.
+- Showcase/marketing: `?mapVariant=strong`.
+- Low-intensity/fallback: `?mapVariant=baseline`.
+- Deterministyczna macierz oceny: `?focus=stable|working|thinking|waiting|stuck|warning|critical|success|offline`.
+- Demo fixtures używają tych samych rendererów i resolverów co tryb live; różni je źródło snapshotu.
+
+### NEXT WINDOW — exact locked order
+
+1. Przeczytać `AGENTS.md`, tę sekcję, visual baseline i końcową sekcję planu.
+2. Sprawdzić `git status`, `git log -5`, testy i oba buildy; nie powtarzać audytów mapy, sprite'ów, skali, routingu ani produktu.
+3. Uruchomić dokładnie jeden preview LAN i uzyskać od użytkownika GL/RL dla: light, Kuźni, thinking/waiting/stuck, tickera i top UI.
+4. RL: poprawić wyłącznie wskazane elementy, bez zmiany mapy/geometrii/globalnej skali/architektury.
+5. GL: przejść do production-data binding audit — sprawdzić istniejący WorldBridge dla realnych health/agents/tasks/alerts/logs bez zmiany API.
+6. Ujednolicić tylko brakujące adaptery live→presentation, jeśli istnieją dowodowe różnice względem fixtures. Nie dodawać fałszywej telemetrii.
+7. Wykonać mobile performance/accessibility smoke: 390×844, większy mobile, desktop; reduced motion, offline, focus/tap, brak podwójnego renderingu.
+8. Pełne testy/buildy, checkpoint i zaktualizowany handoff. Jeden preview tylko na końcu.
+
+### Do not touch
+
+- Nie generować nowej mapy ani postaci.
+- Nie zmieniać map assets, cropu, geometrii, waypointów, routingu, FSM, skali globalnej i anchorów bez konkretnej regresji.
+- Nie modyfikować `server.js`, `src/api.js`, Hermes OS CAT ani kontraktów API bez osobnej zgody.
+- Nie włączać drugiego renderera agentów, nie dodawać mechanik gry, serii Chrome/headless ani wielu serwerów.
+- Nie wracać do `agentVisual=before`, identycznych kapturów, hero cutoutów i wielkich aur.
+
+### Exact commands
+
+```powershell
+npm.cmd test
+npm.cmd run validate:world-life
+npm.cmd run lint
+npm.cmd run build
+npm.cmd run build -- --mode demo
+```
+
+---

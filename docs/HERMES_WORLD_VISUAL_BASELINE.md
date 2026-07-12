@@ -75,3 +75,13 @@ Na widoku około 390×844 bez klikania:
 - Debug tras jest dev-only, per agent, numerowany i warstwowy.
 - Skala agentów 40–46 px, anchor 124/128, cienie i Y-sort pozostają bez zmian po audycie 12/12.
 - Walidacja automatyczna: 29/29 testów, validator, lint i oba buildy zielone. Finalny test 2 sekund należy do użytkownika na telefonie.
+## Final mobile product baseline — 2026-07-12
+
+- LIGHT jest domyślnym produkcyjnym wariantem Hermes Citadel.
+- STRONG jest presetem showcase/marketing, BASELINE presetem fallback/low-intensity.
+- Kuźnia reprezentuje build/load/throughput i ma cztery poziomy lokalnego sygnału.
+- Produkcja używa jednego renderera transparentnych assetów map-agent; tryb porównawczy before został usunięty.
+- Thinking `⌬`, waiting `◷`, stuck `↛`; warning/critical/success/offline zachowują osobną semantykę.
+- Ticker pokazuje jedną pełną wiadomość naraz; alerty i activity mają wspólny priorytetowy strumień.
+- Finalna automatyczna walidacja: 31/31, lint, validator, production/demo build po 820 modułów.
+- Następna decyzja użytkownika GL/RL blokuje warstwę wizualną v1 przed audytem wiązania prawdziwych danych.

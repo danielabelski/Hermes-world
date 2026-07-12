@@ -243,3 +243,46 @@ DoD: każdy stan jest zrozumiały bez kliknięcia i tickera w maksymalnie 2 seku
 DoD: czysty working tree, zielone testy/buildy, aktualny handoff i jeden preview do oceny.
 
 ---
+## NEXT WINDOW — PRODUCTION DATA BINDING + FINAL GL POLISH
+
+Nie zaczynać od redesignu. Baza wizualna z `f0ad1c1` jest produkcyjnym baseline'em.
+
+### Task 0 — Safe resume
+
+- Git/test/lint/validator/build, zero preview podczas implementacji.
+- Potwierdzić chroniony diff i brak niezwiązanych procesów.
+
+### Task 1 — User GL/RL gate
+
+- Jeden preview LAN po zielonym baseline.
+- Ocena: light default, Forge stable/working/warning/critical, wszystkie 9 stanów, top UI i ticker.
+- RL oznacza wyłącznie targeted corrections. GL blokuje warstwę wizualną jako v1.
+
+### Task 2 — Live data contract audit
+
+- Prześledzić istniejący `useWorldBridge`/WorldBridge/store od prawdziwego snapshotu do mapy.
+- Macierz: system health, connection, agents, tasks, alerts, activity/logs i subsystem/building ownership.
+- Nie zmieniać backendu/API i nie wymyślać danych, których kontrakt nie dostarcza.
+
+### Task 3 — Minimal live adapters
+
+- Naprawić wyłącznie dowodowe różnice live kontra deterministyczne fixtures.
+- Jeden resolver priorytetów, jeden status contract, jeden renderer.
+- Demo pozostaje narzędziem testowym, nie osobną implementacją produktu.
+
+### Task 4 — Production state matrix
+
+- Stable/Working/Thinking/Waiting/Stuck/Warning/Critical/Success/Offline na snapshotach odpowiadających kontraktowi live.
+- Global health, agent, subsystem, ticker i główna karta muszą być spójne.
+
+### Task 5 — Mobile readiness
+
+- 390×844, większy mobile, desktop.
+- Performance, reduced motion, offline/reconnect, tap/drill-down, safe areas i brak zasłaniania.
+- Bez automatycznej serii Chrome; ręczny preview tylko na checkpoint.
+
+### Task 6 — Final checkpoint
+
+- Test/lint/validator/oba buildy, protected diff, dokumentacja, commit, jeden preview GL/RL.
+
+---
