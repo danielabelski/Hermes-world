@@ -20,6 +20,7 @@ $watchdogTrigger = New-ScheduledTaskTrigger `
 $settings = New-ScheduledTaskSettingsSet `
   -AllowStartIfOnBatteries `
   -DontStopIfGoingOnBatteries `
+  -DontStopOnIdleEnd `
   -StartWhenAvailable `
   -RestartCount 999 `
   -RestartInterval (New-TimeSpan -Minutes 1) `
