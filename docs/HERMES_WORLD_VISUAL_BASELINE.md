@@ -67,3 +67,11 @@ Na widoku około 390×844 bez klikania:
 - Działający FSM i architektura statusów.
 - Nowe zróżnicowane role oraz aktualna mniejsza skala jako globalny baseline.
 - `server.js`, `src/api.js`, Hermes OS CAT i kontrakty API.
+## Observability polish checkpoint — 2026-07-12
+
+- Główny komunikat respektuje `critical > warning > stuck > success > info`; success nie konkuruje z aktywnym incydentem.
+- Domyślny `light` readability pass pozostaje niedestrukcyjny i został dopracowany lokalnymi maskami dróg/placów. `baseline` i `strong` są wyłącznie wariantami porównawczymi; strong wymaga decyzji użytkownika.
+- Thinking/waiting/stuck i critical localization zachowują zatwierdzoną gramatykę.
+- Debug tras jest dev-only, per agent, numerowany i warstwowy.
+- Skala agentów 40–46 px, anchor 124/128, cienie i Y-sort pozostają bez zmian po audycie 12/12.
+- Walidacja automatyczna: 29/29 testów, validator, lint i oba buildy zielone. Finalny test 2 sekund należy do użytkownika na telefonie.

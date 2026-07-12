@@ -261,6 +261,17 @@ Pracuj na aktualnym stanie repozytorium. Nie analizuj projektu od początku i ni
 - Added pure resolver `src/world/worldMomentPriority.js` and conflict tests. Current suite: `27/27`.
 - First remaining task: Task 1 final non-destructive readability tuning, then Task 3 regression and Task 4 debug numbering.
 
+### POLISH PASS COMPLETE — 2026-07-12
+
+- `61a77ce`: wdrożona hierarchia głównego komunikatu `critical > warning > stuck > success > info`.
+- `c4f7662`: dopracowany odwracalny wariant light; łagodniejszy filtr globalny i lokalne maski osi, placów oraz wejść. Baseline i strong pozostają dostępne; strong nadal wymaga GL.
+- `f2882c2`: debug jednej trasy numeruje punkty, skraca nazwy, zachowuje pełne nazwy w `<title>` i obsługuje osobne home/safe/work/depth/occlusion. `?focus=` sam uruchamia deterministyczny tryb demo.
+- Naprawiono eskalację widocznego success do nowego alertu/stuck także bez nowego wpisu activity.
+- Audyt 12 agentów: wszystkie 40–46 px, foot anchor 124/128, komplet shadowScale i poprawny Y-sort; brak podstaw do micro-korekt.
+- Finalna walidacja: `29/29`, world-life validator, lint, production build i demo build (`819` modułów) — zielone.
+- Chronione: mapa/assety/geometria, waypointy, routing, FSM, `server.js`, `src/api.js`, Hermes OS CAT i API bez zmian.
+- Pozostała wyłącznie ręczna ocena użytkownika GL/RL na jednym preview LAN: light kontra baseline/strong, stuck/critical oraz debug Kowala.
+
 Ta sekcja jest bieżącą instrukcją wznowienia i ma pierwszeństwo przed historią niżej.
 
 ### Repository state
