@@ -1,6 +1,6 @@
 ﻿/* global clients */
 
-const CACHE_NAME = 'hermes-os-v8-clean-origin';
+const CACHE_NAME = 'hermes-citadel-v1';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(Promise.resolve());
@@ -19,7 +19,7 @@ self.addEventListener('activate', (event) => {
 // another app, so network-first passthrough avoids stale white-screen bundles.
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'Hermes OS', body: 'Otrzymano powiadomienie.' };
+  let data = { title: 'Hermes Citadel', body: 'Otrzymano powiadomienie.' };
   if (event.data) {
     try {
       data = event.data.json();
@@ -30,8 +30,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: '/citadel-mark.svg',
+    badge: '/citadel-mark.svg',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/'
