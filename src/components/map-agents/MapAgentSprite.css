@@ -8,6 +8,10 @@
   container-type: size;
 }
 
+.map-agent-layer--facade {
+  z-index: 22;
+}
+
 .map-agent-sprite {
   position: absolute;
   top: 0;

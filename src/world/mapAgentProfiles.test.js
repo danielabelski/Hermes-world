@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { AGENT_DEFINITIONS } from './data/agentDefinitions.js'
 import { getMapAgentSpriteSet } from './data/mapAgentManifest.js'
 import { MAP_AGENT_FALLBACK_IDS, MAP_AGENT_PROFILE_IDS, MAP_AGENT_PROFILES, getMapAgentProfile } from './data/mapAgentProfiles.js'
+import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
 
 test('map agent config explicitly covers the canonical twelve profiles', () => {
   assert.equal(MAP_AGENT_PROFILE_IDS.length, 12)
@@ -27,5 +28,39 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(profile.beforeNormalizationScale >= 1 && profile.beforeNormalizationScale <= 1.37)
     assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
+  }
+})
+
+test('all twelve agents stay visible at valid building or route interaction points on desktop and mobile', () => {
+  const now = Date.parse('2026-07-12T18:00:00.000Z')
+  const agents = Object.values(AGENT_DEFINITIONS).map((definition) => ({
+    id: definition.profile,
+    profile: definition.profile,
+    displayName: definition.displayName,
+    buildingId: definition.buildingId,
+    state: definition.profile === 'prospecting' ? 'observe' : 'working',
+    active: true,
+    isActive: true,
+  }))
+  const tasks = agents.map((agent) => ({
+    id: `task-${agent.profile}`,
+    assignee: agent.profile,
+    status: 'running',
+    transitionStartedAt: new Date(now - 30_000).toISOString(),
+    startedAt: new Date(now - 30_000).toISOString(),
+  }))
+
+  for (const layout of ['desktop', 'mobile']) {
+    const presentations = resolveMapAgentPresentations({ agents, tasks, now, layout })
+    assert.equal(presentations.length, 12)
+    for (const model of presentations) {
+      assert.ok(model.worldX >= 0 && model.worldX <= 100, `${layout}/${model.profileId}: x=${model.worldX}`)
+      assert.ok(model.worldY >= 0 && model.worldY <= 100, `${layout}/${model.profileId}: y=${model.worldY}`)
+      assert.equal(model.isInside, false, `${layout}/${model.profileId} must remain rendered`)
+    }
+    assert.deepEqual(
+      presentations.filter((model) => model.occupancyMode === 'facade-front').map((model) => model.profileId).sort(),
+      ['coder', 'researcher'],
+    )
   }
 })

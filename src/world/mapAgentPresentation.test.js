@@ -71,7 +71,7 @@ test('mobile layout selects road-calibrated journeys with continuous entrances a
   closeTo(mobileDispatch.worldX, 50)
   closeTo(mobileDispatch.worldY, 65.5)
 })
-test('Kowal follows dispatch, road, exact Forge threshold and work anchor', () => {
+test('Kowal follows dispatch and road, then remains visible at the Forge facade interaction point', () => {
   const dispatch = modelAt(START)
   assert.equal(dispatch.journeyStage, 'dispatch')
   assert.equal(dispatch.visualState, 'walk')
@@ -91,15 +91,16 @@ test('Kowal follows dispatch, road, exact Forge threshold and work anchor', () =
   const entering = modelAt(START + 6_750)
   assert.equal(entering.journeyStage, 'enter')
   closeTo(entering.worldX, 84)
-  closeTo(entering.worldY, 47.75)
+  closeTo(entering.worldY, 49)
 
   const working = modelAt(START + 7_100)
   assert.equal(working.journeyStage, 'work')
   assert.equal(working.visualState, 'work')
   assert.equal(working.buildingEffect, 'forge-fire')
-  assert.equal(working.isInside, true)
+  assert.equal(working.isInside, false)
+  assert.equal(working.occupancyMode, 'facade-front')
   closeTo(working.worldX, 84)
-  closeTo(working.worldY, 46.5)
+  closeTo(working.worldY, 49)
 })
 
 test('Kowal exits before success, returns by road and settles at home without teleporting', () => {
@@ -115,9 +116,10 @@ test('Kowal exits before success, returns by road and settles at home without te
   const exitStart = modelAt(completedAt, doneTask)
   assert.equal(exitStart.journeyStage, 'exit')
   assert.equal(exitStart.visualState, 'walk')
-  assert.equal(exitStart.isInside, true)
+  assert.equal(exitStart.isInside, false)
+  assert.equal(exitStart.occupancyMode, 'facade-front')
   closeTo(exitStart.worldX, 84)
-  closeTo(exitStart.worldY, 46.5)
+  closeTo(exitStart.worldY, 49)
 
   const doorway = modelAt(completedAt + 700, doneTask)
   assert.equal(doorway.journeyStage, 'success')
@@ -195,9 +197,10 @@ test('Uczony uses the same resolver and enters the Knowledge Archive through its
   assert.equal(working.journeyStage, 'work')
   assert.equal(working.visualState, 'work')
   assert.equal(working.buildingEffect, 'archive-pulse')
-  assert.equal(working.isInside, true)
-  closeTo(working.worldX, 27)
-  closeTo(working.worldY, 31)
+  assert.equal(working.isInside, false)
+  assert.equal(working.occupancyMode, 'facade-front')
+  closeTo(working.worldX, 28.5)
+  closeTo(working.worldY, 36.5)
 })
 
 test('Zwiadowca patrols, observes distinctly and stops as stuck on a safe road node', () => {

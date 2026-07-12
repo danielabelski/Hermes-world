@@ -4,7 +4,7 @@ import { getWorldLifeJourney } from './data/roadGraph.js'
 
 export const LIVING_AGENT_PHASES = Object.freeze([
   'resting', 'walking-to-work', 'arriving', 'working', 'observing', 'carrying',
-  'walking-home', 'success', 'waiting', 'warning', 'stuck', 'blocked', 'incident', 'unknown',
+  'walking-home', 'success', 'thinking', 'waiting', 'warning', 'stuck', 'blocked', 'incident', 'unknown',
 ])
 
 const TRANSITION_WINDOW_MS = 4_200
@@ -63,6 +63,9 @@ export function resolveLivingAgentState({ agent, tasks = [], alerts = [], now = 
   }
   if (['scheduled', 'ready', 'waiting', 'pending'].includes(String(task?.status ?? '').toLowerCase())) {
     return Object.freeze({ phase: 'waiting', task, alert, visible: true, location: 'home', buildingEffect: 'waiting', carryPackage: false })
+  }
+  if (String(agent.state ?? '').toLowerCase() === 'thinking' || String(task?.status ?? '').toLowerCase() === 'thinking') {
+    return Object.freeze({ phase: 'thinking', task, alert, visible: true, location: 'home', buildingEffect: 'thinking', carryPackage: false })
   }
   // Scripted demo beats and live domain events can explicitly request a
   // pedestrian transition. Resolve it before a long-running task settles at

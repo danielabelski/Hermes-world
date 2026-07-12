@@ -12,6 +12,7 @@ function MapAgentLayer({
   shouldSuppressSelection,
   animationNow = 0,
   animationEnabled = true,
+  layer = 'ground',
 }) {
   const sorted = selectMapAgentRenderSet(
     presentations.filter((model) => Number.isFinite(Number(model?.worldX)) && Number.isFinite(Number(model?.worldY))),
@@ -19,7 +20,7 @@ function MapAgentLayer({
   )
 
   return <div
-    className="map-agent-layer"
+    className={`map-agent-layer map-agent-layer--${layer}`}
     data-map-agent-count={sorted.length}
     data-culled-count={Math.max(0, presentations.length - sorted.length)}
     data-inside-count={sorted.filter((model) => model.isInside).length}

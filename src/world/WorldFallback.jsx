@@ -56,6 +56,8 @@ export default function WorldFallback() {
   } = useDomWorldCamera({ zoomPreference })
   const presentationNow = usePresentationClock()
   const presentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
+  const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
+  const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
   const routeDebug = resolveRouteDebugConfig(typeof window === 'undefined' ? '' : window.location.search, {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
@@ -67,7 +69,7 @@ export default function WorldFallback() {
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
       <MapAgentLayer
-        presentations={presentations}
+        presentations={groundPresentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
         animationEnabled={agentAnimationReady}
@@ -75,6 +77,15 @@ export default function WorldFallback() {
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
       <MapForegroundOcclusion layout={mapLayout} />
+      <MapAgentLayer
+        presentations={facadePresentations}
+        layer="facade"
+        selectedId={selection?.type === 'agent' ? selection.id : null}
+        animationNow={presentationNow}
+        animationEnabled={agentAnimationReady}
+        shouldSuppressSelection={shouldSuppressSelection}
+        onSelect={(profileId) => selectEntity('agent', profileId)}
+      />
       {routeDebug.enabled ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} config={routeDebug} /> : null}
       <div className="fallback-fountain"><i /><i /><i /></div>
     </div>

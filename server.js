@@ -10,6 +10,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import { createWorldEventHub } from './server/worldEventHub.js';
+import { normalizeHermesWorldEvent, WorldEventValidationError } from './src/world/events/worldEventContract.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,6 +83,7 @@ const latestHashedAsset = (prefix, ext) => {
 
 const app = express();
 const PORT = process.env.PORT || 4175;
+const worldEventHub = createWorldEventHub();
 
 app.disable('x-powered-by');
 app.use(compression());
@@ -386,6 +389,47 @@ const requirePanelAuthCookie = (req, res, next) => {
   }
   return next();
 };
+
+const isLoopbackRequest = (req) => {
+  const address = String(req.socket?.remoteAddress ?? '');
+  return address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1';
+};
+const canIngestWorldEvent = (req) => {
+  const token = process.env.HERMES_WORLD_INGEST_TOKEN;
+  if (!token) return isLoopbackRequest(req);
+  const supplied = req.get('x-hermes-world-token') || String(req.get('authorization') ?? '').replace(/^Bearer\s+/i, '');
+  return supplied === token;
+};
+
+app.get('/api/world/events/snapshot', (req, res) => {
+  const events = worldEventHub.snapshot();
+  res.json({ ok: true, events, cursor: events.at(-1)?.eventId ?? null });
+});
+
+app.get('/api/world/events/stream', (req, res) => {
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders?.();
+  res.write('retry: 3000\n\n');
+  const unsubscribe = worldEventHub.subscribe(res, req.get('last-event-id') || String(req.query.after ?? ''));
+  req.on('close', unsubscribe);
+});
+
+app.post('/api/world/events', pushJsonParser, (req, res) => {
+  if (!canIngestWorldEvent(req)) return res.status(403).json({ ok: false, error: 'World event ingestion is local-only or requires HERMES_WORLD_INGEST_TOKEN.' });
+  try {
+    const event = normalizeHermesWorldEvent(req.body);
+    const result = worldEventHub.publish(event);
+    return res.status(result.accepted ? 202 : 200).json({ ok: true, ...result });
+  } catch (error) {
+    if (error instanceof WorldEventValidationError) return res.status(400).json({ ok: false, error: error.code, detail: error.message });
+    console.error('[World Events] ingestion failed:', error);
+    return res.status(500).json({ ok: false, error: 'world_event_ingestion_failed' });
+  }
+});
 
 
 const kanbanJsonCache = new Map();

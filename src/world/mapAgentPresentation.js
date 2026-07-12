@@ -99,6 +99,7 @@ function visualStateForPhase(phase) {
   if (['working', 'carrying'].includes(phase)) return 'work'
   if (phase === 'observing') return 'observe'
   if (phase === 'success') return 'success'
+  if (phase === 'thinking') return 'thinking'
   if (phase === 'waiting') return 'waiting'
   if (phase === 'warning') return 'alert'
   if (phase === 'stuck') return 'stuck'
@@ -108,7 +109,7 @@ function visualStateForPhase(phase) {
 }
 
 function buildBaseModel({ agent, living, task, lifecycle }) {
-  const explicitlyOffline = lifecycle?.connection === 'offline' || lifecycle?.phase === 'unavailable'
+  const explicitlyOffline = agent.presence === 'offline' || agent.online === false || agent.state === 'offline' || lifecycle?.connection === 'offline' || lifecycle?.phase === 'unavailable'
   return {
     profileId: agent.profile,
     buildingId: living.buildingId ?? agent.buildingId,
@@ -126,6 +127,7 @@ function buildBaseModel({ agent, living, task, lifecycle }) {
     routeProgress: 0,
     isMoving: false,
     isInside: false,
+    occupancyMode: 'world',
     carryPackage: Boolean(living.carryPackage),
     buildingEffect: living.buildingEffect ?? 'idle',
     taskId: task?.id ?? null,
@@ -158,6 +160,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
   let signalState = base.signalState
   let isMoving = false
   let isInside = false
+  let occupancyMode = 'world'
 
   if (living.phase === 'walking-to-work') {
     routeProgress = progressFrom(now, task?.transitionStartedAt ?? task?.startedAt ?? task?.started_at, journey.walkDurationMs, agent.routeProgress)
@@ -168,17 +171,19 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
   } else if (living.phase === 'arriving') {
     const startedAt = asTime(task?.transitionStartedAt ?? task?.startedAt ?? task?.started_at, 0) + journey.walkDurationMs
     routeProgress = progressFrom(now, startedAt, journey.arriveDurationMs, agent.routeProgress)
-    sampled = sampleMapAgentRoute([entrance, work], routeProgress)
+    const interaction = point((journey.interactionPoint?.x ?? journey.entrancePoint.x) * 10, (journey.interactionPoint?.y ?? journey.entrancePoint.y) * 10)
+    sampled = sampleMapAgentRoute([entrance, interaction], routeProgress)
     journeyStage = 'enter'
     visualState = 'walk'
     isMoving = true
-    isInside = journey.workVisibility === 'inside' && routeProgress > journey.entranceVisibilityThreshold
+    occupancyMode = journey.occupancyMode
   } else if (['working', 'carrying'].includes(living.phase)) {
-    sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
+    const interaction = point((journey.interactionPoint?.x ?? journey.workPoint.x) * 10, (journey.interactionPoint?.y ?? journey.workPoint.y) * 10)
+    sampled = { worldX: interaction.x, worldY: interaction.y, direction: 'se' }
     routeProgress = 1
     journeyStage = 'work'
     visualState = 'work'
-    isInside = journey.workVisibility === 'inside'
+    occupancyMode = journey.occupancyMode
   } else if (living.phase === 'observing') {
     sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
     routeProgress = 1
@@ -190,11 +195,12 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     const exitDuration = Math.min(800, journey.arriveDurationMs)
     if (elapsed < exitDuration) {
       routeProgress = clamp(elapsed / exitDuration)
-      sampled = sampleMapAgentRoute([work, entrance], routeProgress)
+      const interaction = point((journey.interactionPoint?.x ?? journey.workPoint.x) * 10, (journey.interactionPoint?.y ?? journey.workPoint.y) * 10)
+      sampled = sampleMapAgentRoute([interaction, entrance], routeProgress)
       journeyStage = 'exit'
       visualState = 'walk'
       isMoving = true
-      isInside = journey.workVisibility === 'inside' && routeProgress < (1 - journey.entranceVisibilityThreshold)
+      occupancyMode = journey.occupancyMode
     } else {
       sampled = { worldX: entrance.x, worldY: entrance.y, direction: 'se' }
       routeProgress = 1
@@ -237,6 +243,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     routeProgress,
     isMoving,
     isInside,
+    occupancyMode,
     baseScale: 0.9 + clamp(sampled.worldY / 100, 0, 1) * 0.12,
   }
 }

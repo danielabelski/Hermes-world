@@ -1,5 +1,18 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## ACTIVE DEMO GATE — REAL HERMES EVENT PIPELINE (2026-07-12)
+
+- Nadrzędna zasada: wszystkie bieżące zmiany są wyłącznie w worktree `hermes-os-living-world-demo`, branch `demo`. Produkcja pozostaje nietknięta do jawnego GL użytkownika.
+- Zaimplementowano kontrakt rzeczywistych eventów, lokalnie zabezpieczony POST, SSE z heartbeat/replay, kolejność/deduplikację, kolejkę adaptera oraz źródła JSONL i upstream SSE.
+- Pierwszy pełny pionowy slice: Zwiadowca (`prospecting`) — assigned, droga, thinking, observe, success, wyjście/powrót przez istniejący FSM.
+- Widoczność budynków: wariant A. Kowal i Uczony pracują jako pełne sprite'y przy punkcie interakcji fasady, nad maską foreground. Warstwy są partycjonowane; brak podwójnego renderowania.
+- Centralne mapowanie profili obejmuje 12 agentów. `Komandos MoA` jest dozwolony wyłącznie dla warning/critical.
+- Ambient pozostaje oddzielny od stanu operacyjnego; pierwszy realny event zatrzymuje fixture scenariusza, a polling nie nadpisuje nowszego stanu SSE.
+- Walidacja ekranowa: BASELINE 393×852, LIGHT 393×852 i BASELINE 1366×768 — 12 agentów, online, brak błędów konsoli.
+- Szczegółowy kontrakt, komendy i architektura: `docs/HERMES_WORLD_REAL_EVENT_PIPELINE_DEMO.md`.
+- Następna decyzja: użytkownik ocenia demo RL/GL. Na RL poprawiać wyłącznie demo. Na GL wykonać osobny, audytowalny port do produkcji i pełną ponowną walidację; nie merge'ować automatycznie.
+
+
 ## IMPLEMENTATION WINDOW COMPLETE — 2026-07-11
 
 Ta sekcja zastępuje status wykonawczy niższych sekcji. Visual baseline pozostaje wiążący.

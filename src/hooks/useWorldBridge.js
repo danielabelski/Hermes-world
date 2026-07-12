@@ -5,6 +5,7 @@ import { DEMO_WORLD_PAYLOADS } from '../world/data/demoWorldData.js';
 import { getDemoScenario } from '../world/data/demoScenarios.js';
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from '../world/data/demoObservabilityFocus.js';
 import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
+import { applyWorldEventToSnapshot, applyWorldEventsToSnapshot } from '../world/events/worldEventReducer.js';
 
 // sync() runs every 5s so metrics stay live; WorldBridge independently reuses
 // 15s/60s domain caches for profiles, tasks and slower inventories.
@@ -46,6 +47,8 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   const bridgeRef = useRef(null);
   const retryTimerRef = useRef(null);
   const sceneScriptRef = useRef(null);
+  const eventDrivenRef = useRef(false);
+  const eventHistoryRef = useRef([]);
   const demoSceneStartedAtRef = useRef(Date.now());
   const mountedRef = useRef(false);
   const [state, setState] = useState(() => ({
@@ -72,11 +75,12 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       if (!mountedRef.current) return liveSnapshot;
 
       if (hasUsableHermesData(liveSnapshot)) {
-        const source = liveSnapshot.lifecycle?.source ?? 'live';
+        const resolvedSnapshot = eventHistoryRef.current.length ? applyWorldEventsToSnapshot(liveSnapshot, eventHistoryRef.current) : liveSnapshot;
+        const source = eventDrivenRef.current ? 'live' : liveSnapshot.lifecycle?.source ?? 'live';
         setState({
-          snapshot: liveSnapshot,
+          snapshot: resolvedSnapshot,
           source,
-          connection: liveSnapshot.lifecycle?.connection ?? 'online',
+          connection: eventDrivenRef.current ? 'online' : liveSnapshot.lifecycle?.connection ?? 'online',
           error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
         });
         return liveSnapshot;
@@ -123,6 +127,50 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     };
   }, [clearRetry, demoMode, enabled, refresh, retryIntervalMs]);
 
+  useEffect(() => {
+    if (!enabled || typeof EventSource === 'undefined') return undefined;
+    const source = new EventSource('/api/world/events/stream');
+    const applyEvents = (events) => {
+      if (!events.length) return;
+      const known = new Set(eventHistoryRef.current.map((event) => event.eventId));
+      eventHistoryRef.current = [...eventHistoryRef.current, ...events.filter((event) => !known.has(event.eventId))].slice(-500);
+      eventDrivenRef.current = true;
+      sceneScriptRef.current?.stop?.();
+      setState((previous) => {
+        const base = previous.snapshot ?? demoSnapshotRef.current;
+        return {
+          snapshot: applyWorldEventsToSnapshot(base, events),
+          source: 'live',
+          connection: 'online',
+          error: null,
+        };
+      });
+    };
+    const handleSnapshot = (message) => {
+      try {
+        const payload = JSON.parse(message.data || '{}');
+        applyEvents(Array.isArray(payload.events) ? payload.events : []);
+      } catch { /* malformed server events are ignored; ingestion validates them */ }
+    };
+    const handleEvent = (message) => {
+      try {
+        const event = JSON.parse(message.data || '{}');
+        if (!eventHistoryRef.current.some((item) => item.eventId === event.eventId)) eventHistoryRef.current = [...eventHistoryRef.current, event].slice(-500);
+        eventDrivenRef.current = true;
+        sceneScriptRef.current?.stop?.();
+        setState((previous) => ({
+          snapshot: applyWorldEventToSnapshot(previous.snapshot ?? demoSnapshotRef.current, event),
+          source: 'live',
+          connection: 'online',
+          error: null,
+        }));
+      } catch { /* malformed server events are ignored; ingestion validates them */ }
+    };
+    source.addEventListener('snapshot', handleSnapshot);
+    source.addEventListener('world_event', handleEvent);
+    return () => source.close();
+  }, [enabled]);
+
   /**
    * Give the offline preview an honest heartbeat: it is a deterministic
    * fixture, never a fabricated overlay on live Hermes data. Keeping this
@@ -138,7 +186,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       speed: DEMO_SCENE_SPEED,
       loop: true,
       onUpdate: (snapshot) => {
-        if (!mountedRef.current) return;
+        if (!mountedRef.current || eventDrivenRef.current) return;
         setState((previous) => {
           // A sync may have switched us to real telemetry between scene ticks.
           // Returning the previous object avoids stale demo updates winning.

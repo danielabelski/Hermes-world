@@ -29,6 +29,9 @@ function journeyFromNavigation(profile, layout) {
     entrancePoint: point(resolve(definition.entranceNodeId)),
     workPoint: point(resolve(definition.workNodeId)),
     safeBlockedPoint: point(resolve(definition.safeBlockedNodeId)),
+    approachPoint: point(resolve(definition.outboundNodeIds.at(-2) ?? definition.entranceNodeId)),
+    interactionPoint: point(resolve(definition.entranceNodeId)),
+    insidePoint: point(resolve(definition.workNodeId)),
     outboundWaypoints: pointsFor(nodes, definition.outboundNodeIds),
     returnWaypoints: pointsFor(nodes, definition.returnNodeIds),
     laneOffset: definition.laneOffset,
@@ -38,6 +41,7 @@ function journeyFromNavigation(profile, layout) {
     successDurationMs: definition.successDurationMs,
     workEffect: definition.workEffect,
     workVisibility: definition.workVisibility,
+    occupancyMode: definition.workVisibility === 'inside' ? 'facade-front' : 'world',
     entranceVisibilityThreshold: definition.entranceVisibilityThreshold,
   })
 }
