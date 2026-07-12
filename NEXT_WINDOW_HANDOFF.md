@@ -499,6 +499,7 @@ This section supersedes earlier active-milestone instructions.
 - Visual pre-hackathon GL: `b80a453`.
 - GL/hackathon milestone lock: `47a7ac0`.
 - Production telemetry/onboarding implementation: `e2230c2`.
+- Final Citadel PWA identity/service worker: `39495cb`.
 - Final documentation checkpoint: read `git log -1` after this document commit.
 
 ### Data contract
