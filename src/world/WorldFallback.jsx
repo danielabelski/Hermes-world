@@ -17,6 +17,7 @@ import { applyWorldDirectorPresentation } from './directors/worldDirectorPresent
 import WorldChoreographyLayer from '../components/world-directors/WorldChoreographyLayer.jsx'
 import WorldEnvironmentalLife from '../components/world-directors/WorldEnvironmentalLife.jsx'
 import { useEnvironmentalDirector } from './directors/useEnvironmentalDirector.js'
+import WorldOperationsLayer from '../components/world-directors/WorldOperationsLayer.jsx'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -64,7 +65,7 @@ export default function WorldFallback() {
   const operationalPresentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
   const worldDebugParam = typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('worldDebug')
   const worldDebug = worldDebugParam === 'visual' ? 'visual' : worldDebugParam === '1' ? 'panel' : 'off'
-  const environment = useEnvironmentalDirector({ now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations, visualDebug: worldDebug === 'visual' })
+  const environment = useEnvironmentalDirector({ now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations, lifecycle, visualDebug: worldDebug === 'visual' })
   const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
   const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
   const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
@@ -77,6 +78,7 @@ export default function WorldFallback() {
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
       <WorldEnvironmentalLife presentation={environment} debug={worldDebug} />
       <HermesInfrastructureLayer layout={mapLayout} />
+      <WorldOperationsLayer presentation={{ ...environment.worldOperations, layout: mapLayout }} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
       <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} />

@@ -53,3 +53,17 @@ Priority is operational alert/work → evidence-backed choreography → ambient.
 - Watcher sweep spans roughly 100 degrees, Archive windows sequence at four distinct luminance steps, and Sanctum uses a larger local turquoise breath.
 - Local dark backplates improve contrast only beneath each landmark; there is no global map glow.
 - Global Healthy plus a local Critical is rendered as `System stabilny · 1 incydent lokalny`, while the global severity remains Healthy and the local marker remains Critical.
+
+## Visible World Operations
+
+The main source of perceived life is now a bounded operations scheduler rather than pulses and local particles.
+
+- Opening: a bright packet traverses gate → main road → Citadel → district → Archive while the Citadel rings rotate and distribute energy.
+- Forge: furnace door, piston, gear, crane, finite sparks and chimney smoke form one eight-second mechanical cycle.
+- Watcher: dome calibration plus a long beam sweep with a hold and return.
+- Archive: four facade window stages, moving rune tape and a finite seal; real record mode requires event evidence.
+- Sanctum: two directional orbit points, contracting spiral and channel discharge.
+- Infrastructure: gate panels and a water turbine alternate in the quiet bridge windows.
+- Ambient schedule is deterministic over 48 seconds, has no dead window and renders one or two major operations only.
+- Real choreography replaces the scheduled operations immediately. A delegation produces evidence-backed transit; the target mechanical cycle starts only when the target has real operational activity.
+- The operations layer is presentation-only and cannot write tasks, alerts, statuses or active-agent counts.

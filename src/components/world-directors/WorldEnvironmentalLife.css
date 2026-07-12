@@ -1,7 +1,7 @@
 .world-environmental-life{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:layout paint;opacity:var(--environment-intensity,1);transition:opacity .45s ease}
 .world-environmental-life.is-paused *{animation-play-state:paused!important}
 .building-life-layer,.atmosphere-life-layer,.data-pulse-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.building-life-layer{z-index:2}.data-pulse-layer{z-index:3;overflow:visible}.atmosphere-life-layer{z-index:1}
+.building-life-layer{z-index:2;opacity:.22}.data-pulse-layer{display:none;z-index:3;overflow:visible}.atmosphere-life-layer{z-index:1}
 
 .building-life{position:absolute;left:var(--building-x);top:var(--building-y);width:1px;height:1px;opacity:.38;animation-delay:var(--building-offset);transform:translateZ(0)}
 .building-life::before{content:"";position:absolute;left:0;top:0;width:30px;height:24px;border-radius:50%;background:radial-gradient(ellipse,#04101870 0 28%,#04101830 48%,transparent 72%);transform:translate(-50%,-50%);opacity:.36}
@@ -53,13 +53,13 @@
 .data-pulse--warning .data-pulse__trail,.data-pulse--warning .data-pulse__packet{stroke:#f4a844;fill:#ffc35e}
 .data-pulse--critical .data-pulse__trail,.data-pulse--critical .data-pulse__packet,.data-pulse--error .data-pulse__trail,.data-pulse--error .data-pulse__packet{stroke:#ff5d58;fill:#ff716b}
 
-.atmosphere-water{position:absolute;left:40%;top:54%;width:25%;height:13%;opacity:.5;transform:skewX(-15deg);overflow:hidden;background:radial-gradient(ellipse at center,#03111d55,transparent 70%)}
+.atmosphere-water{position:absolute;left:40%;top:54%;width:25%;height:13%;opacity:.16;overflow:hidden;clip-path:ellipse(48% 42% at 50% 50%);background:radial-gradient(ellipse at center,#03111d55,transparent 70%)}
 .atmosphere-water b{position:absolute;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#c9f7ffc7,transparent);animation:water-reflection 6.1s ease-in-out infinite}
 .atmosphere-water b:nth-child(1){top:35%}.atmosphere-water b:nth-child(2){top:67%;animation-delay:3.1s}
 .atmosphere-forge-smoke{position:absolute;left:84%;top:49%;width:34px;height:64px;transform:translate(-50%,-100%)}
 .atmosphere-forge-smoke b{position:absolute;left:12px;bottom:0;width:10px;height:16px;border-radius:50%;background:linear-gradient(180deg,#e9f0ef99,#71808a66);opacity:0;animation:forge-smoke 6.4s ease-out infinite;animation-delay:2.5s}
 .atmosphere-forge-smoke b:nth-child(2){left:8px;animation-delay:3.4s}
-.atmosphere-fog{position:absolute;left:12%;top:24%;width:50%;height:11%;opacity:.2;background:linear-gradient(90deg,transparent,#d5ecff52,transparent);border-radius:50%;animation:fog-drift 16s ease-in-out infinite}
+.atmosphere-fog{position:absolute;left:12%;top:24%;width:50%;height:11%;opacity:.2;background:radial-gradient(ellipse at 25% 55%,#d5ecff4d,transparent 38%),radial-gradient(ellipse at 66% 42%,#c4e2f33d,transparent 44%);clip-path:polygon(0 48%,12% 22%,29% 31%,43% 9%,61% 26%,78% 17%,100% 46%,87% 73%,66% 64%,49% 91%,30% 69%,10% 82%);animation:fog-drift 16s ease-in-out infinite}
 .atmosphere-road-reflection b{position:absolute;width:34px;height:2px;background:linear-gradient(90deg,transparent,#d3f7ffbf,transparent);opacity:.26;transform:rotate(-13deg);animation:road-reflection 8s ease-in-out infinite}
 .atmosphere-road-reflection b:nth-child(1){left:46%;top:63%}.atmosphere-road-reflection b:nth-child(2){left:58%;top:72%;animation-delay:4.2s}
 
