@@ -1,6 +1,6 @@
 import { memo } from 'react'
-import desktopMapUrl from '../../assets/hermes-citadel-hd-v2.png'
-import mobileMapUrl from '../../assets/hermes-citadel-mobile-v2.png'
+import desktopMapUrl from '../../assets/hermes-citadel-hd-v2.webp'
+import mobileMapUrl from '../../assets/hermes-citadel-mobile-v2.webp'
 import { MAP_FOREGROUND_MASKS } from '../../world/data/mapForegroundMasks.js'
 import './MapForegroundOcclusion.css'
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './worldFallback.css'
 import { useWorldStore } from './store/worldStore.js'
-import citadelArtUrl from '../assets/hermes-citadel-hd-v2.png'
-import citadelMobileArtUrl from '../assets/hermes-citadel-mobile-v2.png'
+import citadelArtUrl from '../assets/hermes-citadel-hd-v2.webp'
+import citadelMobileArtUrl from '../assets/hermes-citadel-mobile-v2.webp'
 import HermesInfrastructureLayer from './HermesInfrastructureLayer.jsx'
 import MapAgentLayer from '../components/map-agents/MapAgentLayer.jsx'
 import RouteDebugOverlay from '../components/map-agents/RouteDebugOverlay.jsx'
@@ -25,6 +25,8 @@ const BUILDINGS = [
 export default function WorldFallback() {
   const mapVariant = getMapVariant(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
+  const [mapLoaded, setMapLoaded] = useState(false)
+  const [agentAnimationReady, setAgentAnimationReady] = useState(false)
   useEffect(() => {
     const query = window.matchMedia?.(MOBILE_MAP_QUERY)
     if (!query) return undefined
@@ -33,6 +35,11 @@ export default function WorldFallback() {
     query.addEventListener?.('change', syncLayout)
     return () => query.removeEventListener?.('change', syncLayout)
   }, [])
+  useEffect(() => {
+    if (!mapLoaded) return undefined
+    const timer = window.setTimeout(() => setAgentAnimationReady(true), 700)
+    return () => window.clearTimeout(timer)
+  }, [mapLoaded])
   const agents = useWorldStore((state) => state.agents ?? [])
   const tasks = useWorldStore((state) => state.tasks ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
@@ -55,7 +62,7 @@ export default function WorldFallback() {
   })
   return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
-      <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} /><img src={citadelArtUrl} alt="" /></picture>
+      <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
       <HermesInfrastructureLayer layout={mapLayout} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
@@ -63,6 +70,7 @@ export default function WorldFallback() {
         presentations={presentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
+        animationEnabled={agentAnimationReady}
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />

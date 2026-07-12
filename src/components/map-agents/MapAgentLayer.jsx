@@ -11,6 +11,7 @@ function MapAgentLayer({
   onSelect,
   shouldSuppressSelection,
   animationNow = 0,
+  animationEnabled = true,
 }) {
   const sorted = selectMapAgentRenderSet(
     presentations.filter((model) => Number.isFinite(Number(model?.worldX)) && Number.isFinite(Number(model?.worldY))),
@@ -27,8 +28,12 @@ function MapAgentLayer({
     {sorted.map((model, index) => {
       const cycleMs = model.walkCycleMs ?? (model.profileId === 'coder' ? 720 : model.profileId === 'prospecting' ? 520 : 620)
       const stagger = index * 43
-      const frameIndex = model.frameIndex ?? Math.floor((animationNow + stagger) / Math.max(120, cycleMs / 4)) % 4
-      const animationPhase = ((animationNow + stagger) % Math.max(900, model.idleCycleMs ?? 3_600)) / Math.max(900, model.idleCycleMs ?? 3_600)
+      const frameIndex = animationEnabled
+        ? model.frameIndex ?? Math.floor((animationNow + stagger) / Math.max(120, cycleMs / 4)) % 4
+        : 0
+      const animationPhase = animationEnabled
+        ? ((animationNow + stagger) % Math.max(900, model.idleCycleMs ?? 3_600)) / Math.max(900, model.idleCycleMs ?? 3_600)
+        : 0
       return <MapAgentSprite
         key={model.profileId}
         profileId={model.profileId}

@@ -14,7 +14,7 @@
   position: absolute;
   z-index: -2;
   inset: -5%;
-  background: linear-gradient(180deg, rgb(4 12 13 / .24), rgb(5 15 12 / .78) 62%, #07110f), url('../assets/hermes-citadel-mobile-v2.png') center 45% / cover no-repeat;
+  background: linear-gradient(180deg, rgb(4 12 13 / .24), rgb(5 15 12 / .78) 62%, #07110f), url('../assets/hermes-citadel-mobile-v2.webp') center 45% / cover no-repeat;
   filter: saturate(.72) brightness(.66) contrast(.98);
   transform: scale(1.04);
 }

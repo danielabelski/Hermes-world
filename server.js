@@ -1,5 +1,6 @@
 ﻿/* global process */
 import express from 'express';
+import compression from 'compression';
 import fs from 'fs';
 import http from 'http';
 import os from 'os';
@@ -82,6 +83,7 @@ const app = express();
 const PORT = process.env.PORT || 5173;
 
 app.disable('x-powered-by');
+app.use(compression());
 
 
 app.use((req, res, next) => {
@@ -781,19 +783,30 @@ app.use((req, res, next) => {
     assetBufferCache.set(cacheKey, cached);
   }
 
-  res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+  const requestedAssetExists = fs.existsSync(requestedAssetPath);
+  res.setHeader('Cache-Control', requestedAssetExists
+    ? 'public, max-age=31536000, immutable'
+    : 'no-store, max-age=0, must-revalidate');
   res.type(isJs ? 'application/javascript' : 'text/css');
   res.send(cached);
 });
 app.use(express.static(distDir, {
-  etag: false,
-  maxAge: 0,
-  setHeaders: (res) => {
-    res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
+  etag: true,
+  setHeaders: (res, filePath) => {
+    const relativePath = path.relative(distDir, filePath).replaceAll('\\', '/');
+    if (relativePath.startsWith('assets/') || /(?:^|\/)citadel-.+-v\d+\./.test(relativePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return;
+    }
+    if (relativePath.startsWith('map-agents/')) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+      return;
+    }
+    if (relativePath === 'index.html' || relativePath === 'manifest.json' || relativePath === 'sw.js') {
+      res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
+      return;
+    }
+    res.setHeader('Cache-Control', 'public, max-age=86400');
   }
 }));
 

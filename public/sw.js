@@ -1,6 +1,6 @@
 ﻿/* global clients */
 
-const CACHE_NAME = 'hermes-citadel-v1';
+const CACHE_NAME = 'hermes-citadel-v3';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(Promise.resolve());
@@ -30,8 +30,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    icon: '/citadel-mark.svg',
-    badge: '/citadel-mark.svg',
+    icon: '/citadel-icon-192-v3.png',
+    badge: '/citadel-icon-192-v3.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/'

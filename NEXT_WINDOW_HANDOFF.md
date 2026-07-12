@@ -1,4 +1,4 @@
-﻿# HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
+# HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
 ## IMPLEMENTATION WINDOW COMPLETE — 2026-07-11
 
@@ -509,5 +509,64 @@ Read `docs/HACKATHON_PRODUCTION_DATA_MAP.md`. It is the canonical source→adapt
 ### Remaining work after this checkpoint
 
 Only authenticated phone verification and targeted defects found there. Do not restart map/status/UI design. Future post-baseline APIs may add queue/RAG/latency/tracing, but they are not authorized or required for this hackathon base.
+
+---
+
+## FINAL V1 CORRECT AFTER HACKATHON — USER GL 2026-07-12
+
+This section supersedes every earlier active directive in this file. The user approved the live mobile result after the production integration, PWA icon correction and performance pass. Treat this state as the restorable V1 baseline.
+
+### Accepted production state
+
+- BASELINE remains the production map default; LIGHT remains fallback and STRONG optional showcase.
+- The single DOM map-agent renderer, twelve role identities, routes, waypoint graph, FSM, anchors, scale, depth ordering and observability grammar remain locked.
+- Default `/` uses the real Cat-compatible production telemetry path. Demo data remains explicit only.
+- The Hermes Citadel login/start surface and gold/cyan Citadel PWA icon replace inherited Hermes OS Cat branding.
+- Android/iOS install assets use unique V3 filenames to bypass launcher cache. The final 192, 180 and 512 px PNGs were visually and pixel-dimension verified.
+- Exactly one detached production server runs on port `4175` and remains alive after Codex closes while the laptop remains powered.
+
+### Final performance pass
+
+- Express compression is enabled for text responses.
+- HTML, API, manifest and service worker remain `no-store`; hashed Vite assets use one-year immutable caching; map-agent WebP assets use a seven-day cache with stale-while-revalidate.
+- The locked mobile map was converted without resizing or geometry changes from 3.54 MB PNG to 0.53 MB WebP (`941×1672`).
+- The locked desktop map was converted without resizing or geometry changes from 3.49 MB PNG to 0.49 MB WebP (`1535×1024`).
+- Login, foreground occlusion and world background all use the new WebP assets; the heavy V2 PNGs are absent from the final production bundle.
+- The map receives high fetch priority after authentication.
+- Agent animation frames are deferred until 700 ms after the map image loads. The first mobile frame dropped from 52 discovered resources to 16; animations then hydrate normally.
+- Measured local mobile navigation at `390×844`: approximately 730 ms to the initial loaded document in the audit browser.
+
+### Final verification
+
+- Production build: passed (`812` modules).
+- Tests: `33/33` passed.
+- ESLint: passed.
+- `validate:world-life`: passed.
+- LAN production smoke: HTTP 200 on `http://192.168.8.132:4175`.
+- Compression header verified for JavaScript.
+- Cache headers verified for hashed assets and map-agent sprites.
+- Mobile visual smoke at `390×844`: passed; WebP map retained the accepted composition and readability.
+
+### Backup and restore policy
+
+- The final cloud archive contains the complete committed source tree, public assets, tests, documentation, production `dist`, package lock, full Git history as a `git bundle`, checksums and restore instructions.
+- `node_modules` is intentionally omitted because it is reproducible with `npm ci` and would make the archive unnecessarily large.
+- `.env*` and runtime secret-bearing files under `data/` are intentionally excluded from the cloud ZIP. VAPID keys regenerate on first server start. This prevents credentials and push subscriptions from being exposed in Google Drive.
+- The canonical release commit is the commit whose subject is `release: V1 correct after hackathon`. Read the exact hash with `git log --grep="release: V1 correct after hackathon" -1 --oneline`.
+
+### Exact restore commands
+
+```powershell
+git clone hermes-citadel-v1-complete.bundle hermes-os-living-world
+Set-Location hermes-os-living-world
+npm.cmd ci
+npm.cmd run build
+$env:PORT='4175'
+node server.js
+```
+
+### Future work boundary
+
+Do not reopen visual direction or replace the map. Any later work must begin from a measured user-facing defect or a hackathon requirement. Preserve real telemetry as the source of truth and keep demo fixtures explicit.
 
 ---
