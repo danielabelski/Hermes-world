@@ -1,13 +1,87 @@
-.world-environmental-life{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;opacity:.68;contain:layout paint}
-.environment-runes,.environment-lights,.environment-path-signals{position:absolute;inset:0}
-.environment-runes b{position:absolute;width:8px;height:8px;border:1px solid #9be6ff99;box-shadow:0 0 7px #4dcfff55;transform:rotate(45deg);animation:environment-rune 5s ease-in-out infinite}
-.environment-runes b:nth-child(1){left:34%;top:54%}.environment-runes b:nth-child(2){left:61%;top:39%;animation-delay:2s}.environment-runes b:nth-child(3){left:70%;top:69%;animation-delay:4s}
-.environment-lights b{position:absolute;width:5px;height:5px;border-radius:50%;background:#ffe9a8;box-shadow:0 0 8px 2px #ffc65d88;animation:environment-light 4s ease-in-out infinite}
-.environment-lights b:nth-child(1){left:29%;top:34%}.environment-lights b:nth-child(2){left:78%;top:49%;animation-delay:1.3s}.environment-lights b:nth-child(3){left:38%;top:76%;animation-delay:2.6s}.environment-lights b:nth-child(4){left:68%;top:57%;animation-delay:3.8s}
-.environment-path-signals b{position:absolute;width:5px;height:5px;border-radius:50%;background:#a6ecff;box-shadow:0 0 9px 2px #55cfff99;opacity:0;animation:environment-path 7s linear infinite}
-.environment-path-signals b:nth-child(1){left:49%;top:60%}.environment-path-signals b:nth-child(2){left:42%;top:67%;animation-delay:3s}.environment-path-signals b:nth-child(3){left:58%;top:71%;animation-delay:6s}
-.layout-mobile .environment-runes b:nth-child(1){left:36%;top:69%}.layout-mobile .environment-runes b:nth-child(2){left:65%;top:70%}.layout-mobile .environment-runes b:nth-child(3){left:51%;top:58%}
-.layout-mobile .environment-lights b:nth-child(1){left:27%;top:48%}.layout-mobile .environment-lights b:nth-child(2){left:64%;top:70%}.layout-mobile .environment-lights b:nth-child(3){left:40%;top:78%}.layout-mobile .environment-lights b:nth-child(4){left:72%;top:55%}
-@keyframes environment-rune{50%{opacity:.32;transform:rotate(225deg) scale(.72)}}@keyframes environment-light{50%{opacity:.34;transform:scale(.72)}}@keyframes environment-path{0%,52%{opacity:0;transform:translate(-8px,8px)}62%{opacity:.8}100%{opacity:0;transform:translate(12px,-24px)}}
-@media(max-width:700px){.world-environmental-life{opacity:.66}.environment-runes b:nth-child(3){display:none}}
-@media(prefers-reduced-motion:reduce){.world-environmental-life *{animation:none!important}.environment-path-signals{display:none}}
+.world-environmental-life{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:layout paint;opacity:var(--environment-intensity,1);transition:opacity .45s ease}
+.world-environmental-life.is-paused *{animation-play-state:paused!important}
+.building-life-layer,.atmosphere-life-layer,.data-pulse-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.building-life-layer{z-index:2}.data-pulse-layer{z-index:3;overflow:visible}.atmosphere-life-layer{z-index:1}
+
+.building-life{position:absolute;left:var(--building-x);top:var(--building-y);width:1px;height:1px;opacity:.3;animation-delay:var(--building-offset);transform:translateZ(0)}
+.building-life.is-ambient-active{opacity:calc(.58 + var(--building-intensity)*.32)}
+.building-life:not(.is-ambient-active):not(.has-event-response) *{animation-play-state:paused!important}
+.building-life__core,.building-life__wave,.building-life__mechanism,.building-life__particles{position:absolute;left:0;top:0;display:block;transform:translate(-50%,-50%)}
+.building-life__core{width:8px;height:8px;border-radius:50%;background:#8fe9ffb8;box-shadow:0 0 7px #59dfff88;animation:building-core-breath 5.4s ease-in-out infinite;animation-delay:var(--building-offset)}
+.building-life__wave{width:18px;height:9px;border:1px solid #91eaff70;border-radius:50%;opacity:0;animation:building-wave 9s ease-out infinite;animation-delay:calc(var(--building-offset) + 1s)}
+.building-life__mechanism{width:16px;height:8px;border:1px dashed #9ae9ff70;border-radius:50%;animation:building-mechanism 16s linear infinite;animation-delay:var(--building-offset)}
+.building-life__particles{display:none;width:26px;height:26px}
+.building-life__particles b{position:absolute;width:3px;height:3px;border-radius:50%;background:#a8eeff;opacity:0;animation:building-mote 7s ease-out infinite;animation-delay:calc(var(--building-offset) + var(--particle-delay,0s))}
+.building-life__particles b:nth-child(1){left:5px;top:17px;--particle-delay:0s}.building-life__particles b:nth-child(2){left:18px;top:20px;--particle-delay:2.1s}.building-life__particles b:nth-child(3){left:12px;top:22px;--particle-delay:4.3s}
+
+.building-life--citadel .building-life__core{width:11px;height:11px;background:#a7efffd0;box-shadow:0 0 10px #63dfff99}
+.building-life--citadel .building-life__mechanism{display:none}
+.building-life--forge .building-life__core{width:12px;height:7px;background:#ffb04bcf;box-shadow:0 0 9px #ff7b2c99;border-radius:45%}
+.building-life--forge .building-life__wave{border-color:#ffb45f88;width:20px;height:7px}
+.building-life--forge .building-life__mechanism{display:block;border-color:#ffc06eaa;animation-duration:13s}
+.building-life--forge .building-life__particles{display:block}
+.building-life--forge .building-life__particles b{background:#ffca6b;animation-duration:5.8s}
+.building-life--watcher .building-life__core{width:7px;height:7px;background:#84e8ff}
+.building-life--watcher .building-life__wave{width:28px;height:13px;border-top-color:#9defff;border-bottom-color:transparent;animation:watcher-scan 7.6s ease-in-out infinite}
+.building-life--watcher .building-life__mechanism{width:21px;height:6px;border-style:solid;border-color:#81e7ff55 transparent transparent;animation-duration:11s}
+.building-life--watcher .building-life__particles{display:none}
+.building-life--archive .building-life__core{width:16px;height:7px;border-radius:2px;background:linear-gradient(90deg,#f1d78588,#fff0ad,#f1d78588);box-shadow:0 0 7px #e9ca6f77;animation:archive-windows 8s steps(3,end) infinite}
+.building-life--archive .building-life__wave,.building-life--archive .building-life__mechanism{border-color:#efd88975}
+.building-life--archive .building-life__particles{display:block}
+.building-life--archive .building-life__particles b{background:#ffe6a0}
+.building-life--sanctum .building-life__core{width:10px;height:7px;background:#72ebbfaa;box-shadow:0 0 8px #4ee8bd88}
+.building-life--sanctum .building-life__wave{width:23px;height:11px;border-color:#6ce8c482;animation-duration:11s}
+.building-life--sanctum .building-life__mechanism{display:none}
+.building-life--sanctum .building-life__particles{display:block}
+.building-life--sanctum .building-life__particles b{background:#85f4d2}
+
+.building-life.has-event-response{opacity:1;z-index:2}
+.building-life.has-event-response .building-life__core{animation-duration:1.3s;box-shadow:0 0 12px 3px #9cecffbb}
+.building-life[data-response-cue="record"] .building-life__core{background:#ffe49a;box-shadow:0 0 12px 3px #f7cf62aa}
+.building-life[data-response-cue="warning"] .building-life__core,.building-life[data-response-cue="alerted"] .building-life__core{background:#ffc164;box-shadow:0 0 12px 3px #ef9628aa}
+.building-life[data-response-cue="critical"] .building-life__core,.building-life[data-response-cue="error"] .building-life__core{background:#ff635e;box-shadow:0 0 14px 4px #ef342eaa;animation-duration:.72s}
+.building-life[data-response-cue="working"] .building-life__mechanism,.building-life[data-response-cue="work"] .building-life__mechanism{animation-duration:5s}
+.building-life[data-response-cue="waiting"]{opacity:.64}
+
+.data-pulse__trail{fill:none;stroke:#7cdfff;stroke-width:.5;stroke-dasharray:1 4;opacity:.16}
+.data-pulse__packet{fill:#9ceaff;opacity:.54}
+.data-pulse--event .data-pulse__trail{stroke-width:1.05;stroke-dasharray:2 2;opacity:.72}
+.data-pulse--event .data-pulse__packet{fill:#d8f8ff;opacity:1}
+.data-pulse--record .data-pulse__trail,.data-pulse--record .data-pulse__packet{stroke:#f5d979;fill:#ffe49d}
+.data-pulse--warning .data-pulse__trail,.data-pulse--warning .data-pulse__packet{stroke:#f4a844;fill:#ffc35e}
+.data-pulse--critical .data-pulse__trail,.data-pulse--critical .data-pulse__packet,.data-pulse--error .data-pulse__trail,.data-pulse--error .data-pulse__packet{stroke:#ff5d58;fill:#ff716b}
+
+.atmosphere-water{position:absolute;left:42%;top:54%;width:17%;height:12%;opacity:.32;transform:skewX(-15deg);overflow:hidden}
+.atmosphere-water b{position:absolute;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,#8fe9ff99,transparent);animation:water-reflection 6.5s ease-in-out infinite}
+.atmosphere-water b:nth-child(1){top:35%}.atmosphere-water b:nth-child(2){top:67%;animation-delay:3.1s}
+.atmosphere-forge-smoke{position:absolute;left:81%;top:40%;width:24px;height:40px}
+.atmosphere-forge-smoke b{position:absolute;bottom:0;width:7px;height:11px;border-radius:50%;background:#d6e2e555;opacity:0;animation:forge-smoke 7s ease-out infinite}
+.atmosphere-forge-smoke b:nth-child(2){left:8px;animation-delay:3.4s}
+.atmosphere-fog{position:absolute;left:13%;top:25%;width:38%;height:12%;opacity:.14;background:linear-gradient(90deg,transparent,#d5ecff55,transparent);border-radius:50%;animation:fog-drift 18s ease-in-out infinite}
+.atmosphere-road-reflection b{position:absolute;width:22px;height:2px;background:linear-gradient(90deg,transparent,#b9efff88,transparent);opacity:.18;transform:rotate(-13deg);animation:road-reflection 9s ease-in-out infinite}
+.atmosphere-road-reflection b:nth-child(1){left:46%;top:63%}.atmosphere-road-reflection b:nth-child(2){left:58%;top:72%;animation-delay:4.2s}
+
+.layout-mobile .atmosphere-water{left:43%;top:58%;width:20%;height:10%}
+.layout-mobile .atmosphere-forge-smoke{left:28%;top:41%}
+.layout-mobile .atmosphere-fog{left:28%;top:30%;width:48%}
+.layout-mobile .atmosphere-road-reflection b:nth-child(1){left:45%;top:64%}.layout-mobile .atmosphere-road-reflection b:nth-child(2){left:57%;top:73%}
+.is-entry-active .building-life--citadel .building-life__core{animation-name:entry-core-pulse;animation-duration:2.4s}
+.is-entry-active .building-life--forge .building-life__core{animation-name:entry-forge-wake;animation-duration:3.2s}
+
+.environment-debug-panel{position:fixed;left:8px;bottom:8px;z-index:1000;display:grid;gap:2px;max-width:min(330px,calc(100vw - 16px));padding:9px 11px;border:1px solid #7ee7ff77;border-radius:8px;background:#071521e8;color:#d9f7ff;font:11px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;pointer-events:none}.environment-debug-panel strong{color:#86ebff}
+
+@keyframes building-core-breath{0%,100%{opacity:.48;transform:translate(-50%,-50%) scale(.78)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes building-wave{0%,72%{opacity:0;transform:translate(-50%,-50%) scale(.55)}82%{opacity:.62}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
+@keyframes building-mechanism{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes building-mote{0%,58%{opacity:0;transform:translateY(4px)}70%{opacity:.64}100%{opacity:0;transform:translateY(-17px)}}
+@keyframes watcher-scan{0%,100%{opacity:.12;transform:translate(-50%,-50%) rotate(-20deg) scaleX(.65)}50%{opacity:.74;transform:translate(-50%,-50%) rotate(24deg) scaleX(1.2)}}
+@keyframes archive-windows{0%,100%{opacity:.34}35%{opacity:.9}68%{opacity:.55}}
+@keyframes water-reflection{0%,100%{opacity:.12;transform:translateX(-18%)}50%{opacity:.72;transform:translateX(20%)}}
+@keyframes forge-smoke{0%{opacity:0;transform:translate(0,5px) scale(.65)}22%{opacity:.35}100%{opacity:0;transform:translate(8px,-27px) scale(1.25)}}
+@keyframes fog-drift{0%,100%{opacity:.08;transform:translateX(-5%)}50%{opacity:.18;transform:translateX(8%)}}
+@keyframes road-reflection{0%,100%{opacity:.06;transform:rotate(-13deg) translateX(-6px)}50%{opacity:.34;transform:rotate(-13deg) translateX(10px)}}
+@keyframes entry-core-pulse{0%{opacity:.35;transform:translate(-50%,-50%) scale(.6)}36%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}70%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.92)}}
+@keyframes entry-forge-wake{0%,22%{opacity:.25;transform:translate(-50%,-50%) scale(.7)}55%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{opacity:.68;transform:translate(-50%,-50%) scale(.92)}}
+
+@media(max-width:700px){.data-pulse__trail{stroke-width:.38}.data-pulse--event .data-pulse__trail{stroke-width:.78}.building-life__wave{transform:translate(-50%,-50%) scale(.86)}.atmosphere-road-reflection b:nth-child(2),.atmosphere-water b:nth-child(2),.atmosphere-forge-smoke b:nth-child(2){display:none}.building-life__particles b:nth-child(3){display:none}.environment-debug-panel{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.world-environmental-life *{animation:none!important}.data-pulse-layer{display:none}.building-life{opacity:.32}.building-life__core{opacity:.3;box-shadow:none}.building-life__wave,.building-life__mechanism,.building-life__particles,.atmosphere-forge-smoke,.atmosphere-fog,.atmosphere-road-reflection{display:none}.atmosphere-water{opacity:.18}}

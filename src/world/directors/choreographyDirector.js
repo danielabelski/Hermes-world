@@ -140,13 +140,13 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   const elapsed = Math.max(0, now - sequence.receivedAt)
   const sinceTerminal = sequence.terminalAt === null ? null : Math.max(0, now - sequence.terminalAt)
   const signals = []
-  if (elapsed < 950) signals.push(freeze({ kind: 'message-pulse', runId: sequence.runId, targetAgentId: null, evidenceEventId: sequence.evidenceEventIds[0] }))
-  if (elapsed >= 180 && (sinceTerminal === null || sinceTerminal < RETURN_DELAY_MS)) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+  if (elapsed < 950) signals.push(freeze({ kind: 'message-pulse', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds[0] }))
+  if (elapsed >= 180 && (sinceTerminal === null || sinceTerminal < RETURN_DELAY_MS)) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
   if (sequence.kind === 'delegation' && sequence.targetAgentId && (sinceTerminal === null || sinceTerminal < RETURN_DELAY_MS)) {
-    signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+    signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, buildingId: sequence.buildingId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
   }
   if (sequence.terminalState === 'success' && sinceTerminal >= ARCHIVE_DELAY_MS && sinceTerminal < RETURN_DELAY_MS + 1_600) {
-    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
   }
   const motion = actorMotion(sequence, now, layout)
   return freeze({
