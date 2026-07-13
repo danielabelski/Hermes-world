@@ -119,3 +119,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 88/88 testów PASS; `validate:world-life` PASS; lint PASS; build PASS (844 moduły, 3,46 s); serwer demo HTTP 200.
 - Produkcja: nietknięta. Zmiany wyłącznie na branchu demo/Build Week.
 - Snapshot startowy: `20260713T214031Z-git-snapshot.txt`.
+
+## BW-2026-07-14-011 — Korekta percepcyjna chmury i wody
+
+- Czas Europe/Warsaw: 2026-07-14 00:15+.
+- Czas UTC: 2026-07-13 22:15+.
+- Powód: po skutecznej optymalizacji użytkownik potwierdził odzyskaną szybkość, ale ruch chmury i wody stał się zbyt subtelny.
+- Wykonano bez dodawania elementów: jedna chmura ma mocniejszy gradient i większy zasięg, ale nie używa `blur()`; każda istniejąca ścieżka wody pokazuje dwa krótkie refleksy zamiast jednego prawie niewidocznego punktu.
+- Koszt: liczba ścieżek i animacji bez wzrostu; kontrola aktywnej sceny wykazała 0 px animowanego blur w warstwie środowiskowej objętej audytem.
+- Walidacja: 88/88 testów PASS; world-life PASS; lint PASS; build PASS (844 moduły, 3,78 s).
+- Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
+- Snapshot wejściowy: `20260713T221311Z-git-snapshot.txt`.

@@ -95,3 +95,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Test polityki jakości: **PASS** — progi 52/42 FPS, histereza trzech zdrowych próbek, brak selektorów adaptive quality obejmujących `WorldOperationsLayer`.
 - Ograniczenie: osadzona przeglądarka automatyzacyjna działała jako `document.visibilityState=hidden` i poprawnie wstrzymała `requestAnimationFrame`; nie użyto tej próbki jako fałszywego wyniku FPS. Rzeczywisty aktywny klient zapisuje wynik w `data-measured-fps` i sam dobiera `data-motion-quality`.
 - Produkcja: **PASS — nietknięta**.
+
+## TEST-BW-005 — Perceptual visibility bez regresji wydajności
+
+- Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `3eeca294ba69c69dda5ed75f41aed55594da80e1`.
+- Kontrakt wody: liczba ścieżek bez wzrostu; `stroke-dasharray: 3.2 24 1.4 71.4`; dwa krótkie refleksy, brak szerokiej grupy soft-water.
+- Kontrakt chmury: jeden element; `filter: none`; animacja transform 23 s desktop / 21 s mobile; brak `cloud-wisp`.
+- Pomiar kontrolny aktywnej sceny desktop: 36 widocznych animacji w bieżącym stanie, 0 px animowanej powierzchni z CSS `blur()`.
+- `npm.cmd test`: **PASS 88/88**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, 844 moduły, 3,78 s; rozmiary głównych chunków bez istotnej zmiany.
+- Produkcja: **PASS — nietknięta**.
