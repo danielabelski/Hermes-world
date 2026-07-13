@@ -130,3 +130,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 88/88 testów PASS; world-life PASS; lint PASS; build PASS (844 moduły, 3,78 s).
 - Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
 - Snapshot wejściowy: `20260713T221311Z-git-snapshot.txt`.
+
+## BW-2026-07-14-012 — Maskowany przepływ wody i usunięcie pasów kompozytora
+
+- Czas Europe/Warsaw: 2026-07-14 00:35–01:25.
+- Czas UTC: 2026-07-13 22:35–23:25.
+- Branch/startowy HEAD: `build-week/hermes-world` / `0f75829117e870d819b526f89d3806d1a90e4a54`.
+- Powód: użytkownik wskazał poruszający się pas po lewej stronie mapy oraz brak czytelnego przepływu rzeczywistych powierzchni wody.
+- Audyt wizualny 393×852 wykazał dwa niezależne problemy: pełnoekranowy cień chmury oraz błędy kompozytora przy ukrywaniu warstw UI w trybie ambient.
+- Wykonano: całkowicie usunięto wadliwy pełnoekranowy cień chmury; usunięto liniowe SVG udające przepływ; dodano lokalne, małe powierzchnie CSS ograniczone maskami do lewej i prawej wody, górnych kanałów oraz desktopowego portu/kanałów.
+- Ruch wody: nieregularne refleksy przesuwają się wewnątrz nieruchomych masek. Próbka 1,8 s wykazała zmianę położenia o około 22–31 px. Warstwa nie kopiuje całej mapy, nie używa animowanego `blur`, filtrów ani pełnoekranowego blend mode.
+- Tryb ambient: niekrytyczne panele są usuwane przez `display:none`, zamiast pozostawiać transformowane/backdrop-filter warstwy powodujące czarne wycięcia. Header, komunikat i sygnał stanu pozostają widoczne.
+- Walidacja: 88/88 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (843 moduły); mobilny ambient po 7,6 s bez czarnych pasów.
+- Produkcja: nietknięta; zmiany wyłącznie na demo/Build Week.

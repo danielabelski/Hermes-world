@@ -9,8 +9,8 @@ button, input, textarea { font: inherit; }
 .world-canvas canvas { display: block; width: 100%; height: 100%; }
 .world-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .world-overlay > * { pointer-events: auto; }
-.world-overlay > :is(.world-controls,.desktop-command-panel,.world-status-badge,.world-insight-panel,.world-focus-ring,.demo-legend,.world-event-ticker,.world-controls-help,.world-mobile-nav,.world-legend,.world-desktop-hint) { transition: opacity 260ms ease, transform 260ms ease; }
-.world-shell.is-ambient .world-overlay > :is(.world-controls,.desktop-command-panel,.world-status-badge,.world-insight-panel,.world-focus-ring,.demo-legend,.world-event-ticker,.world-controls-help,.world-mobile-nav,.world-legend,.world-desktop-hint) { opacity: 0!important; transform: translateY(7px)!important; pointer-events: none!important; }
+.world-overlay > :is(.world-controls,.desktop-command-panel,.world-status-badge,.world-insight-panel,.world-focus-ring,.demo-legend,.world-event-ticker,.world-controls-help,.world-mobile-nav,.world-legend,.world-desktop-hint) { transition: opacity 180ms ease; }
+.world-shell.is-ambient .world-overlay > :is(.world-controls,.desktop-command-panel,.world-status-badge,.world-insight-panel,.world-focus-ring,.demo-legend,.world-event-ticker,.world-controls-help,.world-mobile-nav,.world-legend,.world-desktop-hint) { display: none!important; }
 .status-bar { position: absolute; top: max(14px, env(safe-area-inset-top)); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: center; padding: 10px 13px; border: 1px solid #f2db9a42; border-radius: 14px; background: #15251ddd; box-shadow: 0 8px 28px #06100aaa; backdrop-filter: blur(10px); font-size: 12px; letter-spacing: .08em; }
 .health-ribbon { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; border: 0; background: linear-gradient(90deg, #65ad76, #e9c76a, #65ad76); box-shadow: 0 0 18px #d9be63a8; }
 .health-ribbon.warning { background: linear-gradient(90deg, #d18b3d, #f2cb64, #d18b3d); }

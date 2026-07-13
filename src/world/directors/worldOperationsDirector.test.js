@@ -225,7 +225,7 @@ test('world buildings use transparent sprite strips without geometric placeholde
     assert.equal(jsx.includes(rejected), false)
     assert.equal(css.includes(rejected), false)
   }
-  for (const asset of ['forge-fire', 'forge-smoke', 'forge-sparks', 'citadel-rune-ring', 'citadel-core-pulse', 'citadel-energy-wave', 'watcher-lens-pulse', 'watcher-scan-beam', 'archive-window-glow', 'archive-data-runes', 'sanctum-energy-orbit', 'gate-energy-lock', 'water-reflection']) {
+  for (const asset of ['forge-fire', 'forge-smoke', 'forge-sparks', 'citadel-rune-ring', 'citadel-core-pulse', 'citadel-energy-wave', 'watcher-lens-pulse', 'watcher-scan-beam', 'archive-window-glow', 'archive-data-runes', 'sanctum-energy-orbit', 'gate-energy-lock']) {
     assert.match(jsx, new RegExp(`${asset}-strip\\.runtime\\.png`))
   }
   assert.match(css, /forge-sprite-frames/)
@@ -237,30 +237,34 @@ test('persistent world life keeps fire and water mounted while transit remains e
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const director = readFileSync(new URL('./worldOperationsDirector.js', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-life__forge-fire/)
-  assert.match(persistent, /persistent-life__water-reflection/)
+  assert.match(persistent, /PersistentWaterFlow/)
+  assert.match(persistent, /data-water-region/)
   assert.match(persistent, /data-persistent-world-life="active"/)
-  assert.equal((persistent.match(/fetchPriority="high"/g) ?? []).length, 3)
+  assert.equal((persistent.match(/fetchPriority="high"/g) ?? []).length, 2)
   const ambientSource = director.slice(director.indexOf('function ambientOperations'), director.indexOf('function choreographyOperations'))
   assert.equal(ambientSource.includes("windowOperation('data-transit'"), false)
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
-test('mobile world life uses short water glints and one low-cost cloud shadow without broad moving bands', () => {
+test('mobile world life uses masked map-surface currents and removes the broad moving cloud band', () => {
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const atmosphere = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-water-flow/)
-  assert.match(persistent, /viewBox=\{mobile \? '0 0 980 1680' : '0 0 1536 1024'\}/)
-  assert.match(css, /water-channel-flow 8\.2s linear infinite/)
-  assert.match(css, /stroke-dasharray:3\.2 24 1\.4 71\.4/)
-  assert.doesNotMatch(persistent, /persistent-water-flow__soft/)
-  assert.match(atmosphere, /atmosphere-cloud-shadow--primary/)
+  assert.match(persistent, /persistent-water-surface/)
+  assert.match(persistent, /left-upper/)
+  assert.match(persistent, /right-upper/)
+  assert.match(persistent, /upper-left-channel/)
+  assert.doesNotMatch(persistent, /<svg className=\{`persistent-water-flow/)
+  assert.doesNotMatch(persistent, /<image className="persistent-water-flow/)
+  assert.match(css, /persistent-water-surface--vertical::before\{animation:water-surface-flow-vertical 6\.8s ease-in-out infinite alternate\}/)
+  assert.match(css, /persistent-water-surface--horizontal::before\{animation:water-surface-flow-horizontal 7\.2s ease-in-out/)
+  assert.doesNotMatch(css, /stroke-dasharray/)
+  assert.doesNotMatch(persistent, /water-reflection-strip\.runtime\.png/)
+  assert.doesNotMatch(atmosphere, /atmosphere-cloud-shadow/)
   assert.doesNotMatch(atmosphere, /atmosphere-cloud-wisp/)
-  assert.doesNotMatch(atmosphere, /atmosphere-cloud-shadow--secondary/)
-  assert.match(css, /cloud-shadow-cross 23s linear infinite/)
-  assert.doesNotMatch(css, /atmosphere-cloud-shadow[^}]*filter:blur/)
+  assert.doesNotMatch(css, /cloud-shadow-cross/)
   assert.doesNotMatch(css, /cloud-wisp-cross/)
-  assert.doesNotMatch(css, /prefers-reduced-motion[^}]*atmosphere-cloud[^}]*display:none/)
 })
 
 test('ambient motion quality adapts to measured frame rate without suppressing real operations', () => {

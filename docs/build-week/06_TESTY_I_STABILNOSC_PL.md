@@ -108,3 +108,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run lint`: **PASS**.
 - `npm.cmd run build`: **PASS**, 844 moduły, 3,78 s; rozmiary głównych chunków bez istotnej zmiany.
 - Produkcja: **PASS — nietknięta**.
+
+## TEST-BW-006 — Maskowana woda i stabilność trybu ambient
+
+- Czas: 2026-07-14 01:25 Europe/Warsaw / 2026-07-13 23:25 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `0f75829117e870d819b526f89d3806d1a90e4a54`.
+- Środowisko: jeden istniejący serwer demo, viewport 393×852, BASELINE, tryb ambient aktywowany po 6 sekundach.
+- Audyt wizualny: **PASS** — usunięto pełnoekranowy cień chmury oraz liniowy przepływ SVG; po 7,6 s mapa pozostaje kompletna bez czarnych wycięć.
+- Kontrakt wody: **PASS** — osiem lokalnych obszarów mobile i sześć desktop; ruch pozostaje wewnątrz masek; brak pełnoekranowego SVG/image copy, `stroke-dasharray`, animowanego `blur` i pełnoekranowego blend mode.
+- Pomiar ruchu: **PASS** — transform refleksów zmienił się o około 22–31 px w próbce 1,8 s.
+- `npm.cmd test`: **PASS 88/88**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 843 moduły; główny JS 401,66 kB / 122,70 kB gzip; CSS 70,32 kB / 15,22 kB gzip.
+- Ograniczenie: ostateczna ocena naturalności i intensywności przepływu należy do użytkownika na realnym telefonie przez Tailscale; kontrakt techniczny i brak artefaktów zostały potwierdzone.
+- Produkcja: **PASS — nietknięta**.

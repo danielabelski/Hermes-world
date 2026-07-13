@@ -8,7 +8,27 @@ import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.runtim
 import gateEnergyLockStrip from '../../assets/world-effects/gate-energy-lock-strip.runtime.png'
 import sanctumEnergyOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
 import watcherLensPulseStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
-import waterReflectionStrip from '../../assets/world-effects/water-reflection-strip.runtime.png'
+
+const WATER_SURFACES = Object.freeze({
+  mobile: Object.freeze([
+    Object.freeze({ id: 'left-upper', direction: 'vertical', x: 0, y: 5.5, width: 8, height: 28, clip: 'polygon(0 0,70% 5%,94% 20%,73% 43%,53% 63%,86% 82%,58% 100%,0 100%)' }),
+    Object.freeze({ id: 'left-middle', direction: 'vertical', x: 0, y: 34, width: 8.5, height: 27, clip: 'polygon(0 0,62% 8%,90% 28%,65% 51%,88% 74%,54% 100%,0 100%)' }),
+    Object.freeze({ id: 'left-lower', direction: 'vertical', x: 0, y: 86, width: 8, height: 14, clip: 'polygon(0 0,60% 8%,92% 38%,68% 72%,45% 100%,0 100%)' }),
+    Object.freeze({ id: 'right-upper', direction: 'vertical-reverse', x: 92, y: 5, width: 8, height: 29, clip: 'polygon(30% 0,100% 0,100% 100%,42% 100%,14% 80%,45% 58%,20% 33%)' }),
+    Object.freeze({ id: 'right-middle', direction: 'vertical-reverse', x: 91.5, y: 34, width: 8.5, height: 27, clip: 'polygon(38% 0,100% 0,100% 100%,46% 100%,12% 75%,36% 51%,10% 27%)' }),
+    Object.freeze({ id: 'right-lower', direction: 'vertical-reverse', x: 92, y: 86, width: 8, height: 14, clip: 'polygon(40% 0,100% 0,100% 100%,55% 100%,30% 72%,8% 38%)' }),
+    Object.freeze({ id: 'upper-left-channel', direction: 'horizontal', x: 15, y: 13, width: 8, height: 9, clip: 'ellipse(48% 44% at 50% 50%)' }),
+    Object.freeze({ id: 'upper-right-channel', direction: 'horizontal', x: 77, y: 13, width: 8, height: 9, clip: 'ellipse(48% 44% at 50% 50%)' }),
+  ]),
+  desktop: Object.freeze([
+    Object.freeze({ id: 'harbour', direction: 'horizontal', x: 21, y: 81, width: 58, height: 19, clip: 'polygon(7% 12%,22% 0,42% 14%,53% 28%,68% 10%,86% 18%,96% 48%,100% 100%,0 100%,1% 46%)' }),
+    Object.freeze({ id: 'channel-nw', direction: 'diagonal', x: 25.5, y: 31.5, width: 19, height: 13, clip: 'polygon(0 0,6% 0,100% 82%,94% 100%)' }),
+    Object.freeze({ id: 'channel-ne', direction: 'diagonal-reverse', x: 55, y: 29, width: 19, height: 14, clip: 'polygon(94% 0,100% 8%,6% 100%,0 84%)' }),
+    Object.freeze({ id: 'channel-center', direction: 'vertical', x: 44.5, y: 48, width: 3, height: 12, clip: 'polygon(22% 0,78% 0,100% 100%,0 100%)' }),
+    Object.freeze({ id: 'channel-sw', direction: 'diagonal-reverse', x: 25.5, y: 54, width: 18, height: 13, clip: 'polygon(94% 0,100% 16%,6% 100%,0 82%)' }),
+    Object.freeze({ id: 'channel-se', direction: 'diagonal', x: 54, y: 54, width: 14, height: 13, clip: 'polygon(0 0,8% 0,100% 82%,94% 100%)' }),
+  ]),
+})
 
 const styleAt = (point) => ({ '--life-x': `${point.x}%`, '--life-y': `${point.y}%`, '--life-offset-x': `${point.offsetX ?? 0}px`, '--life-offset-y': `${point.offsetY ?? 0}px` })
 
@@ -28,21 +48,15 @@ function AmbientWindowLight({ anchor }) {
 }
 
 function PersistentWaterFlow({ layout, active = false }) {
-  const mobile = layout === 'mobile'
-  return <svg className={`persistent-water-flow${active ? ' is-operation-active' : ''}`} viewBox={mobile ? '0 0 980 1680' : '0 0 1536 1024'} preserveAspectRatio="none" aria-hidden="true">
-    <g className="persistent-water-flow__highlights">
-      {(mobile ? [
-        'M 8 118 C 64 132, 75 218, 54 310 C 32 410, 28 548, 86 665 C 119 733, 127 818, 82 905 C 40 985, 38 1113, 86 1208',
-        'M 972 112 C 918 146, 903 224, 924 317 C 949 422, 950 547, 892 661 C 856 730, 849 815, 898 909 C 938 987, 942 1114, 895 1208',
-        'M 32 1456 C 87 1485, 122 1543, 131 1668',
-        'M 948 1456 C 893 1485, 858 1543, 849 1668',
-      ] : [
-        'M 505 1018 C 552 949, 626 917, 705 922 C 768 926, 817 958, 865 1018',
-        'M 883 1018 C 928 959, 1014 930, 1098 939 C 1170 946, 1222 978, 1255 1018',
-        'M 583 469 C 635 441, 694 430, 750 443 C 806 456, 839 493, 822 532 C 804 572, 735 584, 674 566 C 617 550, 576 511, 583 469',
-      ]).map((path, index) => <path d={path} pathLength="100" style={{ '--water-path-index': index }} key={`highlight-${index}`} />)}
-    </g>
-  </svg>
+  const regions = WATER_SURFACES[layout === 'mobile' ? 'mobile' : 'desktop']
+  return <div className={`persistent-water-flow${active ? ' is-operation-active' : ''}`} aria-hidden="true">
+    {regions.map((region) => <i
+      className={`persistent-water-surface persistent-water-surface--${region.direction}`}
+      style={{ left: `${region.x}%`, top: `${region.y}%`, width: `${region.width}%`, height: `${region.height}%`, clipPath: region.clip }}
+      data-water-region={region.id}
+      key={region.id}
+    />)}
+  </div>
 }
 
 function PersistentWorldLifeLayer({ presentation }) {
@@ -74,10 +88,6 @@ function PersistentWorldLifeLayer({ presentation }) {
       <LifeSprite src={gateEnergyLockStrip} className="persistent-life__gate-lock" delay="-4.4s" />
     </div>
     <PersistentWaterFlow layout={layout} active={activeOperations.has('water-machinery')} />
-    <div className={`persistent-life persistent-life--water${activeClass('water-machinery')}`} style={styleAt(points.water)}>
-      <LifeSprite src={waterReflectionStrip} className="persistent-life__water-reflection" delay="-2.6s" fetchPriority="high" />
-      <LifeSprite src={waterReflectionStrip} className="persistent-life__water-reflection persistent-life__water-reflection--secondary" delay="-5.1s" />
-    </div>
     <div className="persistent-window-lights">
       {windowAnchors.map((anchor) => <AmbientWindowLight anchor={anchor} key={anchor.id} />)}
     </div>
