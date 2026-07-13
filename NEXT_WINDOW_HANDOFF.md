@@ -651,6 +651,8 @@ This section applies only to the separate demo repository and branch `pre-build-
 
 This section supersedes the earlier demo-only environmental section. It applies only to `hermes-os-living-world-demo` on branch `pre-build-week/environmental-world-life`. Production Correct v1 and its persistent service remain untouched.
 
+- Implementation checkpoint: `593274b feat: finalize pre-build-week living world`.
+
 ### Completed implementation
 
 - Persistent infrastructure life is separate from finite operations and real-event choreography.
