@@ -52,3 +52,9 @@ Poniższe wpisy są czytelnym skrótem zakresu delegacji; pełny rejestr znajduj
 Nie wybrano finalnego ID. Sesja początkowa jest mocnym dowodem genezy, lecz jest pre-submission. Sesja kontynuacyjna obejmuje znaczną część istniejącego core, ale większość tego core także powstała przed granicą. Najlepszym kandydatem powinien zostać prawdziwy wątek po 13 lipca 18:00, w którym powstanie większość znaczącego rozszerzenia konkursowego.
 
 **Finalny Session ID zostanie wybrany dopiero po zbudowaniu podczas Submission Period większości kluczowej funkcjonalności konkursowej.**
+
+## Sesja pierwszego meaningful extension
+
+| Data i czas Europe/Warsaw | Session ID | Model | Cel i wkład | Decyzje autora | Okres | Znaczenie dla core | `/feedback` |
+|---|---|---|---|---|---|---|---|
+| 2026-07-13 22:39+ | `019f4f11-14e9-70e0-8d61-26226257864c` | GPT-5.6 Sol | Żywa infrastruktura, ciągły przepływ wody, widoczna atmosfera, telemetria systemowa oraz evidence-backed choreography prawdziwego eventu | Wyłącznie demo; brak fake stanów; etapowe testy, snapshoty i commity; produkcja nietknięta | podczas Submission Period | BARDZO WYSOKIE — pierwszy zaplanowany functional meaningful extension | MOŻLIWE; ocenić po zamknięciu funkcjonalności |

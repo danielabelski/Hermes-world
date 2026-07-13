@@ -80,3 +80,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i niezmieniony.
 - Remote: brak; backup poza urządzeniem pozostaje ręcznym działaniem.
 - Ten wpis zamyka dokumentację startową; jego commit ma komunikat `docs(build-week): close documentation handoff` i jest widoczny bezpośrednio w Git.
+
+## BW-2026-07-13-008 — Start pierwszego meaningful extension
+
+- Czas Europe/Warsaw: 2026-07-13 22:39+.
+- Czas UTC: 2026-07-13 20:39+.
+- Branch: `build-week/hermes-world`; startowy HEAD: `0a625df7dd0da128a9de63b3f117977aa916d843`.
+- Cel bloku: zbudować żywą infrastrukturę miasta sterowaną prawdziwą telemetrią oraz czytelny nervous system prawdziwych eventów, bez generowania fake `Working` lub `Success`.
+- Zakres pierwszego etapu: stały przepływ wody osadzony na realnych kanałach mapy oraz widoczne na telefonie chmury i cienie chmur.
+- Decyzja człowieka: praca wyłącznie na demo; każda faza ma otrzymać testy, snapshot i czytelny commit Build Week; produkcja pozostaje nietknięta.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Snapshot startowy: `20260713T203947Z-git-snapshot.txt`.
+- Status: rozpoczęto implementację po oficjalnej granicy Submission Period.
