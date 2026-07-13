@@ -44,6 +44,7 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Trailing whitespace i `git diff --check`: **PASS**, 0.
 - Zmiany kodu aplikacji: **PASS**, 0.
 - Ograniczenie: bezpośrednie `bash.exe` systemu Windows wskazuje WSL bez dystrybucji; poprawna walidacja wymaga Git Bash uruchomionego z `-lc`, aby załadować `/usr/bin/date`.
+- Clean-tree behavior: **PASS** w izolowanej kopii na commicie `2b1e3e7`; skrypt odczytał 0 linii statusu przed utworzeniem snapshotu, a katalog testowy został bezpiecznie usunięty.
 
 ## Macierz końcowa
 

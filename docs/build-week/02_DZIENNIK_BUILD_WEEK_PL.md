@@ -70,3 +70,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Snapshot po commicie: `20260713T200743Z-git-snapshot.txt`, branch `build-week/hermes-world`, baseline ref rozwiązuje się do `b80b89d…`.
 - Korekta narzędzia: stan tree jest od tej chwili pobierany przed utworzeniem pliku wyjściowego, dzięki czemu czysty input nie jest błędnie raportowany jako dirty przez sam snapshot.
 - Następny krok: mały commit snapshotu i finalna clean-tree validation.
+
+## BW-2026-07-13-007 — Zamknięcie systemu dowodowego
+
+- Czas Europe/Warsaw: 2026-07-13 22:09+.
+- Commit snapshotu: `2b1e3e71665ff2214b62b14170f1cec49d04fb4f` — `chore(build-week): record initial evidence snapshot`.
+- Clean-tree test: PASS w izolowanej lokalnej kopii; sekcja wejściowego `git status --short` zawierała 0 wierszy, a kopia testowa została usunięta.
+- Finalny zakres od baseline: wyłącznie `.gitignore`, `THIRD_PARTY_NOTICES.md`, `docs/build-week/**` i `scripts/build-week/**`.
+- Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i niezmieniony.
+- Remote: brak; backup poza urządzeniem pozostaje ręcznym działaniem.
+- Ten wpis zamyka dokumentację startową; jego commit ma komunikat `docs(build-week): close documentation handoff` i jest widoczny bezpośrednio w Git.
