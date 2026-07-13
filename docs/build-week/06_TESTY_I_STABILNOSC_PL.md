@@ -63,3 +63,19 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 | Kod aplikacji / produkcja | PASS — brak zmian |
 | Branch i baseline tag | PASS |
 | Remote backup | MANUAL ACTION REQUIRED — brak remote |
+
+## TEST-BW-003 — Pierwszy functional meaningful extension
+
+- Czas: 2026-07-13 22:39–23:16 Europe/Warsaw.
+- Branch: `build-week/hermes-world`.
+- Commity funkcjonalne: `08ad9aa`, `4d5870e`, `3f03073`, `fdb75f4`.
+- `git diff --check` — **PASS**, 0 błędów whitespace.
+- `npm.cmd run lint` — **PASS**.
+- `npm.cmd test` — **PASS 87/87**, 0 fail, 0 skipped.
+- `npm.cmd run validate:world-life` — **PASS**.
+- `npm.cmd run build` — **PASS**, Vite 8.0.16, 844 moduły, około 5,35 s w końcowym uruchomieniu.
+- Mobile 393×852: **PASS** — realny viewport w lokalnej przeglądarce; cztery ścieżki przepływu wody; przesunięcie `strokeDashoffset` potwierdzone między próbkami; transform cienia chmury zmienił się między próbkami; po korekcie opacity cienia `0.078`.
+- Konsola browser: **PASS**, 0 błędów.
+- Semantyka: **PASS** — test potwierdza brak fake operational source, Archive tylko z evidence-backed success oraz ciągły lifecycle evidence ID.
+- Produkcja: **PASS** — nie uruchamiano ani nie modyfikowano produkcyjnego worktree.
+- Ograniczenie: test lokalny miał brak połączenia do runtime API, więc oceniono warstwę wizualną i kontrakty danych; pełny live Hermes E2E pozostaje następnym osobnym testem integracyjnym.

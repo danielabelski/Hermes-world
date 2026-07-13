@@ -90,3 +90,19 @@
 - Problem: przedwczesny wybór wskazałby sesję pre-submission lub dokumentacyjną.
 - Decyzja człowieka: finalny Session ID zostanie wybrany po zbudowaniu większości kluczowej funkcjonalności konkursowej.
 - Konsekwencje: obecnie prowadzona jest tylko lista kandydatów.
+
+## DEC-013 — Infrastruktura żyje z telemetrii, nie z fake stanów
+
+- Problem: statyczna mapa nie komunikowała, że realny system stale działa, a użycie stanów agentów do dekoracyjnego ruchu fałszowałoby observability.
+- Warianty: dekoracyjne losowe animacje; fake `Working`; rytm infrastruktury z prawdziwego heartbeat, CPU/load, journalu, kolejki, sesji i cronów.
+- Wkład Codexa: rozdzielenie `operationalState`, `choreographyState` i `environmentState` oraz czterech kanałów intensywności.
+- Decyzja człowieka: mapa ma żyć stale, ale praca agentów i `Success` mogą pochodzić wyłącznie z realnych eventów.
+- Konsekwencje: telemetria moduluje budynki bez zmiany liczników i FSM; alert może stłumić infrastrukturę, lecz nie wyłącza wody ani atmosfery.
+- Okres: podczas Submission Period.
+
+## DEC-014 — Jeden lifecycle evidence ID, osobny trigger event
+
+- Problem: kolejne eventy jednego runu miały różne identyfikatory i trudno było wizualnie oraz dowodowo prześledzić cały przebieg.
+- Decyzja: pierwszy realny event staje się `lifecycleEvidenceId` dla całej sekwencji; dokładny event uruchamiający etap jest zachowany jako `triggerEventId`.
+- Konsekwencje: sekwencja brama → Cytadela → subsystem → Archiwum jest audytowalna; Archiwum nadal wymaga osobnego prawdziwego eventu `success`.
+- Okres: podczas Submission Period.

@@ -4,7 +4,7 @@
 
 | Priorytet | Ryzyko | Znaczenie | Działanie |
 |---|---|---|---|
-| KRYTYCZNY | Brak meaningful extension wykonanej po 13.07.2026 18:00 Europe/Warsaw | Existing project jest oceniany za nową pracę | Zbudować i udokumentować end-to-end real event extension |
+| WYSOKI | Pierwszy meaningful extension działa na demo, ale nie przeszedł jeszcze pełnego testu z live Hermes runtime | Lokalny test potwierdza UI i kontrakty, nie cały transport produkcyjny | Uruchomić evidence-backed E2E z prawdziwą wiadomością i zachować log/screenshot |
 | WYSOKI | Brak off-device backupu i skonfigurowanego remote | Awaria urządzenia może utracić lokalną historię | Utworzyć prywatny remote/backup, bez publikacji |
 | WYSOKI | Brak środowiska dostępnego jurorom | Produkt może nie być testowalny | Przygotować stabilny test build/account/URL |
 | ŚREDNI | Brak finalnego raportu notices dla faktycznego bundla | Zbiorcze dane lockfile nie wystarczą do dystrybucji | Wygenerować raport z finalnego artefaktu i sprawdzić MPL/CC-BY |

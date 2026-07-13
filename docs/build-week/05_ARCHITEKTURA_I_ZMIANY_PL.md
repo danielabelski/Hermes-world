@@ -49,8 +49,9 @@ Hermes run journal / SSE
 | Choreography i Ambient Director | działa | przed | ambient nie fałszuje operational state |
 | Environmental life / visible operations | działa | przed | assety i procesy mapy |
 | Demo/focus harness | mock kontrolowany | przed | tylko jawne `demo=1`/focus, nie fallback produkcji |
-| Dokumentacja Build Week i snapshoty | w toku | podczas | pierwsza praca po granicy |
-| Produkcyjnie wiarygodny real event → mobile world flow | planowane | podczas | najbliższa meaningful extension; jeszcze nie istnieje |
+| Dokumentacja Build Week i snapshoty | działa | podczas | append-only workflow, snapshoty i etapowe commity |
+| Living infrastructure z realnej telemetrii | działa w demo | podczas | heartbeat/CPU/activity/tasks/sessions/crons sterują wyłącznie prezentacją infrastruktury |
+| Evidence-backed real event → mobile world flow | działa w demo | podczas | jeden lifecycle ID; brama → Cytadela → subsystem; Archiwum tylko po realnym success |
 
 ## Skalowanie do wielu agentów
 
@@ -64,4 +65,4 @@ Centralna konfiguracja ról, semantic nodes, wspólny renderer i normalizacja ev
 
 ## Zmiany po rozpoczęciu Submission Period
 
-Na moment audytu: brak zmian funkcjonalnych i brak post-submission commita. Powstała wyłącznie dokumentacja audytowa i system capture-evidence. Ta sekcja musi być aktualizowana po każdym zaakceptowanym bloku konkursowym.
+Pierwszy blok funkcjonalny po granicy został wykonany w commitach `08ad9aa`, `4d5870e`, `3f03073` i `fdb75f4`. Dodaje stale widoczną, map-aligned wodę i atmosferę, oddzielone kanały intensywności, sterowanie rytmem budynków prawdziwą telemetrią oraz audytowalną choreografię realnego runu. Produkcyjny `main` pozostaje nietknięty; funkcje wymagają jeszcze GL przed jakimkolwiek przeniesieniem z demo.

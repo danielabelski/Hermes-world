@@ -17,7 +17,7 @@ Polska dokumentacja provenance, zasad, sesji, decyzji, architektury, testów, do
 
 Mapa, renderer, 12 agentów, waypointy/routing, statusy, demo event pipeline, choreografia, environmental life i mobile UI należą do baseline sprzed Submission Period. Hermes OS CAT jest własnym wcześniejszym projektem autora. Hermes Agent jest zewnętrznym runtime/CLI, bez wykrytego vendoringu. Wszystkie wizualne assety projektu są AI-generated original project assets.
 
-## Najbliższa meaningful extension
+## Meaningful extension rozpoczęta po baseline
 
 ```text
 real Hermes event
@@ -27,15 +27,15 @@ real Hermes event
 → widoczna zmiana agenta w świecie mobilnym
 ```
 
-Celem jest produkcyjnie wiarygodne end-to-end rozszerzenie wykonane i udokumentowane po starcie Submission Period. Nie należy przedstawiać pre-submission demo pipeline jako nowej pracy konkursowej.
+Część prezentacyjna i semantyczna została wykonana po starcie w commitach `08ad9aa`, `4d5870e`, `3f03073` i `fdb75f4`: żywa woda i atmosfera, infrastruktura sterowana realną telemetrią oraz audytowalny nervous system runu. Następny test musi objąć pełny live Hermes E2E; nie należy przedstawiać pre-submission demo pipeline jako nowej pracy konkursowej.
 
 ## Aktualne ryzyka
 
-1. Nie istnieje jeszcze funkcjonalna meaningful extension po starcie.
+1. Pierwszy extension istnieje na demo, lecz wymaga GL oraz testu z live Hermes runtime.
 2. Finalny `/feedback` Session ID zostanie wybrany po powstaniu większości core functionality.
 3. Brak prywatnego remote/off-device backupu.
 4. Dostęp jurorski, finalne notices bundla, środowisko testowe, angielskie materiały, film i Devpost są zadaniami przed submission.
 
 ## Start następnego bloku
 
-Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCEDURA_PRACY_OD_TERAZ_PL.md), potwierdź branch `build-week/hermes-world` i rozpocznij implementację najbliższej meaningful extension. Nie powtarzaj audytu baseline.
+Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCEDURA_PRACY_OD_TERAZ_PL.md), potwierdź branch `build-week/hermes-world`, a następnie przeprowadź pełny test live Hermes E2E pierwszego extension. Nie powtarzaj audytu baseline i nie przenoś zmian na produkcję bez GL.

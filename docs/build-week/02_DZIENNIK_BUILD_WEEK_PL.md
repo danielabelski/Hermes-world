@@ -92,3 +92,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Snapshot startowy: `20260713T203947Z-git-snapshot.txt`.
 - Status: rozpoczęto implementację po oficjalnej granicy Submission Period.
+
+## BW-2026-07-13-009 — Living infrastructure i nervous system prawdziwego eventu
+
+- Czas Europe/Warsaw: 2026-07-13 22:39–23:16.
+- Czas UTC: 2026-07-13 20:39–21:16.
+- Branch: `build-week/hermes-world`.
+- Wykonano: stały przepływ wody dopasowany osobno do kanałów mobile i portu/fontanny desktop; duże chmury, cienie chmur i spokojną mgłę; niezależne intensywności atmosfery, infrastruktury, eventu i alert suppression; sterowanie rytmem Cytadeli, Kuźni, Archiwum, Sanctum i Watchera rzeczywistymi odczytami systemu, activity journal, zadaniami, sesjami oraz cronami.
+- Prawdziwy lifecycle: jeden `lifecycleEvidenceId` prowadzi sekwencję brama → Cytadela → właściwy subsystem; `triggerEventId` zachowuje dokładny event etapu; Archiwum uruchamia zapis wyłącznie po prawdziwym `success`.
+- Bezpieczeństwo semantyczne: telemetria infrastruktury nie zapisuje `operationalState`, nie zwiększa licznika aktywnych agentów i nie emituje fake `Working` ani `Success`.
+- Commity: `08ad9aa` — woda i atmosfera; `4d5870e` — infrastruktura sterowana telemetrią; `3f03073` — nervous system realnego eventu; `fdb75f4` — korekta widoczności chmur po teście mobile.
+- Walidacja: lint PASS; 87/87 testów PASS; `validate:world-life` PASS; build PASS (844 moduły); 393×852 PASS; 4 aktywne ścieżki wody; animowany cień chmury; 0 błędów konsoli.
+- Znaleziona i naprawiona regresja: pierwszy cień chmury był zbyt ciemny i zasłaniał centrum mapy; obniżono jego intensywność do subtelnej lokalnej zmiany światła bez usuwania dużej amplitudy ruchu.
+- Produkcja: nietknięta; lokalny serwer walidacyjny był jeden i został wyłączony po ocenie.
