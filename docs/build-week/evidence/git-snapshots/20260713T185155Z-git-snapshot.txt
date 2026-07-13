@@ -1,0 +1,108 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-13T18:51:55Z
+Europe/Warsaw: 2026-07-13T18:51:55+00:00
+Session ID: 019f4f11-14e9-70e0-8d61-26226257864c
+Cel: Audyt provenance i dokumentacja Build Week — snapshot kompletny
+Branch: pre-build-week/environmental-world-life
+HEAD: b80b89d771457e6d6c515cda51e4d480f85245e1
+Baseline ref: b80b89d771457e6d6c515cda51e4d480f85245e1
+
+== git status --short ==
+?? docs/build-week/00_WYMAGANIA_KONKURSU_PL.md
+?? docs/build-week/01_PROVENANCE_I_BASELINE_PL.md
+?? docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+?? docs/build-week/03_SESJE_CODEX_PL.md
+?? docs/build-week/04_REJESTR_DECYZJI_PL.md
+?? docs/build-week/05_ARCHITEKTURA_I_ZMIANY_PL.md
+?? docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+?? docs/build-week/07_INDEKS_DOWODOW_PL.md
+?? docs/build-week/08_ZALEZNOSCI_LICENCJE_IP_PL.md
+?? docs/build-week/09_BEZPIECZENSTWO_I_PRYWATNOSC_PL.md
+?? docs/build-week/10_BRAKI_I_RYZYKA_PL.md
+?? docs/build-week/README_PL.md
+?? docs/build-week/evidence/README_PL.md
+?? docs/build-week/evidence/codex-sessions/README_PL.md
+?? docs/build-week/evidence/codex-sessions/SESSION_MANIFEST_PL.md
+?? docs/build-week/evidence/git-snapshots/20260713T185115Z-git-snapshot.txt
+?? docs/build-week/evidence/git-snapshots/20260713T185155Z-git-snapshot.txt
+?? docs/build-week/evidence/git-snapshots/README_PL.md
+?? docs/build-week/evidence/pre-submission/PRE-IMG-001-codex-sol-map-render-audits.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-002-codex-terra-living-world.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-003-physical-photo-terra-agents.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-004-sol-subagent-list.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-005-sol-implementation-progress.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-006-codexbar-usage-aggregate.jpg
+?? docs/build-week/evidence/pre-submission/README_PL.md
+?? docs/build-week/evidence/screenshots/README_PL.md
+?? docs/build-week/evidence/submission-period/README_PL.md
+?? docs/build-week/evidence/tests/README_PL.md
+?? docs/build-week/templates/DECYZJA_TEMPLATE.md
+?? docs/build-week/templates/SESJA_CODEX_TEMPLATE.md
+?? docs/build-week/templates/TEST_TEMPLATE.md
+?? docs/build-week/templates/WPIS_DZIENNIKA_TEMPLATE.md
+?? scripts/build-week/capture-evidence.sh
+
+== Zmienione pliki (bez treści) ==
+?? docs/build-week/00_WYMAGANIA_KONKURSU_PL.md
+?? docs/build-week/01_PROVENANCE_I_BASELINE_PL.md
+?? docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+?? docs/build-week/03_SESJE_CODEX_PL.md
+?? docs/build-week/04_REJESTR_DECYZJI_PL.md
+?? docs/build-week/05_ARCHITEKTURA_I_ZMIANY_PL.md
+?? docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+?? docs/build-week/07_INDEKS_DOWODOW_PL.md
+?? docs/build-week/08_ZALEZNOSCI_LICENCJE_IP_PL.md
+?? docs/build-week/09_BEZPIECZENSTWO_I_PRYWATNOSC_PL.md
+?? docs/build-week/10_BRAKI_I_RYZYKA_PL.md
+?? docs/build-week/README_PL.md
+?? docs/build-week/evidence/README_PL.md
+?? docs/build-week/evidence/codex-sessions/README_PL.md
+?? docs/build-week/evidence/codex-sessions/SESSION_MANIFEST_PL.md
+?? docs/build-week/evidence/git-snapshots/20260713T185115Z-git-snapshot.txt
+?? docs/build-week/evidence/git-snapshots/20260713T185155Z-git-snapshot.txt
+?? docs/build-week/evidence/git-snapshots/README_PL.md
+?? docs/build-week/evidence/pre-submission/PRE-IMG-001-codex-sol-map-render-audits.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-002-codex-terra-living-world.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-003-physical-photo-terra-agents.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-004-sol-subagent-list.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-005-sol-implementation-progress.jpg
+?? docs/build-week/evidence/pre-submission/PRE-IMG-006-codexbar-usage-aggregate.jpg
+?? docs/build-week/evidence/pre-submission/README_PL.md
+?? docs/build-week/evidence/screenshots/README_PL.md
+?? docs/build-week/evidence/submission-period/README_PL.md
+?? docs/build-week/evidence/tests/README_PL.md
+?? docs/build-week/templates/DECYZJA_TEMPLATE.md
+?? docs/build-week/templates/SESJA_CODEX_TEMPLATE.md
+?? docs/build-week/templates/TEST_TEMPLATE.md
+?? docs/build-week/templates/WPIS_DZIENNIKA_TEMPLATE.md
+?? scripts/build-week/capture-evidence.sh
+
+== Diff stat: working tree ==
+
+== Diff stat: staged ==
+
+== Ostatnie commity ==
+b80b89d771457e6d6c515cda51e4d480f85245e1	2026-07-13T16:47:03+02:00	2026-07-13T16:47:03+02:00	pre-build: GPT-5.6 living world checkpoint
+1cd84bb5a8007e2e2fc5f02a862919eb73a20e12	2026-07-13T15:44:01+02:00	2026-07-13T15:44:01+02:00	docs: record living world checkpoint
+593274bf2a16b2fbd199079203274241e19db504	2026-07-13T15:43:21+02:00	2026-07-13T15:43:21+02:00	feat: finalize pre-build-week living world
+4157d4fd225031aa7e37a0bd44e0f43121a4f4e4	2026-07-13T05:36:23+02:00	2026-07-13T05:36:23+02:00	feat: keep Citadel infrastructure visibly alive
+a436ad1598ff91054b12a192f8078a42366e0562	2026-07-13T05:00:17+02:00	2026-07-13T05:00:17+02:00	feat: replace world operation placeholders with alpha sprites
+15904e62249faf6ff50ecaabdc7fd36ecf10edf8	2026-07-13T03:51:21+02:00	2026-07-13T03:51:21+02:00	feat: replace Forge placeholders with alpha sprites
+cbcdf0db92a971da25ce31e0101da497748d85e0	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "feat: animate map-native city infrastructure"
+d75674ba3c396035ab6ae0acea115a767360111b	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "fix: raise world motion visibility floor"
+22d503aeb6883ea230b6b70055c76c4a2a189702	2026-07-13T03:06:59+02:00	2026-07-13T03:06:59+02:00	fix: raise world motion visibility floor
+87bf21d3c60a0a7fc0e65c65e42678529e3611eb	2026-07-13T02:54:30+02:00	2026-07-13T02:55:56+02:00	feat: animate map-native city infrastructure
+a50505f3ea45b0fddf8f861bb91d02418c756360	2026-07-13T02:25:01+02:00	2026-07-13T02:25:01+02:00	fix: integrate world operations with map art
+861e89d50ee03051269ec281ebff5573c9bf3511	2026-07-13T01:54:03+02:00	2026-07-13T01:54:03+02:00	fix: anchor mobile water cycle to the core
+5be4a040d05b34cdd5ae0b62028465690e2b3ae4	2026-07-13T01:45:37+02:00	2026-07-13T01:45:37+02:00	feat: add visible world operations
+94201ef04960bca5e32924c5bed365caf6163059	2026-07-13T01:14:07+02:00	2026-07-13T01:14:07+02:00	fix: make environmental life legible on mobile
+4996066fb0d6879378d6502a2a1aa75cd8e5125b	2026-07-13T00:48:13+02:00	2026-07-13T00:48:13+02:00	feat: add environmental world life pass
+fb96466ad928a82fd6605f55b6d631a651677aa7	2026-07-13T00:11:48+02:00	2026-07-13T00:11:48+02:00	fix: make ambient world life readable on mobile
+303f7dc50ea7175d5117dabe02f0a7422ef5824b	2026-07-12T23:58:40+02:00	2026-07-12T23:58:40+02:00	fix: keep ambient routes in map world space
+0e02e1e4ad21b58f6d1c7253010dd6283eb3ffff	2026-07-12T23:18:45+02:00	2026-07-12T23:18:45+02:00	feat: add world choreography and ambient director
+a8b0a0d50d945f768ca2cbd5b0b5c3bbf24967f4	2026-07-12T21:59:49+02:00	2026-07-12T22:03:19+02:00	feat: connect demo world to real Hermes events
+486e18bec8a7a366f51085d1ba1fb587dc163769	2026-07-12T20:46:28+02:00	2026-07-12T20:46:28+02:00	chore: establish isolated demo server
+
+== Commity od baseline ==
+
+== Tagi Build Week ==

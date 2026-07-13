@@ -5,3 +5,7 @@ data/*.json
 .env
 .env.*
 !.env.example
+
+# Local, unredacted Build Week evidence. Keep hashes and redacted copies in Git,
+# never the private originals prepared for jury-facing repository access.
+docs/build-week/evidence/private-originals/

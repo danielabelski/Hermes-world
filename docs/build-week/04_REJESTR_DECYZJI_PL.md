@@ -1,0 +1,92 @@
+# 04 — Rejestr decyzji
+
+## DEC-001 — Mobile-first observability
+
+- Problem: bogaty świat mógł stać się grą lub dekoracją zamiast interfejsem systemowym.
+- Warianty: game-first; dashboard-first bez świata; ambient observability w świecie fantasy-tech.
+- Propozycja Codexa: czytelna hierarchia globalny stan → lokalny sygnał → drill-down.
+- Decyzja człowieka: Hermes World ma być realną warstwą observability; stan ma być zrozumiały na telefonie w 2–5 sekund.
+- Konsekwencje: realne eventy są źródłem prawdy; dekoracja nie może fałszować pracy.
+- Okres: przed Submission Period.
+
+## DEC-002 — Geometria mapy i wariant BASELINE
+
+- Problem: różne warianty mapy i ryzyko utraty waypointów.
+- Warianty: nowa mapa; LIGHT; STRONG; BASELINE.
+- Propozycja Codexa: presety niedestrukcyjne i walidacja mobile.
+- Decyzja człowieka: BASELINE jest finalnym defaultem, LIGHT fallbackiem; geometria, crop, wejścia, waypointy i depth zones są zamrożone.
+- Konsekwencje: poprawki mapy wyłącznie warstwowe/tonalne.
+- Okres: przed Submission Period.
+
+## DEC-003 — Real event pipeline, nie symulacja
+
+- Problem: żywy świat mógł udawać faktyczne taski agentów.
+- Warianty: losowe fake stany; wyłącznie statyczny świat; rozdzielenie operational/choreography/environment.
+- Propozycja Codexa: oddzielne warstwy i priorytety.
+- Decyzja człowieka: `operationalState` tylko z prawdziwych eventów; ambient nie zwiększa aktywnych agentów i nie emituje Success.
+- Konsekwencje: event ma evidence ID i przerywa ambient; symulacja pozostaje jawnie demo-only.
+- Okres: przed Submission Period.
+
+## DEC-004 — Normalizacja stanów
+
+- Problem: waiting, thinking i stuck były wizualnie mylone.
+- Warianty: duże aury; tekst-only; małe semantyczne markery i zachowanie.
+- Decyzja człowieka: rola i status są niezależnymi kanałami; `online` jest atrybutem obecności, nie pełnym operational state; alert ma być czytelny bez tickera.
+- Konsekwencje: dziewięć scenariuszy walidacyjnych mobile.
+- Okres: przed Submission Period.
+
+## DEC-005 — Rozdzielenie demo i produkcji
+
+- Problem: iteracje wizualne nie mogły naruszać stabilnej wersji Correct v1.
+- Warianty: praca na produkcji; osobny branch/worktree demo.
+- Decyzja człowieka: wszystkie eksperymenty na demo, produkcja nietknięta do GL.
+- Konsekwencje: produkcja `main` i demo `pre-build-week/environmental-world-life` są oddzielnymi worktree.
+- Okres: przed Submission Period.
+
+## DEC-006 — Uczciwa granica konkursowa
+
+- Problem: projekt istniał przed startem Submission Period.
+- Propozycja Codexa: baseline `b80b89d`, annotated tag, append-only dokumentacja i snapshoty.
+- Decyzja człowieka: zachować pełną genezę GPT-5.6/Codex, lecz nie przedstawiać pracy sprzed 18:00 jako Build Week.
+- Konsekwencje: jurorom pokazujemy jasno diff i funkcje dodane po baseline.
+- Okres: podczas Submission Period.
+- Możliwość zmiany: baseline jest zamrożony; przyszłe commity nie zmieniają tego punktu.
+
+## DEC-007 — Prywatne repozytorium i brak licencji OSS
+
+- Problem: publiczne repo lub licencja open-source nie są wymagane, jeśli jurorzy otrzymają dostęp prywatny.
+- Warianty: publikacja z OSS license; prywatne repo; brak dostępu.
+- Wkład Codexa: rozdzielenie własnego kodu od third-party notices.
+- Decyzja człowieka: repo pozostaje prywatne, własny kod nie otrzymuje licencji open-source.
+- Konsekwencje: przed submission udostępnić repo oficjalnym adresom; notices nie licencjonują Hermes World.
+
+## DEC-008 — CAT jako własny pre-existing projekt
+
+- Problem: odziedziczony shell mógł zostać błędnie sklasyfikowany jako third-party.
+- Decyzja człowieka: Hermes OS CAT jest własnym wcześniejszym projektem autora.
+- Konsekwencje: 23 zmodyfikowane pliki i 12 assetów dokumentują granicę czasu, nie cudze IP.
+
+## DEC-009 — Assety AI-generated originals
+
+- Problem: brak części historycznych promptów nie oznacza nieznanego źródła.
+- Decyzja człowieka: wszystkie wizualne assety obu projektów wygenerowano od zera dla autora.
+- Konsekwencje: klasyfikacja `AI-generated original project assets`; nowe assety nadal otrzymują model/prompt/hash, jeśli dostępne.
+
+## DEC-010 — Baseline tag i branch konkursowy
+
+- Problem: praca sprzed i podczas konkursu musi być mechanicznie rozdzielona.
+- Wkład Codexa: tag na dokładnym HEAD oraz osobny branch.
+- Decyzja człowieka: tag `pre-build-week-baseline-2026-07-13` na `b80b89d…`; praca na `build-week/hermes-world`.
+- Konsekwencje: nie przepisywać historii ani nie przesuwać tagu.
+
+## DEC-011 — Append-only evidence workflow
+
+- Problem: korekty dokumentacji mogłyby zacierać historię.
+- Decyzja człowieka: dziennik, sesje, decyzje, testy i dowody są append-only; snapshot przed i po bloku.
+- Konsekwencje: korekta jest nowym wpisem, nie cichą edycją starego dowodu.
+
+## DEC-012 — `/feedback` dopiero po core functionality
+
+- Problem: przedwczesny wybór wskazałby sesję pre-submission lub dokumentacyjną.
+- Decyzja człowieka: finalny Session ID zostanie wybrany po zbudowaniu większości kluczowej funkcjonalności konkursowej.
+- Konsekwencje: obecnie prowadzona jest tylko lista kandydatów.
