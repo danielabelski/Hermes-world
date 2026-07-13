@@ -27,6 +27,41 @@ function AmbientWindowLight({ anchor }) {
   </span>
 }
 
+function PersistentWaterFlow({ layout, active = false }) {
+  const mobile = layout === 'mobile'
+  return <svg className={`persistent-water-flow${active ? ' is-operation-active' : ''}`} viewBox={mobile ? '0 0 980 1680' : '0 0 1536 1024'} preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <filter id={`water-soft-${layout}`} x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation={mobile ? '3.2' : '2.6'} />
+      </filter>
+    </defs>
+    <g className="persistent-water-flow__soft" filter={`url(#water-soft-${layout})`}>
+      {(mobile ? [
+        'M 8 118 C 64 132, 75 218, 54 310 C 32 410, 28 548, 86 665 C 119 733, 127 818, 82 905 C 40 985, 38 1113, 86 1208',
+        'M 972 112 C 918 146, 903 224, 924 317 C 949 422, 950 547, 892 661 C 856 730, 849 815, 898 909 C 938 987, 942 1114, 895 1208',
+        'M 32 1456 C 87 1485, 122 1543, 131 1668',
+        'M 948 1456 C 893 1485, 858 1543, 849 1668',
+      ] : [
+        'M 505 1018 C 552 949, 626 917, 705 922 C 768 926, 817 958, 865 1018',
+        'M 883 1018 C 928 959, 1014 930, 1098 939 C 1170 946, 1222 978, 1255 1018',
+        'M 583 469 C 635 441, 694 430, 750 443 C 806 456, 839 493, 822 532 C 804 572, 735 584, 674 566 C 617 550, 576 511, 583 469',
+      ]).map((path, index) => <path d={path} pathLength="100" key={`soft-${index}`} />)}
+    </g>
+    <g className="persistent-water-flow__highlights">
+      {(mobile ? [
+        'M 8 118 C 64 132, 75 218, 54 310 C 32 410, 28 548, 86 665 C 119 733, 127 818, 82 905 C 40 985, 38 1113, 86 1208',
+        'M 972 112 C 918 146, 903 224, 924 317 C 949 422, 950 547, 892 661 C 856 730, 849 815, 898 909 C 938 987, 942 1114, 895 1208',
+        'M 32 1456 C 87 1485, 122 1543, 131 1668',
+        'M 948 1456 C 893 1485, 858 1543, 849 1668',
+      ] : [
+        'M 505 1018 C 552 949, 626 917, 705 922 C 768 926, 817 958, 865 1018',
+        'M 883 1018 C 928 959, 1014 930, 1098 939 C 1170 946, 1222 978, 1255 1018',
+        'M 583 469 C 635 441, 694 430, 750 443 C 806 456, 839 493, 822 532 C 804 572, 735 584, 674 566 C 617 550, 576 511, 583 469',
+      ]).map((path, index) => <path d={path} pathLength="100" style={{ '--water-path-index': index }} key={`highlight-${index}`} />)}
+    </g>
+  </svg>
+}
+
 function PersistentWorldLifeLayer({ presentation }) {
   const layout = presentation.layout === 'mobile' ? 'mobile' : 'desktop'
   const points = getWorldVisualAnchors(layout)
@@ -55,6 +90,7 @@ function PersistentWorldLifeLayer({ presentation }) {
     <div className={`persistent-life persistent-life--gate${responseClass(ENVIRONMENT_BUILDINGS.gate.buildingId, presentation)}${activeClass('gate-cycle')}`} style={styleAt(points.gate)}>
       <LifeSprite src={gateEnergyLockStrip} className="persistent-life__gate-lock" delay="-4.4s" />
     </div>
+    <PersistentWaterFlow layout={layout} active={activeOperations.has('water-machinery')} />
     <div className={`persistent-life persistent-life--water${activeClass('water-machinery')}`} style={styleAt(points.water)}>
       <LifeSprite src={waterReflectionStrip} className="persistent-life__water-reflection" delay="-2.6s" fetchPriority="high" />
       <LifeSprite src={waterReflectionStrip} className="persistent-life__water-reflection persistent-life__water-reflection--secondary" delay="-5.1s" />
