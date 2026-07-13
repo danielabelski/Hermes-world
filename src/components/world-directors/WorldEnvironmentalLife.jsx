@@ -1,9 +1,8 @@
 import { memo } from 'react'
 import AtmosphereLayer from './AtmosphereLayer.jsx'
-import BuildingLifeLayer from './BuildingLifeLayer.jsx'
-import DataPulseLayer from './DataPulseLayer.jsx'
 import EnvironmentalDebugPanel from './EnvironmentalDebugPanel.jsx'
 import EnvironmentalVisualVerification from './EnvironmentalVisualVerification.jsx'
+import PersistentWorldLifeLayer from './PersistentWorldLifeLayer.jsx'
 import './WorldEnvironmentalLife.css'
 
 function WorldEnvironmentalLife({ presentation, debug = 'off' }) {
@@ -18,8 +17,7 @@ function WorldEnvironmentalLife({ presentation, debug = 'off' }) {
       aria-hidden="true"
     >
       <AtmosphereLayer presentation={presentation} />
-      <BuildingLifeLayer presentation={presentation} />
-      <DataPulseLayer presentation={presentation} />
+      <PersistentWorldLifeLayer presentation={presentation} />
       <EnvironmentalVisualVerification verification={presentation.visualVerification} />
     </div>
     {debug === 'panel' ? <EnvironmentalDebugPanel presentation={presentation} /> : null}

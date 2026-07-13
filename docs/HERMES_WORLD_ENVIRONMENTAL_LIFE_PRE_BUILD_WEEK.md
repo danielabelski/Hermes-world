@@ -1,4 +1,4 @@
-# Hermes World — Environmental World Life Pass
+# Hermes World — Persistent Environmental Life
 
 Status: implemented on `pre-build-week/environmental-world-life`; demo only.
 
@@ -6,84 +6,73 @@ Status: implemented on `pre-build-week/environmental-world-life`; demo only.
 
 - Production Correct v1 is untouched.
 - BASELINE remains default and LIGHT remains fallback.
-- No map geometry, routes, agent count, event pipeline, FSM, operational state or production deployment is changed.
-- Environment is presentation-only and cannot write `Working`, `Success`, `Warning`, `Critical` or active-agent counts.
+- No map geometry, routes, agent count, event pipeline, FSM or operational state is changed.
+- Environmental presentation cannot create `Working`, `Success`, `Warning`, `Critical`, tasks or active-agent counts.
 
-## Architecture
+## Product rule
 
-- `environmentalDirector.js`: centralized building configuration, bounded data routes, ambient scheduling and priority resolution.
-- `useEnvironmentalDirector.js`: one visibility/reduced-motion controller; reuses the existing presentation clock and adds no per-element timers.
-- `BuildingLifeLayer`: individual rhythms for Citadel, Forge, Watcher, Archive and Sanctum.
-- `DataPulseLayer`: 1–3 ambient packets plus evidence-backed real-event packets.
-- `AtmosphereLayer`: bounded water reflections, forge smoke, fog and road reflections.
-- `EnvironmentalDebugPanel`: demo-only `?worldDebug=1` diagnostics.
+The map must remain visibly alive without pretending that an agent is working. Two distinct layers enforce this:
 
-Priority is operational alert/work → evidence-backed choreography → ambient. Operational data is read but never mutated.
+1. `PersistentWorldLifeLayer` — continuous low-intensity infrastructure life.
+2. `WorldOperationsLayer` — finite ambient operations or evidence-backed reactions to real events.
+
+Persistent life never unmounts during the 48-second operation cycle. Real events may increase a building's intensity, but they do not create a second copy of its base asset.
+
+## Continuous map life
+
+- Forge: permanent furnace fire, continuously drifting chimney smoke; production adds sparks and intensity instead of mounting another fire.
+- Water core: two asynchronous clipped reflection bands remain mounted continuously.
+- Citadel: continuous crystal/core cycle; distribution adds the energy wave and rune ring.
+- Archive: four independently phased window lights; ingestion adds facade runes.
+- Watcher: continuous lens pulse; a sweep operation adds the large scan beam.
+- Sanctum: continuous slow orbit; circulation accelerates and strengthens the same asset.
+- Gate: continuous restrained energy lock; a gate cycle strengthens the same asset.
+- Atmosphere: two irregular fog bands move at different speeds and directions.
+
+The effects use the same mobile and desktop semantic points as the accepted operation layer. Legacy geometric site effects and the duplicate legacy core were removed from the rendered tree.
+
+## Data-flow semantics
+
+- Ambient data routes were removed. Idle never displays a line that can be mistaken for an agent path or GPS overlay.
+- Data transit is reserved for choreography backed by a real `evidenceEventId`.
+- A real transit renders only a moving packet, short wake and nearby energized segments; the full navigation path is not visible.
+- Existing Hermes conduits remain operational observability: dormant lines are invisible, waiting lines are nearly invisible, and true working/problem flows remain readable.
+
+## Priority and alert behavior
+
+- Ordinary work no longer reduces opacity of the entire environment; fire and water remain alive.
+- Warning dims unrelated persistent landmarks to `0.68`.
+- Critical/error dims unrelated landmarks to `0.42`, while the affected building remains at full intensity.
+- Operational response and event choreography still outrank ambient scheduling.
 
 ## Performance budget
 
-- Mobile presentation budget: 8 particles; desktop: 10.
-- At most two ambient buildings are active concurrently.
-- At most three ambient data packets are scheduled.
-- Resting buildings pause their internal animation loops.
-- Hidden tabs pause CSS animation and schedule zero moving particles.
-- Reduced motion hides travel effects and retains only subdued static landmarks.
-- Keyframes animate transform and opacity; no animation library or per-particle JavaScript timer is used.
+- Seven persistent landmarks, twelve small sprite nodes and two fog bands on mobile.
+- No new animation library and no per-effect JavaScript timer.
+- Sprite animation uses CSS transforms with eight-frame RGBA strips.
+- Persistent nodes remain stable across the full ambient cycle; operations are capped at two.
+- Hidden/reduced-motion behavior remains supported; heavy smoke and fog are suppressed under reduced motion.
+- Ambient DataPulse rendering and its unused module were removed from the active bundle.
 
 ## Validation
 
-- 57/57 unit and integration tests pass, including ten simulated minutes of bounded idle life.
-- Mobile 393×852: BASELINE and LIGHT, no overflow, 5 configured buildings, director running, bounded packet/particle counts, no console warnings/errors.
-- Desktop 1366×768: BASELINE, no overflow, bounded packet/particle counts, no console warnings/errors.
-- Live local SSE validation: delegation targets only Forge with its event evidence ID; Critical suppresses ambient intensity and dominates the Forge response.
-- Two navigational remounts leave exactly one environment, building, data and atmosphere layer.
+- `72/72` unit and integration tests pass.
+- ESLint passes.
+- Production build passes (`844` modules).
+- Mobile DOM validation at `393×852`: seven persistent landmarks, twelve sprite nodes, two fog bands, zero legacy site placeholders, zero duplicate legacy core and zero idle data transits.
+- Desktop DOM validation at `1366×768`: all seven landmarks remain inside the viewport and no error boundary is present.
+- One full 48-second runtime cycle keeps exactly seven persistent landmarks and twelve sprite nodes; fire and both water bands remain mounted; browser console has no warnings or errors.
+- Critical scenario validation: only the affected Forge remains at full intensity while unrelated ambient landmarks dim to `0.42`.
+- Ten simulated minutes remain bounded and cannot fabricate operational fields.
 
-## Demo URLs
+## Checkpoints
 
-- Ambient: `/?demo=1&scenario=ambient`
-- Debug: `/?demo=1&scenario=ambient&worldDebug=1`
-- LIGHT fallback: `/?demo=1&scenario=ambient&mapVariant=light`
-- Visual verification: `/?demo=1&scenario=ambient&worldDebug=visual` (15 seconds, eight labeled existing effects).
+- `a436ad1 feat: replace world operation placeholders with alpha sprites` — safe pre-persistent checkpoint containing all accepted RGBA strips.
+- The persistent-life pass is committed separately so it can be reverted without touching the accepted asset checkpoint.
 
-## Mobile visibility calibration
+## Demo
 
-- The first five seconds now expose Citadel pulse, an inbound data packet, Forge wake/smoke and directional water/fog movement at the same time.
-- Ambient packets use a larger 0.7 world-unit core, higher-contrast dashed trail and a 6.8 second opening route.
-- Forge smoke is attached to the real Forge anchor and travels more than 50 CSS pixels; neutral Forge sparks remain hidden unless real work or an alert provides evidence.
-- Watcher sweep spans roughly 100 degrees, Archive windows sequence at four distinct luminance steps, and Sanctum uses a larger local turquoise breath.
-- Local dark backplates improve contrast only beneath each landmark; there is no global map glow.
-- Global Healthy plus a local Critical is rendered as `System stabilny · 1 incydent lokalny`, while the global severity remains Healthy and the local marker remains Critical.
-
-## Visible World Operations
-
-The main source of perceived life is now a bounded operations scheduler rather than pulses and local particles.
-
-- Opening: a bright packet traverses gate → main road → Citadel → district → Archive while the Citadel rings rotate and distribute energy.
-- Forge: furnace door, piston, gear, crane, finite sparks and chimney smoke form one eight-second mechanical cycle.
-- Watcher: dome calibration plus a long beam sweep with a hold and return.
-- Archive: four facade window stages, moving rune tape and a finite seal; real record mode requires event evidence.
-- Sanctum: two directional orbit points, contracting spiral and channel discharge.
-- Infrastructure: gate panels and a water turbine alternate in the quiet bridge windows.
-- Ambient schedule is deterministic over 48 seconds, has no dead window and renders one or two major operations only.
-- Real choreography replaces the scheduled operations immediately. A delegation produces evidence-backed transit; the target mechanical cycle starts only when the target has real operational activity.
-- The operations layer is presentation-only and cannot write tasks, alerts, statuses or active-agent counts.
-
-## Final visual integration
-
-- Data transit uses an invisible navigation path. Only the packet, a short fading wake and 3–6 nearby energized segments are rendered; the full route is never exposed as a GPS/debug line.
-- Mobile and desktop transit geometry follows the existing road-calibrated navigation nodes and named building targets.
-- Operations render below agents and below the existing architectural foreground masks, so packets and machinery can be naturally occluded by people, gates and facades.
-- Citadel energy is integrated as segmented ground runes, two masked mechanism rings, a crystal charge and one directional output channel. Editor-like handles and square markers are absent.
-- Forge activity is anchored to the furnace, gear, hammer pivot and chimney. The furnace and door use perspective masks; the hammer preserves its isometric angle throughout the strike; smoke exits behind a chimney lip.
-- Ambient transit remains cyan and restrained. Evidence-backed transit is faster and brighter and carries `evidenceEventId`; it does not create an operational state.
-- The earlier environmental glow and particles remain a low-intensity supporting layer only. They are not the primary source of perceived world activity.
-- Normal mobile verification runs without debug labels or controls; `worldDebug=visual` remains an explicit diagnostic mode only.
-
-## Forge asset vertical slice
-
-- The rejected map-crop pass was reverted completely before this slice. Production remains untouched.
-- Forge now uses three source RGBA PNG strips: fire, smoke and sparks. Each contains exactly eight equal frames and transparent corners.
-- The old synthetic Forge backplate, furnace rectangle, door, gear, piston, crane and chimney-lip shapes were removed from both JSX and CSS.
-- All three strips share one Forge anchor. Fire stays at the furnace, smoke starts above it and sparks use the same impact origin.
-- Ambient remains presentation-only. Event and operational modes increase the same assets' visibility but do not create or mutate operational state.
-- The first user checkpoint is Forge only. No other building receives this asset treatment before Forge receives visual GL.
+- Mobile/default: `http://100.69.167.105:4176/?demo=1`
+- Working: `http://100.69.167.105:4176/?demo=1&focus=working`
+- Critical priority: `http://100.69.167.105:4176/?demo=1&focus=critical`
+- Visual developer mode remains opt-in through `?worldDebug=visual`.

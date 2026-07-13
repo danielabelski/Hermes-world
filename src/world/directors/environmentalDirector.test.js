@@ -12,7 +12,7 @@ test('idle environment becomes visibly alive within 2.5 seconds without fabricat
   const environment = deriveEnvironmentalPresentation({ now: START + 2_500, startedAt: START, layout: 'mobile', operationalPresentations })
   assert.equal(environment.entryActive, true)
   assert.equal(environment.activeBuildingIds.length, 2)
-  assert.ok(environment.ambientPulses.length >= 1 && environment.ambientPulses.length <= 3)
+  assert.equal(environment.ambientPulses.length, 0)
   assert.equal(environment.particleCount, 8)
   assert.equal(environment.response, null)
   assert.equal(JSON.stringify(operationalPresentations), before)
@@ -22,9 +22,8 @@ test('idle environment becomes visibly alive within 2.5 seconds without fabricat
 test('ambient presentation remains bounded over ten simulated minutes and never emits fake evidence', () => {
   for (let elapsed = 0; elapsed <= 600_000; elapsed += 5_000) {
     const environment = deriveEnvironmentalPresentation({ now: START + elapsed, startedAt: START, layout: 'desktop', operationalPresentations: [idleModel('coder')] })
-    assert.ok(environment.ambientPulses.length >= 1 && environment.ambientPulses.length <= 3)
+    assert.equal(environment.ambientPulses.length, 0)
     assert.ok(environment.particleCount <= 10)
-    assert.ok(environment.ambientPulses.every((pulse) => pulse.evidenceEventId === undefined && pulse.mode === 'ambient'))
   }
 })
 

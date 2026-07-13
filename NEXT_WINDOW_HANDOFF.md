@@ -629,3 +629,20 @@ This endpoint works outside the home network, including LTE. It is separate from
 Do not give the user a `192.168.x.x` URL as the primary application address. That address is only a LAN diagnostic fallback. The canonical user-facing address is the Tailscale HTTPS URL above.
 
 ---
+
+## DEMO-ONLY PERSISTENT WORLD LIFE — 2026-07-13
+
+This section applies only to the separate demo repository and branch `pre-build-week/environmental-world-life`. Production Correct v1 remains untouched.
+
+- Accepted RGBA world-effect checkpoint: `a436ad1`.
+- The environmental architecture now separates continuous infrastructure life from finite operations and real-event choreography.
+- Forge fire/smoke, water, Citadel core, Archive windows, Watcher lens, Sanctum orbit and gate lock remain continuously mounted.
+- Forge sparks, Watcher beam, Archive runes and Citadel distribution remain operation-only additions.
+- Ambient data routes were removed because they looked like agent paths. Data transit is now evidence-backed only.
+- Legacy geometric site effects and duplicate core rendering are absent from the active tree.
+- Ordinary working does not dim the whole environment; warning/critical still suppress unrelated ambient landmarks.
+- Validation baseline: 72 tests, ESLint, production build, mobile 393×852, desktop 1366×768 and a full 48-second browser cycle with stable node counts and no console errors.
+- Canonical implementation notes and exact verification are in `docs/HERMES_WORLD_ENVIRONMENTAL_LIFE_PRE_BUILD_WEEK.md`.
+- Do not port this pass to production without explicit user GL after phone review.
+
+---

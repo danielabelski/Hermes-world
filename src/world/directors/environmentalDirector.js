@@ -99,12 +99,7 @@ export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = 
   const choreographed = eventResponse(choreography)
   const response = !operational ? choreographed : !choreographed || operational.priority >= choreographed.priority ? operational : choreographed
   const alerting = response?.priority >= 5
-  const ambientPulseCount = reducedMotion || !visible ? 0 : 1 + (cycle % 3)
-  const routeIds = Object.keys(ENVIRONMENT_DATA_ROUTES)
-  const ambientPulses = freeze(Array.from({ length: ambientPulseCount }, (_, index) => {
-    const routeId = routeIds[(cycle + index) % routeIds.length]
-    return freeze({ id: `ambient-${cycle}-${index}`, mode: 'ambient', routeId, points: ENVIRONMENT_DATA_ROUTES[routeId][normalizedLayout], delay: index * 2.1, duration: 6.8 + index * 1.3 })
-  }))
+  const ambientPulses = freeze([])
   const responsePulse = response && visible ? freeze({
     id: `event-${response.evidenceEventId ?? response.buildingId}-${response.cue}`, mode: 'event', routeId: pulseRouteFor(response),
     points: ENVIRONMENT_DATA_ROUTES[pulseRouteFor(response)][normalizedLayout], cue: response.cue, state: response.state ?? null,

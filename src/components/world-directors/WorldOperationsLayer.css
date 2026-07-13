@@ -1,6 +1,7 @@
 .world-operations-layer{position:absolute;inset:0;z-index:8;pointer-events:none;overflow:hidden;contain:layout paint}
 .world-operations-layer.is-paused *{animation-play-state:paused!important}
 .world-operation{position:absolute;pointer-events:none}
+.world-operations-layer.mode-ambient .world-operation{animation:operation-envelope var(--operation-lifetime,6s) ease-in-out both}
 .world-operation:not(.world-operation--data-transit){left:var(--operation-x);top:var(--operation-y);transform:translate(-50%,-50%)}
 .world-operation--data-transit{inset:0;width:100%;height:100%;overflow:visible}
 
@@ -62,6 +63,7 @@
 .operation-water-machinery.mode-event .operation-water__reflection,.operation-water-machinery.mode-operational .operation-water__reflection{opacity:.68;--effect-duration:3.8s}
 
 @keyframes operation-local-transit{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@keyframes operation-envelope{0%{opacity:0}7%{opacity:1}88%{opacity:1}100%{opacity:0}}
 @keyframes world-effect-sprite{to{transform:translateX(-87.5%)}}
 @keyframes citadel-ring-breathe{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:.82;transform:scale(1.03)}}
 @keyframes forge-sprite-frames{to{transform:translateX(-87.5%)}}

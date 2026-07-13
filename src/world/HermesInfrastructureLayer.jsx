@@ -81,13 +81,9 @@ export default function HermesInfrastructureLayer({ layout = 'desktop' }) {
         style={{ '--x': `${conduit.x}%`, '--y': `${conduit.y}%`, '--length': `${conduit.length}%`, '--angle': `${conduit.angle}deg` }}
       />
     })}
-    {config.crystals.map((crystal) => {
+    {config.crystals.filter((crystal) => crystal.id !== 'core').map((crystal) => {
       const phase = stateByBuilding.get(crystal.buildingId) ?? 'resting'
       return <i className={`hermes-crystal hermes-crystal--${crystal.id} crystal--${phase}`} data-building-id={crystal.buildingId} data-building-phase={phase} data-system-role={crystal.systemRole} key={crystal.id} style={{ '--x': `${crystal.x}%`, '--y': `${crystal.y}%`, '--scale': crystal.scale }}><b /><em /><span /></i>
-    })}
-    {config.sites.map((site) => {
-      const phase = site.profile ? stateByProfile.get(site.profile) ?? 'resting' : 'ambient'
-      return <i className={`hermes-site-effect hermes-site-effect--${site.effect} site-phase--${phase}`} data-source-profile={site.profile ?? 'system'} data-site-phase={phase} data-system-role={site.systemRole ?? 'system-health'} key={site.id} style={{ '--site-x': `${site.x}%`, '--site-y': `${site.y}%` }}><b /><em /></i>
     })}
   </div>
 }

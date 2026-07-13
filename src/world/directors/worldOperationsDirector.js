@@ -51,7 +51,7 @@ function phaseFor(progress) {
   return progress < 0.18 ? 'start' : progress < 0.78 ? 'process' : 'complete'
 }
 
-function ambientOperations({ elapsed, layout }) {
+function ambientOperations({ elapsed }) {
   const cycle = Math.floor(elapsed / AMBIENT_CYCLE_MS)
   const cycleElapsed = elapsed % AMBIENT_CYCLE_MS
   const windowOperation = (type, windowStart, windowEnd, extra = {}) => {
@@ -59,8 +59,8 @@ function ambientOperations({ elapsed, layout }) {
     return operation(`ambient-${cycle}-${type}`, type, 'ambient', phaseFor(progress), progress, { durationMs: windowEnd - windowStart, ...extra })
   }
   if (cycleElapsed < 8_000) return freeze([
-    windowOperation('data-transit', 0, 8_000, { targetBuildingId: 'forge', route: routeFor('forge', layout) }),
     windowOperation('citadel-distribution', 0, 8_000),
+    windowOperation('water-machinery', 0, 8_000),
   ])
   if (cycleElapsed < 16_000) return freeze([
     windowOperation('forge-production', 8_000, 16_000, { targetBuildingId: 'forge' }),
@@ -76,8 +76,8 @@ function ambientOperations({ elapsed, layout }) {
   ])
   if (cycleElapsed < 36_000) return freeze([windowOperation('citadel-distribution', 31_000, 36_000)])
   if (cycleElapsed < 41_000) return freeze([
-    windowOperation('data-transit', 36_000, 41_000, { targetBuildingId: 'archive', route: routeFor('archive', layout) }),
     windowOperation('archive-ingestion', 36_000, 41_000, { targetBuildingId: 'archive' }),
+    windowOperation('water-machinery', 36_000, 41_000),
   ])
   return freeze([
     windowOperation('sanctum-circulation', 41_000, 48_000, { targetBuildingId: 'sanctum' }),
@@ -129,7 +129,7 @@ export function deriveWorldOperations({ now = Date.now(), startedAt = now, visib
   const elapsed = Math.max(0, now - startedAt)
   const operational = operationalOperations(operationalPresentations)
   const choreographed = lifecycle.connection === 'offline' ? [] : choreographyOperations(choreography, normalizedLayout)
-  const ambient = ambientOperations({ elapsed, layout: normalizedLayout })
+  const ambient = ambientOperations({ elapsed })
   const selected = operational.length ? [...operational, ...choreographed] : choreographed.length ? choreographed : ambient
   const operations = freeze(selected.slice(0, 2).map((item) => reducedMotion ? freeze({ ...item, phase: 'static', progress: 0.5 }) : item))
   return freeze({ running: true, operations, majorCount: operations.length, mode: operational.length ? 'operational' : choreographed.length ? 'event' : 'ambient' })

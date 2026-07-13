@@ -6,12 +6,11 @@ import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING 
 const START = Date.parse('2026-07-13T01:00:00.000Z')
 const idle = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
 
-test('opening three seconds contain a map-crossing transit and Citadel machine', () => {
+test('opening three seconds contain Citadel activity and continuous water without a fake ambient route', () => {
   const result = deriveWorldOperations({ now: START + 2_500, startedAt: START, layout: 'mobile', operationalPresentations: [idle('coder')] })
   assert.equal(result.mode, 'ambient')
-  assert.deepEqual(result.operations.map((item) => item.type), ['data-transit', 'citadel-distribution'])
-  assert.equal(result.operations[0].route[0].y, 94)
-  assert.equal(result.operations[0].route.some((point) => point.y <= 43), true)
+  assert.deepEqual(result.operations.map((item) => item.type), ['citadel-distribution', 'water-machinery'])
+  assert.equal(result.operations.some((item) => item.type === 'data-transit'), false)
   assert.equal(result.majorCount, 2)
 })
 
@@ -24,7 +23,7 @@ test('mobile water machinery is anchored to the central water core, never the dr
 })
 
 test('forty-eight second ambient schedule has no dead window and never exceeds two major operations', () => {
-  const expected = new Set(['data-transit', 'citadel-distribution', 'forge-production', 'watcher-sweep', 'archive-ingestion', 'sanctum-circulation', 'gate-cycle', 'water-machinery'])
+  const expected = new Set(['citadel-distribution', 'forge-production', 'watcher-sweep', 'archive-ingestion', 'sanctum-circulation', 'gate-cycle', 'water-machinery'])
   const seen = new Set()
   for (let elapsed = 0; elapsed < WORLD_OPERATIONS_TIMING.AMBIENT_CYCLE_MS; elapsed += 500) {
     const result = deriveWorldOperations({ now: START + elapsed, startedAt: START, layout: 'mobile' })
@@ -107,8 +106,10 @@ test('operations render below agents and existing architectural foreground masks
 })
 
 test('world buildings use transparent sprite strips without geometric placeholders', () => {
-  const jsx = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.jsx', import.meta.url), 'utf8')
-  const css = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
+  const operationsJsx = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.jsx', import.meta.url), 'utf8')
+  const persistentJsx = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
+  const jsx = `${operationsJsx}\n${persistentJsx}`
+  const css = `${readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')}\n${readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')}`
   for (const rejected of [
     'operation-citadel__outer', 'operation-citadel__inner', 'operation-citadel__input', 'operation-citadel__output',
     'operation-forge__backplate', 'operation-forge__furnace', 'operation-forge__door', 'operation-forge__gear', 'operation-forge__piston', 'operation-forge__crane', 'operation-forge__chimney-lip',
@@ -124,6 +125,17 @@ test('world buildings use transparent sprite strips without geometric placeholde
   assert.match(css, /forge-sprite-frames/)
   assert.match(css, /world-effect-sprite/)
   assert.match(css, /steps\(7,end\)/)
+})
+
+test('persistent world life keeps fire and water mounted while transit remains event-only', () => {
+  const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
+  const director = readFileSync(new URL('./worldOperationsDirector.js', import.meta.url), 'utf8')
+  assert.match(persistent, /persistent-life__forge-fire/)
+  assert.match(persistent, /persistent-life__water-reflection/)
+  assert.match(persistent, /data-persistent-world-life="active"/)
+  const ambientSource = director.slice(director.indexOf('function ambientOperations'), director.indexOf('function choreographyOperations'))
+  assert.equal(ambientSource.includes("windowOperation('data-transit'"), false)
+  assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
 test('world effect source strips are real RGBA PNGs with eight equal frames', () => {
