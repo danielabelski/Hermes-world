@@ -245,6 +245,21 @@ test('persistent world life keeps fire and water mounted while transit remains e
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
+test('mobile world life exposes continuous map-aligned water and large atmospheric motion', () => {
+  const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
+  const atmosphere = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
+  assert.match(persistent, /persistent-water-flow/)
+  assert.match(persistent, /viewBox=\{mobile \? '0 0 980 1680' : '0 0 1536 1024'\}/)
+  assert.match(css, /water-channel-flow 13s linear infinite/)
+  assert.match(css, /stroke-dasharray:4 96/)
+  assert.match(atmosphere, /atmosphere-cloud-shadow--primary/)
+  assert.match(atmosphere, /atmosphere-cloud-wisp--primary/)
+  assert.match(css, /cloud-shadow-cross 27s linear infinite/)
+  assert.match(css, /cloud-wisp-cross 31s linear infinite/)
+  assert.doesNotMatch(css, /prefers-reduced-motion[^}]*atmosphere-cloud[^}]*display:none/)
+})
+
 test('runtime sprite strips retain RGBA alpha at mobile-sized resolution and stay under the startup budget', () => {
   const assets = [
     ['forge-fire-strip.runtime.png', 1024, 160],
