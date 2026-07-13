@@ -646,3 +646,61 @@ This section applies only to the separate demo repository and branch `pre-build-
 - Do not port this pass to production without explicit user GL after phone review.
 
 ---
+
+## PRE-BUILD-WEEK WORLD LIFE CHECKPOINT — 2026-07-13
+
+This section supersedes the earlier demo-only environmental section. It applies only to `hermes-os-living-world-demo` on branch `pre-build-week/environmental-world-life`. Production Correct v1 and its persistent service remain untouched.
+
+### Completed implementation
+
+- Persistent infrastructure life is separate from finite operations and real-event choreography.
+- Forge fire/smoke, water reflections, Citadel core, Archive windows, Watcher lens, Sanctum orbit, Gate lock and two fog bands remain continuously mounted.
+- A deterministic 36-second schedule has no dead interval and never exceeds two large simultaneous operations.
+- Visual anchors are centralized separately from navigation nodes, routes and agent interaction points.
+- Idle ambient renders no data paths. A data transit requires a real `evidenceEventId`, exposes only a short local wake and runs one finite cycle.
+- Warning and critical suppress unrelated environmental motion while preserving the affected subsystem at full intensity.
+- Duplicate legacy site effects, duplicate core rendering, `BuildingLifeLayer` and `DataPulseLayer` were removed from the active bundle.
+- Thirteen accepted source strips have clean mobile-sized `*.runtime.png` derivatives. Combined payload is `795070` bytes; source assets remain unchanged.
+- Citadel core, Forge fire and water reflection receive high fetch priority. Other effects use async decode and low priority.
+
+### Validation
+
+- Tests: `75/75` passed.
+- World-life validator: passed.
+- ESLint: passed.
+- Build: passed (`842` modules).
+- Runtime asset alpha, dimensions, eight-frame division and total payload are enforced by tests.
+- The 36-second schedule and ten simulated minutes are tested for dead gaps, operation bounds and fabricated operational fields.
+- Reduced motion, hidden-tab handling and warning/critical priority remain covered.
+- All runtime assets return HTTP `200` from the existing demo server on port `4176`.
+- Final automated screenshot capture in the in-app preview was unstable and reset during capture. Real-phone perceptual GL is mandatory and has not been inferred.
+
+### Exact next action
+
+1. Open `http://100.69.167.105:4176/?demo=1` on the real phone.
+2. Observe the first 5 seconds and at least one complete 36-second cycle.
+3. Check continuous Forge fire/water, Archive windows, Citadel core, operation handoffs and absence of GPS/debug paths.
+4. Check `&focus=warning` and `&focus=critical`; the affected subsystem must dominate while unrelated ambient motion is suppressed.
+5. User returns `GL` or exact `RL` defects.
+6. On `RL`, change only named demo defects and repeat tests/build.
+7. On `GL`, freeze this branch as the Build Week visual base. Any production port is a separate audited operation.
+
+### Do not touch
+
+- Production repository, port `4175`, Tailscale Funnel, scheduled service or production deployment.
+- Map asset, crop, geometry, waypoint graph, routes, anchors, FSM, event pipeline, `server.js`, `src/api.js` or API contracts.
+- Agent count, operational-state ownership or active-agent counters.
+- Do not reintroduce ambient GPS lines, duplicate renderers, fake Working/Success or debug labels in normal view.
+
+### Exact commands
+
+```powershell
+npm.cmd test
+npm.cmd run validate:world-life
+npm.cmd run lint
+npm.cmd run build
+```
+
+Canonical notes: `docs/HERMES_WORLD_ENVIRONMENTAL_LIFE_PRE_BUILD_WEEK.md`.
+
+---

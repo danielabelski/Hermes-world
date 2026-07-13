@@ -5,7 +5,7 @@
 .world-operation:not(.world-operation--data-transit){left:var(--operation-x);top:var(--operation-y);transform:translate(-50%,-50%)}
 .world-operation--data-transit{inset:0;width:100%;height:100%;overflow:visible}
 
-.operation-artery__wake,.operation-artery__segments{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-dashoffset:100;animation:operation-local-transit var(--transit-duration) linear infinite}
+.operation-artery__wake,.operation-artery__segments{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-dashoffset:100;animation:operation-local-transit var(--transit-duration) linear 1 both}
 .operation-artery__wake{stroke:#70dfff68;stroke-width:3;stroke-dasharray:16 84;opacity:.46}
 .operation-artery__segments{stroke:#c0f6ff;stroke-width:1.25;stroke-dasharray:2 1.5 2 1.5 2 1.5 3 86.5;opacity:.9}
 .operation-artery__halo{fill:#72dcff4d;stroke:#75e6ff80;stroke-width:.2}.operation-artery__core{fill:#e3fbff;stroke:#6de1ff;stroke-width:.22}
@@ -15,58 +15,36 @@
 
 .operation-sprite{position:absolute;display:block;overflow:hidden;pointer-events:none;filter:drop-shadow(0 1px 2px #0207089c)}
 .operation-sprite img{position:absolute;left:0;top:0;display:block;width:800%;height:100%;max-width:none;object-fit:fill;animation:world-effect-sprite var(--effect-duration,1.4s) steps(7,end) infinite;will-change:transform}
-.operation-sprite.is-static-frame img{animation:none;transform:none}
+.operation-sprite.is-static-frame img{animation:none;transform:none;will-change:auto}
 
 .operation-citadel{width:88px;height:80px;transform-origin:50% 62%}
 .operation-citadel__wave{left:2px;top:35px;width:84px;height:40px;z-index:1;--effect-duration:4.8s;opacity:.5;mix-blend-mode:screen}
 .operation-citadel__ring{left:16px;top:34px;width:56px;height:28px;z-index:2;opacity:.68;mix-blend-mode:screen;animation:citadel-ring-breathe 4.8s ease-in-out infinite}
-.operation-citadel__core{left:33px;top:9px;width:22px;height:30px;z-index:3;--effect-duration:4.8s;opacity:.82;mix-blend-mode:screen}
 .operation-citadel.mode-event{transform:translate(-50%,-50%) scale(1.08)}
 .operation-citadel.mode-event .operation-citadel__wave,.operation-citadel.mode-operational .operation-citadel__wave{opacity:.82;--effect-duration:2.8s}
 .operation-citadel.mode-event .operation-citadel__ring,.operation-citadel.mode-operational .operation-citadel__ring{opacity:1;animation-duration:3.2s}
-.operation-citadel.mode-event .operation-citadel__core,.operation-citadel.mode-operational .operation-citadel__core{opacity:1;--effect-duration:2.8s}
 
 .operation-forge{width:64px;height:88px;overflow:visible;transform-origin:50% 72%}
 .operation-forge__sprite{position:absolute;display:block;overflow:hidden;pointer-events:none;filter:drop-shadow(0 2px 2px #020606a6)}
 .operation-forge__sprite img{position:absolute;left:0;top:0;display:block;width:800%;height:100%;max-width:none;object-fit:fill;animation:forge-sprite-frames var(--forge-frame-duration) steps(7,end) infinite;will-change:transform}
-.operation-forge__fire{left:19px;top:47px;width:25px;height:31px;z-index:2;--forge-frame-duration:.92s;opacity:.82;mix-blend-mode:screen}
-.operation-forge__smoke{left:23px;top:0;width:30px;height:38px;z-index:1;--forge-frame-duration:2.4s;opacity:.42;filter:blur(.35px) saturate(.72) drop-shadow(0 2px 2px #02060685)}
-.operation-forge__sparks{left:17px;top:36px;width:30px;height:30px;z-index:3;--forge-frame-duration:.78s;opacity:.72;mix-blend-mode:screen}
+.operation-forge__sparks{left:17px;top:29px;width:30px;height:30px;z-index:3;--forge-frame-duration:.78s;opacity:.72;mix-blend-mode:screen}
 .operation-forge.mode-event,.operation-forge.mode-operational{transform:translate(-50%,-50%) scale(1.08)}
-.operation-forge.mode-event .operation-forge__fire,.operation-forge.mode-operational .operation-forge__fire{opacity:1;filter:brightness(1.08) drop-shadow(0 0 4px #ff8d35a8)}
-.operation-forge.mode-event .operation-forge__smoke,.operation-forge.mode-operational .operation-forge__smoke{opacity:.58}
 .operation-forge.mode-event .operation-forge__sparks,.operation-forge.mode-operational .operation-forge__sparks{opacity:1}
 .operation-forge.phase-interrupted{filter:hue-rotate(-18deg) saturate(1.18)}
 
-.operation-watcher{width:150px;height:112px;transform-origin:18px 84px}
+.operation-watcher{width:150px;height:112px;transform-origin:50% 50%}
 .operation-watcher__beam{left:15px;top:0;width:132px;height:106px;z-index:1;--effect-duration:7s;opacity:.18;mix-blend-mode:screen;filter:blur(.25px) drop-shadow(0 0 2px #46dfff5c)}
-.operation-watcher__lens{left:7px;top:73px;width:24px;height:24px;z-index:2;--effect-duration:3.6s;opacity:.78;mix-blend-mode:screen}
 .operation-watcher.mode-operational .operation-watcher__beam,.operation-watcher.mode-event .operation-watcher__beam{opacity:.32;--effect-duration:4s}
-.operation-watcher.mode-operational .operation-watcher__lens,.operation-watcher.mode-event .operation-watcher__lens{opacity:1;--effect-duration:2.2s}
 
 .operation-archive{width:78px;height:78px}
-.operation-archive__windows{position:absolute;left:8px;top:24px;width:62px;height:46px;display:grid;grid-template-columns:repeat(2,16px);grid-auto-rows:22px;justify-content:space-between;align-content:space-between;z-index:2}
-.operation-archive__window{position:relative;width:16px;height:22px;--effect-duration:5.6s;opacity:.45;mix-blend-mode:screen}
-.operation-archive__window:nth-child(2){animation-delay:.38s}.operation-archive__window:nth-child(3){animation-delay:.76s}.operation-archive__window:nth-child(4){animation-delay:1.14s}
 .operation-archive__runes{left:29px;top:0;width:20px;height:58px;z-index:3;--effect-duration:3.8s;opacity:.5;mix-blend-mode:screen}
-.operation-archive.mode-event .operation-archive__window,.operation-archive.mode-operational .operation-archive__window{opacity:.82;--effect-duration:3s}
 .operation-archive.mode-event .operation-archive__runes,.operation-archive.mode-operational .operation-archive__runes{opacity:.9;--effect-duration:2.4s}
 
-.operation-sanctum{width:72px;height:72px}
-.operation-sanctum__orbit{left:3px;top:3px;width:66px;height:66px;--effect-duration:7s;opacity:.62;mix-blend-mode:screen}
-.operation-sanctum.mode-event .operation-sanctum__orbit,.operation-sanctum.mode-operational .operation-sanctum__orbit{opacity:.9;--effect-duration:4.2s}
-
-.operation-gate{width:56px;height:48px}.operation-gate__lock{left:8px;top:7px;width:40px;height:40px;--effect-duration:6.4s;opacity:.7;mix-blend-mode:screen}
-.operation-gate.mode-event .operation-gate__lock,.operation-gate.mode-operational .operation-gate__lock{opacity:1;--effect-duration:3s}
-.operation-water-machinery{width:96px;height:42px;overflow:hidden;clip-path:ellipse(48% 42% at 50% 50%)}
-.operation-water__reflection{left:0;top:6px;width:96px;height:30px;--effect-duration:6.4s;opacity:.42;mix-blend-mode:screen}
-.operation-water-machinery.mode-event .operation-water__reflection,.operation-water-machinery.mode-operational .operation-water__reflection{opacity:.68;--effect-duration:3.8s}
-
-@keyframes operation-local-transit{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@keyframes operation-local-transit{0%{opacity:0;stroke-dashoffset:100}8%{opacity:1}84%{opacity:1}100%{opacity:0;stroke-dashoffset:0}}
 @keyframes operation-envelope{0%{opacity:0}7%{opacity:1}88%{opacity:1}100%{opacity:0}}
 @keyframes world-effect-sprite{to{transform:translateX(-87.5%)}}
 @keyframes citadel-ring-breathe{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:.82;transform:scale(1.03)}}
 @keyframes forge-sprite-frames{to{transform:translateX(-87.5%)}}
 
-@media(max-width:700px){.operation-citadel{width:76px;height:70px}.operation-citadel__wave{left:2px;top:32px;width:72px;height:34px}.operation-citadel__ring{left:14px;top:31px;width:48px;height:24px}.operation-citadel__core{left:29px;top:10px;width:18px;height:25px}.operation-forge{width:56px;height:78px}.operation-forge__fire{left:18px;top:44px;width:21px;height:27px}.operation-forge__smoke{left:21px;top:2px;width:26px;height:33px}.operation-forge__sparks{left:16px;top:35px;width:26px;height:26px}.operation-watcher{width:132px;height:100px}.operation-watcher__beam{left:14px;width:116px;height:94px}.operation-watcher__lens{left:7px;top:65px;width:22px;height:22px}.operation-archive{width:68px;height:70px}.operation-archive__windows{left:7px;top:22px;width:54px;height:41px;grid-template-columns:repeat(2,14px);grid-auto-rows:19px}.operation-archive__window{width:14px;height:19px}.operation-archive__runes{left:25px;width:18px;height:52px}.operation-sanctum{width:64px;height:64px}.operation-sanctum__orbit{width:58px;height:58px}.operation-gate{width:48px;height:42px}.operation-gate__lock{left:7px;top:6px;width:34px;height:34px}.operation-water-machinery{width:86px;height:38px}.operation-water__reflection{width:86px;height:27px}}
-@media(prefers-reduced-motion:reduce){.world-operations-layer *{animation:none!important}.operation-artery__wake,.operation-artery__segments,.operation-artery__halo,.operation-forge__sparks,.operation-forge__smoke,.operation-watcher__beam,.operation-archive__runes{display:none}.operation-forge__sprite img,.operation-sprite img{transform:none}.world-operation{opacity:.42}}
+@media(max-width:700px){.operation-citadel{width:76px;height:70px}.operation-citadel__wave{left:2px;top:32px;width:72px;height:34px}.operation-citadel__ring{left:14px;top:31px;width:48px;height:24px}.operation-forge{width:56px;height:78px}.operation-forge__sparks{left:16px;top:26px;width:26px;height:26px}.operation-watcher{width:132px;height:100px}.operation-watcher__beam{left:8px;top:3px;width:116px;height:94px}.operation-archive{width:68px;height:70px}.operation-archive__runes{left:25px;width:18px;height:52px}}
+@media(prefers-reduced-motion:reduce){.world-operations-layer *{animation:none!important}.operation-artery__wake,.operation-artery__segments,.operation-artery__halo,.operation-forge__sparks,.operation-watcher__beam,.operation-archive__runes{display:none}.operation-forge__sprite img,.operation-sprite img{transform:none}.world-operation{opacity:.42}}

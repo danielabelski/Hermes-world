@@ -1,29 +1,27 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { readFileSync, statSync } from 'node:fs'
 import test from 'node:test'
 import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
 
 const START = Date.parse('2026-07-13T01:00:00.000Z')
 const idle = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
 
-test('opening three seconds contain Citadel activity and continuous water without a fake ambient route', () => {
+test('opening three seconds contain Citadel activity while persistent water remains outside the operation budget', () => {
   const result = deriveWorldOperations({ now: START + 2_500, startedAt: START, layout: 'mobile', operationalPresentations: [idle('coder')] })
   assert.equal(result.mode, 'ambient')
-  assert.deepEqual(result.operations.map((item) => item.type), ['citadel-distribution', 'water-machinery'])
+  assert.deepEqual(result.operations.map((item) => item.type), ['citadel-distribution'])
   assert.equal(result.operations.some((item) => item.type === 'data-transit'), false)
-  assert.equal(result.majorCount, 2)
+  assert.equal(result.majorCount, 1)
 })
 
-test('mobile water machinery is anchored to the central water core, never the dry south road', () => {
-  const result = deriveWorldOperations({ now: START + 10_000, startedAt: START, layout: 'mobile' })
-  assert.equal(result.operations.some((item) => item.type === 'water-machinery'), true)
-  const water = result.operations.find((item) => item.type === 'water-machinery')
-  assert.equal(water.type, 'water-machinery')
-  assert.deepEqual(WORLD_OPERATION_POINTS.mobile.water, WORLD_OPERATION_POINTS.mobile.citadel)
+test('water is anchored to the visible fountain basin in both layouts', () => {
+  assert.deepEqual(WORLD_OPERATION_POINTS.mobile.water, { x: 50, y: 59.5 })
+  assert.deepEqual(WORLD_OPERATION_POINTS.desktop.water, { x: 50, y: 47 })
+  assert.notDeepEqual(WORLD_OPERATION_POINTS.mobile.water, WORLD_OPERATION_POINTS.mobile.citadel)
 })
 
-test('forty-eight second ambient schedule has no dead window and never exceeds two major operations', () => {
-  const expected = new Set(['citadel-distribution', 'forge-production', 'watcher-sweep', 'archive-ingestion', 'sanctum-circulation', 'gate-cycle', 'water-machinery'])
+test('thirty-six second ambient schedule has no dead window and never exceeds two major operations', () => {
+  const expected = new Set(['citadel-distribution', 'forge-production', 'watcher-sweep', 'archive-ingestion', 'sanctum-circulation', 'gate-cycle'])
   const seen = new Set()
   for (let elapsed = 0; elapsed < WORLD_OPERATIONS_TIMING.AMBIENT_CYCLE_MS; elapsed += 500) {
     const result = deriveWorldOperations({ now: START + elapsed, startedAt: START, layout: 'mobile' })
@@ -58,6 +56,23 @@ test('real message and delegation replace ambient with evidence-backed transit a
   assert.equal(result.operations.some((item) => item.type === 'forge-production'), false)
 })
 
+test('fresh evidence-backed choreography outranks two ordinary working presentations', () => {
+  const choreography = { activeRunId: 'run-priority', signals: [
+    { kind: 'message-pulse', evidenceEventId: 'run-priority:1', buildingId: 'citadel' },
+    { kind: 'command-core', evidenceEventId: 'run-priority:2', buildingId: 'citadel' },
+  ] }
+  const result = deriveWorldOperations({
+    now: START, startedAt: START, layout: 'mobile', choreography,
+    operationalPresentations: [
+      { ...idle('coder'), phase: 'working', active: true, isActive: true },
+      { ...idle('researcher'), phase: 'working', active: true, isActive: true },
+    ],
+  })
+  assert.equal(result.mode, 'event')
+  assert.deepEqual(result.operations.map((item) => item.type), ['data-transit', 'citadel-distribution'])
+  assert.ok(result.operations.every((item) => item.evidenceEventId))
+})
+
 test('Forge production and Watcher sweep require their real operational presentation', () => {
   const forge = deriveWorldOperations({ now: START, startedAt: START, operationalPresentations: [{ ...idle('coder'), phase: 'working', active: true, isActive: true }] })
   assert.equal(forge.mode, 'operational')
@@ -89,8 +104,12 @@ test('data transit renders only a local wake and segments, never a full GPS rout
   assert.match(jsx, /operation-artery__wake/)
   assert.match(jsx, /operation-artery__segments/)
   assert.match(jsx, /pathLength="100"/)
+  assert.match(jsx, /repeatCount="1"/)
+  assert.doesNotMatch(jsx, /repeatCount="indefinite"/)
   assert.match(css, /stroke-dasharray:16 84/)
   assert.match(css, /stroke-dasharray:2 1\.5 2 1\.5 2 1\.5 3 86\.5/)
+  assert.match(css, /operation-local-transit var\(--transit-duration\) linear 1 both/)
+  assert.doesNotMatch(css, /operation-local-transit[^;}]*infinite/)
 })
 
 test('operations render below agents and existing architectural foreground masks', () => {
@@ -120,7 +139,7 @@ test('world buildings use transparent sprite strips without geometric placeholde
     assert.equal(css.includes(rejected), false)
   }
   for (const asset of ['forge-fire', 'forge-smoke', 'forge-sparks', 'citadel-rune-ring', 'citadel-core-pulse', 'citadel-energy-wave', 'watcher-lens-pulse', 'watcher-scan-beam', 'archive-window-glow', 'archive-data-runes', 'sanctum-energy-orbit', 'gate-energy-lock', 'water-reflection']) {
-    assert.match(jsx, new RegExp(`${asset}-strip\\.png`))
+    assert.match(jsx, new RegExp(`${asset}-strip\\.runtime\\.png`))
   }
   assert.match(css, /forge-sprite-frames/)
   assert.match(css, /world-effect-sprite/)
@@ -133,9 +152,40 @@ test('persistent world life keeps fire and water mounted while transit remains e
   assert.match(persistent, /persistent-life__forge-fire/)
   assert.match(persistent, /persistent-life__water-reflection/)
   assert.match(persistent, /data-persistent-world-life="active"/)
+  assert.equal((persistent.match(/fetchPriority="high"/g) ?? []).length, 3)
   const ambientSource = director.slice(director.indexOf('function ambientOperations'), director.indexOf('function choreographyOperations'))
   assert.equal(ambientSource.includes("windowOperation('data-transit'"), false)
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
+})
+
+test('runtime sprite strips retain RGBA alpha at mobile-sized resolution and stay under the startup budget', () => {
+  const assets = [
+    ['forge-fire-strip.runtime.png', 1024, 160],
+    ['forge-smoke-strip.runtime.png', 1024, 160],
+    ['forge-sparks-strip.runtime.png', 768, 96],
+    ['archive-data-runes-strip.runtime.png', 768, 128],
+    ['water-reflection-strip.runtime.png', 1024, 64],
+    ['sanctum-energy-orbit-strip.runtime.png', 1024, 128],
+    ['citadel-energy-wave-strip.runtime.png', 1024, 96],
+    ['citadel-core-pulse-strip.runtime.png', 768, 128],
+    ['archive-window-glow-strip.runtime.png', 512, 96],
+    ['gate-energy-lock-strip.runtime.png', 768, 96],
+    ['citadel-rune-ring-strip.runtime.png', 1024, 128],
+    ['watcher-lens-pulse-strip.runtime.png', 512, 64],
+    ['watcher-scan-beam-strip.runtime.png', 1024, 160],
+  ]
+  let totalBytes = 0
+  for (const [name, width, height] of assets) {
+    const url = new URL(`../../assets/world-effects/${name}`, import.meta.url)
+    const png = readFileSync(url)
+    totalBytes += statSync(url).size
+    assert.equal(png.subarray(1, 4).toString('ascii'), 'PNG')
+    assert.equal(png.readUInt32BE(16), width)
+    assert.equal(png.readUInt32BE(20), height)
+    assert.equal(width % 8, 0)
+    assert.equal(png[25], 6, `${name} must retain RGBA alpha`)
+  }
+  assert.ok(totalBytes < 800_000, `runtime sprites must stay below 800 KB, received ${totalBytes}`)
 })
 
 test('world effect source strips are real RGBA PNGs with eight equal frames', () => {

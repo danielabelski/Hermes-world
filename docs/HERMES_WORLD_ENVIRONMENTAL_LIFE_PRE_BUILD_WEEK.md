@@ -5,74 +5,70 @@ Status: implemented on `pre-build-week/environmental-world-life`; demo only.
 ## Locked boundaries
 
 - Production Correct v1 is untouched.
-- BASELINE remains default and LIGHT remains fallback.
-- No map geometry, routes, agent count, event pipeline, FSM or operational state is changed.
-- Environmental presentation cannot create `Working`, `Success`, `Warning`, `Critical`, tasks or active-agent counts.
+- BASELINE remains the default map and LIGHT remains the fallback.
+- Map geometry, routes, agents, event pipeline, FSM and operational state are unchanged.
+- Environmental presentation cannot create tasks, active-agent counts or fake operational states.
+- Production port is forbidden until explicit GL after real-phone review.
 
-## Product rule
+## Architecture and behavior
 
-The map must remain visibly alive without pretending that an agent is working. Two distinct layers enforce this:
+The map stays visibly alive without pretending that an agent is working:
 
-1. `PersistentWorldLifeLayer` — continuous low-intensity infrastructure life.
-2. `WorldOperationsLayer` — finite ambient operations or evidence-backed reactions to real events.
+1. `PersistentWorldLifeLayer` owns continuous low-intensity infrastructure life.
+2. `WorldOperationsLayer` owns finite ambient operations and event reactions.
+3. `WorldChoreographyLayer` visualizes real Hermes events.
 
-Persistent life never unmounts during the 48-second operation cycle. Real events may increase a building's intensity, but they do not create a second copy of its base asset.
+Persistent landmarks never unmount during the operation schedule. Real events may increase intensity but do not create duplicate assets.
 
-## Continuous map life
+- Forge: permanent furnace fire and chimney smoke; production adds sparks/intensity.
+- Water: two asynchronous clipped reflection bands.
+- Citadel: continuous core; distribution adds the energy wave and rune ring.
+- Archive: four phased facade window lights; ingestion adds facade runes.
+- Watcher: continuous lens pulse; sweep adds the scan beam.
+- Sanctum: continuous slow orbit; circulation strengthens the same asset.
+- Gate: continuous restrained energy lock; a gate cycle strengthens it.
+- Atmosphere: two irregular fog bands with independent timing.
 
-- Forge: permanent furnace fire, continuously drifting chimney smoke; production adds sparks and intensity instead of mounting another fire.
-- Water core: two asynchronous clipped reflection bands remain mounted continuously.
-- Citadel: continuous crystal/core cycle; distribution adds the energy wave and rune ring.
-- Archive: four independently phased window lights; ingestion adds facade runes.
-- Watcher: continuous lens pulse; a sweep operation adds the large scan beam.
-- Sanctum: continuous slow orbit; circulation accelerates and strengthens the same asset.
-- Gate: continuous restrained energy lock; a gate cycle strengthens the same asset.
-- Atmosphere: two irregular fog bands move at different speeds and directions.
+Semantic visual anchors are separate from navigation nodes and agent routing. Legacy geometric placeholders, duplicate core rendering and unused duplicate building/data layers are absent from the active tree.
 
-The effects use the same mobile and desktop semantic points as the accepted operation layer. Legacy geometric site effects and the duplicate legacy core were removed from the rendered tree.
+## Operations and event priority
 
-## Data-flow semantics
+- A deterministic 36-second schedule always keeps at least one readable operation active and never exceeds two large operations.
+- Each operation has a beginning, middle and end; processes do not become synchronized permanent pulses.
+- Urgent operational state outranks choreography, ordinary work and ambient operations.
+- Warning dims unrelated landmarks to `0.68`; critical/error dims them to `0.42`; the affected subsystem remains at full intensity.
+- Idle ambient never renders data paths.
+- Data transit requires a real `evidenceEventId` and shows only a packet, short wake and nearby segments, never a full GPS-like route.
+- Wake/segments run one finite cycle and stop.
 
-- Ambient data routes were removed. Idle never displays a line that can be mistaken for an agent path or GPS overlay.
-- Data transit is reserved for choreography backed by a real `evidenceEventId`.
-- A real transit renders only a moving packet, short wake and nearby energized segments; the full navigation path is not visible.
-- Existing Hermes conduits remain operational observability: dormant lines are invisible, waiting lines are nearly invisible, and true working/problem flows remain readable.
+## Runtime asset and performance budget
 
-## Priority and alert behavior
+- Accepted source RGBA strips remain unchanged.
+- Rendering uses 13 clean mobile-sized `*.runtime.png` derivatives.
+- All runtime strips preserve alpha and divide into eight equal frames.
+- Combined payload: `795070` bytes; enforced budget: `<800000` bytes.
+- Citadel core, Forge fire and water reflection have high fetch priority; other effects use async decoding and low priority.
+- Experimental WebP derivatives were rejected after visual inspection exposed alpha/color artifacts.
+- No animation library or per-effect JavaScript timer was added.
+- Reduced-motion and hidden-tab behavior remain supported.
 
-- Ordinary work no longer reduces opacity of the entire environment; fire and water remain alive.
-- Warning dims unrelated persistent landmarks to `0.68`.
-- Critical/error dims unrelated landmarks to `0.42`, while the affected building remains at full intensity.
-- Operational response and event choreography still outrank ambient scheduling.
+## Validation — 2026-07-13
 
-## Performance budget
+- `npm.cmd test`: `75/75` passed.
+- `npm.cmd run validate:world-life`: passed.
+- `npm.cmd run lint`: passed.
+- `npm.cmd run build`: passed (`842` modules).
+- Tests enforce runtime PNG alpha/dimensions/frame division/payload, 36-second and ten-minute schedule bounds, no dead gaps, no fabricated operational fields, reduced motion and alert priority.
+- All runtime assets return HTTP `200` with correct content types from the existing demo server.
+- Warm local responses: HTML ~`12 ms`, JS ~`51 ms`, fire ~`161 ms`, smoke ~`95 ms`.
+- Final screenshot capture in the in-app preview repeatedly reset during capture. Perceptual acceptance is therefore explicitly a real-phone GL step, not an automated claim.
 
-- Seven persistent landmarks, twelve small sprite nodes and two fog bands on mobile.
-- No new animation library and no per-effect JavaScript timer.
-- Sprite animation uses CSS transforms with eight-frame RGBA strips.
-- Persistent nodes remain stable across the full ambient cycle; operations are capped at two.
-- Hidden/reduced-motion behavior remains supported; heavy smoke and fog are suppressed under reduced motion.
-- Ambient DataPulse rendering and its unused module were removed from the active bundle.
+## Demo and gate
 
-## Validation
+- Phone: `http://100.69.167.105:4176/?demo=1`
+- Local: `http://127.0.0.1:4176/?demo=1`
+- Warning: append `&focus=warning`.
+- Critical: append `&focus=critical`.
+- Developer visual mode: append `&worldDebug=visual`.
 
-- `72/72` unit and integration tests pass.
-- ESLint passes.
-- Production build passes (`844` modules).
-- Mobile DOM validation at `393×852`: seven persistent landmarks, twelve sprite nodes, two fog bands, zero legacy site placeholders, zero duplicate legacy core and zero idle data transits.
-- Desktop DOM validation at `1366×768`: all seven landmarks remain inside the viewport and no error boundary is present.
-- One full 48-second runtime cycle keeps exactly seven persistent landmarks and twelve sprite nodes; fire and both water bands remain mounted; browser console has no warnings or errors.
-- Critical scenario validation: only the affected Forge remains at full intensity while unrelated ambient landmarks dim to `0.42`.
-- Ten simulated minutes remain bounded and cannot fabricate operational fields.
-
-## Checkpoints
-
-- `a436ad1 feat: replace world operation placeholders with alpha sprites` — safe pre-persistent checkpoint containing all accepted RGBA strips.
-- The persistent-life pass is committed separately so it can be reverted without touching the accepted asset checkpoint.
-
-## Demo
-
-- Mobile/default: `http://100.69.167.105:4176/?demo=1`
-- Working: `http://100.69.167.105:4176/?demo=1&focus=working`
-- Critical priority: `http://100.69.167.105:4176/?demo=1&focus=critical`
-- Visual developer mode remains opt-in through `?worldDebug=visual`.
+Next action: user phone review. `GL` freezes this checkpoint as the Build Week visual base; `RL` changes only named demo defects. Never port this pass to production automatically.

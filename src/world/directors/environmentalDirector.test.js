@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { deriveEnvironmentalPresentation, ENVIRONMENT_BUILDINGS } from './environmentalDirector.js'
+import { resolveWorldLifePreset } from './worldLifePreset.js'
+import { WORLD_VISUAL_ANCHORS } from './worldVisualAnchors.js'
 import { countLocalCriticalIncidents, resolveHealthSummaryLabel } from '../healthSummary.js'
 
 const START = Date.parse('2026-07-13T00:22:00.000Z')
@@ -11,9 +13,8 @@ test('idle environment becomes visibly alive within 2.5 seconds without fabricat
   const before = JSON.stringify(operationalPresentations)
   const environment = deriveEnvironmentalPresentation({ now: START + 2_500, startedAt: START, layout: 'mobile', operationalPresentations })
   assert.equal(environment.entryActive, true)
-  assert.equal(environment.activeBuildingIds.length, 2)
-  assert.equal(environment.ambientPulses.length, 0)
-  assert.equal(environment.particleCount, 8)
+  assert.equal(environment.persistentEffectIds.length, 7)
+  assert.equal(environment.atmosphereBandCount, 2)
   assert.equal(environment.response, null)
   assert.equal(JSON.stringify(operationalPresentations), before)
   assert.equal(JSON.stringify(environment).includes('"source":"operational"'), false)
@@ -22,8 +23,8 @@ test('idle environment becomes visibly alive within 2.5 seconds without fabricat
 test('ambient presentation remains bounded over ten simulated minutes and never emits fake evidence', () => {
   for (let elapsed = 0; elapsed <= 600_000; elapsed += 5_000) {
     const environment = deriveEnvironmentalPresentation({ now: START + elapsed, startedAt: START, layout: 'desktop', operationalPresentations: [idleModel('coder')] })
-    assert.equal(environment.ambientPulses.length, 0)
-    assert.ok(environment.particleCount <= 10)
+    assert.equal(environment.persistentEffectIds.length, 7)
+    assert.ok(environment.atmosphereBandCount <= 2)
   }
 })
 
@@ -37,7 +38,6 @@ test('real message and delegation create evidence-backed responses for only the 
   })
   assert.equal(delegation.response.buildingId, 'forge')
   assert.equal(delegation.response.cue, 'route')
-  assert.equal(delegation.activeBuildingIds.filter((id) => id === 'forge').length, 1)
 })
 
 test('operational warning and critical override ambient and ordinary choreography', () => {
@@ -57,7 +57,7 @@ test('operational warning and critical override ambient and ordinary choreograph
 
 test('success records only when backed by the real archive choreography signal', () => {
   const ambient = deriveEnvironmentalPresentation({ now: START + 4_000, startedAt: START, operationalPresentations: [] })
-  assert.equal(ambient.responsePulse, null)
+  assert.equal(ambient.response, null)
   const success = deriveEnvironmentalPresentation({
     now: START + 4_000, startedAt: START,
     choreography: { signals: [{ kind: 'archive-record', buildingId: 'archive', evidenceEventId: 'run-4:4' }] }, operationalPresentations: [],
@@ -66,14 +66,12 @@ test('success records only when backed by the real archive choreography signal',
   assert.equal(success.response.evidenceEventId, 'run-4:4')
 })
 
-test('hidden and reduced-motion modes stop scheduling moving particles', () => {
+test('hidden and reduced-motion modes stop atmosphere bands', () => {
   const hidden = deriveEnvironmentalPresentation({ now: START, startedAt: START, visible: false })
   assert.equal(hidden.running, false)
-  assert.equal(hidden.ambientPulses.length, 0)
-  assert.equal(hidden.particleCount, 0)
+  assert.equal(hidden.atmosphereBandCount, 0)
   const reduced = deriveEnvironmentalPresentation({ now: START, startedAt: START, reducedMotion: true })
-  assert.equal(reduced.ambientPulses.length, 0)
-  assert.equal(reduced.particleCount, 0)
+  assert.equal(reduced.atmosphereBandCount, 0)
 })
 
 test('building configuration is centralized, complete and individually timed', () => {
@@ -88,9 +86,23 @@ test('visual verification walks all eight existing effects over exactly fifteen 
     const environment = deriveEnvironmentalPresentation({ now: START + index * 1_875 + 100, startedAt: START, visualDebug: true, layout: 'mobile' })
     labels.push(environment.visualVerification?.label)
   }
-  assert.deepEqual(labels, ['Citadel pulse', 'Forge smoke', 'Watcher scan', 'Archive lights', 'Sanctum particles', 'Data pulse', 'Water reflection', 'Fog'])
+  assert.deepEqual(labels, ['Citadel core', 'Forge fire + smoke', 'Watcher lens', 'Archive windows', 'Sanctum orbit', 'Gate lock', 'Water reflection', 'Fog'])
   assert.equal(deriveEnvironmentalPresentation({ now: START + 15_001, startedAt: START, visualDebug: true }).visualVerification, null)
   assert.equal(deriveEnvironmentalPresentation({ now: START + 1_000, startedAt: START, visualDebug: false }).visualVerification, null)
+})
+
+test('world life presets are reversible and balanced is the demo default', () => {
+  assert.equal(resolveWorldLifePreset('').id, 'balanced')
+  assert.equal(resolveWorldLifePreset('?worldLife=safe').role, 'low-power')
+  assert.equal(resolveWorldLifePreset('?worldLife=showcase').role, 'presentation')
+  assert.equal(resolveWorldLifePreset('?worldLife=unknown').id, 'balanced')
+})
+
+test('visual landmarks use workstation and facade anchors without changing route entrances', () => {
+  assert.deepEqual(WORLD_VISUAL_ANCHORS.mobile.forge, { x: 23.5, y: 44.5, offsetX: 0, offsetY: 0 })
+  assert.deepEqual(WORLD_VISUAL_ANCHORS.mobile.archive, { x: 24.5, y: 65.5, offsetX: 0, offsetY: 0 })
+  assert.deepEqual(WORLD_VISUAL_ANCHORS.mobile.water, { x: 50, y: 56, offsetX: 0, offsetY: 0 })
+  assert.deepEqual(WORLD_VISUAL_ANCHORS.desktop.water, { x: 50, y: 47, offsetX: 0, offsetY: 0 })
 })
 
 test('healthy global state and local critical incident produce one consistent summary', () => {

@@ -18,6 +18,7 @@ import WorldChoreographyLayer from '../components/world-directors/WorldChoreogra
 import WorldEnvironmentalLife from '../components/world-directors/WorldEnvironmentalLife.jsx'
 import { useEnvironmentalDirector } from './directors/useEnvironmentalDirector.js'
 import WorldOperationsLayer from '../components/world-directors/WorldOperationsLayer.jsx'
+import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -30,6 +31,7 @@ const BUILDINGS = [
 
 export default function WorldFallback() {
   const mapVariant = getMapVariant(typeof window === 'undefined' ? '' : window.location.search)
+  const worldLifePreset = resolveWorldLifePreset(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
   const [mapLoaded, setMapLoaded] = useState(false)
   const [agentAnimationReady, setAgentAnimationReady] = useState(false)
@@ -73,12 +75,12 @@ export default function WorldFallback() {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
   })
-  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
+  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-world-life-preset={worldLifePreset.id} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" {...cameraHandlers}>
     <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
-      <WorldEnvironmentalLife presentation={environment} debug={worldDebug} />
+      <WorldEnvironmentalLife presentation={environment} debug={worldDebug} preset={worldLifePreset} />
       <HermesInfrastructureLayer layout={mapLayout} />
-      <WorldOperationsLayer presentation={{ ...environment.worldOperations, layout: mapLayout }} />
+      <WorldOperationsLayer presentation={environment.worldOperations} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
       <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} />

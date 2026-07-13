@@ -8,12 +8,12 @@ export const ENVIRONMENT_BUILDINGS = freeze({
   citadel: building({
     buildingId: 'citadel', agentProfile: 'orchestrator', ambientEffects: freeze(['core-breath', 'energy-wave', 'facade-runes']),
     eventResponses: freeze(['thinking', 'working', 'waiting', 'warning', 'critical']), intensity: 0.72, timingOffset: 0,
-    points: freeze({ desktop: point(46, 36.5), mobile: point(50, 43) }),
+    points: freeze({ desktop: point(46, 34), mobile: point(50, 43) }),
   }),
   forge: building({
     buildingId: 'forge', agentProfile: 'coder', ambientEffects: freeze(['ember', 'smoke', 'sparks', 'mechanism']),
     eventResponses: freeze(['working', 'waiting', 'success', 'warning', 'critical']), intensity: 0.74, timingOffset: 1.7,
-    points: freeze({ desktop: point(84, 49), mobile: point(30.5, 49.2) }),
+    points: freeze({ desktop: point(84, 46.5), mobile: point(23.5, 44.5) }),
   }),
   watcher: building({
     buildingId: 'watcher', agentProfile: 'prospecting', ambientEffects: freeze(['scanner', 'lens-pulse']),
@@ -23,33 +23,27 @@ export const ENVIRONMENT_BUILDINGS = freeze({
   archive: building({
     buildingId: 'archive', agentProfile: 'researcher', ambientEffects: freeze(['window-sequence', 'information-runes']),
     eventResponses: freeze(['thinking', 'working', 'waiting', 'success', 'warning', 'critical']), intensity: 0.62, timingOffset: 4.6,
-    points: freeze({ desktop: point(28.5, 36.5), mobile: point(35.5, 70.5) }),
+    points: freeze({ desktop: point(27, 31), mobile: point(24.5, 65.5) }),
   }),
   sanctum: building({
-    buildingId: 'sanctum', agentProfile: null, ambientEffects: freeze(['healing-breath', 'healing-motes']),
+    buildingId: 'sanctum', agentProfile: null, ambientEffects: freeze(['energy-orbit', 'channel-circulation']),
     eventResponses: freeze(['waiting', 'warning', 'critical']), intensity: 0.5, timingOffset: 6.1,
     points: freeze({ desktop: point(39, 76), mobile: point(72, 80) }),
   }),
 })
 
-export const ENVIRONMENT_DATA_ROUTES = freeze({
-  gateToCitadel: freeze({ desktop: freeze([point(50, 91), point(50, 62), point(46, 36.5)]), mobile: freeze([point(50, 91), point(50, 65), point(50, 43)]) }),
-  citadelToForge: freeze({ desktop: freeze([point(46, 36.5), point(58, 48), point(76, 51.5), point(84, 49)]), mobile: freeze([point(50, 43), point(50, 63.5), point(40.5, 59.3), point(30.5, 49.2)]) }),
-  citadelToWatcher: freeze({ desktop: freeze([point(46, 36.5), point(58, 32.5), point(67, 31.5)]), mobile: freeze([point(50, 43), point(56.5, 65.8), point(65.5, 71.2)]) }),
-  citadelToArchive: freeze({ desktop: freeze([point(46, 36.5), point(40, 36.2), point(28.5, 36.5)]), mobile: freeze([point(50, 43), point(44.5, 64), point(35.5, 70.5)]) }),
-  archiveToSanctum: freeze({ desktop: freeze([point(28.5, 36.5), point(35, 58), point(39, 76)]), mobile: freeze([point(35.5, 70.5), point(52, 76), point(72, 80)]) }),
-})
-
 export const ENVIRONMENT_VISUAL_STEPS = freeze([
-  freeze({ id: 'citadel-pulse', label: 'Citadel pulse', points: freeze({ desktop: point(46, 36.5), mobile: point(50, 43) }) }),
-  freeze({ id: 'forge-smoke', label: 'Forge smoke', points: freeze({ desktop: point(84, 40), mobile: point(28, 41) }) }),
-  freeze({ id: 'watcher-scan', label: 'Watcher scan', points: freeze({ desktop: point(67, 31.5), mobile: point(65.5, 71.2) }) }),
-  freeze({ id: 'archive-lights', label: 'Archive lights', points: freeze({ desktop: point(28.5, 36.5), mobile: point(35.5, 70.5) }) }),
-  freeze({ id: 'sanctum-particles', label: 'Sanctum particles', points: freeze({ desktop: point(39, 76), mobile: point(72, 80) }) }),
-  freeze({ id: 'data-pulse', label: 'Data pulse', points: freeze({ desktop: point(53, 52), mobile: point(48, 63) }) }),
-  freeze({ id: 'water-reflection', label: 'Water reflection', points: freeze({ desktop: point(49, 59), mobile: point(50, 62) }) }),
+  freeze({ id: 'citadel-core', label: 'Citadel core', points: freeze({ desktop: point(46, 34), mobile: point(50, 43) }) }),
+  freeze({ id: 'forge-cycle', label: 'Forge fire + smoke', points: freeze({ desktop: point(84, 46.5), mobile: point(23.5, 44.5) }) }),
+  freeze({ id: 'watcher-lens', label: 'Watcher lens', points: freeze({ desktop: point(67, 31.5), mobile: point(65.5, 71.2) }) }),
+  freeze({ id: 'archive-windows', label: 'Archive windows', points: freeze({ desktop: point(27, 31), mobile: point(24.5, 65.5) }) }),
+  freeze({ id: 'sanctum-orbit', label: 'Sanctum orbit', points: freeze({ desktop: point(39, 76), mobile: point(72, 80) }) }),
+  freeze({ id: 'gate-lock', label: 'Gate lock', points: freeze({ desktop: point(50, 88.5), mobile: point(50, 88.5) }) }),
+  freeze({ id: 'water-reflection', label: 'Water reflection', points: freeze({ desktop: point(50, 47), mobile: point(50, 56) }) }),
   freeze({ id: 'fog', label: 'Fog', points: freeze({ desktop: point(27, 29), mobile: point(47, 32) }) }),
 ])
+
+export const ENVIRONMENT_PERSISTENT_EFFECTS = freeze(['citadel', 'forge', 'watcher', 'archive', 'sanctum', 'gate', 'water'])
 
 const PROFILE_BUILDINGS = freeze({ orchestrator: 'citadel', default: 'citadel', coder: 'forge', prospecting: 'watcher', researcher: 'archive' })
 const STATE_PRIORITY = freeze({ critical: 6, error: 6, warning: 5, alerted: 5, working: 3, work: 3, thinking: 2, waiting: 1, idle: 0, resting: 0 })
@@ -79,49 +73,29 @@ function operationalResponse(presentations = []) {
   return candidates[0]?.priority > 0 ? freeze(candidates[0]) : null
 }
 
-function pulseRouteFor(response) {
-  if (!response) return null
-  if (response.cue === 'record') return 'citadelToArchive'
-  if (response.buildingId === 'forge') return 'citadelToForge'
-  if (response.buildingId === 'watcher') return 'citadelToWatcher'
-  if (response.buildingId === 'archive') return 'citadelToArchive'
-  if (response.buildingId === 'sanctum') return 'archiveToSanctum'
-  return 'gateToCitadel'
-}
-
 export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [] } = {}) {
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
   const elapsed = Math.max(0, now - startedAt)
-  const cycle = Math.floor(elapsed / 12_000)
-  const buildingIds = Object.keys(ENVIRONMENT_BUILDINGS)
-  const ambientBuildingIds = freeze(['citadel', buildingIds[1 + (cycle % (buildingIds.length - 1))]])
   const operational = operationalResponse(operationalPresentations)
   const choreographed = eventResponse(choreography)
   const response = !operational ? choreographed : !choreographed || operational.priority >= choreographed.priority ? operational : choreographed
   const alerting = response?.priority >= 5
-  const ambientPulses = freeze([])
-  const responsePulse = response && visible ? freeze({
-    id: `event-${response.evidenceEventId ?? response.buildingId}-${response.cue}`, mode: 'event', routeId: pulseRouteFor(response),
-    points: ENVIRONMENT_DATA_ROUTES[pulseRouteFor(response)][normalizedLayout], cue: response.cue, state: response.state ?? null,
-    evidenceEventId: response.evidenceEventId, duration: alerting ? 1.15 : 1.8,
-  }) : null
   const intensity = !visible ? 0 : alerting ? 0.28 : response ? 0.52 : 1
   const visualElapsed = Math.max(0, elapsed)
   const visualStepIndex = visualDebug && visualElapsed < 15_000 ? Math.min(ENVIRONMENT_VISUAL_STEPS.length - 1, Math.floor(visualElapsed / (15_000 / ENVIRONMENT_VISUAL_STEPS.length))) : -1
   const visualVerification = visualStepIndex >= 0 ? freeze({ ...ENVIRONMENT_VISUAL_STEPS[visualStepIndex], index: visualStepIndex, point: ENVIRONMENT_VISUAL_STEPS[visualStepIndex].points[normalizedLayout] }) : null
   return freeze({
     running: visible, visible, reducedMotion, layout: normalizedLayout, entryActive: elapsed < 5_000, elapsed,
-    ambientBuildingIds, activeBuildingIds: freeze([...new Set([...ambientBuildingIds, response?.buildingId].filter(Boolean))]),
-    ambientPulses, responsePulse, response, ambientIntensity: intensity,
-    particleCount: reducedMotion || !visible ? 0 : normalizedLayout === 'mobile' ? 8 : 10,
-    performanceStatus: reducedMotion || !visible ? 'paused' : 'bounded', visualVerification,
+    persistentEffectIds: ENVIRONMENT_PERSISTENT_EFFECTS, response, ambientIntensity: intensity,
+    atmosphereBandCount: reducedMotion || !visible ? 0 : 2,
+    performanceStatus: !visible ? 'paused' : reducedMotion ? 'reduced-motion' : 'css-composited', visualVerification,
   })
 }
 
 export function getEnvironmentalBuildingState(buildingId, presentation) {
   const config = ENVIRONMENT_BUILDINGS[buildingId]
   const response = presentation?.response?.buildingId === buildingId ? presentation.response : null
-  return freeze({ config, ambientActive: presentation?.ambientBuildingIds?.includes(buildingId) ?? false, response })
+  return freeze({ config, response })
 }
 
 export function resolveBuildingIdForProfile(profileId) {

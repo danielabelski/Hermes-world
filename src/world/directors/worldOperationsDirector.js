@@ -6,16 +6,16 @@ export const WORLD_OPERATION_TYPES = freeze([
   'archive-ingestion', 'sanctum-circulation', 'gate-cycle', 'water-machinery',
 ])
 
-const AMBIENT_CYCLE_MS = 48_000
+const AMBIENT_CYCLE_MS = 36_000
 
 export const WORLD_OPERATION_POINTS = freeze({
   mobile: freeze({
     gate: point(50, 94), road: point(50, 76), fountain: point(50, 60), citadel: point(50, 43),
-    forge: point(30.5, 49.2), watcher: point(65.5, 71.2), archive: point(35.5, 70.5), sanctum: point(72, 80), water: point(50, 43),
+    forge: point(30.5, 49.2), watcher: point(65.5, 71.2), archive: point(35.5, 70.5), sanctum: point(72, 80), water: point(50, 59.5),
   }),
   desktop: freeze({
     gate: point(50, 92), road: point(50, 69), fountain: point(50, 49), citadel: point(46, 36.5),
-    forge: point(84, 49), watcher: point(67, 31.5), archive: point(28.5, 36.5), sanctum: point(39, 76), water: point(50, 88),
+    forge: point(84, 49), watcher: point(67, 31.5), archive: point(28.5, 36.5), sanctum: point(39, 76), water: point(50, 47),
   }),
 })
 
@@ -58,31 +58,12 @@ function ambientOperations({ elapsed }) {
     const progress = Math.max(0, Math.min(1, (cycleElapsed - windowStart) / (windowEnd - windowStart)))
     return operation(`ambient-${cycle}-${type}`, type, 'ambient', phaseFor(progress), progress, { durationMs: windowEnd - windowStart, ...extra })
   }
-  if (cycleElapsed < 8_000) return freeze([
-    windowOperation('citadel-distribution', 0, 8_000),
-    windowOperation('water-machinery', 0, 8_000),
-  ])
-  if (cycleElapsed < 16_000) return freeze([
-    windowOperation('forge-production', 8_000, 16_000, { targetBuildingId: 'forge' }),
-    windowOperation('water-machinery', 8_000, 16_000),
-  ])
-  if (cycleElapsed < 24_000) return freeze([
-    windowOperation('gate-cycle', 16_000, 24_000),
-    windowOperation('water-machinery', 16_000, 24_000),
-  ])
-  if (cycleElapsed < 31_000) return freeze([
-    windowOperation('watcher-sweep', 24_000, 31_000, { targetBuildingId: 'watcher' }),
-    windowOperation('water-machinery', 24_000, 31_000),
-  ])
-  if (cycleElapsed < 36_000) return freeze([windowOperation('citadel-distribution', 31_000, 36_000)])
-  if (cycleElapsed < 41_000) return freeze([
-    windowOperation('archive-ingestion', 36_000, 41_000, { targetBuildingId: 'archive' }),
-    windowOperation('water-machinery', 36_000, 41_000),
-  ])
-  return freeze([
-    windowOperation('sanctum-circulation', 41_000, 48_000, { targetBuildingId: 'sanctum' }),
-    windowOperation('water-machinery', 41_000, 48_000),
-  ])
+  if (cycleElapsed < 6_000) return freeze([windowOperation('citadel-distribution', 0, 6_000)])
+  if (cycleElapsed < 12_000) return freeze([windowOperation('forge-production', 6_000, 12_000, { targetBuildingId: 'forge' })])
+  if (cycleElapsed < 18_000) return freeze([windowOperation('watcher-sweep', 12_000, 18_000, { targetBuildingId: 'watcher' })])
+  if (cycleElapsed < 24_000) return freeze([windowOperation('archive-ingestion', 18_000, 24_000, { targetBuildingId: 'archive' })])
+  if (cycleElapsed < 30_000) return freeze([windowOperation('sanctum-circulation', 24_000, 30_000, { targetBuildingId: 'sanctum' })])
+  return freeze([windowOperation('gate-cycle', 30_000, 36_000)])
 }
 
 function choreographyOperations(choreography, layout) {
@@ -125,14 +106,19 @@ function operationalOperations(presentations = []) {
 
 export function deriveWorldOperations({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, layout = 'desktop', choreography = {}, operationalPresentations = [], lifecycle = {} } = {}) {
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
-  if (!visible) return freeze({ running: false, operations: freeze([]), majorCount: 0 })
+  if (!visible) return freeze({ running: false, operations: freeze([]), majorCount: 0, mode: 'paused', layout: normalizedLayout })
   const elapsed = Math.max(0, now - startedAt)
   const operational = operationalOperations(operationalPresentations)
   const choreographed = lifecycle.connection === 'offline' ? [] : choreographyOperations(choreography, normalizedLayout)
   const ambient = ambientOperations({ elapsed })
-  const selected = operational.length ? [...operational, ...choreographed] : choreographed.length ? choreographed : ambient
+  const urgentOperational = operational.filter((item) => item.priority >= 5)
+  const selected = urgentOperational.length
+    ? [...urgentOperational, ...choreographed]
+    : choreographed.length
+      ? [...choreographed, ...operational]
+      : operational.length ? operational : ambient
   const operations = freeze(selected.slice(0, 2).map((item) => reducedMotion ? freeze({ ...item, phase: 'static', progress: 0.5 }) : item))
-  return freeze({ running: true, operations, majorCount: operations.length, mode: operational.length ? 'operational' : choreographed.length ? 'event' : 'ambient' })
+  return freeze({ running: true, operations, majorCount: operations.length, mode: urgentOperational.length ? 'operational' : choreographed.length ? 'event' : operational.length ? 'operational' : 'ambient', layout: normalizedLayout })
 }
 
 export const WORLD_OPERATIONS_TIMING = freeze({ AMBIENT_CYCLE_MS })

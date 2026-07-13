@@ -19,9 +19,26 @@ export function useEnvironmentalDirector({ now, layout, choreography, operationa
     }
   }, [])
 
+  const controlNow = Math.floor(now / 500) * 500
+  const choreographySnapshot = JSON.stringify({
+    activeRunId: choreography?.activeRunId ?? null,
+    kind: choreography?.kind ?? null,
+    signals: (choreography?.signals ?? []).map((signal) => ({
+      kind: signal.kind, evidenceEventId: signal.evidenceEventId ?? null, buildingId: signal.buildingId ?? null,
+      targetAgentId: signal.targetAgentId ?? null, runId: signal.runId ?? null,
+    })),
+  })
+  const operationalSnapshot = JSON.stringify((operationalPresentations ?? []).map((model) => ({
+    profileId: model.profileId, phase: model.phase ?? null, visualState: model.visualState ?? null,
+    severity: model.severity ?? null, evidenceEventId: model.evidenceEventId ?? null,
+    active: Boolean(model.active), isActive: Boolean(model.isActive),
+  })))
+  const lifecycleConnection = lifecycle?.connection ?? 'unknown'
   return useMemo(() => {
-    const environment = deriveEnvironmentalPresentation({ now, startedAt, visible, reducedMotion, visualDebug, layout, choreography, operationalPresentations })
-    const worldOperations = deriveWorldOperations({ now, startedAt, visible, reducedMotion, layout, choreography, operationalPresentations, lifecycle })
+    const stableChoreography = JSON.parse(choreographySnapshot)
+    const stableOperational = JSON.parse(operationalSnapshot)
+    const environment = deriveEnvironmentalPresentation({ now: controlNow, startedAt, visible, reducedMotion, visualDebug, layout, choreography: stableChoreography, operationalPresentations: stableOperational })
+    const worldOperations = deriveWorldOperations({ now: controlNow, startedAt, visible, reducedMotion, layout, choreography: stableChoreography, operationalPresentations: stableOperational, lifecycle: { connection: lifecycleConnection } })
     return { ...environment, worldOperations }
-  }, [choreography, layout, lifecycle, now, operationalPresentations, reducedMotion, startedAt, visible, visualDebug])
+  }, [choreographySnapshot, controlNow, layout, lifecycleConnection, operationalSnapshot, reducedMotion, startedAt, visible, visualDebug])
 }

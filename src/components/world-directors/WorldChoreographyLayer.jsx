@@ -3,8 +3,8 @@ import { getWorldLifeJourney } from '../../world/data/roadGraph.js'
 import './WorldChoreographyLayer.css'
 
 const LAYOUT_POINTS = Object.freeze({
-  desktop: Object.freeze({ gate: { x: 50, y: 91 }, core: { x: 46, y: 36.5 }, archive: { x: 28.5, y: 36.5 } }),
-  mobile: Object.freeze({ gate: { x: 50, y: 91 }, core: { x: 50, y: 43 }, archive: { x: 35.5, y: 70.5 } }),
+  desktop: Object.freeze({ core: { x: 46, y: 36.5 }, archive: { x: 28.5, y: 36.5 } }),
+  mobile: Object.freeze({ core: { x: 50, y: 43 }, archive: { x: 35.5, y: 70.5 } }),
 })
 
 function targetPoint(signal, layout, points) {
@@ -29,7 +29,6 @@ function WorldChoreographyLayer({ presentation, layout = 'desktop' }) {
     aria-hidden="true"
   >
     {signals.map((signal) => {
-      const from = signal.kind === 'message-pulse' ? points.gate : points.core
       const to = targetPoint(signal, normalizedLayout, points)
       return <g
         className={`world-choreography-signal signal-${signal.kind}`}
@@ -38,7 +37,6 @@ function WorldChoreographyLayer({ presentation, layout = 'desktop' }) {
         data-evidence-event-id={signal.evidenceEventId}
         key={`${signal.runId}-${signal.kind}-${signal.targetAgentId ?? 'system'}`}
       >
-        {signal.kind !== 'command-core' ? <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} vectorEffect="non-scaling-stroke" /> : null}
         <circle className="signal-endpoint" cx={to.x} cy={to.y} r={signal.kind === 'command-core' ? 2.1 : 1.15} vectorEffect="non-scaling-stroke" />
       </g>
     })}
