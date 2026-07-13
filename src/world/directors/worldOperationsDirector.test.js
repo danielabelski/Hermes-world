@@ -158,3 +158,14 @@ test('atmosphere shares one bounded wind vector and disables macro motion for re
   assert.match(css, /fog-drift var\(--world-wind-duration\)/)
   assert.match(css, /prefers-reduced-motion:reduce[^}]*[\s\S]*atmosphere-cloud-shadow,[^}]*atmosphere-wind-thread\{display:none/)
 })
+
+test('map-native and entry atmosphere exceed the minimum mobile visibility floor', () => {
+  const nativeCss = readFileSync(new URL('../../components/world-directors/MapNativeMotionLayer.css', import.meta.url), 'utf8')
+  const atmosphereCss = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
+  assert.match(nativeCss, /map-native-region\{[^}]*opacity:calc\(var\(--native-intensity\)\*1\.16\)/)
+  assert.match(nativeCss, /brightness\(1\.2\) saturate\(1\.14\)/)
+  assert.match(nativeCss, /38%,62%\{opacity:\.94/)
+  assert.match(nativeCss, /26%,72%\{opacity:\.9/)
+  assert.match(atmosphereCss, /atmosphere-cloud-shadow\{[^}]*left:-8%[^}]*opacity:\.24/)
+  assert.match(atmosphereCss, /is-entry-active \.atmosphere-cloud-shadow\{animation:world-cloud-entry 5s/)
+})
