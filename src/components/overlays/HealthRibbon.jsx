@@ -1,5 +1,5 @@
 import { useWorldStore } from '../../world/store/worldStore.js'
-import { countLocalCriticalIncidents, resolveHealthSummaryLabel } from '../../world/healthSummary.js'
+import { countLocalIncidents, resolveHealthSummaryLabel } from '../../world/healthSummary.js'
 
 const COPY = {
   healthy: 'Świat działa spokojnie',
@@ -21,14 +21,14 @@ export function HealthRibbon() {
   const alerts = useWorldStore((state) => state.alerts ?? [])
   const openSheet = useWorldStore((state) => state.openSheet)
   const severity = severityFor(system, lifecycle, scenario)
-  const criticalCount = countLocalCriticalIncidents(alerts)
-  const label = resolveHealthSummaryLabel({ severity, baseLabel: COPY[severity] ?? COPY.healthy, criticalCount })
+  const incidentCount = countLocalIncidents(alerts)
+  const label = resolveHealthSummaryLabel({ severity, baseLabel: COPY[severity] ?? COPY.healthy, incidentCount })
 
   return (
-    <button className="health-ribbon" data-severity={severity} type="button" onClick={() => openSheet?.('activity')} aria-label={`${label}${criticalCount ? `. Ważne alerty: ${criticalCount}` : ''}. Otwórz aktywność.`}>
+    <button className="health-ribbon" data-severity={severity} type="button" onClick={() => openSheet?.('activity')} aria-label={`${label}${incidentCount ? `. Lokalne alerty: ${incidentCount}` : ''}. Otwórz aktywność.`}>
       <span className="health-ribbon__wave" aria-hidden="true" />
       <span className="health-ribbon__label">{label}</span>
-      {criticalCount > 0 && <span className="health-ribbon__alert-count" aria-label={`${criticalCount} ważne alerty`}>{criticalCount}</span>}
+      {incidentCount > 0 && <span className="health-ribbon__alert-count" aria-label={`${incidentCount} lokalne alerty`}>{incidentCount}</span>}
     </button>
   )
 }

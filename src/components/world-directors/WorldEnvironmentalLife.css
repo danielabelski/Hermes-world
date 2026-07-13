@@ -22,6 +22,8 @@
 .persistent-life.cue-critical .persistent-life__sprite,.persistent-life.cue-error .persistent-life__sprite{filter:hue-rotate(-24deg) saturate(1.25) drop-shadow(0 1px 2px #3b0909aa)}
 .world-environmental-life[data-environment-response="warning"] .persistent-life:not(.has-response),.world-environmental-life[data-environment-response="alerted"] .persistent-life:not(.has-response){opacity:.68}
 .world-environmental-life[data-environment-response="critical"] .persistent-life:not(.has-response),.world-environmental-life[data-environment-response="error"] .persistent-life:not(.has-response){opacity:.42}
+.world-environmental-life[data-environment-response="warning"] .persistent-window-light,.world-environmental-life[data-environment-response="alerted"] .persistent-window-light{opacity:.14;animation-play-state:paused}
+.world-environmental-life[data-environment-response="critical"] .persistent-window-light,.world-environmental-life[data-environment-response="error"] .persistent-window-light{opacity:.06;animation-play-state:paused}
 
 [data-world-life-preset="safe"] .persistent-world-life,[data-world-life-preset="safe"] .world-operations-layer{opacity:.72}
 [data-world-life-preset="safe"] .atmosphere-life-layer{opacity:calc(var(--environment-intensity,1)*.7)}

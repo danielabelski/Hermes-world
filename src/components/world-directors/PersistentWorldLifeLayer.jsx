@@ -52,7 +52,7 @@ function PersistentWorldLifeLayer({ presentation }) {
     <div className={`persistent-life persistent-life--sanctum${responseClass(ENVIRONMENT_BUILDINGS.sanctum.buildingId, presentation)}${activeClass('sanctum-circulation')}`} style={styleAt(points.sanctum)}>
       <LifeSprite src={sanctumEnergyOrbitStrip} className="persistent-life__sanctum-orbit" delay="-3.1s" />
     </div>
-    <div className={`persistent-life persistent-life--gate${activeClass('gate-cycle')}`} style={styleAt(points.gate)}>
+    <div className={`persistent-life persistent-life--gate${responseClass(ENVIRONMENT_BUILDINGS.gate.buildingId, presentation)}${activeClass('gate-cycle')}`} style={styleAt(points.gate)}>
       <LifeSprite src={gateEnergyLockStrip} className="persistent-life__gate-lock" delay="-4.4s" />
     </div>
     <div className={`persistent-life persistent-life--water${activeClass('water-machinery')}`} style={styleAt(points.water)}>

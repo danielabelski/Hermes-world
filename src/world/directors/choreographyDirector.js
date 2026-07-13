@@ -8,6 +8,8 @@ const ARCHIVE_DELAY_MS = 420
 const RETURN_DELAY_MS = 1_650
 const RETURN_MS = 2_400
 const COMPLETE_MS = RETURN_DELAY_MS + RETURN_MS
+const COMMAND_SIGNAL_MS = 4_800
+const DELEGATION_SIGNAL_MS = 5_600
 const MAX_SEQUENCES = 12
 
 const asMs = (value, fallback = Date.now()) => {
@@ -141,12 +143,12 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   const sinceTerminal = sequence.terminalAt === null ? null : Math.max(0, now - sequence.terminalAt)
   const signals = []
   if (elapsed < 950) signals.push(freeze({ kind: 'message-pulse', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds[0] }))
-  if (elapsed >= 180 && (sinceTerminal === null || sinceTerminal < RETURN_DELAY_MS)) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
-  if (sequence.kind === 'delegation' && sequence.targetAgentId && (sinceTerminal === null || sinceTerminal < RETURN_DELAY_MS)) {
+  if (elapsed >= 180 && elapsed < COMMAND_SIGNAL_MS && sinceTerminal === null) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+  if (sequence.kind === 'delegation' && sequence.targetAgentId && elapsed < DELEGATION_SIGNAL_MS && sinceTerminal === null) {
     signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, buildingId: sequence.buildingId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
   }
   if (sequence.terminalState === 'success' && sinceTerminal >= ARCHIVE_DELAY_MS && sinceTerminal < RETURN_DELAY_MS + 1_600) {
-    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', sourceAgentId: sequence.targetAgentId, sourceBuildingId: sequence.buildingId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
   }
   const motion = actorMotion(sequence, now, layout)
   return freeze({
@@ -159,4 +161,4 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   })
 }
 
-export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS })
+export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS, COMMAND_SIGNAL_MS, DELEGATION_SIGNAL_MS })

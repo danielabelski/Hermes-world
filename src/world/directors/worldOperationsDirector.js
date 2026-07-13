@@ -1,3 +1,5 @@
+import { resolveWorldSubsystem } from './profileSubsystemMap.js'
+
 const freeze = Object.freeze
 const point = (x, y) => freeze({ x, y })
 
@@ -19,23 +21,41 @@ export const WORLD_OPERATION_POINTS = freeze({
   }),
 })
 
-const TARGET_FOR_PROFILE = freeze({ coder: 'forge', prospecting: 'watcher', researcher: 'archive', orchestrator: 'citadel', default: 'citadel' })
-const TYPE_FOR_TARGET = freeze({ forge: 'forge-production', watcher: 'watcher-sweep', archive: 'archive-ingestion', sanctum: 'sanctum-circulation', citadel: 'citadel-distribution' })
+const TYPE_FOR_TARGET = freeze({ forge: 'forge-production', watcher: 'watcher-sweep', archive: 'archive-ingestion', sanctum: 'sanctum-circulation', gate: 'gate-cycle', citadel: 'citadel-distribution' })
 
-const TRANSIT_ROUTES = freeze({
+export const INGRESS_ROUTES = freeze({
   mobile: freeze({
     citadel: freeze([point(50, 94), point(50, 86), point(50, 76.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43)]),
-    forge: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(45.5, 63), point(40.5, 59.3), point(35.2, 53.5), point(30.5, 49.2), point(35.2, 53.5), point(40.5, 59.3), point(44.5, 64), point(39.5, 67), point(37, 69.2), point(35.5, 70.5)]),
-    watcher: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(61.5, 68.2), point(64, 70), point(65.5, 71.2), point(61.5, 68.2), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+    forge: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(45.5, 63), point(40.5, 59.3), point(35.2, 53.5), point(30.5, 49.2)]),
+    watcher: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(61.5, 68.2), point(64, 70), point(65.5, 71.2)]),
     archive: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(37, 69.2), point(35.5, 70.5)]),
-    sanctum: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(64, 70), point(68, 74), point(72, 80), point(64, 75), point(52, 72), point(44.5, 68), point(35.5, 70.5)]),
+    sanctum: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(64, 70), point(68, 74), point(72, 80)]),
+    gate: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 43), point(50, 55), point(50, 65.5), point(50, 81.5), point(50, 88.5)]),
   }),
   desktop: freeze({
     citadel: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5)]),
-    forge: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(54, 48), point(57, 54.5), point(66, 56.5), point(76, 51.5), point(84, 49), point(76, 51.5), point(66, 56.5), point(57, 54.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
-    watcher: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(52, 35.5), point(58, 32.5), point(63, 31), point(67, 31.5), point(58, 32.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    forge: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(54, 48), point(57, 54.5), point(66, 56.5), point(76, 51.5), point(84, 49)]),
+    watcher: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(52, 35.5), point(58, 32.5), point(63, 31), point(67, 31.5)]),
     archive: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(40, 36.2), point(34, 33.5), point(30.2, 35.2), point(28.5, 36.5)]),
-    sanctum: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(50, 55), point(44, 65), point(39, 76), point(34, 58), point(28.5, 36.5)]),
+    sanctum: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(50, 55), point(44, 65), point(39, 76)]),
+    gate: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(46, 36.5), point(50, 55), point(50, 69), point(50, 88.5)]),
+  }),
+})
+
+export const ARCHIVE_RETURN_ROUTES = freeze({
+  mobile: freeze({
+    citadel: freeze([point(50, 43), point(50, 55), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+    forge: freeze([point(30.5, 49.2), point(35.2, 53.5), point(40.5, 59.3), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+    watcher: freeze([point(65.5, 71.2), point(61.5, 68.2), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+    sanctum: freeze([point(72, 80), point(64, 75), point(52, 72), point(44.5, 68), point(35.5, 70.5)]),
+    gate: freeze([point(50, 88.5), point(50, 81.5), point(50, 65.5), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+  }),
+  desktop: freeze({
+    citadel: freeze([point(46, 36.5), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    forge: freeze([point(84, 49), point(76, 51.5), point(66, 56.5), point(57, 54.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    watcher: freeze([point(67, 31.5), point(58, 32.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    sanctum: freeze([point(39, 76), point(44, 65), point(50, 55), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    gate: freeze([point(50, 88.5), point(50, 69), point(50, 55), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
   }),
 })
 
@@ -43,8 +63,12 @@ function operation(id, type, mode, phase, progress, extra = {}) {
   return freeze({ id, type, mode, phase, progress: Math.max(0, Math.min(1, progress)), ...extra })
 }
 
-function routeFor(target, layout) {
-  return TRANSIT_ROUTES[layout]?.[target] ?? TRANSIT_ROUTES[layout].archive
+function ingressRouteFor(target, layout) {
+  return INGRESS_ROUTES[layout]?.[target] ?? INGRESS_ROUTES[layout].citadel
+}
+
+function archiveReturnRouteFor(source, layout) {
+  return ARCHIVE_RETURN_ROUTES[layout]?.[source] ?? ARCHIVE_RETURN_ROUTES[layout].citadel
 }
 
 function phaseFor(progress) {
@@ -77,9 +101,10 @@ function choreographyOperations(choreography, layout) {
   const message = signals.find((signal) => signal.kind === 'message-pulse')
   const operations = []
   if (message || delegation || archive) {
-    const target = archive ? 'archive' : delegation?.buildingId ?? TARGET_FOR_PROFILE[delegation?.targetAgentId] ?? 'citadel'
-    operations.push(operation(`event-transit-${evidence}`, 'data-transit', 'event', archive ? 'complete' : 'process', archive ? 0.82 : 0.35, {
-      targetBuildingId: target, route: routeFor(target, layout), evidenceEventId: evidence, durationMs: archive ? 4_200 : 5_200,
+    const source = resolveWorldSubsystem(archive?.sourceAgentId ?? choreography.targetAgentId, archive?.sourceBuildingId)
+    const target = archive ? 'archive' : resolveWorldSubsystem(delegation?.targetAgentId, delegation?.buildingId) ?? 'citadel'
+    if (!archive || source !== 'archive') operations.push(operation(`event-transit-${evidence}`, 'data-transit', 'event', archive ? 'complete' : 'process', archive ? 0.82 : 0.35, {
+      targetBuildingId: target, route: archive ? archiveReturnRouteFor(source, layout) : ingressRouteFor(target, layout), evidenceEventId: evidence, durationMs: archive ? 4_200 : 5_200,
     }))
   }
   if (archive) operations.push(operation(`event-archive-${evidence}`, 'archive-ingestion', 'event', 'process', 0.42, { targetBuildingId: 'archive', evidenceEventId: evidence, durationMs: 5_800 }))
@@ -89,7 +114,7 @@ function choreographyOperations(choreography, layout) {
 
 function operationalOperations(presentations = []) {
   const ranked = presentations.map((model) => {
-    const target = TARGET_FOR_PROFILE[model.profileId]
+    const target = resolveWorldSubsystem(model.profileId, model.buildingId)
     const state = String(model.phase ?? model.visualState ?? '').toLowerCase()
     if (!target || ['idle', 'resting', 'offline', 'unknown'].includes(state)) return null
     const severity = String(model.severity ?? '').toLowerCase()
@@ -108,8 +133,9 @@ export function deriveWorldOperations({ now = Date.now(), startedAt = now, visib
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
   if (!visible) return freeze({ running: false, operations: freeze([]), majorCount: 0, mode: 'paused', layout: normalizedLayout })
   const elapsed = Math.max(0, now - startedAt)
-  const operational = operationalOperations(operationalPresentations)
-  const choreographed = lifecycle.connection === 'offline' ? [] : choreographyOperations(choreography, normalizedLayout)
+  const telemetryFresh = !['offline', 'stale'].includes(lifecycle.connection)
+  const operational = telemetryFresh ? operationalOperations(operationalPresentations) : []
+  const choreographed = telemetryFresh ? choreographyOperations(choreography, normalizedLayout) : []
   const ambient = ambientOperations({ elapsed })
   const urgentOperational = operational.filter((item) => item.priority >= 5)
   const selected = urgentOperational.length

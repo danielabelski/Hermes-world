@@ -70,6 +70,25 @@ test('delegation wakes only the true target and keeps worker motion operational'
   assert.deepEqual(Object.keys(presentation.motionByAgent), ['orchestrator'])
 })
 
+test('ingress choreography expires after the visible handoff and cannot block a long real task', () => {
+  const state = reduceChoreographyEvent(createChoreographyState(), event(0, 'assigned', 'coder'), START)
+  const handoff = deriveChoreographyPresentation(state, { now: START + CHOREOGRAPHY_TIMING.DELEGATION_SIGNAL_MS - 1, layout: 'mobile' })
+  assert.ok(handoff.signals.some((signal) => signal.kind === 'delegation'))
+  for (const elapsed of [CHOREOGRAPHY_TIMING.DELEGATION_SIGNAL_MS + 1, 30_000, 5 * 60_000]) {
+    const presentation = deriveChoreographyPresentation(state, { now: START + elapsed, layout: 'mobile' })
+    assert.equal(presentation.signals.some((signal) => ['command-core', 'delegation'].includes(signal.kind)), false)
+  }
+})
+
+test('Archive record retains the true source subsystem only after evidence-backed success', () => {
+  let state = reduceChoreographyEvent(createChoreographyState(), { ...event(0, 'assigned', 'coder'), buildingId: 'forge' }, START)
+  state = reduceChoreographyEvent(state, { ...event(1, 'success', 'coder'), buildingId: 'forge' }, START + 5_000)
+  const presentation = deriveChoreographyPresentation(state, { now: START + 5_000 + CHOREOGRAPHY_TIMING.ARCHIVE_DELAY_MS + 1, layout: 'mobile' })
+  const archive = presentation.signals.find((signal) => signal.kind === 'archive-record')
+  assert.equal(archive.sourceAgentId, 'coder')
+  assert.equal(archive.sourceBuildingId, 'forge')
+})
+
 test('ambient director is deterministic, opens with two visible journeys and schedules every 20–40 seconds', () => {
   const agents = idleAgents()
   const left = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'same' }), { agents, now: START + 2_400, layout: 'mobile' })

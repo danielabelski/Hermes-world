@@ -72,3 +72,27 @@ Semantic visual anchors are separate from navigation nodes and agent routing. Le
 - Developer visual mode: append `&worldDebug=visual`.
 
 Next action: user phone review. `GL` freezes this checkpoint as the Build Week visual base; `RL` changes only named demo defects. Never port this pass to production automatically.
+
+## GPT-5.6 completion audit — 2026-07-13
+
+The final semantic and runtime audit closed the remaining correctness gaps without changing the locked map, agent routes, FSM, event pipeline or API:
+
+- Delegation ingress now ends at the actual target subsystem. A separate return to Archive exists only for an evidence-backed real Success.
+- Command/delegation choreography signals expire after their visible handoff, so a long real task cannot be visually masked for minutes.
+- One central mapping covers all 12 accepted profiles and the six existing visual subsystems, including Gate.
+- Offline or stale telemetry suppresses old operational/choreography presentation; it cannot keep a stale Working animation alive.
+- Infrastructure conduit math now accounts for the non-square mobile/desktop map aspect ratio and reaches semantic visual anchors.
+- Warning/critical pauses and dims persistent Archive window light so alert priority is unambiguous.
+- The world scheduler stops waking while the document is hidden and resumes when visible.
+- Global Stable plus a local warning/critical is summarized as `System stabilny · 1 incydent lokalny`, never as a calm world.
+
+Final validation:
+
+- `npm.cmd test`: `83/83` passed.
+- `npm.cmd run validate:world-life`: passed.
+- `npm.cmd run lint`: passed.
+- `npm.cmd run build`: passed (`844` modules, `16.13 s`).
+- In-app browser at `393×852`: no viewport overflow, no console errors, clean Stable screen, and consistent local-incident summary after the deterministic timeline.
+- Production repository and production service were not modified.
+
+Checkpoint subject: `pre-build: GPT-5.6 living world checkpoint`.

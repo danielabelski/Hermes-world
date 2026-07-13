@@ -2,12 +2,9 @@ import './hermesInfrastructureLayer.css'
 import { useWorldStore } from './store/worldStore.js'
 import { resolveLivingWorld } from './LivingWorldStateMachine.js'
 import { resolveInfrastructureFlowPresentation } from './infrastructureFlowPresentation.js'
+import { computeConduitGeometry, INFRASTRUCTURE_STAGE_ASPECT } from './infrastructureGeometry.js'
 
-const segment = (id, profile, from, to) => {
-  const dx = to[0] - from[0]
-  const dy = to[1] - from[1]
-  return Object.freeze({ id, profile, x: from[0], y: from[1], length: Math.hypot(dx, dy), angle: Math.atan2(dy, dx) * 180 / Math.PI })
-}
+const segment = (id, profile, from, to, layout) => Object.freeze({ id, profile, ...computeConduitGeometry(from, to, INFRASTRUCTURE_STAGE_ASPECT[layout]) })
 
 const LAYOUT = Object.freeze({
   desktop: Object.freeze({
@@ -18,9 +15,9 @@ const LAYOUT = Object.freeze({
       { id: 'observatory', buildingId: 'scout-lodge', systemRole: 'monitoring-observability', x: 67, y: 31.5, scale: 0.68 },
     ]),
     conduits: Object.freeze([
-      segment('core-forge', 'coder', [46, 37], [84, 49]),
-      segment('core-archive', 'researcher', [46, 37], [28.5, 36.5]),
-      segment('core-observatory', 'prospecting', [46, 37], [67, 31.5]),
+      segment('core-forge', 'coder', [46, 34], [84, 46.5], 'desktop'),
+      segment('core-archive', 'researcher', [46, 34], [27, 31], 'desktop'),
+      segment('core-observatory', 'prospecting', [46, 34], [67, 31.5], 'desktop'),
     ]),
   }),
   mobile: Object.freeze({
@@ -31,9 +28,9 @@ const LAYOUT = Object.freeze({
       { id: 'observatory', buildingId: 'scout-lodge', systemRole: 'monitoring-observability', x: 65.5, y: 71.2, scale: 0.68 },
     ]),
     conduits: Object.freeze([
-      segment('core-forge', 'coder', [50, 43], [30.5, 49.2]),
-      segment('core-archive', 'researcher', [50, 43], [35.5, 70.5]),
-      segment('core-observatory', 'prospecting', [50, 43], [65.5, 71.2]),
+      segment('core-forge', 'coder', [50, 43], [23.5, 44.5], 'mobile'),
+      segment('core-archive', 'researcher', [50, 43], [24.5, 65.5], 'mobile'),
+      segment('core-observatory', 'prospecting', [50, 43], [65.5, 71.2], 'mobile'),
     ]),
   }),
 })

@@ -3,7 +3,7 @@ import test from 'node:test'
 import { deriveEnvironmentalPresentation, ENVIRONMENT_BUILDINGS } from './environmentalDirector.js'
 import { resolveWorldLifePreset } from './worldLifePreset.js'
 import { WORLD_VISUAL_ANCHORS } from './worldVisualAnchors.js'
-import { countLocalCriticalIncidents, resolveHealthSummaryLabel } from '../healthSummary.js'
+import { countLocalCriticalIncidents, countLocalIncidents, resolveHealthSummaryLabel } from '../healthSummary.js'
 
 const START = Date.parse('2026-07-13T00:22:00.000Z')
 const idleModel = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
@@ -75,8 +75,8 @@ test('hidden and reduced-motion modes stop atmosphere bands', () => {
 })
 
 test('building configuration is centralized, complete and individually timed', () => {
-  assert.deepEqual(Object.keys(ENVIRONMENT_BUILDINGS), ['citadel', 'forge', 'watcher', 'archive', 'sanctum'])
-  assert.equal(new Set(Object.values(ENVIRONMENT_BUILDINGS).map((config) => config.timingOffset)).size, 5)
+  assert.deepEqual(Object.keys(ENVIRONMENT_BUILDINGS), ['citadel', 'forge', 'watcher', 'archive', 'sanctum', 'gate'])
+  assert.equal(new Set(Object.values(ENVIRONMENT_BUILDINGS).map((config) => config.timingOffset)).size, 6)
   assert.ok(Object.values(ENVIRONMENT_BUILDINGS).every((config) => config.ambientEffects.length >= 2 && config.eventResponses.length >= 3))
 })
 
@@ -111,4 +111,15 @@ test('healthy global state and local critical incident produce one consistent su
   assert.equal(criticalCount, 1)
   assert.equal(resolveHealthSummaryLabel({ severity: 'healthy', baseLabel: 'Świat działa spokojnie', criticalCount }), 'System stabilny · 1 incydent lokalny')
   assert.equal(resolveHealthSummaryLabel({ severity: 'critical', baseLabel: 'Wymagana szybka reakcja', criticalCount }), 'Wymagana szybka reakcja')
+})
+
+test('healthy global state also exposes a local warning instead of claiming the world is calm', () => {
+  const alerts = [
+    { severity: 'warning' },
+    { severity: 'success' },
+    { severity: 'info' },
+  ]
+  const incidentCount = countLocalIncidents(alerts)
+  assert.equal(incidentCount, 1)
+  assert.equal(resolveHealthSummaryLabel({ severity: 'healthy', baseLabel: 'Świat działa spokojnie', incidentCount }), 'System stabilny · 1 incydent lokalny')
 })

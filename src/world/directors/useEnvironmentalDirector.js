@@ -25,7 +25,8 @@ export function useEnvironmentalDirector({ now, layout, choreography, operationa
     kind: choreography?.kind ?? null,
     signals: (choreography?.signals ?? []).map((signal) => ({
       kind: signal.kind, evidenceEventId: signal.evidenceEventId ?? null, buildingId: signal.buildingId ?? null,
-      targetAgentId: signal.targetAgentId ?? null, runId: signal.runId ?? null,
+      targetAgentId: signal.targetAgentId ?? null, sourceAgentId: signal.sourceAgentId ?? null,
+      sourceBuildingId: signal.sourceBuildingId ?? null, runId: signal.runId ?? null,
     })),
   })
   const operationalSnapshot = JSON.stringify((operationalPresentations ?? []).map((model) => ({
@@ -37,7 +38,7 @@ export function useEnvironmentalDirector({ now, layout, choreography, operationa
   return useMemo(() => {
     const stableChoreography = JSON.parse(choreographySnapshot)
     const stableOperational = JSON.parse(operationalSnapshot)
-    const environment = deriveEnvironmentalPresentation({ now: controlNow, startedAt, visible, reducedMotion, visualDebug, layout, choreography: stableChoreography, operationalPresentations: stableOperational })
+    const environment = deriveEnvironmentalPresentation({ now: controlNow, startedAt, visible, reducedMotion, visualDebug, layout, choreography: stableChoreography, operationalPresentations: stableOperational, lifecycle: { connection: lifecycleConnection } })
     const worldOperations = deriveWorldOperations({ now: controlNow, startedAt, visible, reducedMotion, layout, choreography: stableChoreography, operationalPresentations: stableOperational, lifecycle: { connection: lifecycleConnection } })
     return { ...environment, worldOperations }
   }, [choreographySnapshot, controlNow, layout, lifecycleConnection, operationalSnapshot, reducedMotion, startedAt, visible, visualDebug])

@@ -706,3 +706,37 @@ npm.cmd run build
 Canonical notes: `docs/HERMES_WORLD_ENVIRONMENTAL_LIFE_PRE_BUILD_WEEK.md`.
 
 ---
+
+## GPT-5.6 LIVING WORLD COMPLETION CHECKPOINT — 2026-07-13
+
+Scope: demo repository only, branch `pre-build-week/environmental-world-life`. Production Correct v1 remains untouched.
+
+### Completed after the final audit
+
+- Split the real-event lifecycle into ingress (`Gate → Citadel → actual subsystem`) and an Archive return that appears only after evidence-backed Success.
+- Bounded command/delegation choreography signals to the visible handoff instead of allowing them to mask long-running operational work.
+- Centralized all 12 profile-to-subsystem mappings, including Gate behavior.
+- Prevented stale/offline telemetry from replaying old Working or choreography presentation.
+- Corrected infrastructure conduit geometry for the real non-square mobile and desktop stages.
+- Paused hidden-tab scheduling and dimmed persistent windows during warning/critical.
+- Removed the Stable/local-warning copy contradiction in the mobile health ribbon.
+
+### Verification
+
+- Tests: `83/83` passed.
+- World-life validator: passed.
+- ESLint: passed.
+- Production build: passed (`844` modules, `16.13 s`).
+- Browser smoke: `393×852`, no overflow, no console errors, Stable clean view and deterministic local-warning summary verified.
+- Demo URL: `http://100.69.167.105:4176/?demo=1`.
+- Commit subject: `pre-build: GPT-5.6 living world checkpoint`.
+
+### Resume gate
+
+1. User performs the final real-phone perceptual review.
+2. `GL`: freeze this demo checkpoint; any production transfer is a separate audited operation.
+3. `RL`: change only the exact named visual defect on the demo branch, rerun all four validation commands, then present the same demo URL.
+
+Do not modify production, the base map, waypoint geometry, routes, FSM, event pipeline, `server.js` or API contracts without a new explicit instruction.
+
+---

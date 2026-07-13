@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
 import { readFileSync, statSync } from 'node:fs'
 import test from 'node:test'
-import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
+import { ARCHIVE_RETURN_ROUTES, deriveWorldOperations, INGRESS_ROUTES, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
+import { PROFILE_SUBSYSTEMS, resolveWorldSubsystem } from './profileSubsystemMap.js'
+import { computeConduitGeometry, INFRASTRUCTURE_STAGE_ASPECT } from '../infrastructureGeometry.js'
 
 const START = Date.parse('2026-07-13T01:00:00.000Z')
 const idle = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
@@ -110,6 +112,54 @@ test('data transit renders only a local wake and segments, never a full GPS rout
   assert.match(css, /stroke-dasharray:2 1\.5 2 1\.5 2 1\.5 3 86\.5/)
   assert.match(css, /operation-local-transit var\(--transit-duration\) linear 1 both/)
   assert.doesNotMatch(css, /operation-local-transit[^;}]*infinite/)
+})
+
+test('delegation ingress ends in the selected subsystem and only real success returns to Archive', () => {
+  for (const layout of ['mobile', 'desktop']) {
+    for (const target of ['forge', 'watcher', 'sanctum', 'citadel']) {
+      const ingress = INGRESS_ROUTES[layout][target]
+      assert.notDeepEqual(ingress.at(-1), WORLD_OPERATION_POINTS[layout].archive, `${layout}/${target} must not pre-emptively reach Archive`)
+      const archiveReturn = ARCHIVE_RETURN_ROUTES[layout][target]
+      assert.deepEqual(archiveReturn.at(-1), WORLD_OPERATION_POINTS[layout].archive)
+    }
+  }
+  const result = deriveWorldOperations({
+    now: START, startedAt: START, layout: 'mobile',
+    choreography: { activeRunId: 'run-success', targetAgentId: 'coder', signals: [{ kind: 'archive-record', evidenceEventId: 'run-success:4', sourceAgentId: 'coder', sourceBuildingId: 'forge', buildingId: 'archive' }] },
+  })
+  assert.equal(result.operations[0].type, 'data-transit')
+  assert.deepEqual(result.operations[0].route.at(0), WORLD_OPERATION_POINTS.mobile.forge)
+  assert.deepEqual(result.operations[0].route.at(-1), WORLD_OPERATION_POINTS.mobile.archive)
+})
+
+test('all twelve accepted roles map to an existing environmental subsystem', () => {
+  const expectedProfiles = ['default', 'orchestrator', 'coder', 'developer', 'devops', 'komandos', 'outreach', 'prospecting', 'researcher', 'reviewer', 'synthesizer', 'verifier']
+  assert.deepEqual(Object.keys(PROFILE_SUBSYSTEMS).sort(), expectedProfiles.sort())
+  for (const profileId of expectedProfiles) assert.ok(['citadel', 'forge', 'watcher', 'archive', 'sanctum', 'gate'].includes(resolveWorldSubsystem(profileId)))
+})
+
+test('offline or stale telemetry cannot keep an old Working operation alive', () => {
+  const working = [{ ...idle('coder'), phase: 'working', active: true, isActive: true }]
+  for (const connection of ['offline', 'stale']) {
+    const result = deriveWorldOperations({ now: START, startedAt: START, lifecycle: { connection }, operationalPresentations: working })
+    assert.equal(result.mode, 'ambient')
+    assert.equal(result.operations.some((item) => item.mode === 'operational'), false)
+  }
+})
+
+test('conduit geometry reaches semantic endpoints on non-square mobile and desktop stages', () => {
+  for (const [layout, from, to] of [
+    ['mobile', [50, 43], [23.5, 44.5]],
+    ['desktop', [46, 34], [84, 46.5]],
+  ]) {
+    const aspect = INFRASTRUCTURE_STAGE_ASPECT[layout]
+    const geometry = computeConduitGeometry(from, to, aspect)
+    const radians = geometry.angle * Math.PI / 180
+    const endX = geometry.x + Math.cos(radians) * geometry.length
+    const endY = geometry.y + Math.sin(radians) * geometry.length * aspect
+    assert.ok(Math.abs(endX - to[0]) < 0.0001)
+    assert.ok(Math.abs(endY - to[1]) < 0.0001)
+  }
 })
 
 test('operations render below agents and existing architectural foreground masks', () => {

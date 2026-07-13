@@ -1,4 +1,4 @@
-import { getAgentDefinition } from '../data/agentDefinitions.js'
+import { resolveWorldSubsystem } from './profileSubsystemMap.js'
 
 const freeze = Object.freeze
 const point = (x, y) => freeze({ x, y })
@@ -30,6 +30,11 @@ export const ENVIRONMENT_BUILDINGS = freeze({
     eventResponses: freeze(['waiting', 'warning', 'critical']), intensity: 0.5, timingOffset: 6.1,
     points: freeze({ desktop: point(39, 76), mobile: point(72, 80) }),
   }),
+  gate: building({
+    buildingId: 'gate', agentProfile: 'komandos', ambientEffects: freeze(['energy-lock', 'ward-idle-cycle']),
+    eventResponses: freeze(['working', 'waiting', 'warning', 'critical']), intensity: 0.46, timingOffset: 7.4,
+    points: freeze({ desktop: point(50, 88.5), mobile: point(50, 88.5) }),
+  }),
 })
 
 export const ENVIRONMENT_VISUAL_STEPS = freeze([
@@ -45,15 +50,13 @@ export const ENVIRONMENT_VISUAL_STEPS = freeze([
 
 export const ENVIRONMENT_PERSISTENT_EFFECTS = freeze(['citadel', 'forge', 'watcher', 'archive', 'sanctum', 'gate', 'water'])
 
-const PROFILE_BUILDINGS = freeze({ orchestrator: 'citadel', default: 'citadel', coder: 'forge', prospecting: 'watcher', researcher: 'archive' })
 const STATE_PRIORITY = freeze({ critical: 6, error: 6, warning: 5, alerted: 5, working: 3, work: 3, thinking: 2, waiting: 1, idle: 0, resting: 0 })
 const normalizeState = (model = {}) => String(model.severity === 'critical' || model.severity === 'error' ? 'critical' : model.severity === 'warning' ? 'warning' : model.phase ?? model.visualState ?? 'idle').toLowerCase()
 
 function buildingForSignal(signal = {}) {
-  if (signal.buildingId && ENVIRONMENT_BUILDINGS[signal.buildingId]) return signal.buildingId
   if (signal.kind === 'archive-record') return 'archive'
   if (signal.kind === 'message-pulse' || signal.kind === 'command-core') return 'citadel'
-  return PROFILE_BUILDINGS[signal.targetAgentId] ?? null
+  return resolveWorldSubsystem(signal.targetAgentId, signal.buildingId)
 }
 
 function eventResponse(choreography = {}) {
@@ -66,18 +69,19 @@ function eventResponse(choreography = {}) {
 
 function operationalResponse(presentations = []) {
   const candidates = presentations.map((model) => {
-    const buildingId = PROFILE_BUILDINGS[model.profileId]
+    const buildingId = resolveWorldSubsystem(model.profileId, model.buildingId)
     const state = normalizeState(model)
     return buildingId ? { source: 'operational', buildingId, cue: state, state, priority: STATE_PRIORITY[state] ?? 0, evidenceEventId: model.evidenceEventId ?? null } : null
   }).filter(Boolean).sort((left, right) => right.priority - left.priority)
   return candidates[0]?.priority > 0 ? freeze(candidates[0]) : null
 }
 
-export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [] } = {}) {
+export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [], lifecycle = {} } = {}) {
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
   const elapsed = Math.max(0, now - startedAt)
-  const operational = operationalResponse(operationalPresentations)
-  const choreographed = eventResponse(choreography)
+  const connected = !['offline', 'stale'].includes(lifecycle.connection)
+  const operational = connected ? operationalResponse(operationalPresentations) : null
+  const choreographed = connected ? eventResponse(choreography) : null
   const response = !operational ? choreographed : !choreographed || operational.priority >= choreographed.priority ? operational : choreographed
   const alerting = response?.priority >= 5
   const intensity = !visible ? 0 : alerting ? 0.28 : response ? 0.52 : 1
@@ -99,5 +103,5 @@ export function getEnvironmentalBuildingState(buildingId, presentation) {
 }
 
 export function resolveBuildingIdForProfile(profileId) {
-  return PROFILE_BUILDINGS[profileId] ?? getAgentDefinition(profileId)?.buildingId ?? null
+  return resolveWorldSubsystem(profileId)
 }

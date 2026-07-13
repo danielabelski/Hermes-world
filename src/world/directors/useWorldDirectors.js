@@ -12,6 +12,7 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
   const [choreographyState, setChoreographyState] = useState(createChoreographyState)
   const [ambientState, setAmbientState] = useState(() => createAmbientDirectorState({ now: Date.now() }))
   const [reactionLatencyMs, setReactionLatencyMs] = useState(null)
+  const [pageVisible, setPageVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden')
   useEffect(() => { agentsRef.current = agents }, [agents])
   useEffect(() => {
     layoutRef.current = layout
@@ -20,14 +21,20 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
   }, [layout])
 
   useEffect(() => {
-    if (!enabled) return undefined
+    const syncVisibility = () => setPageVisible(document.visibilityState !== 'hidden')
+    document.addEventListener('visibilitychange', syncVisibility)
+    return () => document.removeEventListener('visibilitychange', syncVisibility)
+  }, [])
+
+  useEffect(() => {
+    if (!enabled || !pageVisible) return undefined
     const timer = window.setInterval(() => {
       const tickAt = Date.now()
       setAmbientState((state) => advanceAmbientDirector(state, { agents: agentsRef.current, now: tickAt, layout: layoutRef.current }))
       setChoreographyState((state) => pruneChoreographyState(state, tickAt))
     }, AMBIENT_TICK_MS)
     return () => window.clearInterval(timer)
-  }, [enabled])
+  }, [enabled, pageVisible])
 
   useEffect(() => {
     if (!enabled || typeof EventSource === 'undefined') return undefined
