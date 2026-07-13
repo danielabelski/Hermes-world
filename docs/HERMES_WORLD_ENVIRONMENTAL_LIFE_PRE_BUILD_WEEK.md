@@ -78,3 +78,12 @@ The main source of perceived life is now a bounded operations scheduler rather t
 - Ambient transit remains cyan and restrained. Evidence-backed transit is faster and brighter and carries `evidenceEventId`; it does not create an operational state.
 - The earlier environmental glow and particles remain a low-intensity supporting layer only. They are not the primary source of perceived world activity.
 - Normal mobile verification runs without debug labels or controls; `worldDebug=visual` remains an explicit diagnostic mode only.
+
+## Forge asset vertical slice
+
+- The rejected map-crop pass was reverted completely before this slice. Production remains untouched.
+- Forge now uses three source RGBA PNG strips: fire, smoke and sparks. Each contains exactly eight equal frames and transparent corners.
+- The old synthetic Forge backplate, furnace rectangle, door, gear, piston, crane and chimney-lip shapes were removed from both JSX and CSS.
+- All three strips share one Forge anchor. Fire stays at the furnace, smoke starts above it and sparks use the same impact origin.
+- Ambient remains presentation-only. Event and operational modes increase the same assets' visibility but do not create or mutate operational state.
+- The first user checkpoint is Forge only. No other building receives this asset treatment before Forge receives visual GL.

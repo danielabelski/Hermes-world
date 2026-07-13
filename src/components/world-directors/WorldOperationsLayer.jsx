@@ -1,5 +1,8 @@
 import { memo } from 'react'
 import { WORLD_OPERATION_POINTS } from '../../world/directors/worldOperationsDirector.js'
+import forgeFireStrip from '../../assets/world-effects/forge-fire-strip.png'
+import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.png'
+import forgeSparksStrip from '../../assets/world-effects/forge-sparks-strip.png'
 import './WorldOperationsLayer.css'
 
 const pathData = (points = []) => points.map((point, index) => `${index ? 'L' : 'M'} ${point.x} ${point.y}`).join(' ')
@@ -27,9 +30,9 @@ function CitadelOperation({ operation, point }) {
 
 function ForgeOperation({ operation, point }) {
   return <div className={`world-operation operation-forge mode-${operation.mode} phase-${operation.phase}`} data-world-operation={operation.type} data-operation-phase={operation.phase} data-evidence-event-id={operation.evidenceEventId ?? ''} style={styleAt(point)}>
-    <i className="operation-forge__backplate" /><i className="operation-forge__furnace" /><i className="operation-forge__door" />
-    <i className="operation-forge__gear" /><i className="operation-forge__piston" /><i className="operation-forge__crane" /><i className="operation-forge__chimney-lip" />
-    <span className="operation-forge__sparks"><b /><b /></span><span className="operation-forge__smoke"><b /></span>
+    <span className="operation-forge__sprite operation-forge__fire"><img src={forgeFireStrip} alt="" /></span>
+    <span className="operation-forge__sprite operation-forge__smoke"><img src={forgeSmokeStrip} alt="" /></span>
+    <span className="operation-forge__sprite operation-forge__sparks"><img src={forgeSparksStrip} alt="" /></span>
   </div>
 }
 

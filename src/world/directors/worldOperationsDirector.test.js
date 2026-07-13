@@ -106,12 +106,34 @@ test('operations render below agents and existing architectural foreground masks
   assert.match(foregroundCss, /map-foreground[^{]*\{[^}]*z-index:\s*21/)
 })
 
-test('Citadel and Forge visual contracts contain no editor handles or rectangular placeholders', () => {
+test('Citadel contains no editor handles and Forge uses transparent sprite strips only', () => {
+  const jsx = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
   assert.match(css, /operation-citadel__outer[^}]*conic-gradient/)
   assert.match(css, /operation-citadel__runes b[^}]*width:8px;height:2px;border:0/)
-  assert.match(css, /operation-forge__furnace[^}]*clip-path:polygon/)
-  assert.match(css, /operation-forge__gear[^}]*repeating-conic-gradient/)
-  assert.match(css, /operation-forge__piston::after[^}]*clip-path:polygon/)
-  assert.match(css, /operation-forge__chimney-lip/)
+  for (const rejected of ['operation-forge__backplate', 'operation-forge__furnace', 'operation-forge__door', 'operation-forge__gear', 'operation-forge__piston', 'operation-forge__crane', 'operation-forge__chimney-lip']) {
+    assert.equal(jsx.includes(rejected), false)
+    assert.equal(css.includes(rejected), false)
+  }
+  assert.match(jsx, /forge-fire-strip\.png/)
+  assert.match(jsx, /forge-smoke-strip\.png/)
+  assert.match(jsx, /forge-sparks-strip\.png/)
+  assert.match(css, /forge-sprite-frames/)
+  assert.match(css, /steps\(7,end\)/)
+})
+
+test('Forge source strips are real RGBA PNGs with eight equal frames', () => {
+  const assets = [
+    ['forge-fire-strip.png', 2048, 320],
+    ['forge-smoke-strip.png', 2048, 320],
+    ['forge-sparks-strip.png', 1536, 192],
+  ]
+  for (const [name, width, height] of assets) {
+    const png = readFileSync(new URL(`../../assets/world-effects/${name}`, import.meta.url))
+    assert.equal(png.subarray(1, 4).toString('ascii'), 'PNG')
+    assert.equal(png.readUInt32BE(16), width)
+    assert.equal(png.readUInt32BE(20), height)
+    assert.equal(width % 8, 0)
+    assert.equal(png[25], 6, `${name} must retain RGBA alpha`)
+  }
 })
