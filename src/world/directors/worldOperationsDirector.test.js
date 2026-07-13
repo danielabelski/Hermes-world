@@ -58,6 +58,43 @@ test('real message and delegation replace ambient with evidence-backed transit a
   assert.equal(result.operations.some((item) => item.type === 'forge-production'), false)
 })
 
+test('one real lifecycle keeps a continuous evidence id from gate through subsystem to Archive', () => {
+  const rootEvidence = 'run-nervous:0'
+  const ingress = deriveWorldOperations({
+    now: START + 200, startedAt: START, layout: 'mobile',
+    choreography: {
+      activeRunId: 'run-nervous', lifecycleEvidenceId: rootEvidence, elapsedMs: 200,
+      signals: [{ kind: 'message-pulse', evidenceEventId: rootEvidence, triggerEventId: rootEvidence }],
+    },
+  })
+  assert.deepEqual(ingress.operations.map((item) => item.type), ['data-transit', 'citadel-distribution'])
+  assert.deepEqual(ingress.operations[0].route.at(0), WORLD_OPERATION_POINTS.mobile.gate)
+  assert.deepEqual(ingress.operations[0].route.at(-1), WORLD_OPERATION_POINTS.mobile.citadel)
+  assert.ok(ingress.operations.every((item) => item.evidenceEventId === rootEvidence))
+
+  const dispatch = deriveWorldOperations({
+    now: START + 3_400, startedAt: START, layout: 'mobile',
+    choreography: {
+      activeRunId: 'run-nervous', lifecycleEvidenceId: rootEvidence, elapsedMs: 3_400, targetAgentId: 'coder',
+      signals: [{ kind: 'delegation', targetAgentId: 'coder', buildingId: 'forge', evidenceEventId: rootEvidence, triggerEventId: 'run-nervous:1' }],
+    },
+  })
+  assert.deepEqual(dispatch.operations.map((item) => item.type), ['data-transit', 'forge-production'])
+  assert.deepEqual(dispatch.operations[0].route.at(0), WORLD_OPERATION_POINTS.mobile.citadel)
+  assert.deepEqual(dispatch.operations[0].route.at(-1), WORLD_OPERATION_POINTS.mobile.forge)
+  assert.ok(dispatch.operations.every((item) => item.evidenceEventId === rootEvidence))
+
+  const archive = deriveWorldOperations({
+    now: START + 7_000, startedAt: START, layout: 'mobile',
+    choreography: {
+      activeRunId: 'run-nervous', lifecycleEvidenceId: rootEvidence, elapsedMs: 7_000, targetAgentId: 'coder', terminalState: 'success',
+      signals: [{ kind: 'archive-record', sourceAgentId: 'coder', sourceBuildingId: 'forge', evidenceEventId: rootEvidence, triggerEventId: 'run-nervous:3' }],
+    },
+  })
+  assert.deepEqual(archive.operations.map((item) => item.type), ['data-transit', 'archive-ingestion'])
+  assert.ok(archive.operations.every((item) => item.evidenceEventId === rootEvidence && item.triggerEventId === 'run-nervous:3'))
+})
+
 test('fresh evidence-backed choreography outranks two ordinary working presentations', () => {
   const choreography = { activeRunId: 'run-priority', signals: [
     { kind: 'message-pulse', evidenceEventId: 'run-priority:1', buildingId: 'citadel' },

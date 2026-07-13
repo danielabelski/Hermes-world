@@ -5,6 +5,8 @@ import archiveDataRunesStrip from '../../assets/world-effects/archive-data-runes
 import citadelEnergyWaveStrip from '../../assets/world-effects/citadel-energy-wave-strip.runtime.png'
 import citadelRuneRingStrip from '../../assets/world-effects/citadel-rune-ring-strip.runtime.png'
 import watcherScanBeamStrip from '../../assets/world-effects/watcher-scan-beam-strip.runtime.png'
+import sanctumEnergyOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
+import gateEnergyLockStrip from '../../assets/world-effects/gate-energy-lock-strip.runtime.png'
 import './WorldOperationsLayer.css'
 
 const pathData = (points = []) => points.map((point, index) => `${index ? 'L' : 'M'} ${point.x} ${point.y}`).join(' ')
@@ -54,6 +56,18 @@ function ArchiveOperation({ operation, point }) {
   </div>
 }
 
+function SanctumOperation({ operation, point }) {
+  return <div className={`world-operation operation-sanctum mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} data-evidence-event-id={operation.evidenceEventId ?? ''} style={styleAt(point, operation)}>
+    <SpriteStrip src={sanctumEnergyOrbitStrip} className="operation-sanctum__orbit" />
+  </div>
+}
+
+function GateOperation({ operation, point }) {
+  return <div className={`world-operation operation-gate mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} data-evidence-event-id={operation.evidenceEventId ?? ''} style={styleAt(point, operation)}>
+    <SpriteStrip src={gateEnergyLockStrip} className="operation-gate__lock" />
+  </div>
+}
+
 function WorldOperationsLayer({ presentation }) {
   const operations = presentation?.operations ?? []
   const layout = presentation?.layout === 'mobile' ? 'mobile' : 'desktop'
@@ -65,6 +79,8 @@ function WorldOperationsLayer({ presentation }) {
       if (operation.type === 'forge-production') return <ForgeOperation operation={operation} point={points.forge} key={operation.id} />
       if (operation.type === 'watcher-sweep') return <WatcherOperation operation={operation} point={points.watcher} key={operation.id} />
       if (operation.type === 'archive-ingestion') return <ArchiveOperation operation={operation} point={points.archive} key={operation.id} />
+      if (operation.type === 'sanctum-circulation') return <SanctumOperation operation={operation} point={points.sanctum} key={operation.id} />
+      if (operation.type === 'gate-cycle') return <GateOperation operation={operation} point={points.gate} key={operation.id} />
       return null
     })}
   </div>

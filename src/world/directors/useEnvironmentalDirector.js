@@ -23,10 +23,15 @@ export function useEnvironmentalDirector({ now, layout, choreography, operationa
   const choreographySnapshot = JSON.stringify({
     activeRunId: choreography?.activeRunId ?? null,
     kind: choreography?.kind ?? null,
+    elapsedMs: choreography?.elapsedMs ?? null,
+    terminalState: choreography?.terminalState ?? null,
+    lifecycleEvidenceId: choreography?.lifecycleEvidenceId ?? null,
+    triggerEventId: choreography?.triggerEventId ?? null,
     signals: (choreography?.signals ?? []).map((signal) => ({
       kind: signal.kind, evidenceEventId: signal.evidenceEventId ?? null, buildingId: signal.buildingId ?? null,
       targetAgentId: signal.targetAgentId ?? null, sourceAgentId: signal.sourceAgentId ?? null,
       sourceBuildingId: signal.sourceBuildingId ?? null, runId: signal.runId ?? null,
+      triggerEventId: signal.triggerEventId ?? null,
     })),
   })
   const operationalSnapshot = JSON.stringify((operationalPresentations ?? []).map((model) => ({

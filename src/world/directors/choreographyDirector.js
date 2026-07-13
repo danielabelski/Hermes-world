@@ -142,13 +142,15 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   const elapsed = Math.max(0, now - sequence.receivedAt)
   const sinceTerminal = sequence.terminalAt === null ? null : Math.max(0, now - sequence.terminalAt)
   const signals = []
-  if (elapsed < 950) signals.push(freeze({ kind: 'message-pulse', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds[0] }))
-  if (elapsed >= 180 && elapsed < COMMAND_SIGNAL_MS && sinceTerminal === null) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+  const lifecycleEvidenceId = sequence.evidenceEventIds[0]
+  const triggerEventId = sequence.evidenceEventIds.at(-1)
+  if (elapsed < 950) signals.push(freeze({ kind: 'message-pulse', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: lifecycleEvidenceId, triggerEventId: lifecycleEvidenceId }))
+  if (elapsed >= 180 && elapsed < COMMAND_SIGNAL_MS && sinceTerminal === null) signals.push(freeze({ kind: 'command-core', runId: sequence.runId, targetAgentId: null, buildingId: 'citadel', evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   if (sequence.kind === 'delegation' && sequence.targetAgentId && elapsed < DELEGATION_SIGNAL_MS && sinceTerminal === null) {
-    signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, buildingId: sequence.buildingId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+    signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, buildingId: sequence.buildingId, evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   }
   if (sequence.terminalState === 'success' && sinceTerminal >= ARCHIVE_DELAY_MS && sinceTerminal < RETURN_DELAY_MS + 1_600) {
-    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', sourceAgentId: sequence.targetAgentId, sourceBuildingId: sequence.buildingId, evidenceEventId: sequence.evidenceEventIds.at(-1) }))
+    signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', sourceAgentId: sequence.targetAgentId, sourceBuildingId: sequence.buildingId, evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   }
   const motion = actorMotion(sequence, now, layout)
   return freeze({
@@ -157,6 +159,10 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
     activeRunId: sequence.runId,
     kind: sequence.kind,
     targetAgentId: sequence.targetAgentId,
+    elapsedMs: elapsed,
+    terminalState: sequence.terminalState,
+    lifecycleEvidenceId,
+    triggerEventId,
     responseLatencyMs: Math.max(0, sequence.latestAt - sequence.occurredAt),
   })
 }

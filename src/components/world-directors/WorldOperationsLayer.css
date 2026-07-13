@@ -39,6 +39,8 @@
 .operation-archive{width:78px;height:78px}
 .operation-archive__runes{left:29px;top:0;width:20px;height:58px;z-index:3;--effect-duration:3.8s;opacity:.5;mix-blend-mode:screen}
 .operation-archive.mode-event .operation-archive__runes,.operation-archive.mode-operational .operation-archive__runes{opacity:.9;--effect-duration:2.4s}
+.operation-sanctum{width:76px;height:76px}.operation-sanctum__orbit{inset:2px;width:72px;height:72px;opacity:.58;mix-blend-mode:screen;--effect-duration:5.4s}.operation-sanctum.mode-event .operation-sanctum__orbit,.operation-sanctum.mode-operational .operation-sanctum__orbit{opacity:.9;--effect-duration:3.2s}
+.operation-gate{width:58px;height:52px}.operation-gate__lock{left:5px;top:2px;width:48px;height:48px;opacity:.58;mix-blend-mode:screen;--effect-duration:5.8s}.operation-gate.mode-event .operation-gate__lock,.operation-gate.mode-operational .operation-gate__lock{opacity:.92;--effect-duration:3.4s}
 
 @keyframes operation-local-transit{0%{opacity:0;stroke-dashoffset:100}8%{opacity:1}84%{opacity:1}100%{opacity:0;stroke-dashoffset:0}}
 @keyframes operation-envelope{0%{opacity:0}7%{opacity:1}88%{opacity:1}100%{opacity:0}}
@@ -46,5 +48,5 @@
 @keyframes citadel-ring-breathe{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:.82;transform:scale(1.03)}}
 @keyframes forge-sprite-frames{to{transform:translateX(-87.5%)}}
 
-@media(max-width:700px){.operation-citadel{width:76px;height:70px}.operation-citadel__wave{left:2px;top:32px;width:72px;height:34px}.operation-citadel__ring{left:14px;top:31px;width:48px;height:24px}.operation-forge{width:56px;height:78px}.operation-forge__sparks{left:16px;top:26px;width:26px;height:26px}.operation-watcher{width:132px;height:100px}.operation-watcher__beam{left:8px;top:3px;width:116px;height:94px}.operation-archive{width:68px;height:70px}.operation-archive__runes{left:25px;width:18px;height:52px}}
+@media(max-width:700px){.operation-citadel{width:76px;height:70px}.operation-citadel__wave{left:2px;top:32px;width:72px;height:34px}.operation-citadel__ring{left:14px;top:31px;width:48px;height:24px}.operation-forge{width:56px;height:78px}.operation-forge__sparks{left:16px;top:26px;width:26px;height:26px}.operation-watcher{width:132px;height:100px}.operation-watcher__beam{left:8px;top:3px;width:116px;height:94px}.operation-archive{width:68px;height:70px}.operation-archive__runes{left:25px;width:18px;height:52px}.operation-sanctum{width:66px;height:66px}.operation-sanctum__orbit{width:62px;height:62px}.operation-gate{width:50px;height:46px}.operation-gate__lock{left:4px;top:1px;width:42px;height:42px}}
 @media(prefers-reduced-motion:reduce){.world-operations-layer *{animation:none!important}.operation-artery__wake,.operation-artery__segments,.operation-artery__halo,.operation-forge__sparks,.operation-watcher__beam,.operation-archive__runes{display:none}.operation-forge__sprite img,.operation-sprite img{transform:none}.world-operation{opacity:.42}}

@@ -71,6 +71,13 @@ function archiveReturnRouteFor(source, layout) {
   return ARCHIVE_RETURN_ROUTES[layout]?.[source] ?? ARCHIVE_RETURN_ROUTES[layout].citadel
 }
 
+function dispatchRouteFor(target, layout) {
+  const route = ingressRouteFor(target, layout)
+  const citadel = WORLD_OPERATION_POINTS[layout].citadel
+  const citadelIndex = route.findIndex((candidate) => candidate.x === citadel.x && candidate.y === citadel.y)
+  return citadelIndex >= 0 ? route.slice(citadelIndex) : route
+}
+
 function phaseFor(progress) {
   return progress < 0.18 ? 'start' : progress < 0.78 ? 'process' : 'complete'
 }
@@ -93,22 +100,37 @@ function ambientOperations({ elapsed }) {
 function choreographyOperations(choreography, layout) {
   if (!choreography?.activeRunId) return []
   const signals = choreography.signals ?? []
-  const evidence = signals.map((signal) => signal.evidenceEventId).find(Boolean) ?? null
+  const evidence = choreography.lifecycleEvidenceId ?? signals.map((signal) => signal.evidenceEventId).find(Boolean) ?? null
   if (!evidence) return []
   const delegation = signals.find((signal) => signal.kind === 'delegation')
   const archive = signals.find((signal) => signal.kind === 'archive-record')
   const command = signals.find((signal) => signal.kind === 'command-core')
   const message = signals.find((signal) => signal.kind === 'message-pulse')
+  const elapsed = Number(choreography.elapsedMs ?? 0)
   const operations = []
-  if (message || delegation || archive) {
+  if (archive) {
     const source = resolveWorldSubsystem(archive?.sourceAgentId ?? choreography.targetAgentId, archive?.sourceBuildingId)
-    const target = archive ? 'archive' : resolveWorldSubsystem(delegation?.targetAgentId, delegation?.buildingId) ?? 'citadel'
-    if (!archive || source !== 'archive') operations.push(operation(`event-transit-${evidence}`, 'data-transit', 'event', archive ? 'complete' : 'process', archive ? 0.82 : 0.35, {
-      targetBuildingId: target, route: archive ? archiveReturnRouteFor(source, layout) : ingressRouteFor(target, layout), evidenceEventId: evidence, durationMs: archive ? 4_200 : 5_200,
+    if (source !== 'archive') operations.push(operation(`event-return-${evidence}`, 'data-transit', 'event', 'complete', 0.82, {
+      targetBuildingId: 'archive', route: archiveReturnRouteFor(source, layout), evidenceEventId: evidence, triggerEventId: archive.triggerEventId, durationMs: 4_200,
     }))
+    operations.push(operation(`event-archive-${evidence}`, 'archive-ingestion', 'event', 'process', 0.42, { targetBuildingId: 'archive', evidenceEventId: evidence, triggerEventId: archive.triggerEventId, durationMs: 5_800 }))
+    return operations.slice(0, 2)
   }
-  if (archive) operations.push(operation(`event-archive-${evidence}`, 'archive-ingestion', 'event', 'process', 0.42, { targetBuildingId: 'archive', evidenceEventId: evidence, durationMs: 5_800 }))
-  else if (command) operations.push(operation(`event-citadel-${evidence}`, 'citadel-distribution', 'event', 'process', 0.44, { targetBuildingId: 'citadel', evidenceEventId: evidence, durationMs: 5_200 }))
+  if (elapsed < 3_000) {
+    operations.push(operation(`event-ingress-${evidence}`, 'data-transit', 'event', 'receive', Math.min(1, elapsed / 3_000), {
+      targetBuildingId: 'citadel', route: ingressRouteFor('citadel', layout), evidenceEventId: evidence, triggerEventId: message?.triggerEventId ?? choreography.triggerEventId, durationMs: 3_000,
+    }))
+    operations.push(operation(`event-intake-${evidence}`, 'citadel-distribution', 'event', 'intake', Math.min(1, elapsed / 3_000), { targetBuildingId: 'citadel', evidenceEventId: evidence, triggerEventId: command?.triggerEventId ?? choreography.triggerEventId, durationMs: 3_000 }))
+    return operations
+  }
+  const target = resolveWorldSubsystem(delegation?.targetAgentId ?? choreography.targetAgentId, delegation?.buildingId) ?? 'citadel'
+  if (delegation && target !== 'citadel') {
+    const type = TYPE_FOR_TARGET[target]
+    operations.push(operation(`event-dispatch-${evidence}`, 'data-transit', 'event', 'dispatch', Math.min(1, (elapsed - 3_000) / 2_800), {
+      targetBuildingId: target, route: dispatchRouteFor(target, layout), evidenceEventId: evidence, triggerEventId: delegation.triggerEventId, durationMs: 2_800,
+    }))
+    if (type) operations.push(operation(`event-receive-${evidence}-${target}`, type, 'event', 'receive', 0.35, { targetBuildingId: target, evidenceEventId: evidence, triggerEventId: delegation.triggerEventId, durationMs: 2_800 }))
+  } else if (command) operations.push(operation(`event-citadel-${evidence}`, 'citadel-distribution', 'event', 'analysis', 0.58, { targetBuildingId: 'citadel', evidenceEventId: evidence, triggerEventId: command.triggerEventId, durationMs: 4_800 }))
   return operations.slice(0, 2)
 }
 
