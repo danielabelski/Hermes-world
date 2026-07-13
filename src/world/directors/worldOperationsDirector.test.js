@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
+import { MAP_NATIVE_MOTION_REGIONS, getMapNativeRegions } from '../data/mapNativeMotionConfig.js'
 
 const START = Date.parse('2026-07-13T01:00:00.000Z')
 const idle = (profileId) => Object.freeze({ profileId, phase: 'resting', visualState: 'idle', severity: 'none', active: false, isActive: false })
@@ -114,4 +115,46 @@ test('Citadel and Forge visual contracts contain no editor handles or rectangula
   assert.match(css, /operation-forge__gear[^}]*repeating-conic-gradient/)
   assert.match(css, /operation-forge__piston::after[^}]*clip-path:polygon/)
   assert.match(css, /operation-forge__chimney-lip/)
+})
+
+test('map-native motion uses bounded crops of the locked map for four system buildings', () => {
+  assert.deepEqual(MAP_NATIVE_MOTION_REGIONS.map((region) => region.id), [
+    'citadel-core', 'citadel-threshold', 'forge-furnace', 'watcher-lens', 'archive-facade',
+  ])
+  assert.ok(MAP_NATIVE_MOTION_REGIONS.every((region) => ['mobile', 'desktop'].every((layout) => {
+    const geometry = region.geometry[layout]
+    return geometry.x > 0 && geometry.x < 100 && geometry.y > 0 && geometry.y < 100 && geometry.width > 0 && geometry.width <= 14 && geometry.height > 0 && geometry.height <= 12
+  })))
+  const active = getMapNativeRegions('mobile', [
+    { id: 'forge-1', type: 'forge-production', mode: 'ambient', phase: 'process' },
+    { id: 'water-1', type: 'water-machinery', mode: 'ambient', phase: 'process' },
+  ])
+  assert.deepEqual(active.map((region) => region.id), ['forge-furnace'])
+  assert.equal(JSON.stringify(active).includes('operationalState'), false)
+})
+
+test('map-native crops reuse the current map assets and remain below operations, agents and foreground', () => {
+  const fallback = readFileSync(new URL('../WorldFallback.jsx', import.meta.url), 'utf8')
+  const layer = readFileSync(new URL('../../components/world-directors/MapNativeMotionLayer.jsx', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../../components/world-directors/MapNativeMotionLayer.css', import.meta.url), 'utf8')
+  const nativeIndex = fallback.indexOf('<MapNativeMotionLayer')
+  const operationsIndex = fallback.indexOf('<WorldOperationsLayer')
+  const agentsIndex = fallback.indexOf('<MapAgentLayer')
+  assert.ok(nativeIndex > 0 && nativeIndex < operationsIndex && operationsIndex < agentsIndex)
+  assert.match(layer, /hermes-citadel-hd-v2\.webp/)
+  assert.match(layer, /hermes-citadel-mobile-v2\.webp/)
+  assert.match(css, /map-native-motion-layer\{[^}]*z-index:7/)
+  assert.match(css, /overflow:hidden/)
+  assert.match(css, /clip-path:/)
+})
+
+test('atmosphere shares one bounded wind vector and disables macro motion for reduced motion', () => {
+  const jsx = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
+  assert.match(jsx, /atmosphere-cloud-shadow/)
+  assert.match(jsx, /atmosphere-wind-thread/)
+  assert.match(css, /--world-wind-x:26px;--world-wind-y:-10px;--world-wind-duration:18s/)
+  assert.match(css, /forge-smoke var\(--world-wind-duration\)/)
+  assert.match(css, /fog-drift var\(--world-wind-duration\)/)
+  assert.match(css, /prefers-reduced-motion:reduce[^}]*[\s\S]*atmosphere-cloud-shadow,[^}]*atmosphere-wind-thread\{display:none/)
 })
