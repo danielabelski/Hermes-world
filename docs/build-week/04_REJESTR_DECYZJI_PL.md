@@ -106,3 +106,13 @@
 - Decyzja: pierwszy realny event staje się `lifecycleEvidenceId` dla całej sekwencji; dokładny event uruchamiający etap jest zachowany jako `triggerEventId`.
 - Konsekwencje: sekwencja brama → Cytadela → subsystem → Archiwum jest audytowalna; Archiwum nadal wymaga osobnego prawdziwego eventu `success`.
 - Okres: podczas Submission Period.
+
+## DEC-015 — Płynność ma pierwszeństwo przed liczbą efektów
+
+- Problem: szerokie rozmyte pasy atmosfery i wody zwiększały koszt kompozycji oraz wyglądały jak overlay zamiast integralnej części miasta.
+- Warianty: dodawać kolejne efekty; globalnie wyłączyć ambient; ograniczyć kosztowne warstwy i adaptować wyłącznie dekoracyjny ambient do realnego FPS urządzenia.
+- Wkład Codexa: audyt liczby animacji i powierzchni blur, krótkie refleksy wody zamiast szerokich pasów oraz automatyczne poziomy `full` / `reduced` / `minimal`.
+- Decyzja człowieka: demo dla jurorów ma przede wszystkim działać płynnie; żadna dekoracyjna animacja nie może powodować lagów.
+- Konsekwencje: kosztowne pasy zostały usunięte; prawdziwe eventy, alerty, Cytadela i Kuźnia zachowują priorytet; wolniejsze urządzenie redukuje tylko ambient.
+- Możliwość zmiany: progi można stroić na podstawie testów realnego iPhone’a, bez zmiany event pipeline’u.
+- Okres: podczas Submission Period.

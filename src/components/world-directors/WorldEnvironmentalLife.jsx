@@ -1,14 +1,80 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import AtmosphereLayer from './AtmosphereLayer.jsx'
 import EnvironmentalDebugPanel from './EnvironmentalDebugPanel.jsx'
 import EnvironmentalVisualVerification from './EnvironmentalVisualVerification.jsx'
 import PersistentWorldLifeLayer from './PersistentWorldLifeLayer.jsx'
 import './WorldEnvironmentalLife.css'
 
+const MOTION_SAMPLE_MS = 2_000
+const MOTION_RECOVERY_SAMPLES = 3
+const MOTION_TIER_RANK = Object.freeze({ full: 0, reduced: 1, minimal: 2 })
+
+function resolveMotionTier(fps) {
+  if (fps < 42) return 'minimal'
+  if (fps < 52) return 'reduced'
+  return 'full'
+}
+
 function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
   const telemetry = presentation.infrastructureTelemetry ?? {}
+  const lifeRootRef = useRef(null)
+
+  useEffect(() => {
+    const root = lifeRootRef.current
+    if (!root) return undefined
+    if (presentation.reducedMotion) {
+      root.dataset.motionQuality = 'minimal'
+      root.dataset.measuredFps = 'reduced-motion'
+      return undefined
+    }
+    if (!presentation.visible || typeof window.requestAnimationFrame !== 'function') {
+      root.dataset.motionQuality = presentation.visible ? 'full' : 'paused'
+      root.dataset.measuredFps = presentation.visible ? 'unavailable' : 'paused'
+      return undefined
+    }
+
+    let animationFrame = 0
+    let frames = 0
+    let sampleStartedAt = 0
+    let currentTier = 'full'
+    let recoverySamples = 0
+
+    const measureFrame = (timestamp) => {
+      if (!sampleStartedAt) sampleStartedAt = timestamp
+      frames += 1
+      const elapsed = timestamp - sampleStartedAt
+      if (elapsed >= MOTION_SAMPLE_MS) {
+        const fps = Math.round((frames * 1_000 / elapsed) * 10) / 10
+        const targetTier = resolveMotionTier(fps)
+        if (MOTION_TIER_RANK[targetTier] > MOTION_TIER_RANK[currentTier]) {
+          currentTier = targetTier
+          recoverySamples = 0
+        } else if (MOTION_TIER_RANK[targetTier] < MOTION_TIER_RANK[currentTier]) {
+          recoverySamples += 1
+          if (recoverySamples >= MOTION_RECOVERY_SAMPLES) {
+            currentTier = targetTier
+            recoverySamples = 0
+          }
+        } else {
+          recoverySamples = 0
+        }
+        root.dataset.motionQuality = currentTier
+        root.dataset.measuredFps = String(fps)
+        frames = 0
+        sampleStartedAt = timestamp
+      }
+      animationFrame = window.requestAnimationFrame(measureFrame)
+    }
+
+    root.dataset.motionQuality = currentTier
+    root.dataset.measuredFps = 'warming-up'
+    animationFrame = window.requestAnimationFrame(measureFrame)
+    return () => window.cancelAnimationFrame(animationFrame)
+  }, [presentation.reducedMotion, presentation.visible])
+
   return <>
     <div
+      ref={lifeRootRef}
       className={`world-environmental-life layout-${presentation.layout} life-${preset?.id ?? 'balanced'}${presentation.entryActive ? ' is-entry-active' : ''}${presentation.visible ? '' : ' is-paused'}`}
       data-environment-director={presentation.running ? 'running' : 'stopped'}
       data-environment-response={presentation.response?.cue ?? 'none'}

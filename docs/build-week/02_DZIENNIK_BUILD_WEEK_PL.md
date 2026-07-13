@@ -105,3 +105,17 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: lint PASS; 87/87 testów PASS; `validate:world-life` PASS; build PASS (844 moduły); 393×852 PASS; 4 aktywne ścieżki wody; animowany cień chmury; 0 błędów konsoli.
 - Znaleziona i naprawiona regresja: pierwszy cień chmury był zbyt ciemny i zasłaniał centrum mapy; obniżono jego intensywność do subtelnej lokalnej zmiany światła bez usuwania dużej amplitudy ruchu.
 - Produkcja: nietknięta; lokalny serwer walidacyjny był jeden i został wyłączony po ocenie.
+
+## BW-2026-07-14-010 — Mobile motion performance pass
+
+- Czas Europe/Warsaw: 2026-07-14 00:02+.
+- Czas UTC: 2026-07-13 22:02+.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d91f2fa5bc1a3513a672884022991c41ac995d2f`.
+- Cel: usunąć źle wyglądające ruchome pasy i zmniejszyć koszt stałego ambientu bez osłabiania prawdziwych eventów.
+- Audyt wejściowy 393×852: 49 równoległych animacji CSS; animowane elementy z `blur()` obejmowały około 192 548 px, czyli 57,5% powierzchni viewportu; 2 szerokie jasne pasy chmur i 4 szerokie miękkie pasy kanałów wody.
+- Wykonano: usunięto jasne `cloud-wisp` oraz drugi kosztowny cień chmury; usunięto szerokie 16-pikselowe pasy wody; wodę pozostawiono jako cztery krótkie refleksy poruszające się po istniejących kanałach.
+- Wynik statycznego porównania po zmianie: 42 animacje; 77 027 px animowanego blur, czyli około 23,0% viewportu; spadek powierzchni kosztownego blur o około 60%; 0 szerokich pasów chmur i 0 szerokich pasów wody.
+- Ochrona wolniejszych urządzeń: warstwa mierzy realne `requestAnimationFrame` aktywnego klienta co 2 sekundy; poniżej 52 FPS redukuje wyłącznie dekoracyjny ambient, poniżej 42 FPS przechodzi w tryb minimalny. Prawdziwy `WorldOperationsLayer`, alerty i eventy nie podlegają redukcji.
+- Walidacja: 88/88 testów PASS; `validate:world-life` PASS; lint PASS; build PASS (844 moduły, 3,46 s); serwer demo HTTP 200.
+- Produkcja: nietknięta. Zmiany wyłącznie na branchu demo/Build Week.
+- Snapshot startowy: `20260713T214031Z-git-snapshot.txt`.

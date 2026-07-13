@@ -245,19 +245,33 @@ test('persistent world life keeps fire and water mounted while transit remains e
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
-test('mobile world life exposes continuous map-aligned water and large atmospheric motion', () => {
+test('mobile world life uses short water glints and one low-cost cloud shadow without broad moving bands', () => {
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const atmosphere = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-water-flow/)
   assert.match(persistent, /viewBox=\{mobile \? '0 0 980 1680' : '0 0 1536 1024'\}/)
-  assert.match(css, /water-channel-flow 13s linear infinite/)
-  assert.match(css, /stroke-dasharray:4 96/)
+  assert.match(css, /water-channel-flow 9\.5s linear infinite/)
+  assert.match(css, /stroke-dasharray:1\.8 98\.2/)
+  assert.doesNotMatch(persistent, /persistent-water-flow__soft/)
   assert.match(atmosphere, /atmosphere-cloud-shadow--primary/)
-  assert.match(atmosphere, /atmosphere-cloud-wisp--primary/)
+  assert.doesNotMatch(atmosphere, /atmosphere-cloud-wisp/)
+  assert.doesNotMatch(atmosphere, /atmosphere-cloud-shadow--secondary/)
   assert.match(css, /cloud-shadow-cross 27s linear infinite/)
-  assert.match(css, /cloud-wisp-cross 31s linear infinite/)
+  assert.doesNotMatch(css, /cloud-wisp-cross/)
   assert.doesNotMatch(css, /prefers-reduced-motion[^}]*atmosphere-cloud[^}]*display:none/)
+})
+
+test('ambient motion quality adapts to measured frame rate without suppressing real operations', () => {
+  const component = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.jsx', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
+  assert.match(component, /MOTION_SAMPLE_MS = 2_000/)
+  assert.match(component, /requestAnimationFrame\(measureFrame\)/)
+  assert.match(component, /root\.dataset\.motionQuality = currentTier/)
+  assert.match(component, /root\.dataset\.measuredFps = String\(fps\)/)
+  assert.match(css, /data-motion-quality="reduced"/)
+  assert.match(css, /data-motion-quality="minimal"/)
+  assert.doesNotMatch(css, /data-motion-quality="(?:reduced|minimal)"[^}]*\.world-operations-layer/)
 })
 
 test('runtime sprite strips retain RGBA alpha at mobile-sized resolution and stay under the startup budget', () => {

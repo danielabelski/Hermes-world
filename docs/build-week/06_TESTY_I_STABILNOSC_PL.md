@@ -79,3 +79,19 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Semantyka: **PASS** — test potwierdza brak fake operational source, Archive tylko z evidence-backed success oraz ciągły lifecycle evidence ID.
 - Produkcja: **PASS** — nie uruchamiano ani nie modyfikowano produkcyjnego worktree.
 - Ograniczenie: test lokalny miał brak połączenia do runtime API, więc oceniono warstwę wizualną i kontrakty danych; pełny live Hermes E2E pozostaje następnym osobnym testem integracyjnym.
+
+## TEST-BW-004 — Mobile motion performance i adaptive ambient
+
+- Czas: 2026-07-14 00:02 Europe/Warsaw / 2026-07-13 22:02 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d91f2fa5bc1a3513a672884022991c41ac995d2f`.
+- Środowisko: build Vite serwowany przez jeden serwer demo na porcie 4176; kontrola DOM/CSS przy viewport 393×852.
+- Pomiar wejściowy: 49 widocznych animacji CSS; 192 548 px animowanej powierzchni z blur; 394 węzły DOM; 36 obrazów.
+- Pomiar po usunięciu wadliwych warstw: 42 animacje; 77 027 px animowanej powierzchni z blur; 0 `.atmosphere-cloud-wisp`; 0 `.persistent-water-flow__soft`; 4 krótkie water glints.
+- Lokalny transport: HTML 200; po końcowym buildzie TTFB około 7 ms na loopback. Rozmiar `dist/assets`: około 3,04 MB, w tym obrazy około 2,11 MB i JS około 0,86 MB przed kompresją HTTP.
+- `npm.cmd test`: **PASS 88/88**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, 844 moduły, 3,46 s; główny JS 400,73 kB / 122,64 kB gzip; CSS 71,02 kB / 15,37 kB gzip.
+- Test polityki jakości: **PASS** — progi 52/42 FPS, histereza trzech zdrowych próbek, brak selektorów adaptive quality obejmujących `WorldOperationsLayer`.
+- Ograniczenie: osadzona przeglądarka automatyzacyjna działała jako `document.visibilityState=hidden` i poprawnie wstrzymała `requestAnimationFrame`; nie użyto tej próbki jako fałszywego wyniku FPS. Rzeczywisty aktywny klient zapisuje wynik w `data-measured-fps` i sam dobiera `data-motion-quality`.
+- Produkcja: **PASS — nietknięta**.
