@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { deriveWorldOperations, WORLD_OPERATION_POINTS, WORLD_OPERATIONS_TIMING } from './worldOperationsDirector.js'
 
@@ -79,4 +80,38 @@ test('hidden mode stops operations and reduced motion keeps static substitutes o
   assert.equal(deriveWorldOperations({ now: START, startedAt: START, visible: false }).operations.length, 0)
   const reduced = deriveWorldOperations({ now: START, startedAt: START, reducedMotion: true })
   assert.ok(reduced.operations.every((item) => item.phase === 'static'))
+})
+
+test('data transit renders only a local wake and segments, never a full GPS route', () => {
+  const jsx = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.jsx', import.meta.url), 'utf8')
+  const css = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
+  assert.equal(jsx.includes('operation-artery__bed'), false)
+  assert.equal(jsx.includes('operation-artery__trail'), false)
+  assert.match(jsx, /operation-artery__wake/)
+  assert.match(jsx, /operation-artery__segments/)
+  assert.match(jsx, /pathLength="100"/)
+  assert.match(css, /stroke-dasharray:16 84/)
+  assert.match(css, /stroke-dasharray:2 1\.5 2 1\.5 2 1\.5 3 86\.5/)
+})
+
+test('operations render below agents and existing architectural foreground masks', () => {
+  const fallback = readFileSync(new URL('../WorldFallback.jsx', import.meta.url), 'utf8')
+  const operationsIndex = fallback.indexOf('<WorldOperationsLayer')
+  const agentsIndex = fallback.indexOf('<MapAgentLayer')
+  const foregroundIndex = fallback.indexOf('<MapForegroundOcclusion')
+  assert.ok(operationsIndex > 0 && operationsIndex < agentsIndex && agentsIndex < foregroundIndex)
+  const operationCss = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
+  const foregroundCss = readFileSync(new URL('../../components/map-agents/MapForegroundOcclusion.css', import.meta.url), 'utf8')
+  assert.match(operationCss, /world-operations-layer\{[^}]*z-index:8/)
+  assert.match(foregroundCss, /map-foreground[^{]*\{[^}]*z-index:\s*21/)
+})
+
+test('Citadel and Forge visual contracts contain no editor handles or rectangular placeholders', () => {
+  const css = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
+  assert.match(css, /operation-citadel__outer[^}]*conic-gradient/)
+  assert.match(css, /operation-citadel__runes b[^}]*width:8px;height:2px;border:0/)
+  assert.match(css, /operation-forge__furnace[^}]*clip-path:polygon/)
+  assert.match(css, /operation-forge__gear[^}]*repeating-conic-gradient/)
+  assert.match(css, /operation-forge__piston::after[^}]*clip-path:polygon/)
+  assert.match(css, /operation-forge__chimney-lip/)
 })

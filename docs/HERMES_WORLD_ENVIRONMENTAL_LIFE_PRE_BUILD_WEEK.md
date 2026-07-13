@@ -67,3 +67,14 @@ The main source of perceived life is now a bounded operations scheduler rather t
 - Ambient schedule is deterministic over 48 seconds, has no dead window and renders one or two major operations only.
 - Real choreography replaces the scheduled operations immediately. A delegation produces evidence-backed transit; the target mechanical cycle starts only when the target has real operational activity.
 - The operations layer is presentation-only and cannot write tasks, alerts, statuses or active-agent counts.
+
+## Final visual integration
+
+- Data transit uses an invisible navigation path. Only the packet, a short fading wake and 3–6 nearby energized segments are rendered; the full route is never exposed as a GPS/debug line.
+- Mobile and desktop transit geometry follows the existing road-calibrated navigation nodes and named building targets.
+- Operations render below agents and below the existing architectural foreground masks, so packets and machinery can be naturally occluded by people, gates and facades.
+- Citadel energy is integrated as segmented ground runes, two masked mechanism rings, a crystal charge and one directional output channel. Editor-like handles and square markers are absent.
+- Forge activity is anchored to the furnace, gear, hammer pivot and chimney. The furnace and door use perspective masks; the hammer preserves its isometric angle throughout the strike; smoke exits behind a chimney lip.
+- Ambient transit remains cyan and restrained. Evidence-backed transit is faster and brighter and carries `evidenceEventId`; it does not create an operational state.
+- The earlier environmental glow and particles remain a low-intensity supporting layer only. They are not the primary source of perceived world activity.
+- Normal mobile verification runs without debug labels or controls; `worldDebug=visual` remains an explicit diagnostic mode only.

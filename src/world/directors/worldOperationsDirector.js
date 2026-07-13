@@ -22,14 +22,29 @@ export const WORLD_OPERATION_POINTS = freeze({
 const TARGET_FOR_PROFILE = freeze({ coder: 'forge', prospecting: 'watcher', researcher: 'archive', orchestrator: 'citadel', default: 'citadel' })
 const TYPE_FOR_TARGET = freeze({ forge: 'forge-production', watcher: 'watcher-sweep', archive: 'archive-ingestion', sanctum: 'sanctum-circulation', citadel: 'citadel-distribution' })
 
+const TRANSIT_ROUTES = freeze({
+  mobile: freeze({
+    citadel: freeze([point(50, 94), point(50, 86), point(50, 76.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43)]),
+    forge: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(45.5, 63), point(40.5, 59.3), point(35.2, 53.5), point(30.5, 49.2), point(35.2, 53.5), point(40.5, 59.3), point(44.5, 64), point(39.5, 67), point(37, 69.2), point(35.5, 70.5)]),
+    watcher: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(61.5, 68.2), point(64, 70), point(65.5, 71.2), point(61.5, 68.2), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(35.5, 70.5)]),
+    archive: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(44.5, 64), point(39.5, 67), point(37, 69.2), point(35.5, 70.5)]),
+    sanctum: freeze([point(50, 94), point(50, 81.5), point(50, 65.5), point(50, 55), point(50, 45), point(50, 43), point(50, 55), point(50, 63.5), point(56.5, 65.8), point(64, 70), point(68, 74), point(72, 80), point(64, 75), point(52, 72), point(44.5, 68), point(35.5, 70.5)]),
+  }),
+  desktop: freeze({
+    citadel: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5)]),
+    forge: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(54, 48), point(57, 54.5), point(66, 56.5), point(76, 51.5), point(84, 49), point(76, 51.5), point(66, 56.5), point(57, 54.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    watcher: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(52, 35.5), point(58, 32.5), point(63, 31), point(67, 31.5), point(58, 32.5), point(46, 39), point(40, 36.2), point(34, 33.5), point(28.5, 36.5)]),
+    archive: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(40, 36.2), point(34, 33.5), point(30.2, 35.2), point(28.5, 36.5)]),
+    sanctum: freeze([point(50, 92), point(48, 83.5), point(50, 69), point(50, 55), point(54, 48), point(46, 39), point(46, 36.5), point(50, 55), point(44, 65), point(39, 76), point(34, 58), point(28.5, 36.5)]),
+  }),
+})
+
 function operation(id, type, mode, phase, progress, extra = {}) {
   return freeze({ id, type, mode, phase, progress: Math.max(0, Math.min(1, progress)), ...extra })
 }
 
 function routeFor(target, layout) {
-  const p = WORLD_OPERATION_POINTS[layout]
-  const destination = p[target] ?? p.archive
-  return freeze([p.gate, p.road, p.fountain, p.citadel, destination, p.archive])
+  return TRANSIT_ROUTES[layout]?.[target] ?? TRANSIT_ROUTES[layout].archive
 }
 
 function phaseFor(progress) {

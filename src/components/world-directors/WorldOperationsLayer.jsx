@@ -7,11 +7,11 @@ const styleAt = (point) => ({ '--operation-x': `${point.x}%`, '--operation-y': `
 
 function DataTransitOperation({ operation }) {
   const path = pathData(operation.route)
-  const duration = Math.max(4, Math.min(8, operation.durationMs / 1_000))
-  return <svg className={`world-operation world-operation--data-transit mode-${operation.mode}`} viewBox="0 0 100 100" preserveAspectRatio="none" data-world-operation={operation.type} data-operation-mode={operation.mode} data-evidence-event-id={operation.evidenceEventId ?? ''}>
-    <path className="operation-artery__bed" d={path} vectorEffect="non-scaling-stroke" />
-    <path className="operation-artery__wake" d={path} vectorEffect="non-scaling-stroke" />
-    <path className="operation-artery__trail" d={path} vectorEffect="non-scaling-stroke" />
+  const baseDuration = Math.max(4, Math.min(8, operation.durationMs / 1_000))
+  const duration = operation.mode === 'event' ? Math.max(4, baseDuration * 0.78) : baseDuration
+  return <svg className={`world-operation world-operation--data-transit mode-${operation.mode}`} style={{ '--transit-duration': `${duration}s` }} viewBox="0 0 100 100" preserveAspectRatio="none" data-world-operation={operation.type} data-operation-mode={operation.mode} data-evidence-event-id={operation.evidenceEventId ?? ''}>
+    <path className="operation-artery__wake" d={path} pathLength="100" vectorEffect="non-scaling-stroke" />
+    <path className="operation-artery__segments" d={path} pathLength="100" vectorEffect="non-scaling-stroke" />
     <circle className="operation-artery__halo" r={operation.mode === 'event' ? 1.5 : 1.05}><animateMotion path={path} dur={`${duration}s`} repeatCount="indefinite" /></circle>
     <circle className="operation-artery__core" r={operation.mode === 'event' ? 0.82 : 0.58}><animateMotion path={path} dur={`${duration}s`} repeatCount="indefinite" /></circle>
   </svg>
@@ -19,7 +19,7 @@ function DataTransitOperation({ operation }) {
 
 function CitadelOperation({ operation, point }) {
   return <div className={`world-operation operation-citadel mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} style={styleAt(point)}>
-    <i className="operation-citadel__outer" /><i className="operation-citadel__inner" /><i className="operation-citadel__core" />
+    <i className="operation-citadel__outer" /><i className="operation-citadel__inner" /><i className="operation-citadel__input" /><i className="operation-citadel__core" />
     <span className="operation-citadel__runes">{Array.from({ length: 8 }, (_, index) => <b style={{ '--rune-index': index }} key={index} />)}</span>
     <i className="operation-citadel__output" />
   </div>
@@ -28,7 +28,7 @@ function CitadelOperation({ operation, point }) {
 function ForgeOperation({ operation, point }) {
   return <div className={`world-operation operation-forge mode-${operation.mode} phase-${operation.phase}`} data-world-operation={operation.type} data-operation-phase={operation.phase} data-evidence-event-id={operation.evidenceEventId ?? ''} style={styleAt(point)}>
     <i className="operation-forge__backplate" /><i className="operation-forge__furnace" /><i className="operation-forge__door" />
-    <i className="operation-forge__gear" /><i className="operation-forge__piston" /><i className="operation-forge__crane" />
+    <i className="operation-forge__gear" /><i className="operation-forge__piston" /><i className="operation-forge__crane" /><i className="operation-forge__chimney-lip" />
     <span className="operation-forge__sparks"><b /><b /></span><span className="operation-forge__smoke"><b /></span>
   </div>
 }
