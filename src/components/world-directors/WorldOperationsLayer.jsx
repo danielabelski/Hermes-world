@@ -3,10 +3,24 @@ import { WORLD_OPERATION_POINTS } from '../../world/directors/worldOperationsDir
 import forgeFireStrip from '../../assets/world-effects/forge-fire-strip.png'
 import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.png'
 import forgeSparksStrip from '../../assets/world-effects/forge-sparks-strip.png'
+import archiveDataRunesStrip from '../../assets/world-effects/archive-data-runes-strip.png'
+import archiveWindowGlowStrip from '../../assets/world-effects/archive-window-glow-strip.png'
+import citadelCorePulseStrip from '../../assets/world-effects/citadel-core-pulse-strip.png'
+import citadelEnergyWaveStrip from '../../assets/world-effects/citadel-energy-wave-strip.png'
+import citadelRuneRingStrip from '../../assets/world-effects/citadel-rune-ring-strip.png'
+import gateEnergyLockStrip from '../../assets/world-effects/gate-energy-lock-strip.png'
+import sanctumEnergyOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.png'
+import watcherLensPulseStrip from '../../assets/world-effects/watcher-lens-pulse-strip.png'
+import watcherScanBeamStrip from '../../assets/world-effects/watcher-scan-beam-strip.png'
+import waterReflectionStrip from '../../assets/world-effects/water-reflection-strip.png'
 import './WorldOperationsLayer.css'
 
 const pathData = (points = []) => points.map((point, index) => `${index ? 'L' : 'M'} ${point.x} ${point.y}`).join(' ')
 const styleAt = (point) => ({ '--operation-x': `${point.x}%`, '--operation-y': `${point.y}%` })
+
+function SpriteStrip({ src, className = '', staticFrame = false }) {
+  return <span className={`operation-sprite ${className}${staticFrame ? ' is-static-frame' : ''}`}><img src={src} alt="" /></span>
+}
 
 function DataTransitOperation({ operation }) {
   const path = pathData(operation.route)
@@ -22,9 +36,9 @@ function DataTransitOperation({ operation }) {
 
 function CitadelOperation({ operation, point }) {
   return <div className={`world-operation operation-citadel mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} style={styleAt(point)}>
-    <i className="operation-citadel__outer" /><i className="operation-citadel__inner" /><i className="operation-citadel__input" /><i className="operation-citadel__core" />
-    <span className="operation-citadel__runes">{Array.from({ length: 8 }, (_, index) => <b style={{ '--rune-index': index }} key={index} />)}</span>
-    <i className="operation-citadel__output" />
+    <SpriteStrip src={citadelEnergyWaveStrip} className="operation-citadel__wave" />
+    <SpriteStrip src={citadelRuneRingStrip} className="operation-citadel__ring" staticFrame />
+    <SpriteStrip src={citadelCorePulseStrip} className="operation-citadel__core" />
   </div>
 }
 
@@ -38,28 +52,32 @@ function ForgeOperation({ operation, point }) {
 
 function WatcherOperation({ operation, point }) {
   return <div className={`world-operation operation-watcher mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} style={styleAt(point)}>
-    <i className="operation-watcher__dome" /><i className="operation-watcher__lens" /><i className="operation-watcher__beam" /><i className="operation-watcher__arc" />
+    <SpriteStrip src={watcherScanBeamStrip} className="operation-watcher__beam" />
+    <SpriteStrip src={watcherLensPulseStrip} className="operation-watcher__lens" />
   </div>
 }
 
 function ArchiveOperation({ operation, point }) {
   return <div className={`world-operation operation-archive mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} data-evidence-event-id={operation.evidenceEventId ?? ''} style={styleAt(point)}>
-    <i className="operation-archive__backplate" /><span className="operation-archive__windows"><b /><b /><b /><b /></span><i className="operation-archive__tape" /><i className="operation-archive__seal" />
+    <span className="operation-archive__windows">
+      {Array.from({ length: 4 }, (_, index) => <SpriteStrip src={archiveWindowGlowStrip} className="operation-archive__window" key={index} />)}
+    </span>
+    <SpriteStrip src={archiveDataRunesStrip} className="operation-archive__runes" />
   </div>
 }
 
 function SanctumOperation({ operation, point }) {
   return <div className={`world-operation operation-sanctum mode-${operation.mode}`} data-world-operation={operation.type} data-operation-phase={operation.phase} style={styleAt(point)}>
-    <i className="operation-sanctum__orbit"><b /><b /></i><i className="operation-sanctum__spiral" /><i className="operation-sanctum__core" /><i className="operation-sanctum__channel" />
+    <SpriteStrip src={sanctumEnergyOrbitStrip} className="operation-sanctum__orbit" />
   </div>
 }
 
 function GateOperation({ operation, point }) {
-  return <div className={`world-operation operation-gate mode-${operation.mode}`} data-world-operation={operation.type} style={styleAt(point)}><i /><i /><b /></div>
+  return <div className={`world-operation operation-gate mode-${operation.mode}`} data-world-operation={operation.type} style={styleAt(point)}><SpriteStrip src={gateEnergyLockStrip} className="operation-gate__lock" /></div>
 }
 
 function WaterMachineryOperation({ operation, point }) {
-  return <div className={`world-operation operation-water-machinery mode-${operation.mode}`} data-world-operation={operation.type} style={styleAt(point)}><i /><i /><b /></div>
+  return <div className={`world-operation operation-water-machinery mode-${operation.mode}`} data-world-operation={operation.type} style={styleAt(point)}><SpriteStrip src={waterReflectionStrip} className="operation-water__reflection" /></div>
 }
 
 function WorldOperationsLayer({ presentation }) {

@@ -106,27 +106,41 @@ test('operations render below agents and existing architectural foreground masks
   assert.match(foregroundCss, /map-foreground[^{]*\{[^}]*z-index:\s*21/)
 })
 
-test('Citadel contains no editor handles and Forge uses transparent sprite strips only', () => {
+test('world buildings use transparent sprite strips without geometric placeholders', () => {
   const jsx = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldOperationsLayer.css', import.meta.url), 'utf8')
-  assert.match(css, /operation-citadel__outer[^}]*conic-gradient/)
-  assert.match(css, /operation-citadel__runes b[^}]*width:8px;height:2px;border:0/)
-  for (const rejected of ['operation-forge__backplate', 'operation-forge__furnace', 'operation-forge__door', 'operation-forge__gear', 'operation-forge__piston', 'operation-forge__crane', 'operation-forge__chimney-lip']) {
+  for (const rejected of [
+    'operation-citadel__outer', 'operation-citadel__inner', 'operation-citadel__input', 'operation-citadel__output',
+    'operation-forge__backplate', 'operation-forge__furnace', 'operation-forge__door', 'operation-forge__gear', 'operation-forge__piston', 'operation-forge__crane', 'operation-forge__chimney-lip',
+    'operation-watcher__dome', 'operation-watcher__arc', 'operation-archive__backplate', 'operation-archive__tape', 'operation-archive__seal',
+    'operation-sanctum__spiral', 'operation-sanctum__channel', 'gate-panel-left', 'water-turbine-turn',
+  ]) {
     assert.equal(jsx.includes(rejected), false)
     assert.equal(css.includes(rejected), false)
   }
-  assert.match(jsx, /forge-fire-strip\.png/)
-  assert.match(jsx, /forge-smoke-strip\.png/)
-  assert.match(jsx, /forge-sparks-strip\.png/)
+  for (const asset of ['forge-fire', 'forge-smoke', 'forge-sparks', 'citadel-rune-ring', 'citadel-core-pulse', 'citadel-energy-wave', 'watcher-lens-pulse', 'watcher-scan-beam', 'archive-window-glow', 'archive-data-runes', 'sanctum-energy-orbit', 'gate-energy-lock', 'water-reflection']) {
+    assert.match(jsx, new RegExp(`${asset}-strip\\.png`))
+  }
   assert.match(css, /forge-sprite-frames/)
+  assert.match(css, /world-effect-sprite/)
   assert.match(css, /steps\(7,end\)/)
 })
 
-test('Forge source strips are real RGBA PNGs with eight equal frames', () => {
+test('world effect source strips are real RGBA PNGs with eight equal frames', () => {
   const assets = [
     ['forge-fire-strip.png', 2048, 320],
     ['forge-smoke-strip.png', 2048, 320],
     ['forge-sparks-strip.png', 1536, 192],
+    ['archive-data-runes-strip.png', 1536, 256],
+    ['water-reflection-strip.png', 2048, 128],
+    ['sanctum-energy-orbit-strip.png', 2048, 256],
+    ['citadel-energy-wave-strip.png', 2048, 192],
+    ['citadel-core-pulse-strip.png', 1536, 256],
+    ['archive-window-glow-strip.png', 1024, 192],
+    ['gate-energy-lock-strip.png', 1536, 192],
+    ['citadel-rune-ring-strip.png', 2048, 256],
+    ['watcher-lens-pulse-strip.png', 1024, 128],
+    ['watcher-scan-beam-strip.png', 2048, 320],
   ]
   for (const [name, width, height] of assets) {
     const png = readFileSync(new URL(`../../assets/world-effects/${name}`, import.meta.url))
