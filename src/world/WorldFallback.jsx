@@ -18,7 +18,6 @@ import WorldChoreographyLayer from '../components/world-directors/WorldChoreogra
 import WorldEnvironmentalLife from '../components/world-directors/WorldEnvironmentalLife.jsx'
 import { useEnvironmentalDirector } from './directors/useEnvironmentalDirector.js'
 import WorldOperationsLayer from '../components/world-directors/WorldOperationsLayer.jsx'
-import MapNativeMotionLayer from '../components/world-directors/MapNativeMotionLayer.jsx'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -79,7 +78,6 @@ export default function WorldFallback() {
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
       <WorldEnvironmentalLife presentation={environment} debug={worldDebug} />
       <HermesInfrastructureLayer layout={mapLayout} />
-      <MapNativeMotionLayer presentation={{ ...environment.worldOperations, layout: mapLayout }} />
       <WorldOperationsLayer presentation={{ ...environment.worldOperations, layout: mapLayout }} />
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
