@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { deriveEnvironmentalPresentation, ENVIRONMENT_BUILDINGS } from './environmentalDirector.js'
+import { deriveEnvironmentalPresentation, deriveInfrastructureTelemetry, ENVIRONMENT_BUILDINGS } from './environmentalDirector.js'
 import { resolveWorldLifePreset } from './worldLifePreset.js'
 import { WORLD_VISUAL_ANCHORS } from './worldVisualAnchors.js'
 import { countLocalCriticalIncidents, countLocalIncidents, resolveHealthSummaryLabel } from '../healthSummary.js'
@@ -49,7 +49,10 @@ test('operational warning and critical override ambient and ordinary choreograph
   assert.equal(warning.response.source, 'operational')
   assert.equal(warning.response.buildingId, 'forge')
   assert.equal(warning.response.cue, 'warning')
-  assert.equal(warning.ambientIntensity, 0.28)
+  assert.equal(warning.infrastructureIntensity, 0.46)
+  assert.equal(warning.atmosphereIntensity, 1)
+  assert.equal(warning.eventIntensity, 1.28)
+  assert.equal(warning.alertSuppression, 0.58)
   const critical = deriveEnvironmentalPresentation({ now: START + 1_000, startedAt: START, operationalPresentations: [{ ...idleModel('prospecting'), severity: 'critical', phase: 'error' }] })
   assert.equal(critical.response.buildingId, 'watcher')
   assert.equal(critical.response.cue, 'critical')
@@ -72,6 +75,42 @@ test('hidden and reduced-motion modes stop atmosphere bands', () => {
   assert.equal(hidden.atmosphereBandCount, 0)
   const reduced = deriveEnvironmentalPresentation({ now: START, startedAt: START, reducedMotion: true })
   assert.equal(reduced.atmosphereBandCount, 0)
+})
+
+test('real telemetry changes infrastructure rhythm without creating operational state', () => {
+  const telemetry = deriveInfrastructureTelemetry({
+    now: START,
+    lifecycle: { connection: 'live' },
+    telemetry: {
+      system: { cpuPercent: 86, memoryPercent: 70, health: { score: 92 } },
+      tokenRiver: { activeSessionCount: 3 },
+      tasks: [{ id: 'q1', status: 'queued' }, { id: 'r1', status: 'running' }],
+      crons: [{ id: 'health' }, { id: 'journal' }],
+      activityItems: [{ id: 'evt-1', createdAt: START - 5_000 }, { id: 'evt-2', createdAt: START - 15_000 }],
+    },
+  })
+  assert.equal(telemetry.connected, true)
+  assert.equal(telemetry.forgeLoad, 0.86)
+  assert.equal(telemetry.recentActivity, 2)
+  assert.equal(telemetry.queuedTasks, 1)
+  assert.equal(telemetry.activeTasks, 1)
+  const environment = deriveEnvironmentalPresentation({ now: START, startedAt: START, lifecycle: { connection: 'live' }, telemetry: {
+    system: { cpuPercent: 86, health: { score: 92 } }, tasks: [{ status: 'running' }], activityItems: [{ createdAt: START - 1_000 }],
+  } })
+  assert.equal(environment.response, null)
+  assert.ok(environment.infrastructureTelemetry.forgeLoad > 0.8)
+  assert.equal(JSON.stringify(environment).includes('"source":"operational"'), false)
+})
+
+test('atmosphere persists while unrelated infrastructure is suppressed for a real alert', () => {
+  const environment = deriveEnvironmentalPresentation({
+    now: START + 1_000, startedAt: START, lifecycle: { connection: 'live' },
+    operationalPresentations: [{ ...idleModel('coder'), severity: 'critical', phase: 'error' }],
+  })
+  assert.equal(environment.atmosphereIntensity, 1)
+  assert.equal(environment.infrastructureIntensity, 0.46)
+  assert.ok(environment.eventIntensity > 1)
+  assert.ok(environment.alertSuppression > 0.5)
 })
 
 test('building configuration is centralized, complete and individually timed', () => {

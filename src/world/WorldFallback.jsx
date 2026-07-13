@@ -52,6 +52,10 @@ export default function WorldFallback() {
   const tasks = useWorldStore((state) => state.tasks ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
   const lifecycle = useWorldStore((state) => state.lifecycle ?? {})
+  const system = useWorldStore((state) => state.system ?? {})
+  const activityItems = useWorldStore((state) => state.activity?.items ?? [])
+  const tokenRiver = useWorldStore((state) => state.tokenRiver ?? {})
+  const crons = useWorldStore((state) => state.crons ?? [])
   const zoomPreference = useWorldStore((state) => state.camera?.zoomPreference ?? 'standard')
   const selection = useWorldStore((state) => state.selection)
   const selectEntity = useWorldStore((state) => state.selectEntity)
@@ -67,7 +71,10 @@ export default function WorldFallback() {
   const operationalPresentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
   const worldDebugParam = typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('worldDebug')
   const worldDebug = worldDebugParam === 'visual' ? 'visual' : worldDebugParam === '1' ? 'panel' : 'off'
-  const environment = useEnvironmentalDirector({ now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations, lifecycle, visualDebug: worldDebug === 'visual' })
+  const environment = useEnvironmentalDirector({
+    now: presentationNow, layout: mapLayout, choreography: directors.choreography, operationalPresentations, lifecycle,
+    telemetry: { system, activityItems, tokenRiver, tasks, crons }, visualDebug: worldDebug === 'visual',
+  })
   const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
   const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
   const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')

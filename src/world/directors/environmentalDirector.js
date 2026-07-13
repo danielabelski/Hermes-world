@@ -3,6 +3,13 @@ import { resolveWorldSubsystem } from './profileSubsystemMap.js'
 const freeze = Object.freeze
 const point = (x, y) => freeze({ x, y })
 const building = (definition) => freeze({ enabled: true, ...definition })
+const clamp01 = (value, fallback = 0) => Number.isFinite(Number(value)) ? Math.max(0, Math.min(1, Number(value))) : fallback
+const timestampMs = (value) => {
+  const numeric = Number(value)
+  if (Number.isFinite(numeric)) return numeric < 1e12 ? numeric * 1_000 : numeric
+  const parsed = Date.parse(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
 
 export const ENVIRONMENT_BUILDINGS = freeze({
   citadel: building({
@@ -76,7 +83,40 @@ function operationalResponse(presentations = []) {
   return candidates[0]?.priority > 0 ? freeze(candidates[0]) : null
 }
 
-export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [], lifecycle = {} } = {}) {
+export function deriveInfrastructureTelemetry({ now = Date.now(), telemetry = {}, lifecycle = {} } = {}) {
+  const connected = !['offline', 'stale'].includes(lifecycle.connection)
+  const system = telemetry.system ?? {}
+  const health = system.health ?? {}
+  const activityItems = telemetry.activityItems ?? []
+  const tasks = telemetry.tasks ?? []
+  const crons = telemetry.crons ?? []
+  const tokenRiver = telemetry.tokenRiver ?? {}
+  const recentActivity = activityItems.filter((item) => {
+    const createdAt = timestampMs(item?.createdAt ?? item?.timestamp)
+    return createdAt !== null && now - createdAt >= 0 && now - createdAt <= 60_000
+  }).length
+  const queuedTasks = tasks.filter((task) => ['queued', 'pending', 'waiting'].includes(String(task?.status ?? '').toLowerCase())).length
+  const activeTasks = tasks.filter((task) => ['running', 'working', 'active', 'in_progress'].includes(String(task?.status ?? '').toLowerCase())).length
+  const cpuLoad = clamp01(Number(system.cpuPercent) / 100)
+  const memoryLoad = clamp01(Number(system.memoryPercent) / 100)
+  const sessionLoad = clamp01(Number(tokenRiver.activeSessionCount) / 4)
+  const queueLoad = clamp01((queuedTasks + activeTasks) / 6)
+  const healthScore = Number.isFinite(Number(health.score)) ? clamp01(Number(health.score) / 100) : connected ? 0.72 : 0
+  return freeze({
+    connected,
+    heartbeat: connected ? 0.62 + 0.38 * ((Math.sin(now / 1_650) + 1) / 2) : 0.08,
+    forgeLoad: connected ? Math.max(0.2, cpuLoad, queueLoad, sessionLoad * 0.72) : 0.06,
+    archiveRate: connected ? Math.max(0.16, clamp01(recentActivity / 8)) : 0.04,
+    sanctumFlow: connected ? Math.max(0.18, 1 - healthScore, memoryLoad * 0.48) : 0.04,
+    watcherSweep: connected ? Math.max(0.2, clamp01(crons.length / 8), recentActivity > 0 ? 0.34 : 0) : 0.05,
+    distributionDensity: connected ? Math.max(0.18, queueLoad, sessionLoad) : 0.04,
+    recentActivity,
+    queuedTasks,
+    activeTasks,
+  })
+}
+
+export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = now, visible = true, reducedMotion = false, visualDebug = false, layout = 'desktop', choreography = {}, operationalPresentations = [], lifecycle = {}, telemetry = {} } = {}) {
   const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
   const elapsed = Math.max(0, now - startedAt)
   const connected = !['offline', 'stale'].includes(lifecycle.connection)
@@ -84,13 +124,18 @@ export function deriveEnvironmentalPresentation({ now = Date.now(), startedAt = 
   const choreographed = connected ? eventResponse(choreography) : null
   const response = !operational ? choreographed : !choreographed || operational.priority >= choreographed.priority ? operational : choreographed
   const alerting = response?.priority >= 5
-  const intensity = !visible ? 0 : alerting ? 0.28 : response ? 0.52 : 1
+  const atmosphereIntensity = visible ? 1 : 0
+  const infrastructureIntensity = !visible ? 0 : alerting ? 0.46 : response ? 0.74 : 1
+  const eventIntensity = !visible ? 0 : alerting ? 1.28 : response ? 1.12 : 1
+  const alertSuppression = !visible ? 1 : alerting ? 0.58 : response ? 0.24 : 0
+  const infrastructureTelemetry = deriveInfrastructureTelemetry({ now, telemetry, lifecycle })
   const visualElapsed = Math.max(0, elapsed)
   const visualStepIndex = visualDebug && visualElapsed < 15_000 ? Math.min(ENVIRONMENT_VISUAL_STEPS.length - 1, Math.floor(visualElapsed / (15_000 / ENVIRONMENT_VISUAL_STEPS.length))) : -1
   const visualVerification = visualStepIndex >= 0 ? freeze({ ...ENVIRONMENT_VISUAL_STEPS[visualStepIndex], index: visualStepIndex, point: ENVIRONMENT_VISUAL_STEPS[visualStepIndex].points[normalizedLayout] }) : null
   return freeze({
     running: visible, visible, reducedMotion, layout: normalizedLayout, entryActive: elapsed < 5_000, elapsed,
-    persistentEffectIds: ENVIRONMENT_PERSISTENT_EFFECTS, response, ambientIntensity: intensity,
+    persistentEffectIds: ENVIRONMENT_PERSISTENT_EFFECTS, response,
+    ambientIntensity: infrastructureIntensity, atmosphereIntensity, infrastructureIntensity, eventIntensity, alertSuppression, infrastructureTelemetry,
     atmosphereBandCount: reducedMotion || !visible ? 0 : 2,
     performanceStatus: !visible ? 'paused' : reducedMotion ? 'reduced-motion' : 'css-composited', visualVerification,
   })

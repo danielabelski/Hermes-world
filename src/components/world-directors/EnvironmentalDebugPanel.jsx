@@ -5,6 +5,8 @@ function EnvironmentalDebugPanel({ presentation }) {
     <strong>Environmental Director: {presentation.running ? 'running' : 'stopped'}</strong>
     <span>persistent: {presentation.persistentEffectIds.join(', ') || 'none'}</span>
     <span>atmosphere bands: {presentation.atmosphereBandCount}</span>
+    <span>intensity: atmosphere {presentation.atmosphereIntensity} / infrastructure {presentation.infrastructureIntensity} / event {presentation.eventIntensity}</span>
+    <span>telemetry: heartbeat {presentation.infrastructureTelemetry?.heartbeat?.toFixed?.(2) ?? 'n/a'} / forge {presentation.infrastructureTelemetry?.forgeLoad?.toFixed?.(2) ?? 'n/a'} / archive {presentation.infrastructureTelemetry?.archiveRate?.toFixed?.(2) ?? 'n/a'}</span>
     <span>operations: {presentation.worldOperations?.operations?.map((item) => item.type).join(', ') || 'none'}</span>
     <span>major processes: {presentation.worldOperations?.majorCount ?? 0}</span>
     <span>event: {presentation.response ? `${presentation.response.buildingId}/${presentation.response.cue}` : 'none'}</span>
