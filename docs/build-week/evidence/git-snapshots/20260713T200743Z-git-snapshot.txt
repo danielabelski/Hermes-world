@@ -1,0 +1,46 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-13T20:07:43Z
+Europe/Warsaw: 2026-07-13T22:07:43+02:00
+Session ID: 019f4f11-14e9-70e0-8d61-26226257864c
+Cel: Post-commit
+Branch: build-week/hermes-world
+HEAD: 2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe
+Baseline ref: b80b89d771457e6d6c515cda51e4d480f85245e1
+
+== git status --short ==
+?? docs/build-week/evidence/git-snapshots/20260713T200743Z-git-snapshot.txt
+
+== Zmienione pliki (bez treści) ==
+?? docs/build-week/evidence/git-snapshots/20260713T200743Z-git-snapshot.txt
+
+== Diff stat: working tree ==
+
+== Diff stat: staged ==
+
+== Ostatnie commity ==
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+b80b89d771457e6d6c515cda51e4d480f85245e1	2026-07-13T16:47:03+02:00	2026-07-13T16:47:03+02:00	pre-build: GPT-5.6 living world checkpoint
+1cd84bb5a8007e2e2fc5f02a862919eb73a20e12	2026-07-13T15:44:01+02:00	2026-07-13T15:44:01+02:00	docs: record living world checkpoint
+593274bf2a16b2fbd199079203274241e19db504	2026-07-13T15:43:21+02:00	2026-07-13T15:43:21+02:00	feat: finalize pre-build-week living world
+4157d4fd225031aa7e37a0bd44e0f43121a4f4e4	2026-07-13T05:36:23+02:00	2026-07-13T05:36:23+02:00	feat: keep Citadel infrastructure visibly alive
+a436ad1598ff91054b12a192f8078a42366e0562	2026-07-13T05:00:17+02:00	2026-07-13T05:00:17+02:00	feat: replace world operation placeholders with alpha sprites
+15904e62249faf6ff50ecaabdc7fd36ecf10edf8	2026-07-13T03:51:21+02:00	2026-07-13T03:51:21+02:00	feat: replace Forge placeholders with alpha sprites
+cbcdf0db92a971da25ce31e0101da497748d85e0	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "feat: animate map-native city infrastructure"
+d75674ba3c396035ab6ae0acea115a767360111b	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "fix: raise world motion visibility floor"
+22d503aeb6883ea230b6b70055c76c4a2a189702	2026-07-13T03:06:59+02:00	2026-07-13T03:06:59+02:00	fix: raise world motion visibility floor
+87bf21d3c60a0a7fc0e65c65e42678529e3611eb	2026-07-13T02:54:30+02:00	2026-07-13T02:55:56+02:00	feat: animate map-native city infrastructure
+a50505f3ea45b0fddf8f861bb91d02418c756360	2026-07-13T02:25:01+02:00	2026-07-13T02:25:01+02:00	fix: integrate world operations with map art
+861e89d50ee03051269ec281ebff5573c9bf3511	2026-07-13T01:54:03+02:00	2026-07-13T01:54:03+02:00	fix: anchor mobile water cycle to the core
+5be4a040d05b34cdd5ae0b62028465690e2b3ae4	2026-07-13T01:45:37+02:00	2026-07-13T01:45:37+02:00	feat: add visible world operations
+94201ef04960bca5e32924c5bed365caf6163059	2026-07-13T01:14:07+02:00	2026-07-13T01:14:07+02:00	fix: make environmental life legible on mobile
+4996066fb0d6879378d6502a2a1aa75cd8e5125b	2026-07-13T00:48:13+02:00	2026-07-13T00:48:13+02:00	feat: add environmental world life pass
+fb96466ad928a82fd6605f55b6d631a651677aa7	2026-07-13T00:11:48+02:00	2026-07-13T00:11:48+02:00	fix: make ambient world life readable on mobile
+303f7dc50ea7175d5117dabe02f0a7422ef5824b	2026-07-12T23:58:40+02:00	2026-07-12T23:58:40+02:00	fix: keep ambient routes in map world space
+0e02e1e4ad21b58f6d1c7253010dd6283eb3ffff	2026-07-12T23:18:45+02:00	2026-07-12T23:18:45+02:00	feat: add world choreography and ambient director
+a8b0a0d50d945f768ca2cbd5b0b5c3bbf24967f4	2026-07-12T21:59:49+02:00	2026-07-12T22:03:19+02:00	feat: connect demo world to real Hermes events
+
+== Commity od baseline ==
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+
+== Tagi Build Week ==
+pre-build-week-baseline-2026-07-13	36c0f2ab0d4fc9274031afd5c4bede9cc5fa59e9	2026-07-13T22:02:28+02:00	Hermes World verified pre-Submission baseline.

@@ -55,6 +55,14 @@ UTC_ISO="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 WARSAW_ISO="$(TZ='CET-1CEST,M3.5.0,M10.5.0/3' date '+%Y-%m-%dT%H:%M:%S%:z')"
 OUT="$OUT_DIR/${UTC_FILE}-git-snapshot.txt"
 
+# Capture working-tree state before opening OUT. Without this, the snapshot file
+# itself would appear as an untracked change even when the input tree was clean.
+INITIAL_STATUS="$(git status --short --untracked-files=all)"
+INITIAL_DIFF_NAMES="$(git diff --name-status)"
+INITIAL_CACHED_NAMES="$(git diff --cached --name-status)"
+INITIAL_DIFF_STAT="$(git diff --stat)"
+INITIAL_CACHED_STAT="$(git diff --cached --stat)"
+
 umask 077
 (
   printf 'HERMES WORLD — BUILD WEEK GIT SNAPSHOT\n'
@@ -67,18 +75,18 @@ umask 077
   printf 'Baseline ref: %s\n' "$BASELINE"
 
   printf '\n== git status --short ==\n'
-  git status --short --untracked-files=all
+  printf '%s\n' "$INITIAL_STATUS"
 
   printf '\n== Zmienione pliki (bez treści) ==\n'
-  git status --short --untracked-files=all
-  git diff --name-status
-  git diff --cached --name-status
+  printf '%s\n' "$INITIAL_STATUS"
+  printf '%s\n' "$INITIAL_DIFF_NAMES"
+  printf '%s\n' "$INITIAL_CACHED_NAMES"
 
   printf '\n== Diff stat: working tree ==\n'
-  git diff --stat
+  printf '%s\n' "$INITIAL_DIFF_STAT"
 
   printf '\n== Diff stat: staged ==\n'
-  git diff --cached --stat
+  printf '%s\n' "$INITIAL_CACHED_STAT"
 
   printf '\n== Ostatnie commity ==\n'
   git log -n 20 --date=iso-strict --format='%H%x09%aI%x09%cI%x09%s'

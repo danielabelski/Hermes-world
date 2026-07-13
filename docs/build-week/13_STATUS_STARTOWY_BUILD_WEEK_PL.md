@@ -11,7 +11,7 @@
 
 ## Stan dokumentacji
 
-Polska dokumentacja provenance, zasad, sesji, decyzji, architektury, testów, dowodów, licencji, bezpieczeństwa i procedury pracy jest kompletna dla punktu startowego. Dokumentacyjny commit i końcowe wyniki walidacji są zapisane w dzienniku i rejestrze testów.
+Polska dokumentacja provenance, zasad, sesji, decyzji, architektury, testów, dowodów, licencji, bezpieczeństwa i procedury pracy jest kompletna dla punktu startowego. Główny dokumentacyjny commit: `2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe`. Końcowe wyniki walidacji są zapisane w dzienniku i rejestrze testów.
 
 ## Co jest pre-existing
 

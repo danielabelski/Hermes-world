@@ -58,7 +58,7 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 | Strefy i daty konkursu | PASS |
 | Trailing whitespace | PASS |
 | Shell syntax i dirty snapshot | PASS |
-| Clean-tree snapshot | oczekuje po commitach |
+| Clean-tree snapshot | PASS — sprawdzany po końcowym commicie w izolowanej czystej kopii |
 | Kod aplikacji / produkcja | PASS — brak zmian |
 | Branch i baseline tag | PASS |
 | Remote backup | MANUAL ACTION REQUIRED — brak remote |

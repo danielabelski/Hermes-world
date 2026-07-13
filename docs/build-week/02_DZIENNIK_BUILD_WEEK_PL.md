@@ -61,3 +61,12 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Branch: utworzono `build-week/hermes-world` z baseline; wcześniejsze branche i produkcyjny `main` nie zostały zmienione.
 - Commit: `docs(build-week): establish provenance and evidence system` — hash zostanie zapisany w kolejnym append-only wpisie po wykonaniu.
 - Następny krok: snapshot po commicie, drugi mały commit dowodowy i clean-tree validation.
+
+## BW-2026-07-13-006 — Dokumentacyjny commit i snapshot
+
+- Czas Europe/Warsaw: 2026-07-13 22:07+.
+- Commit: `2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe` — `docs(build-week): establish provenance and evidence system`.
+- Zakres: 44 dozwolone pliki; 0 zmian kodu aplikacji; prywatne oryginały poza Git.
+- Snapshot po commicie: `20260713T200743Z-git-snapshot.txt`, branch `build-week/hermes-world`, baseline ref rozwiązuje się do `b80b89d…`.
+- Korekta narzędzia: stan tree jest od tej chwili pobierany przed utworzeniem pliku wyjściowego, dzięki czemu czysty input nie jest błędnie raportowany jako dirty przez sam snapshot.
+- Następny krok: mały commit snapshotu i finalna clean-tree validation.
