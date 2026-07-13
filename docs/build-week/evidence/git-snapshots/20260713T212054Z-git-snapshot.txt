@@ -1,0 +1,58 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-13T21:20:54Z
+Europe/Warsaw: 2026-07-13T23:20:55+02:00
+Session ID: 019f4f11-14e9-70e0-8d61-26226257864c
+Cel: Post-commit
+Branch: build-week/hermes-world
+HEAD: 5a0bc361bd71da39d64676ef0745494696497751
+Baseline ref: b80b89d771457e6d6c515cda51e4d480f85245e1
+
+== git status --short ==
+
+
+== Zmienione pliki (bez treści) ==
+
+
+
+
+== Diff stat: working tree ==
+
+
+== Diff stat: staged ==
+
+
+== Ostatnie commity ==
+5a0bc361bd71da39d64676ef0745494696497751	2026-07-13T23:20:37+02:00	2026-07-13T23:20:37+02:00	docs(build-week): record first meaningful extension
+fdb75f4cd1826c83804e4fbd3bf178b1af37c1dd	2026-07-13T23:15:39+02:00	2026-07-13T23:15:39+02:00	fix(build-week): balance mobile cloud visibility
+3f030730fef72b5a52f5c122b0f0159d16cc11b7	2026-07-13T23:00:57+02:00	2026-07-13T23:00:57+02:00	feat(build-week): visualize the real event nervous system
+4d5870e059c2a9690c90851cfc01aab5ca2f9283	2026-07-13T22:56:06+02:00	2026-07-13T22:56:06+02:00	feat(build-week): drive infrastructure from real telemetry
+08ad9aa72ad406eda31ee3f409daf6dde0485379	2026-07-13T22:49:09+02:00	2026-07-13T22:49:09+02:00	feat(build-week): make water and atmosphere visibly alive
+e1958d8c6262c42c5af8fb8012d1937be14e15fd	2026-07-13T22:43:39+02:00	2026-07-13T22:43:39+02:00	chore(build-week): capture meaningful extension start
+0a625df7dd0da128a9de63b3f117977aa916d843	2026-07-13T22:14:05+02:00	2026-07-13T22:14:05+02:00	docs(build-week): close documentation handoff
+2b1e3e71665ff2214b62b14170f1cec49d04fb4f	2026-07-13T22:09:47+02:00	2026-07-13T22:09:47+02:00	chore(build-week): record initial evidence snapshot
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+b80b89d771457e6d6c515cda51e4d480f85245e1	2026-07-13T16:47:03+02:00	2026-07-13T16:47:03+02:00	pre-build: GPT-5.6 living world checkpoint
+1cd84bb5a8007e2e2fc5f02a862919eb73a20e12	2026-07-13T15:44:01+02:00	2026-07-13T15:44:01+02:00	docs: record living world checkpoint
+593274bf2a16b2fbd199079203274241e19db504	2026-07-13T15:43:21+02:00	2026-07-13T15:43:21+02:00	feat: finalize pre-build-week living world
+4157d4fd225031aa7e37a0bd44e0f43121a4f4e4	2026-07-13T05:36:23+02:00	2026-07-13T05:36:23+02:00	feat: keep Citadel infrastructure visibly alive
+a436ad1598ff91054b12a192f8078a42366e0562	2026-07-13T05:00:17+02:00	2026-07-13T05:00:17+02:00	feat: replace world operation placeholders with alpha sprites
+15904e62249faf6ff50ecaabdc7fd36ecf10edf8	2026-07-13T03:51:21+02:00	2026-07-13T03:51:21+02:00	feat: replace Forge placeholders with alpha sprites
+cbcdf0db92a971da25ce31e0101da497748d85e0	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "feat: animate map-native city infrastructure"
+d75674ba3c396035ab6ae0acea115a767360111b	2026-07-13T03:18:52+02:00	2026-07-13T03:18:52+02:00	Revert "fix: raise world motion visibility floor"
+22d503aeb6883ea230b6b70055c76c4a2a189702	2026-07-13T03:06:59+02:00	2026-07-13T03:06:59+02:00	fix: raise world motion visibility floor
+87bf21d3c60a0a7fc0e65c65e42678529e3611eb	2026-07-13T02:54:30+02:00	2026-07-13T02:55:56+02:00	feat: animate map-native city infrastructure
+a50505f3ea45b0fddf8f861bb91d02418c756360	2026-07-13T02:25:01+02:00	2026-07-13T02:25:01+02:00	fix: integrate world operations with map art
+
+== Commity od baseline ==
+5a0bc361bd71da39d64676ef0745494696497751	2026-07-13T23:20:37+02:00	2026-07-13T23:20:37+02:00	docs(build-week): record first meaningful extension
+fdb75f4cd1826c83804e4fbd3bf178b1af37c1dd	2026-07-13T23:15:39+02:00	2026-07-13T23:15:39+02:00	fix(build-week): balance mobile cloud visibility
+3f030730fef72b5a52f5c122b0f0159d16cc11b7	2026-07-13T23:00:57+02:00	2026-07-13T23:00:57+02:00	feat(build-week): visualize the real event nervous system
+4d5870e059c2a9690c90851cfc01aab5ca2f9283	2026-07-13T22:56:06+02:00	2026-07-13T22:56:06+02:00	feat(build-week): drive infrastructure from real telemetry
+08ad9aa72ad406eda31ee3f409daf6dde0485379	2026-07-13T22:49:09+02:00	2026-07-13T22:49:09+02:00	feat(build-week): make water and atmosphere visibly alive
+e1958d8c6262c42c5af8fb8012d1937be14e15fd	2026-07-13T22:43:39+02:00	2026-07-13T22:43:39+02:00	chore(build-week): capture meaningful extension start
+0a625df7dd0da128a9de63b3f117977aa916d843	2026-07-13T22:14:05+02:00	2026-07-13T22:14:05+02:00	docs(build-week): close documentation handoff
+2b1e3e71665ff2214b62b14170f1cec49d04fb4f	2026-07-13T22:09:47+02:00	2026-07-13T22:09:47+02:00	chore(build-week): record initial evidence snapshot
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+
+== Tagi Build Week ==
+pre-build-week-baseline-2026-07-13	36c0f2ab0d4fc9274031afd5c4bede9cc5fa59e9	2026-07-13T22:02:28+02:00	Hermes World verified pre-Submission baseline.
