@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
 import { BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
 
@@ -32,5 +33,18 @@ describe('building entry config', () => {
     assert.deepEqual([desktop.xPercent, desktop.yPercent], [39, 76])
     assert.deepEqual([mobile.xPercent, mobile.yPercent], [72, 80])
     assert.equal(resolveBuildingEntry('unknown', 'mobile'), null)
+  })
+
+  it('keeps every main interior architecturally identifiable without duplicating Forge', () => {
+    const scene = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.jsx', import.meta.url), 'utf8')
+    const identityLandmarks = [
+      'archive-chamber__shelves', 'archive-chamber__codex',
+      'citadel-chamber__banner', 'citadel-chamber__war-table',
+      'watcher-chamber__telescope', 'watcher-chamber__parapet',
+      'sanctum-chamber__apothecary', 'sanctum-chamber__pool',
+    ]
+    for (const landmark of identityLandmarks) assert.match(scene, new RegExp(landmark))
+    assert.equal((scene.match(/function ForgeChamber/g) ?? []).length, 1)
+    assert.equal((scene.match(/function (Archive|Citadel|Watcher|Sanctum)Chamber/g) ?? []).length, 4)
   })
 })

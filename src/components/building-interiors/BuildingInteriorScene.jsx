@@ -44,8 +44,11 @@ function ForgeChamber() {
 function ArchiveChamber() {
   return <div className="interior-chamber archive-chamber" aria-hidden="true">
     <div className="archive-chamber__vault"><i /><i /><i /><i /><i /><i /></div>
+    <div className="archive-chamber__shelves archive-chamber__shelves--left"><i /><i /><i /><i /></div>
+    <div className="archive-chamber__shelves archive-chamber__shelves--right"><i /><i /><i /><i /></div>
     <div className="archive-chamber__ribbon"><SpriteStrip className="archive-chamber__runes" src={archiveRunesStrip} /></div>
     <div className="archive-chamber__core"><SpriteStrip className="archive-chamber__windows" src={archiveWindowsStrip} /><i /><i /></div>
+    <div className="archive-chamber__codex"><i /><i /><i /></div>
     <div className="archive-chamber__desk"><i /><i /><i /></div>
     <div className="archive-chamber__foreground" />
   </div>
@@ -54,7 +57,11 @@ function ArchiveChamber() {
 function CitadelChamber() {
   return <div className="interior-chamber citadel-chamber" aria-hidden="true">
     <div className="citadel-chamber__vault"><i /><i /><i /></div>
+    <div className="citadel-chamber__banner citadel-chamber__banner--left"><i /></div>
+    <div className="citadel-chamber__banner citadel-chamber__banner--right"><i /></div>
     <div className="citadel-chamber__dais"><SpriteStrip className="citadel-chamber__ring" src={citadelRuneStrip} /><SpriteStrip className="citadel-chamber__core" src={citadelCoreStrip} /><i className="citadel-chamber__pedestal" /></div>
+    <div className="citadel-chamber__war-table"><i /><i /><i /><i /></div>
+    <div className="citadel-chamber__steps"><i /><i /><i /></div>
     <div className="citadel-chamber__console citadel-chamber__console--left"><i /><i /><i /></div>
     <div className="citadel-chamber__console citadel-chamber__console--right"><i /><i /><i /></div>
     <div className="citadel-chamber__foreground" />
@@ -66,7 +73,8 @@ function WatcherChamber() {
     <div className="watcher-chamber__dome"><i /><i /><i /><i /></div>
     <div className="watcher-chamber__horizon" />
     <SpriteStrip className="watcher-chamber__scan" src={watcherScanStrip} />
-    <div className="watcher-chamber__lens"><SpriteStrip className="watcher-chamber__lens-pulse" src={watcherLensStrip} /><i /></div>
+    <div className="watcher-chamber__parapet"><i /><i /><i /><i /><i /></div>
+    <div className="watcher-chamber__telescope"><i className="watcher-chamber__tube" /><div className="watcher-chamber__lens"><SpriteStrip className="watcher-chamber__lens-pulse" src={watcherLensStrip} /></div><i className="watcher-chamber__pivot" /><i className="watcher-chamber__tripod" /></div>
     <div className="watcher-chamber__console"><i /><i /><i /></div>
     <div className="watcher-chamber__foreground" />
   </div>
@@ -75,8 +83,11 @@ function WatcherChamber() {
 function SanctumChamber() {
   return <div className="interior-chamber sanctum-chamber" aria-hidden="true">
     <div className="sanctum-chamber__vault"><i /><i /><i /></div>
+    <div className="sanctum-chamber__apothecary sanctum-chamber__apothecary--left"><i /><i /><i /><i /><i /></div>
+    <div className="sanctum-chamber__apothecary sanctum-chamber__apothecary--right"><i /><i /><i /><i /><i /></div>
     <div className="sanctum-chamber__pool"><i /><i /></div>
     <div className="sanctum-chamber__focus"><SpriteStrip className="sanctum-chamber__orbit" src={sanctumOrbitStrip} /><i /></div>
+    <div className="sanctum-chamber__roots"><i /><i /><i /><i /></div>
     <div className="sanctum-chamber__channels"><i /><i /><i /></div>
     <div className="sanctum-chamber__foreground" />
   </div>

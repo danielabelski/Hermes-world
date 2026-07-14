@@ -221,3 +221,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Koszt stały: 0 nowych timerów, 0 nowych keyframes, 0 nowych cząstek, 0 filtrów i 0 animacji pełnoekranowych. Globalna warstwa zmienia jedynie `background-color`/`opacity` przy faktycznej zmianie tieru.
 - Semantyka: źródłem pozostają wyłącznie istniejące `system.cpuPercent` i `system.temperatureC`; warstwa nie emituje stanów operacyjnych ani alertów.
 - Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
+
+## BW-2026-07-14-019 — Architectural identity pass wnętrz subsystemów
+
+- Czas Europe/Warsaw: 2026-07-14 13:08–13:48.
+- Czas UTC: 2026-07-14 11:08–11:48.
+- Branch/startowy HEAD: `build-week/hermes-world` / `ac5b3f8`.
+- Problem: Archiwum, Cytadela, Watcher i Sanctum były funkcjonalne, lecz zbyt podobne — ciemne, abstrakcyjne komory o przewadze cyan, bez natychmiastowej informacji o funkcji miejsca.
+- Wykonano: Archiwum przebudowano na skryptorium z regałami, fizycznym kodeksem i złotą taśmą zapisu; Cytadelę na gotycką salę dowodzenia z chorągwiami, stołem-mapą i podium; Watchera na otwarte obserwatorium z parapetem i dużym mosiężnym teleskopem; Sanctum na alchemiczne regeneratorium z aptekarskimi półkami, fiolkami, basenem i organicznym obiegiem.
+- Kierunek wizualny: materiały kamień/drewno/mosiądz/tkanina dominują nad neonem; cyan pozostaje wyłącznie sygnałem infrastruktury, zgodnie z językiem mapy i zaakceptowaną Kuźnią.
+- Zakres zamrożony: bez zmian wejść, współrzędnych, routingu, telemetrii, kontraktu danych, FSM, serwera, API i produkcji.
+- Kontrola 393×852: każde wnętrze jest rozpoznawalne bez tekstu; wspólny header i readout zachowują hierarchię produktu, a geometria pomieszczeń pozostaje odmienna.
+- Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.

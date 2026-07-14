@@ -161,6 +161,20 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Ograniczenie: odczyt FPS osadzonej przeglądarki nie jest traktowany jako miarodajny dla aktywnego telefonu; brak regresji potwierdzono przez niezmienioną liczbę animacji pogodowych i brak nowej animacji pełnoekranowej.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-012 — Rozpoznawalność i budżet czterech wnętrz
+
+- Czas: 2026-07-14 13:48 Europe/Warsaw / 2026-07-14 11:48 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `ac5b3f8`.
+- Viewport 393×852: **PASS** — Archiwum, Cytadela, Watcher i Sanctum mają odrębne, semantyczne landmarki i nie wyglądają jak warianty jednej cyber-komory.
+- Koszt aktywnej sceny: Archiwum 65 DOM / 5 animacji / 3 filtry; Cytadela 63 / 5 / 2; Watcher 57 / 5 / 2; Sanctum 64 / 6 / 2. Mapa pozostaje pauzowana pod otwartym wnętrzem.
+- Kontrakt tożsamości: **PASS** — test wymaga regałów i kodeksu Archiwum, chorągwi i stołu Cytadeli, teleskopu i parapetu Watchera oraz apteki i basenu Sanctum; renderer Kuźni nie został zduplikowany.
+- `npm.cmd test`: **PASS 101/101**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów; lazy JS wnętrz 13,64 kB / 3,84 kB gzip; CSS wnętrz 39,78 kB / 9,91 kB gzip; główny JS bez wzrostu 407,99 kB / 124,74 kB gzip.
+- `git diff --check`: **PASS**.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.
