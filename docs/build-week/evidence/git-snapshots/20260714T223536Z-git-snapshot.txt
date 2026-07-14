@@ -1,0 +1,84 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-14T22:35:36Z
+Europe/Warsaw: 2026-07-15T00:35:37+02:00
+Session ID: 019f4f11-14e9-70e0-8d61-26226257864c
+Cel: Interior first-open performance and dedicated effect asset migration
+Branch: build-week/hermes-world
+HEAD: 62ad776313f437ee794b3bd3f591110f2b0f0868
+Baseline ref: b80b89d771457e6d6c515cda51e4d480f85245e1
+
+== git status --short ==
+
+
+== Zmienione pliki (bez treści) ==
+
+
+
+
+== Diff stat: working tree ==
+
+
+== Diff stat: staged ==
+
+
+== Ostatnie commity ==
+62ad776313f437ee794b3bd3f591110f2b0f0868	2026-07-15T00:23:36+02:00	2026-07-15T00:23:36+02:00	chore(build-week): record cinematic interiors checkpoint
+b11f61437cd7b7301c59e0e5258c46ba36c25c22	2026-07-15T00:22:50+02:00	2026-07-15T00:22:50+02:00	docs(build-week): record cinematic interior integration
+d16969e555968c2595e28a1ad711cbc2e4b1dc37	2026-07-15T00:14:14+02:00	2026-07-15T00:14:14+02:00	feat(build-week): integrate cinematic subsystem interiors
+2513ddbfdab9404a6287fd48530e4470cb97e58b	2026-07-14T21:26:09+02:00	2026-07-14T21:26:09+02:00	chore(build-week): record CAT and interior integration snapshot
+9b3d1cfe1fb2daa21bfcfde1ebc316bdcdf06b87	2026-07-14T21:23:59+02:00	2026-07-14T21:23:59+02:00	docs(build-week): record CAT telemetry and interior integration pass
+2e8b63cc9a3e7e8c5657c888c7f9d0cd80db74b7	2026-07-14T21:21:02+02:00	2026-07-14T21:21:02+02:00	test(build-week): lock premium interior spatial contract
+1027a080c184d9f66b78c7a25234fd3175087f53	2026-07-14T21:19:25+02:00	2026-07-14T21:19:25+02:00	feat(build-week): deepen subsystem interiors with physical architecture
+f099dcca492ccbdef178b72f7de7790ba3467919	2026-07-14T21:19:13+02:00	2026-07-14T21:19:13+02:00	fix(build-week): make building thresholds hide agents atomically
+5fcbea00cdd879086b9eb5dc401b91f031a507ae	2026-07-14T14:35:15+02:00	2026-07-14T14:35:15+02:00	chore(build-week): record interior depth checkpoint
+1d1f1438b0a028871bcd987fd6024115bfa0341c	2026-07-14T14:33:13+02:00	2026-07-14T14:33:13+02:00	feat(build-week): add depth and material lighting to interiors
+c95006b31674c006728e7121ace802dcb47f745f	2026-07-14T13:52:06+02:00	2026-07-14T13:52:06+02:00	chore(build-week): record interior identity checkpoint
+0669e272c4d4e8da7801d4c60e45f27ddc92cd4f	2026-07-14T13:50:53+02:00	2026-07-14T13:50:53+02:00	feat(build-week): give subsystem interiors architectural identity
+ac5b3f87e53a755cad87e238e77fd4b882054e71	2026-07-14T13:09:17+02:00	2026-07-14T13:09:17+02:00	chore(build-week): record interior and weather checkpoint
+da07641f7e672b055cd882c7c57e449a146c3afb	2026-07-14T13:06:05+02:00	2026-07-14T13:06:05+02:00	feat(build-week): extend telemetry weather across the world
+d25722324c27c67a206e36079b96b020abc9cafe	2026-07-14T12:56:50+02:00	2026-07-14T12:56:50+02:00	feat(build-week): add subsystem interior framework
+3da2925c52825a9ef28cdd78b128ec85c8f60250	2026-07-14T12:20:33+02:00	2026-07-14T12:20:33+02:00	feat(build-week): integrate Forge interior with Citadel style
+6fec34084f28a6eedb582fcbb2cded202fe5b38a	2026-07-14T03:11:23+02:00	2026-07-14T03:11:23+02:00	chore(build-week): record Forge interior checkpoint
+cf493470611aa7917103918208166ab0371d871a	2026-07-14T03:09:00+02:00	2026-07-14T03:09:00+02:00	feat(build-week): add Forge interior vertical slice
+77042200bc9b0d2573548ffd862e9f2378946de9	2026-07-14T02:50:38+02:00	2026-07-14T02:50:38+02:00	feat(build-week): drive weather from real telemetry
+d8f7e3d6f2e1f59ad5918984674378f7f28207db	2026-07-14T01:29:51+02:00	2026-07-14T01:29:51+02:00	chore(build-week): record masked water checkpoint
+
+== Commity od baseline ==
+62ad776313f437ee794b3bd3f591110f2b0f0868	2026-07-15T00:23:36+02:00	2026-07-15T00:23:36+02:00	chore(build-week): record cinematic interiors checkpoint
+b11f61437cd7b7301c59e0e5258c46ba36c25c22	2026-07-15T00:22:50+02:00	2026-07-15T00:22:50+02:00	docs(build-week): record cinematic interior integration
+d16969e555968c2595e28a1ad711cbc2e4b1dc37	2026-07-15T00:14:14+02:00	2026-07-15T00:14:14+02:00	feat(build-week): integrate cinematic subsystem interiors
+2513ddbfdab9404a6287fd48530e4470cb97e58b	2026-07-14T21:26:09+02:00	2026-07-14T21:26:09+02:00	chore(build-week): record CAT and interior integration snapshot
+9b3d1cfe1fb2daa21bfcfde1ebc316bdcdf06b87	2026-07-14T21:23:59+02:00	2026-07-14T21:23:59+02:00	docs(build-week): record CAT telemetry and interior integration pass
+2e8b63cc9a3e7e8c5657c888c7f9d0cd80db74b7	2026-07-14T21:21:02+02:00	2026-07-14T21:21:02+02:00	test(build-week): lock premium interior spatial contract
+1027a080c184d9f66b78c7a25234fd3175087f53	2026-07-14T21:19:25+02:00	2026-07-14T21:19:25+02:00	feat(build-week): deepen subsystem interiors with physical architecture
+f099dcca492ccbdef178b72f7de7790ba3467919	2026-07-14T21:19:13+02:00	2026-07-14T21:19:13+02:00	fix(build-week): make building thresholds hide agents atomically
+5fcbea00cdd879086b9eb5dc401b91f031a507ae	2026-07-14T14:35:15+02:00	2026-07-14T14:35:15+02:00	chore(build-week): record interior depth checkpoint
+1d1f1438b0a028871bcd987fd6024115bfa0341c	2026-07-14T14:33:13+02:00	2026-07-14T14:33:13+02:00	feat(build-week): add depth and material lighting to interiors
+c95006b31674c006728e7121ace802dcb47f745f	2026-07-14T13:52:06+02:00	2026-07-14T13:52:06+02:00	chore(build-week): record interior identity checkpoint
+0669e272c4d4e8da7801d4c60e45f27ddc92cd4f	2026-07-14T13:50:53+02:00	2026-07-14T13:50:53+02:00	feat(build-week): give subsystem interiors architectural identity
+ac5b3f87e53a755cad87e238e77fd4b882054e71	2026-07-14T13:09:17+02:00	2026-07-14T13:09:17+02:00	chore(build-week): record interior and weather checkpoint
+da07641f7e672b055cd882c7c57e449a146c3afb	2026-07-14T13:06:05+02:00	2026-07-14T13:06:05+02:00	feat(build-week): extend telemetry weather across the world
+d25722324c27c67a206e36079b96b020abc9cafe	2026-07-14T12:56:50+02:00	2026-07-14T12:56:50+02:00	feat(build-week): add subsystem interior framework
+3da2925c52825a9ef28cdd78b128ec85c8f60250	2026-07-14T12:20:33+02:00	2026-07-14T12:20:33+02:00	feat(build-week): integrate Forge interior with Citadel style
+6fec34084f28a6eedb582fcbb2cded202fe5b38a	2026-07-14T03:11:23+02:00	2026-07-14T03:11:23+02:00	chore(build-week): record Forge interior checkpoint
+cf493470611aa7917103918208166ab0371d871a	2026-07-14T03:09:00+02:00	2026-07-14T03:09:00+02:00	feat(build-week): add Forge interior vertical slice
+77042200bc9b0d2573548ffd862e9f2378946de9	2026-07-14T02:50:38+02:00	2026-07-14T02:50:38+02:00	feat(build-week): drive weather from real telemetry
+d8f7e3d6f2e1f59ad5918984674378f7f28207db	2026-07-14T01:29:51+02:00	2026-07-14T01:29:51+02:00	chore(build-week): record masked water checkpoint
+78ba8447a4428213f2c93bbeb0097b3330b620de	2026-07-14T01:28:11+02:00	2026-07-14T01:28:11+02:00	feat(build-week): add masked continuous water flow
+0f75829117e870d819b526f89d3806d1a90e4a54	2026-07-14T00:20:44+02:00	2026-07-14T00:20:44+02:00	chore(build-week): record perceptual motion checkpoint
+c4796565b33eef85de4d66edae7b4eaa561b694c	2026-07-14T00:19:43+02:00	2026-07-14T00:19:43+02:00	fix(build-week): rebalance visible water and clouds
+3eeca294ba69c69dda5ed75f41aed55594da80e1	2026-07-14T00:06:47+02:00	2026-07-14T00:06:47+02:00	chore(build-week): record mobile performance checkpoint
+0b4854f43c3403ee61990970edd511800e227216	2026-07-14T00:06:29+02:00	2026-07-14T00:06:29+02:00	fix(build-week): protect mobile world motion
+d91f2fa5bc1a3513a672884022991c41ac995d2f	2026-07-13T23:21:20+02:00	2026-07-13T23:21:20+02:00	chore(build-week): record meaningful extension checkpoint
+5a0bc361bd71da39d64676ef0745494696497751	2026-07-13T23:20:37+02:00	2026-07-13T23:20:37+02:00	docs(build-week): record first meaningful extension
+fdb75f4cd1826c83804e4fbd3bf178b1af37c1dd	2026-07-13T23:15:39+02:00	2026-07-13T23:15:39+02:00	fix(build-week): balance mobile cloud visibility
+3f030730fef72b5a52f5c122b0f0159d16cc11b7	2026-07-13T23:00:57+02:00	2026-07-13T23:00:57+02:00	feat(build-week): visualize the real event nervous system
+4d5870e059c2a9690c90851cfc01aab5ca2f9283	2026-07-13T22:56:06+02:00	2026-07-13T22:56:06+02:00	feat(build-week): drive infrastructure from real telemetry
+08ad9aa72ad406eda31ee3f409daf6dde0485379	2026-07-13T22:49:09+02:00	2026-07-13T22:49:09+02:00	feat(build-week): make water and atmosphere visibly alive
+e1958d8c6262c42c5af8fb8012d1937be14e15fd	2026-07-13T22:43:39+02:00	2026-07-13T22:43:39+02:00	chore(build-week): capture meaningful extension start
+0a625df7dd0da128a9de63b3f117977aa916d843	2026-07-13T22:14:05+02:00	2026-07-13T22:14:05+02:00	docs(build-week): close documentation handoff
+2b1e3e71665ff2214b62b14170f1cec49d04fb4f	2026-07-13T22:09:47+02:00	2026-07-13T22:09:47+02:00	chore(build-week): record initial evidence snapshot
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+
+== Tagi Build Week ==
+pre-build-week-baseline-2026-07-13	36c0f2ab0d4fc9274031afd5c4bede9cc5fa59e9	2026-07-13T22:02:28+02:00	Hermes World verified pre-Submission baseline.

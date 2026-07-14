@@ -48,3 +48,6 @@ Skrypt zapisuje wyłącznie metadane Git w `evidence/git-snapshots/`. Nie czyta 
 - Kopie po redakcji: `evidence/screenshots-redacted/`.
 - Dowody pre-submission mają stałe oznaczenie, że nie dokumentują pracy Build Week.
 - Finalne materiały jurorskie powstaną później po angielsku; nie należy ich tworzyć przez modyfikowanie tej historii.
+# Dedykowane efekty wnętrz
+
+Prompty, jednolity kontrakt sprite stripów oraz kolejność generowania znajdują się w [INTERIOR_EFFECT_ASSET_PROMPTS_PL.md](./INTERIOR_EFFECT_ASSET_PROMPTS_PL.md). Źródła są generowane pojedynczo w ChatGPT, a ich integracja, provenance, normalizacja i testy są wykonywane przez Codexa na branchu Build Week.

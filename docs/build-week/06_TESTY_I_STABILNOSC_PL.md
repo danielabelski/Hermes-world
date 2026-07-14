@@ -222,6 +222,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Automatyczna finalna walidacja 393×852: **MANUAL ACTION REQUIRED** — końcowe GL/RL autora na realnym telefonie przez Tailscale; nie zapisano fałszywego PASS.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-016 — First-open interior performance pass
+
+- Czas: 2026-07-15 00:43 Europe/Warsaw / 2026-07-14 22:43 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `62ad776313f437ee794b3bd3f591110f2b0f0868`; wynik zapisany w `8f43378`.
+- Audyt Vite: **PASS** — pięć plansz nie pobiera się równocześnie; aktywne jest tylko jedno wnętrze. Kuźnia pozostaje najcięższa (około 795 kB first-open przed migracją dedykowanych efektów).
+- Kontrakt prewarm: **PASS** — `requestIdleCallback` ładuje tylko lazy kod/CSS, bez pięciu JPG; pointer/focus rozpoczyna predecode jednej wybranej planszy.
+- Kontrakt renderowania: **PASS** — efekty montują się po `onLoad` planszy; stripy mają `fetchPriority="low"` i `decoding="async"`; mobilny duplicate backdrop jest wyłączony; pełnoekranowy camera settle usunięty.
+- `npm.cmd test`: **PASS 101/101**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS poza sandboxem po powtarzalnym EPERM pliku tymczasowego Vite**, 855 modułów, 3,02 s. Nie zmieniono konfiguracji testów ani Vite.
+- Bundle: lazy interior JS 9,43 kB / 3,91 gzip; lazy interior CSS 17,27 kB / 4,20 gzip; main JS 409,60 kB / 125,28 gzip.
+- Test realnego telefonu 393×852: **MANUAL ACTION REQUIRED** po odświeżeniu serwera demo.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

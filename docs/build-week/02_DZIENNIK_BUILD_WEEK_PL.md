@@ -284,3 +284,21 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Następny etap po GL, niezaimplementowany w tej sesji: prawdziwa obecność małego agenta we wnętrzu wyłącznie wtedy, gdy stan świata potwierdza jego wejście; prosta trasa do stanowiska oraz kliknięcie otwierające drill-down techniczny.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Produkcja Correct v1 i branch `main`: nietknięte.
+
+## BW-2026-07-15-023 — Audyt i optymalizacja pierwszego wejścia do wnętrz
+
+- Czas Europe/Warsaw: 2026-07-15 00:23–00:43.
+- Czas UTC: 2026-07-14 22:23–22:43.
+- Branch/startowy HEAD: `build-week/hermes-world` / `62ad776313f437ee794b3bd3f591110f2b0f0868`.
+- Środowiska: zmiany wyłącznie w osobnym repo/branchu demo Build Week; repo produkcyjne Correct v1 pozostaje odseparowane i nie otrzymuje zmian przed GL autora.
+- Proces Codexa: snapshot przed zmianą, read-only audyt bundla i ścieżki ładowania, pomiar zimnych requestów, implementacja minimalnego passu, test kontraktowy, pełne testy/lint/walidacja/build i kolejny checkpoint.
+- Benchmark: first-open pobiera tylko lazy JS/CSS, jedną aktywną planszę i efekty wybranego pokoju. Szacowany zimny transfer: Cytadela około 379 kB, Archiwum 393 kB, Watcher 379 kB, Sanctum 453 kB, Kuźnia 795 kB. Kuźnia jest najdroższa z powodu odziedziczonych stripów ognia, dymu i iskier (około 419 kB dodatku).
+- Diagnoza: waterfall klik → lazy chunk → plansza; równoległe dekodowanie planszy i stripów; dwie pełnoekranowe animacje wejścia; `mix-blend-mode: screen` na wszystkich hotspotach; dodatkowy raster backdropu na mobile.
+- Implementacja: kod i CSS wnętrza są dogrzewane przez `requestIdleCallback` po załadowaniu mapy bez pobierania pięciu JPG; plansza jest predekodowana po pointer/focus; hotspoty montują się dopiero po załadowaniu planszy; stripy mają niski priorytet; mobile nie renderuje duplikatu backdropu; usunięto pełnoekranowe scale/camera settle; screen blend pozostał wyłącznie na sprite'ach.
+- Wynik builda: lazy interior JS 9,43 kB / 3,91 kB gzip (wcześniej 9,85 / 4,09); CSS 17,27 kB / 4,20 kB gzip (wcześniej 17,51 / 4,26). Main JS wzrósł o 1,27 kB przez manifest i preloader URL-i, bez automatycznego pobierania plansz.
+- Strategia assetów: istniejące efekty mapowe zostaną usunięte atomowo dopiero po dostarczeniu dedykowanych efektów wnętrz. Przygotowano 11 promptów i wspólny kontrakt 8-klatkowych transparentnych stripów.
+- Workflow generatywny: autor generuje każdy oryginalny asset osobno w ChatGPT, specjalnie dla Hermes World. Jest to świadomy podział pracy: ChatGPT służy do generowania bitmap bez obciążania limitu implementacyjnego Codexa, a Codex odpowiada za specyfikację, provenance, deterministyczną normalizację, integrację, benchmarki, testy i commity.
+- Model sesji implementacyjnej: GPT-5.6 Sol. Assety ChatGPT pozostają klasyfikowane jako `AI-generated original project assets`; dokładny model generujący należy dopisać, jeśli interfejs go ujawni.
+- Walidacja: 101/101 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (855 modułów); `git diff --check` PASS.
+- Commit funkcjonalny: `8f43378` (`perf(build-week): smooth first interior entry`).
+- Produkcja: nietknięta; finalna percepcyjna ocena płynności na telefonie pozostaje do GL/RL autora.

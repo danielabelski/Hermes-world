@@ -127,3 +127,13 @@
 - Decyzja człowieka: wybór i dostarczenie wszystkich pięciu ilustracji, zatwierdzenie kierunku cinematic oraz wymóg demo-only do GL/RL.
 - Konsekwencje: poprzednie komory CSS przestają być aktywnym rendererem; produkcja pozostaje nietknięta. Agent wewnątrz budynku jest osobnym przyszłym etapem po GL.
 - Możliwość zmiany: lokalne hotspoty, intensywność i animacje można regulować centralnie bez podmiany płyt ani kontraktu danych.
+
+## DEC-BW-015 — Dedykowane efekty wnętrz i podział pracy ChatGPT/Codex
+
+- Problem: odziedziczone stripy mapowe zwiększają transfer pierwszego wejścia, nie zawsze pasują perspektywą do wnętrz i mają niespójne liczby klatek.
+- Warianty: pozostawić wspólne efekty; tworzyć ruch wyłącznie w CSS; przygotować mały komplet dedykowanych stripów per wnętrze.
+- Decyzja: maksymalnie dwa stale aktywne, dedykowane efekty per pokój; efekt eventowy może być trzeci, ale pozostaje nieaktywny bez prawdziwego zdarzenia. Wszystkie stripy mają jednolity kontrakt 8 klatek.
+- Wkład Codexa: benchmark, specyfikacja techniczna, 11 promptów, późniejsza normalizacja, integracja, testy i provenance.
+- Decyzja człowieka: generowanie źródeł pojedynczo w ChatGPT, specjalnie dla projektu, aby wykorzystać dostępne generowanie obrazów i zachować limit Codexa na architekturę oraz implementację.
+- Konsekwencje: światowe efekty nie są usuwane przed gotowym zamiennikiem; migracja odbywa się atomowo per wnętrze i podlega GL/RL na demo.
+- Możliwość zmiany: liczba klatek i rozdzielczość runtime mogą zostać obniżone po benchmarku bez ponownego generowania źródła.
