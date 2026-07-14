@@ -38,7 +38,9 @@ describe('building entry config', () => {
   it('renders every main interior through one cinematic plate contract', () => {
     const scene = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.jsx', import.meta.url), 'utf8')
     const plates = readFileSync(new URL('../components/building-interiors/CinematicInteriorPlate.jsx', import.meta.url), 'utf8')
+    const manifest = readFileSync(new URL('../components/building-interiors/interiorPlateManifest.js', import.meta.url), 'utf8')
     const styles = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.css', import.meta.url), 'utf8')
+    const world = readFileSync(new URL('./WorldFallback.jsx', import.meta.url), 'utf8')
     assert.equal((scene.match(/<CinematicInteriorPlate/g) ?? []).length, 1)
     assert.doesNotMatch(scene, /RoomDepth|ForgeChamber|archive-chamber|citadel-chamber|watcher-chamber|sanctum-chamber/)
     const plateAssets = {
@@ -49,10 +51,16 @@ describe('building entry config', () => {
       sanctum: 'sanctum-recovery-hall.jpg',
     }
     for (const [buildingId, asset] of Object.entries(plateAssets)) {
-      assert.match(plates, new RegExp(`${buildingId}: freeze`))
-      assert.match(plates, new RegExp(asset.replace('.', '\\.')))
+      assert.match(manifest, new RegExp(`${buildingId}: freeze`))
+      assert.match(manifest, new RegExp(asset.replace('.', '\\.')))
       assert.match(styles, new RegExp(`cinematic-effect--${buildingId}-`))
     }
+    assert.match(plates, /plateReady \? EFFECTS\[buildingId\]/)
+    assert.match(plates, /fetchPriority="low"/)
+    assert.match(world, /requestIdleCallback\(warmInteriorCode/)
+    assert.match(world, /preloadInteriorPlate\(entry\.buildingId\)/)
+    assert.match(styles, /@media\(max-width:700px\)\{\.cinematic-interior__backdrop\{display:none\}\}/)
+    assert.doesNotMatch(styles, /interior-camera-settle/)
     assert.match(styles, /aspect-ratio:4\/5/)
     assert.match(styles, /prefers-reduced-motion:reduce/)
     assert.doesNotMatch(styles, /filter\s*:|backdrop-filter\s*:|blur\s*\(/)

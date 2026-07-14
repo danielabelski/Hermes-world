@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import archiveRunesStrip from '../../assets/world-effects/archive-data-runes-strip.runtime.png'
 import archiveWindowsStrip from '../../assets/world-effects/archive-window-glow-strip.runtime.png'
 import citadelCoreStrip from '../../assets/world-effects/citadel-core-pulse-strip.runtime.png'
@@ -9,21 +10,9 @@ import forgeSparksStrip from '../../assets/world-effects/forge-sparks-strip.runt
 import sanctumOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
 import watcherLensStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
 import watcherScanStrip from '../../assets/world-effects/watcher-scan-beam-strip.runtime.png'
-import archivePlate from '../../assets/building-interiors/archive-memory-hall.jpg'
-import citadelPlate from '../../assets/building-interiors/citadel-command-hall.jpg'
-import forgePlate from '../../assets/building-interiors/forge-execution-hall.jpg'
-import sanctumPlate from '../../assets/building-interiors/sanctum-recovery-hall.jpg'
-import watcherPlate from '../../assets/building-interiors/watcher-observatory.jpg'
+import { CINEMATIC_INTERIOR_PLATES } from './interiorPlateManifest.js'
 
 const freeze = Object.freeze
-
-const CINEMATIC_INTERIOR_PLATES = freeze({
-  archive: freeze({ src: archivePlate, label: 'Archiwum Wiedzy', focusX: 50, focusY: 50 }),
-  citadel: freeze({ src: citadelPlate, label: 'Komnata Dowodzenia', focusX: 50, focusY: 50 }),
-  forge: freeze({ src: forgePlate, label: 'Kuźnia Systemowa', focusX: 50, focusY: 50 }),
-  sanctum: freeze({ src: sanctumPlate, label: 'Sanctum Regeneracji', focusX: 50, focusY: 49 }),
-  watcher: freeze({ src: watcherPlate, label: 'Obserwatorium Watchera', focusX: 58, focusY: 48 }),
-})
 
 const EFFECTS = freeze({
   citadel: freeze([
@@ -72,10 +61,11 @@ const EFFECTS = freeze({
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, Number(value) || 0))
 
 function SpriteStrip({ src }) {
-  return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" /></span>
+  return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" decoding="async" fetchPriority="low" /></span>
 }
 
 export default function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null }) {
+  const [plateReady, setPlateReady] = useState(false)
   const scene = CINEMATIC_INTERIOR_PLATES[buildingId]
   if (!scene) return null
 
@@ -94,15 +84,15 @@ export default function CinematicInteriorPlate({ buildingId, phase = 'standby', 
     '--forge-smoke-opacity': 0.28 + telemetryLoad * 0.18,
   }
 
-  return <div className={`cinematic-interior cinematic-interior--${buildingId}`} data-phase={phase} data-evidence-event={evidenceEventId ? 'true' : 'false'} style={style} aria-hidden="true">
+  return <div className={`cinematic-interior cinematic-interior--${buildingId}${plateReady ? ' is-plate-ready' : ''}`} data-phase={phase} data-evidence-event={evidenceEventId ? 'true' : 'false'} style={style} aria-hidden="true">
     <div className="cinematic-interior__backdrop" />
     <div className="cinematic-interior__frame">
-      <img className="cinematic-interior__plate" src={scene.src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" />
+      <img className="cinematic-interior__plate" src={scene.src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" onLoad={() => setPlateReady(true)} />
       <div className="cinematic-interior__camera" />
       <div className="cinematic-interior__effects">
-        {EFFECTS[buildingId].map((effect) => <span key={effect.id} className={`cinematic-effect cinematic-effect--${buildingId}-${effect.id}`} data-effect={effect.id}>
+        {plateReady ? EFFECTS[buildingId].map((effect) => <span key={effect.id} className={`cinematic-effect cinematic-effect--${buildingId}-${effect.id}${effect.strip ? ' is-sprite' : ''}`} data-effect={effect.id}>
           {effect.strip ? <SpriteStrip src={effect.strip} /> : null}
-        </span>)}
+        </span>) : null}
       </div>
       <div className="cinematic-interior__grade" />
     </div>

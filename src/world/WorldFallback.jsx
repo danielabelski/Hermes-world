@@ -20,10 +20,12 @@ import { useEnvironmentalDirector } from './directors/useEnvironmentalDirector.j
 import WorldOperationsLayer from '../components/world-directors/WorldOperationsLayer.jsx'
 import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
 import { BUILDING_INTERIOR_CONFIG, BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
+import { preloadInteriorPlate } from '../components/building-interiors/interiorPlateManifest.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
-const BuildingInteriorScene = lazy(() => import('../components/building-interiors/BuildingInteriorScene.jsx'))
+const loadBuildingInteriorScene = () => import('../components/building-interiors/BuildingInteriorScene.jsx')
+const BuildingInteriorScene = lazy(loadBuildingInteriorScene)
 
 const BUILDINGS = [
   ['keep', 'Cytadela'], ['library', 'Biblioteka'], ['forge', 'Kuźnia'], ['research', 'Research Lab'],
@@ -57,6 +59,16 @@ export default function WorldFallback() {
   useEffect(() => {
     if (!mapLoaded) return undefined
     const timer = window.setTimeout(() => setAgentAnimationReady(true), 700)
+    return () => window.clearTimeout(timer)
+  }, [mapLoaded])
+  useEffect(() => {
+    if (!mapLoaded) return undefined
+    const warmInteriorCode = () => { loadBuildingInteriorScene().catch(() => undefined) }
+    if (typeof window.requestIdleCallback === 'function') {
+      const idleId = window.requestIdleCallback(warmInteriorCode, { timeout: 2_500 })
+      return () => window.cancelIdleCallback?.(idleId)
+    }
+    const timer = window.setTimeout(warmInteriorCode, 1_200)
     return () => window.clearTimeout(timer)
   }, [mapLoaded])
   const agents = useWorldStore((state) => state.agents ?? [])
@@ -113,8 +125,11 @@ export default function WorldFallback() {
         data-entry-node={entry.nodeId}
         data-entry-anchor-kind={entry.anchorKind}
         aria-label={entry.ariaLabel}
+        onPointerEnter={() => { preloadInteriorPlate(entry.buildingId) }}
+        onFocus={() => { preloadInteriorPlate(entry.buildingId) }}
         onPointerDown={(event) => {
           event.stopPropagation()
+          preloadInteriorPlate(entry.buildingId)
           entryPointerRef.current = { buildingId: entry.buildingId, pointerId: event.pointerId, x: event.clientX, y: event.clientY, moved: false }
           event.currentTarget.setPointerCapture?.(event.pointerId)
         }}
