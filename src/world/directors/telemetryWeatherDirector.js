@@ -14,7 +14,6 @@ function pressureFor(cpuPercent, temperatureC) {
   if (cpu === null && thermalPressure === null) return null
   return Math.max(cpu ?? 0, thermalPressure ?? 0)
 }
-
 function desiredTier(currentTier, pressure) {
   if (currentTier === 'storm') return pressure < EXIT_THRESHOLDS.storm ? 'rain' : 'storm'
   if (currentTier === 'rain') {
@@ -92,4 +91,3 @@ export function updateTelemetryWeather(previous, { cpuPercent, temperatureC, con
     sampledAt: now,
   })
 }
-

@@ -107,6 +107,23 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Zakres integracji: **PASS** — brak zmian `server.js`, API, Hermes OS CAT i produkcyjnego worktree.
 - Ograniczenie: pogoda jest reprezentacją telemetrycznego obciążenia hosta, nie odrębnym alarmem; krytyczne zdarzenia nadal pochodzą wyłącznie z prawdziwego pipeline’u Hermesa.
 
+## TEST-BW-008 — Wzorcowe wejście i wnętrze Kuźni
+
+- Czas: 2026-07-14 02:44 Europe/Warsaw / 2026-07-14 00:44 UTC.
+- Branch: `build-week/hermes-world`.
+- Środowisko: istniejący serwer demo na porcie 4176, BASELINE, viewport 393×852 oraz produkcyjny build Vite.
+- Hotspot: **PASS** — 52×62 px, semantic entrance; test potwierdza osobne współrzędne desktop/mobile i brak aktywacji niedokończonych wnętrz.
+- Wejście: **PASS** — tap otwiera Kuźnię, faza wynika z realnego snapshotu, focus trafia do przycisku powrotu.
+- Powrót: **PASS** — focus wraca do hotspotu, mapa jest odblokowana; transform przed i po: `matrix(1, 0, 0, 1, -240.688, -426)`.
+- Dostępność: **PASS** — focus trap, Escape, `inert`, `aria-hidden` i restore focus.
+- `npm.cmd test`: **PASS 97/97**, 0 fail, 0 skipped.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów; główny JS 405,78 kB / 124,15 kB gzip; lazy chunk wnętrza 6,10 kB / 2,27 kB gzip i CSS 8,54 kB / 2,65 kB gzip.
+- `git diff --check`: **PASS** po kosmetycznej korekcie EOF.
+- Ograniczenie: finalna ocena estetyczna należy do użytkownika na telefonie; jeden wzorzec nie oznacza jeszcze wdrożenia wnętrz wszystkich budynków.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

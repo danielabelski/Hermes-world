@@ -157,3 +157,19 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Walidacja: testy reżysera obejmują spokojny stan, dwell, skok awaryjny, histerezę oraz brak telemetrii; pełny lint, testy, world-life validation i build zakończyły się powodzeniem w tym samym bloku.
 - Następny krok wykonany w ramach tej samej sesji: wzorcowe, nieinwazyjne wejście do jednego budynku — Kuźni.
+
+## BW-2026-07-14-014 — Wzorcowe wejście do Kuźni Systemowej
+
+- Czas Europe/Warsaw: 2026-07-14 02:05–02:44.
+- Czas UTC: 2026-07-14 00:05–00:44.
+- Branch/startowy HEAD: `build-week/hermes-world` / `7704220` po zamknięciu Fazy 2.
+- Cel: sprawdzić prosty, rozszerzalny mechanizm wejścia do jednego budynku bez nowej mapy, przebudowy świata ani utraty kontekstu przestrzennego.
+- Wykonano: hotspot Kuźni powiązany z zamrożonym semantic node `forge_entrance` / `mobile_forge_entrance`; obszar dotyku 52×62 px; rozróżnienie tapnięcia od przeciągania; wnętrze ładowane leniwie i renderowane portalem ponad istniejącym UI.
+- Mapa pozostaje zamontowana, a jej animacje są pauzowane pod otwartym wnętrzem. Po powrocie zachowane są zoom, przesunięcie i stan świata; test wykazał identyczną macierz transformacji przed wejściem i po wyjściu.
+- Wnętrze pokazuje istniejące CPU, temperaturę, liczbę aktywnych buildów, bieżące zadanie i źródło połączenia. Prezentacja rozróżnia `standby`, `working`, `warning`, `critical` i `offline`, ale nie emituje nowych stanów i nie wymyśla `Success`.
+- Dostępność: focus trap, Escape, przywrócenie focusu do hotspotu, `inert`/`aria-hidden` dla świata pod modalem oraz opisany przycisk powrotu.
+- Mobile 393×852: hotspot `x=76.625`, `y=385.692`, `52×62`; wejście otworzyło fazę `working`, focus trafił do „Wróć do mapy Cytadeli”; wnętrze zmieściło się w pionowym layoucie.
+- Świadomie aktywna jest tylko Kuźnia. Wspólny shell i czyste funkcje prezentacji są bazą do rozszerzenia po GL; niedokończone wnętrza nie są po cichu aktywowane.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Produkcja: nietknięta; brak zmian `server.js`, API, Hermes OS CAT, deploymentu i geometrii mapy.
+- Następny krok po GL: wynieść stan wnętrza do wspólnego kontrolera i dopisać kolejne budynki na tym samym kontrakcie.
