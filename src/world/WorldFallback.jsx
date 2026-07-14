@@ -38,7 +38,11 @@ export default function WorldFallback() {
   const buildingEntries = BUILDING_INTERIOR_IDS.map((buildingId) => resolveBuildingEntry(buildingId, mapLayout)).filter(Boolean)
   const [mapLoaded, setMapLoaded] = useState(false)
   const [agentAnimationReady, setAgentAnimationReady] = useState(false)
-  const [activeInterior, setActiveInterior] = useState(null)
+  const [activeInterior, setActiveInterior] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    const requested = params.get('interior')
+    return params.get('demo') === '1' && BUILDING_INTERIOR_IDS.includes(requested) ? requested : null
+  })
   const closeInterior = useCallback(() => setActiveInterior(null), [])
   const entryPointerRef = useRef(null)
   const activeEntryRef = useRef(null)

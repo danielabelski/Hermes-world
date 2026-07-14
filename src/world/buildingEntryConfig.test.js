@@ -35,26 +35,27 @@ describe('building entry config', () => {
     assert.equal(resolveBuildingEntry('unknown', 'mobile'), null)
   })
 
-  it('keeps every main interior architecturally identifiable without duplicating Forge', () => {
+  it('renders every main interior through one cinematic plate contract', () => {
     const scene = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.jsx', import.meta.url), 'utf8')
+    const plates = readFileSync(new URL('../components/building-interiors/CinematicInteriorPlate.jsx', import.meta.url), 'utf8')
     const styles = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.css', import.meta.url), 'utf8')
-    const identityLandmarks = [
-      'archive-chamber__shelves', 'archive-chamber__codex', 'archive-chamber__lamp', 'archive-chamber__aisle',
-      'citadel-chamber__banner', 'citadel-chamber__war-table', 'citadel-chamber__oculus', 'citadel-chamber__aisle',
-      'watcher-chamber__telescope', 'watcher-chamber__parapet', 'watcher-chamber__shutter',
-      'sanctum-chamber__apothecary', 'sanctum-chamber__pool', 'sanctum-chamber__canopy', 'sanctum-chamber__altar',
-    ]
-    for (const landmark of identityLandmarks) assert.match(scene, new RegExp(landmark))
-    assert.equal((scene.match(/function ForgeChamber/g) ?? []).length, 1)
-    assert.equal((scene.match(/function (Archive|Citadel|Watcher|Sanctum)Chamber/g) ?? []).length, 4)
-    assert.equal((scene.match(/<RoomDepth kind=/g) ?? []).length, 4)
-    for (const depthLayer of ['interior-depth__ceiling', 'interior-depth__back-arch', 'interior-depth__rib', 'interior-depth__wall', 'interior-depth__floor', 'interior-depth__light', 'interior-depth__light-pool', 'interior-depth__threshold']) {
-      assert.match(scene, new RegExp(depthLayer))
-      assert.match(styles, new RegExp(`\\.${depthLayer}`))
+    assert.equal((scene.match(/<CinematicInteriorPlate/g) ?? []).length, 1)
+    assert.doesNotMatch(scene, /RoomDepth|ForgeChamber|archive-chamber|citadel-chamber|watcher-chamber|sanctum-chamber/)
+    const plateAssets = {
+      forge: 'forge-execution-hall.jpg',
+      archive: 'archive-memory-hall.jpg',
+      citadel: 'citadel-command-hall.jpg',
+      watcher: 'watcher-observatory.jpg',
+      sanctum: 'sanctum-recovery-hall.jpg',
     }
-    const depthContract = styles.slice(styles.indexOf('.interior-depth{'), styles.indexOf('.building-interior--citadel{'))
-    assert.doesNotMatch(depthContract, /animation\s*:/)
-    const premiumContract = styles.slice(styles.indexOf('/* Premium spatial integration'), styles.indexOf('.building-interior__readout'))
-    assert.doesNotMatch(premiumContract, /@keyframes|animation\s*:/)
+    for (const [buildingId, asset] of Object.entries(plateAssets)) {
+      assert.match(plates, new RegExp(`${buildingId}: freeze`))
+      assert.match(plates, new RegExp(asset.replace('.', '\\.')))
+      assert.match(styles, new RegExp(`cinematic-effect--${buildingId}-`))
+    }
+    assert.match(styles, /aspect-ratio:4\/5/)
+    assert.match(styles, /prefers-reduced-motion:reduce/)
+    assert.doesNotMatch(styles, /filter\s*:|backdrop-filter\s*:|blur\s*\(/)
+    assert.doesNotMatch(styles, /interior-depth|forge-chamber|archive-chamber|citadel-chamber|watcher-chamber|sanctum-chamber/)
   })
 })
