@@ -237,6 +237,20 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Test realnego telefonu 393×852: **MANUAL ACTION REQUIRED** po odświeżeniu serwera demo.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-017 — Dedykowany ogień cinematic Kuźni
+
+- Czas: 2026-07-15 01:32 Europe/Warsaw / 2026-07-14 23:32 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `7010990`; wynik zapisany w `7ed6f77`.
+- Alpha source: **PASS** — płaskie chroma-key usunięte lokalnie, zachowane częściowo przezroczyste krawędzie, brak prostokątnego tła.
+- Kontrakt klatek: **PASS** — 8 klatek, source 2048×256, runtime 1024×128, identyczny baseline i fixed pivot.
+- Kontrakt importu: **PASS** — wnętrze importuje `building-interior-effects/forge-interior-fire-strip.runtime.png` i nie importuje mapowego `world-effects/forge-fire-strip.runtime.png`.
+- Koszt: **PASS** — 65 025 B runtime, redukcja około 68% względem 205 184 B.
+- `npm.cmd test`: **PASS 101/101**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, 856 modułów, 3,36 s; build uruchomiony poza sandboxem po EPERM pliku tymczasowego Vite.
+- Walidacja 393×852: **MANUAL ACTION REQUIRED** — finalna ocena skali, koloru i integracji z piecem przez autora na telefonie.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

@@ -302,3 +302,18 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 101/101 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (855 modułów); `git diff --check` PASS.
 - Commit funkcjonalny: `8f43378` (`perf(build-week): smooth first interior entry`).
 - Produkcja: nietknięta; finalna percepcyjna ocena płynności na telefonie pozostaje do GL/RL autora.
+
+## BW-2026-07-15-024 — Pierwszy dedykowany cinematic VFX: ogień Kuźni
+
+- Czas Europe/Warsaw: 2026-07-15 00:47–01:32.
+- Czas UTC: 2026-07-14 22:47–23:32.
+- Branch/startowy HEAD: `build-week/hermes-world` / `7010990`.
+- Decyzja autora: technicznie poprawny ogień przesłany wcześniej został odrzucony, ponieważ stylistycznie pasował do mapy, ale nie do cinematic wnętrza Kuźni. Nie został wdrożony ani zapisany jako finalny asset.
+- Generowanie: GPT-5.6 Sol przygotował precyzyjny prompt i wykorzystał wbudowane generowanie obrazu z `forge-execution-hall.jpg` jako ścisłą referencją stylu, światła, materiałów i perspektywy. Wygenerowano wyłącznie jeden source sheet; nie uruchamiano równoległych generatorów.
+- Pipeline: source 4×2 na płaskim chroma-key → helper `remove_chroma_key.py` → drugi, ciaśniejszy matte/despill pass → deterministyczny podział komórek → wspólna skala → identyczny baseline → source strip 2048×256 → runtime 1024×128.
+- Narzędzie: dodano reprodukowalny `scripts/normalize-interior-vfx-sheet.py`; skrypt nie generuje treści, tylko porządkuje klatki, stabilizuje pivot i tworzy lekką pochodną runtime.
+- Integracja: wnętrze Kuźni przestało importować mapowy `world-effects/forge-fire-strip.runtime.png`; korzysta z `building-interior-effects/forge-interior-fire-strip.runtime.png`. Ogień mapowy pozostaje nietknięty w warstwie świata.
+- Wydajność: dedykowany runtime waży 65 025 B wobec 205 184 B poprzedniego stripu, czyli około 68% mniej. Osiem klatek ma jeden baseline i prawdziwy kanał alpha.
+- Walidacja: 101/101 testów PASS; lint PASS; build PASS (856 modułów, 3,36 s poza sandboxem po powtarzalnym EPERM Vite); kontrakt testowy blokuje ponowny import mapowego ognia do wnętrza.
+- Commit funkcjonalny: `7ed6f77` (`feat(build-week): add cinematic forge interior fire`).
+- Ograniczenie: finalne dopasowanie wielkości i intensywności wymaga percepcyjnej oceny autora na realnym telefonie; produkcja pozostaje nietknięta.

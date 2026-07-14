@@ -37,6 +37,16 @@ Klasyfikacja: **AI-generated original project assets**. Brak zachowanego promptu
 
 Wszystkie pięć źródeł ma rozdzielczość 1024×1280 i proporcje 4:5. Autor wygenerował je od zera specjalnie dla Hermes World. Nie pochodzą z gry, marketplace'u, repozytorium ani zewnętrznej paczki assetów. Dokładny model i prompt nie zostały zachowane w repozytorium; nie zmienia to potwierdzonego pochodzenia.
 
+## Dedykowane efekty cinematic wnętrz — 2026-07-15
+
+| Plik | Rola | SHA-256 | Status |
+|---|---|---|---|
+| `artifacts/interior-vfx/source/forge-interior-fire-chromakey.png` | oryginalny source 4×2 z wbudowanego image generation, referencja `forge-execution-hall.jpg` | `6B4FF2111FFA6571E12560B2292B1DC00F47AF638E7911687BEA6F7F593C11B0` | AI-generated original project asset |
+| `artifacts/interior-vfx/forge-interior-fire-strip.png` | oczyszczony i znormalizowany source strip 2048×256 | `D56FDB78BCEBF0153801DCDD0B1177A8ABD5EB70E05D0B0A46A2BE63176797CC` | deterministyczna pochodna własnego źródła |
+| `src/assets/building-interior-effects/forge-interior-fire-strip.runtime.png` | lekki runtime 1024×128 | `0E870784D45B26AA35BB66E55EE187F24AFEE637E7D9A0D82BF765C522793AE3` | deterministyczna pochodna własnego źródła |
+
+Prompt i pełny kontekst generowania znajdują się w sesji `019f4f11-14e9-70e0-8d61-26226257864c`. Generowanie wykonało narzędzie wbudowane; nie zapisujemy niepotwierdzonej nazwy modelu obrazu. Projektowy prompt, selekcja, odrzucenie wcześniejszego wariantu, integracja i walidacja zostały wykonane z GPT-5.6 Sol.
+
 Audyt wykrył 367 plików graficznych/ikon w aktywnym drzewie z pominięciem `node_modules`, `dist` i dowodów Build Week. Wiele plików to formaty i deterministyczne pochodne tych samych źródeł.
 
 ## Hermes OS CAT
