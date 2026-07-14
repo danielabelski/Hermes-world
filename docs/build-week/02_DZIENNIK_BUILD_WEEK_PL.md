@@ -185,3 +185,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Końcowa walidacja bloku: 97/97 testów PASS; world-life PASS; lint PASS; build PASS (848 modułów); `git diff --check` PASS.
 - Produkcja Correct v1, jej serwer, API, Hermes OS CAT i geometria mapy pozostały nietknięte.
 - Stan decyzji: demo jest gotowe do oceny GL/RL. Bez GL nie rozszerzać mechanizmu na pozostałe budynki.
+
+## BW-2026-07-14-016 — Visual integration polish wnętrza Kuźni
+
+- Czas Europe/Warsaw: 2026-07-14 12:19+.
+- Czas UTC: 2026-07-14 10:19+.
+- Branch/startowy HEAD: `build-week/hermes-world` / `6fec34084f28a6eedb582fcbb2cded202fe5b38a`.
+- Decyzja autora: mechanizm wejścia/wyjścia został zaakceptowany; dalsza praca dotyczy jakości wizualnej wnętrza i rozszerzenia wspólnego systemu na kolejne budynki.
+- Wykonano: izometryczną posadzkę, kamienno-metalową ścianę, asymetryczne łuki, wspólną podstawę maszyny, częściową okluzję kół, pivot młota, obudowę pieca, przewód energii Hermes i foreground. Ogień pozostaje ciepłym akcentem procesu, a cyan oznacza infrastrukturę systemową.
+- Semantyka: tempo mechanizmu wynika z istniejącego stanu `standby` / `working` / `warning` / `critical` / `offline`; nie dodano nowego operational state ani fałszywego eventu.
+- Wydajność: 65 elementów DOM we wnętrzu, 9 animowanych elementów i 4 lokalne filtry przy 393×852; animacje ograniczone do transform/opacity, mapa pozostaje pauzowana pod wnętrzem.
+- Walidacja wizualna 393×852: PASS — scena zyskała wyraźne plany, perspektywę, wspólną architekturę i czytelny punkt pracy bez zmiany mechanizmu wejścia.
+- Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.

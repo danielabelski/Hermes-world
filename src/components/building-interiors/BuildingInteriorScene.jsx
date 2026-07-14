@@ -83,19 +83,28 @@ export default function BuildingInteriorScene({ buildingId, system, lifecycle, a
     </header>
 
     <div className="forge-chamber">
+      <div className="forge-chamber__backwall" aria-hidden="true"><i /><i /><i /></div>
       <div className="forge-chamber__arch forge-chamber__arch--left" aria-hidden="true" />
       <div className="forge-chamber__arch forge-chamber__arch--right" aria-hidden="true" />
-      <div className="forge-machine" aria-hidden="true">
-        <i className="forge-machine__wheel forge-machine__wheel--rear" />
-        <i className="forge-machine__wheel forge-machine__wheel--front" />
-        <i className="forge-machine__hammer" />
+      <div className="forge-chamber__conduit" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="forge-chamber__floor" aria-hidden="true"><i /><i /><i /></div>
+      <div className="forge-workbench" aria-hidden="true">
+        <div className="forge-machine">
+          <i className="forge-machine__housing" />
+          <i className="forge-machine__wheel forge-machine__wheel--rear" />
+          <i className="forge-machine__wheel forge-machine__wheel--front" />
+          <i className="forge-machine__hammer" />
+          <i className="forge-machine__pivot" />
+        </div>
+        <div className="forge-furnace">
+          <span className="forge-furnace__smoke"><img src={forgeSmokeStrip} alt="" /></span>
+          <span className="forge-furnace__mouth"><img src={forgeFireStrip} alt="" /></span>
+          <i className="forge-furnace__rim" />
+          <i className="forge-furnace__crown" />
+        </div>
+        <div className="forge-anvil"><i /></div>
       </div>
-      <div className="forge-furnace" aria-hidden="true">
-        <span className="forge-furnace__smoke"><img src={forgeSmokeStrip} alt="" /></span>
-        <span className="forge-furnace__mouth"><img src={forgeFireStrip} alt="" /></span>
-        <i className="forge-furnace__rim" />
-      </div>
-      <div className="forge-anvil" aria-hidden="true"><i /></div>
+      <div className="forge-chamber__foreground" aria-hidden="true"><i /><i /></div>
     </div>
 
     <div className="building-interior__readout">

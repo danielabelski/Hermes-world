@@ -124,6 +124,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Ograniczenie: finalna ocena estetyczna należy do użytkownika na telefonie; jeden wzorzec nie oznacza jeszcze wdrożenia wnętrz wszystkich budynków.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-009 — Visual integration polish Kuźni
+
+- Czas: 2026-07-14 12:19 Europe/Warsaw / 2026-07-14 10:19 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `6fec34084f28a6eedb582fcbb2cded202fe5b38a`.
+- Viewport 393×852: **PASS** — wejście otwiera scenę, header/readout pozostają czytelne, komora ma trzy plany i brak prostokątnych overlayów oderwanych od architektury.
+- Budżet sceny: **PASS** — 65 potomków DOM, 9 elementów z animacją, 4 elementy z lokalnym filtrem; brak pełnoekranowego blur i animowanych layout properties.
+- Lint zmienionego komponentu: **PASS**.
+- `npm.cmd test`: **PASS 97/97**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów, 9,01 s; lazy JS wnętrza 6,84 kB / 2,34 kB gzip; CSS wnętrza 16,15 kB / 4,55 kB gzip.
+- `git diff --check`: **PASS**.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.
