@@ -26,10 +26,16 @@ const formatMetric = ({ value, suffix = '' }) => value === null || value === und
 const SpriteStrip = ({ className, src }) => <span className={className}><img src={src} alt="" /></span>
 const RoomDepth = ({ kind }) => <div className={`interior-depth interior-depth--${kind}`} aria-hidden="true">
   <i className="interior-depth__ceiling" />
+  <i className="interior-depth__back-arch" />
+  <i className="interior-depth__rib interior-depth__rib--left" />
+  <i className="interior-depth__rib interior-depth__rib--right" />
   <i className="interior-depth__wall interior-depth__wall--left" />
   <i className="interior-depth__wall interior-depth__wall--right" />
   <i className="interior-depth__floor" />
   <i className="interior-depth__light" />
+  <i className="interior-depth__light-pool" />
+  <i className="interior-depth__threshold interior-depth__threshold--left" />
+  <i className="interior-depth__threshold interior-depth__threshold--right" />
 </div>
 
 function ForgeChamber() {
@@ -51,6 +57,8 @@ function ForgeChamber() {
 function ArchiveChamber() {
   return <div className="interior-chamber archive-chamber" aria-hidden="true">
     <RoomDepth kind="archive" />
+    <div className="archive-chamber__lamp"><i /><i /></div>
+    <div className="archive-chamber__aisle" />
     <div className="archive-chamber__vault"><i /><i /><i /><i /><i /><i /></div>
     <div className="archive-chamber__shelves archive-chamber__shelves--left"><i /><i /><i /><i /></div>
     <div className="archive-chamber__shelves archive-chamber__shelves--right"><i /><i /><i /><i /></div>
@@ -65,6 +73,8 @@ function ArchiveChamber() {
 function CitadelChamber() {
   return <div className="interior-chamber citadel-chamber" aria-hidden="true">
     <RoomDepth kind="citadel" />
+    <div className="citadel-chamber__oculus"><i /><i /><i /></div>
+    <div className="citadel-chamber__aisle" />
     <div className="citadel-chamber__vault"><i /><i /><i /></div>
     <div className="citadel-chamber__banner citadel-chamber__banner--left"><i /></div>
     <div className="citadel-chamber__banner citadel-chamber__banner--right"><i /></div>
@@ -80,6 +90,8 @@ function CitadelChamber() {
 function WatcherChamber() {
   return <div className="interior-chamber watcher-chamber" aria-hidden="true">
     <RoomDepth kind="watcher" />
+    <div className="watcher-chamber__shutter watcher-chamber__shutter--left" />
+    <div className="watcher-chamber__shutter watcher-chamber__shutter--right" />
     <div className="watcher-chamber__dome"><i /><i /><i /><i /></div>
     <div className="watcher-chamber__horizon" />
     <SpriteStrip className="watcher-chamber__scan" src={watcherScanStrip} />
@@ -93,6 +105,8 @@ function WatcherChamber() {
 function SanctumChamber() {
   return <div className="interior-chamber sanctum-chamber" aria-hidden="true">
     <RoomDepth kind="sanctum" />
+    <div className="sanctum-chamber__canopy"><i /><i /><i /></div>
+    <div className="sanctum-chamber__altar"><i /><i /></div>
     <div className="sanctum-chamber__vault"><i /><i /><i /></div>
     <div className="sanctum-chamber__apothecary sanctum-chamber__apothecary--left"><i /><i /><i /><i /><i /></div>
     <div className="sanctum-chamber__apothecary sanctum-chamber__apothecary--right"><i /><i /><i /><i /><i /></div>
