@@ -161,6 +161,8 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
   let isMoving = false
   let isInside = false
   let occupancyMode = 'world'
+  const usesInteriorThreshold = journey.workVisibility === 'inside'
+  const entranceThreshold = clamp(Number(journey.entranceVisibilityThreshold) || 0.62, 0.25, 0.9)
 
   if (living.phase === 'walking-to-work') {
     routeProgress = progressFrom(now, task?.transitionStartedAt ?? task?.startedAt ?? task?.started_at, journey.walkDurationMs, agent.routeProgress)
@@ -168,6 +170,9 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = routeProgress < 0.05 ? 'dispatch' : 'road'
     visualState = 'walk'
     isMoving = true
+    // Lift the complete sprite above the facade immediately before the
+    // threshold. The doorway never clips individual pixels from the agent.
+    if (usesInteriorThreshold && routeProgress >= 0.96) occupancyMode = journey.occupancyMode
   } else if (living.phase === 'arriving') {
     const startedAt = asTime(task?.transitionStartedAt ?? task?.startedAt ?? task?.started_at, 0) + journey.walkDurationMs
     routeProgress = progressFrom(now, startedAt, journey.arriveDurationMs, agent.routeProgress)
@@ -177,6 +182,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     visualState = 'walk'
     isMoving = true
     occupancyMode = journey.occupancyMode
+    isInside = usesInteriorThreshold && routeProgress >= entranceThreshold
   } else if (['working', 'carrying'].includes(living.phase)) {
     const interaction = point((journey.interactionPoint?.x ?? journey.workPoint.x) * 10, (journey.interactionPoint?.y ?? journey.workPoint.y) * 10)
     sampled = { worldX: interaction.x, worldY: interaction.y, direction: 'se' }
@@ -184,6 +190,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'work'
     visualState = 'work'
     occupancyMode = journey.occupancyMode
+    isInside = usesInteriorThreshold
   } else if (living.phase === 'observing') {
     sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
     routeProgress = 1
@@ -201,12 +208,14 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
       visualState = 'walk'
       isMoving = true
       occupancyMode = journey.occupancyMode
+      isInside = usesInteriorThreshold && routeProgress < 1 - entranceThreshold
     } else {
       sampled = { worldX: entrance.x, worldY: entrance.y, direction: 'se' }
       routeProgress = 1
       journeyStage = 'success'
       visualState = 'success'
       signalState = elapsed - exitDuration < 900 ? 'success' : 'none'
+      if (usesInteriorThreshold) occupancyMode = journey.occupancyMode
     }
   } else if (living.phase === 'walking-home') {
     const completedAt = asTime(task?.visualCompletedAt ?? task?.completedAt ?? task?.completed_at, 0)
@@ -216,6 +225,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'return'
     visualState = 'walk'
     isMoving = true
+    if (usesInteriorThreshold && routeProgress < 0.04) occupancyMode = journey.occupancyMode
   } else if (living.phase === 'waiting') {
     sampled = { worldX: home.x, worldY: home.y, direction: 'se' }
     journeyStage = 'waiting'

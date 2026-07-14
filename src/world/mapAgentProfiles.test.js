@@ -31,7 +31,7 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
   }
 })
 
-test('all twelve agents stay visible at valid building or route interaction points on desktop and mobile', () => {
+test('all twelve agents stay at valid interaction points while interior workers hide only beyond the threshold', () => {
   const now = Date.parse('2026-07-12T18:00:00.000Z')
   const agents = Object.values(AGENT_DEFINITIONS).map((definition) => ({
     id: definition.profile,
@@ -53,10 +53,11 @@ test('all twelve agents stay visible at valid building or route interaction poin
   for (const layout of ['desktop', 'mobile']) {
     const presentations = resolveMapAgentPresentations({ agents, tasks, now, layout })
     assert.equal(presentations.length, 12)
+    const expectedInside = new Set(['coder', 'researcher'])
     for (const model of presentations) {
       assert.ok(model.worldX >= 0 && model.worldX <= 100, `${layout}/${model.profileId}: x=${model.worldX}`)
       assert.ok(model.worldY >= 0 && model.worldY <= 100, `${layout}/${model.profileId}: y=${model.worldY}`)
-      assert.equal(model.isInside, false, `${layout}/${model.profileId} must remain rendered`)
+      assert.equal(model.isInside, expectedInside.has(model.profileId), `${layout}/${model.profileId}: interior visibility contract`)
     }
     assert.deepEqual(
       presentations.filter((model) => model.occupancyMode === 'facade-front').map((model) => model.profileId).sort(),

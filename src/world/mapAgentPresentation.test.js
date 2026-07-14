@@ -71,7 +71,7 @@ test('mobile layout selects road-calibrated journeys with continuous entrances a
   closeTo(mobileDispatch.worldX, 50)
   closeTo(mobileDispatch.worldY, 65.5)
 })
-test('Kowal follows dispatch and road, then remains visible at the Forge facade interaction point', () => {
+test('Kowal crosses the Forge threshold as one complete sprite instead of being clipped by the facade', () => {
   const dispatch = modelAt(START)
   assert.equal(dispatch.journeyStage, 'dispatch')
   assert.equal(dispatch.visualState, 'walk')
@@ -90,14 +90,21 @@ test('Kowal follows dispatch and road, then remains visible at the Forge facade 
 
   const entering = modelAt(START + 6_750)
   assert.equal(entering.journeyStage, 'enter')
+  assert.equal(entering.isInside, false)
+  assert.equal(entering.occupancyMode, 'facade-front')
   closeTo(entering.worldX, 84)
   closeTo(entering.worldY, 49)
+
+  const crossedThreshold = modelAt(START + 6_900)
+  assert.equal(crossedThreshold.journeyStage, 'enter')
+  assert.equal(crossedThreshold.isInside, true)
+  assert.equal(crossedThreshold.occupancyMode, 'facade-front')
 
   const working = modelAt(START + 7_100)
   assert.equal(working.journeyStage, 'work')
   assert.equal(working.visualState, 'work')
   assert.equal(working.buildingEffect, 'forge-fire')
-  assert.equal(working.isInside, false)
+  assert.equal(working.isInside, true)
   assert.equal(working.occupancyMode, 'facade-front')
   closeTo(working.worldX, 84)
   closeTo(working.worldY, 49)
@@ -116,10 +123,15 @@ test('Kowal exits before success, returns by road and settles at home without te
   const exitStart = modelAt(completedAt, doneTask)
   assert.equal(exitStart.journeyStage, 'exit')
   assert.equal(exitStart.visualState, 'walk')
-  assert.equal(exitStart.isInside, false)
+  assert.equal(exitStart.isInside, true)
   assert.equal(exitStart.occupancyMode, 'facade-front')
   closeTo(exitStart.worldX, 84)
   closeTo(exitStart.worldY, 49)
+
+  const emerged = modelAt(completedAt + 400, doneTask)
+  assert.equal(emerged.journeyStage, 'exit')
+  assert.equal(emerged.isInside, false)
+  assert.equal(emerged.occupancyMode, 'facade-front')
 
   const doorway = modelAt(completedAt + 700, doneTask)
   assert.equal(doorway.journeyStage, 'success')
@@ -134,11 +146,13 @@ test('Kowal exits before success, returns by road and settles at home without te
   const returnStart = modelAt(completedAt + 1_800, doneTask)
   assert.equal(returnStart.journeyStage, 'return')
   assert.equal(returnStart.visualState, 'walk')
+  assert.equal(returnStart.occupancyMode, 'facade-front')
   closeTo(returnStart.worldX, 84)
   closeTo(returnStart.worldY, 49)
 
   const almostHome = modelAt(completedAt + 8_199, doneTask)
   assert.equal(almostHome.journeyStage, 'return')
+  assert.equal(almostHome.occupancyMode, 'world')
   closeTo(almostHome.worldX, 46, 0.12)
   closeTo(almostHome.worldY, 36.5, 0.12)
 
@@ -197,7 +211,7 @@ test('Uczony uses the same resolver and enters the Knowledge Archive through its
   assert.equal(working.journeyStage, 'work')
   assert.equal(working.visualState, 'work')
   assert.equal(working.buildingEffect, 'archive-pulse')
-  assert.equal(working.isInside, false)
+  assert.equal(working.isInside, true)
   assert.equal(working.occupancyMode, 'facade-front')
   closeTo(working.worldX, 28.5)
   closeTo(working.worldY, 36.5)
