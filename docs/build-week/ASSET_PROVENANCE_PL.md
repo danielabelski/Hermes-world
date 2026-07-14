@@ -23,6 +23,19 @@ Klasyfikacja: **AI-generated original project assets**. Brak zachowanego promptu
 | stare ikony CAT w `public/` | 4+ | wygenerowane dla własnego Hermes OS CAT | odziedziczone lub zmodyfikowane | własne pre-existing |
 | nowe ikony Citadel/PWA | zestaw runtime | wygenerowane dla Hermes World | warianty PWA/cache | własne |
 | `artifacts/validation/*.png` | 5 | screenshoty testowe | brak użycia jako asset produktu | dowody wewnętrzne |
+| `src/assets/building-interiors/*.jpg` | 5 | wygenerowane od zera dla Hermes World na polecenie autora | bez zmiany kompozycji; import do lazy renderera 4:5 | własne, AI-generated original project assets |
+
+## Cinematic interior plates — 2026-07-14
+
+| Plik runtime | Funkcja | Rozmiar | SHA-256 źródła | Powiązany commit |
+|---|---|---:|---|---|
+| `citadel-command-hall.jpg` | Cytadela / orchestration | 243623 B | `38D0EABB454E550F5B75662101FD16619E7749ABBD069BF32E960C98D9E40AB1` | `d16969e` |
+| `archive-memory-hall.jpg` | Archiwum / memory and records | 299670 B | `9D438A455160E102369E917E91944BD8B4C08AB718285980EA2BD32424C77100` | `d16969e` |
+| `watcher-observatory.jpg` | Watcher / observation and cron oversight | 285291 B | `34D161C153C433CD37CCA623BDCCDB1BAF25C5D39533A2BF1D7E11C22F66F348` | `d16969e` |
+| `sanctum-recovery-hall.jpg` | Sanctum / recovery and health | 349425 B | `8920101B04D2BB680AF5EAA38E07C08A4296A167AF3D9C24CED1965150E71109` | `d16969e` |
+| `forge-execution-hall.jpg` | Kuźnia / execution and workload | 347498 B | `754AE8DA073B8C496292EE8801721436584251F928E829C7335CDF8E77F16950` | `d16969e` |
+
+Wszystkie pięć źródeł ma rozdzielczość 1024×1280 i proporcje 4:5. Autor wygenerował je od zera specjalnie dla Hermes World. Nie pochodzą z gry, marketplace'u, repozytorium ani zewnętrznej paczki assetów. Dokładny model i prompt nie zostały zachowane w repozytorium; nie zmienia to potwierdzonego pochodzenia.
 
 Audyt wykrył 367 plików graficznych/ikon w aktywnym drzewie z pominięciem `node_modules`, `dist` i dowodów Build Week. Wiele plików to formaty i deterministyczne pochodne tych samych źródeł.
 

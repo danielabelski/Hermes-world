@@ -265,3 +265,22 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Snapshot startowy: `20260714T184519Z-git-snapshot.txt`.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Produkcja Correct v1 i branch `main`: nietknięte.
+
+## BW-2026-07-14-022 — Cinematic subsystem interiors
+
+- Czas Europe/Warsaw: 2026-07-14 23:26 – 2026-07-15 00:15.
+- Czas UTC: 2026-07-14 21:26–22:15.
+- Branch/startowy HEAD: `build-week/hermes-world` / `2513ddbfdab9404a6287fd48530e4470cb97e58b`.
+- Cel: zastąpić płaskie, kodowo rysowane komory pięcioma spójnymi wnętrzami klasy cinematic, zachowując jeden renderer, realną telemetrię, wejścia/wyjścia i budżet mobile.
+- Źródła: pięć pionowych ilustracji 1024×1280 wygenerowanych od zera dla Hermes World na polecenie autora. Wdrożono Cytadelę, Archiwum, Watchera, Sanctum i Kuźnię.
+- Implementacja: wspólny `CinematicInteriorPlate` renderuje bazową ilustrację i lokalne, zakotwiczone hotspoty animacji. Efekty dotyczą fizycznych elementów sceny: kryształu, pierścieni, kodeksu, armilarium, soczewki, skanera, basenu, obiegu energii, pieca, dymu, iskier i linii produkcyjnej.
+- Semantyka: faza i metryki nadal pochodzą z istniejącego kontraktu operacyjnego; `evidenceEventId` pozostaje dostępny dla prawdziwych eventów. Warstwa wizualna nie emituje fake Working ani Success.
+- Mobile/desktop: scena zachowuje proporcje 4:5; na szerokim ekranie płyta jest wycentrowana na nieruchomym, ciemnym tle. Mapa jest pauzowana pod otwartym wnętrzem, a assety są ładowane dopiero po otwarciu drill-downu.
+- Dostępność: zachowano portal, focus trap, Escape, przywracanie focusu, reduced motion i pełne znikanie agentów na progu budynku.
+- Walidacja techniczna: 101/101 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (854 moduły); `git diff --check` PASS.
+- Bundle: główny JS 408,33 kB / 124,86 kB gzip; lazy interior JS 9,85 kB / 4,09 kB gzip; lazy interior CSS 17,51 kB / 4,26 kB gzip. Pięć płyt ma 244–349 kB każda i nie obciąża startu mapy.
+- Ograniczenie dowodowe: automatyczna walidacja wizualna ujawniła i usunęła przenikanie mapy podczas pierwszej klatki wejścia; ostateczny odbiór estetyczny 393×852 pozostaje do GL/RL autora na telefonie.
+- Commit funkcjonalny: `d16969e` (`feat(build-week): integrate cinematic subsystem interiors`).
+- Następny etap po GL, niezaimplementowany w tej sesji: prawdziwa obecność małego agenta we wnętrzu wyłącznie wtedy, gdy stan świata potwierdza jego wejście; prosta trasa do stanowiska oraz kliknięcie otwierające drill-down techniczny.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Produkcja Correct v1 i branch `main`: nietknięte.

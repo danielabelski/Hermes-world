@@ -91,3 +91,14 @@ Docelowe przypisanie bez zmian endpointów:
 - Sanctum: global health i obciążenie pamięci systemowej; RAG health dopiero po dodaniu prawdziwego źródła pomiarowego.
 
 Minimalny kontrakt przyszłego realnego RAG health powinien zawierać co najmniej: dostępność źródła Obsidian, liczbę dokumentów źródłowych, liczbę dokumentów zindeksowanych, liczbę elementów nieaktualnych/failed, czas ostatniego udanego indeksowania oraz latency i wynik kontrolnego retrieval probe. Do czasu istnienia tych danych Sanctum nie może nazywać RAM lub samej zawartości `/memory` zdrowiem RAG.
+
+## Wnętrza subsystemów — stan po cinematic integration
+
+Przepływ renderowania:
+
+`WorldFallback` → hotspot budynku → lazy `BuildingInteriorScene` → wspólny `CinematicInteriorPlate` → płyta 4:5 + lokalne hotspoty efektów → telemetryczny readout.
+
+- **Działa podczas Submission Period:** pięć wejść, jeden portal i renderer, focus trap, Escape, powrót focusu, pełne progi sylwetek agentów, responsywne 4:5, lazy loading oraz mapa pauzowana pod sceną.
+- **Działa podczas Submission Period:** faza wnętrza i metryki pochodzą z istniejącego stanu świata; `evidenceEventId` zachowuje powiązanie z realnym eventem.
+- **Warstwa wizualna:** ilustracja jest nieruchomą bazą; małe efekty są zakotwiczone do fizycznych elementów i nie zmieniają `operationalState`.
+- **Niezaimplementowane:** agent widoczny we wnętrzu, interior waypoints i klikany drill-down agenta. Funkcja może zostać dodana po GL bez tworzenia nowego stanu operacyjnego.

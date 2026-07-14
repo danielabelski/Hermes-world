@@ -116,3 +116,14 @@
 - Konsekwencje: kosztowne pasy zostały usunięte; prawdziwe eventy, alerty, Cytadela i Kuźnia zachowują priorytet; wolniejsze urządzenie redukuje tylko ambient.
 - Możliwość zmiany: progi można stroić na podstawie testów realnego iPhone’a, bez zmiany event pipeline’u.
 - Okres: podczas Submission Period.
+
+## DEC-BW-014 — Cinematic plates zamiast kodowo rysowanych komór
+
+- Problem: funkcjonalne wnętrza były stylistycznie spójne, lecz nadal wyglądały płasko i nie osiągały oczekiwanego efektu przestrzennego.
+- Rozważane warianty: dalsze rozbudowywanie CSS; generowanie pełnych wnętrz; jedna płyta rastrowa z lokalnymi, fizycznie zakotwiczonymi animacjami.
+- Decyzja: pięć oryginalnych płyt 4:5 stanowi bazę wizualną, a wspólny renderer dodaje wyłącznie małe warstwy funkcjonalne nad rzeczywistymi elementami ilustracji.
+- Uzasadnienie: najwyższa jakość wizualna przy mniejszym DOM, mniejszym CSS i zachowaniu płynności mobile; role subsystemów są czytelne bez tekstu.
+- Wkład Codexa: audyt hotspotów i budżetu, renderer, mapowanie efektów, testy, lazy loading i zachowanie semantyki eventów.
+- Decyzja człowieka: wybór i dostarczenie wszystkich pięciu ilustracji, zatwierdzenie kierunku cinematic oraz wymóg demo-only do GL/RL.
+- Konsekwencje: poprzednie komory CSS przestają być aktywnym rendererem; produkcja pozostaje nietknięta. Agent wewnątrz budynku jest osobnym przyszłym etapem po GL.
+- Możliwość zmiany: lokalne hotspoty, intensywność i animacje można regulować centralnie bez podmiany płyt ani kontraktu danych.

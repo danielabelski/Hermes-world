@@ -206,6 +206,22 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Automatyczna walidacja przeglądarkowa 393×852: **MANUAL ACTION REQUIRED** — brak działającego sterowania przeglądarką w tej sesji; nie zapisano fałszywego PASS.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-015 — Cinematic subsystem interiors
+
+- Czas: 2026-07-15 00:15 Europe/Warsaw / 2026-07-14 22:15 UTC.
+- Branch/HEAD: `build-week/hermes-world` / `d16969e`.
+- Zakres: pięć wnętrz 1024×1280, wspólny lazy renderer, lokalne hotspoty animacji, progi wejścia i istniejący kontrakt telemetrii.
+- `npm.cmd test`: **PASS 101/101**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 854 moduły.
+- Bundle: główny JS 408,33 kB / 124,86 kB gzip; lazy interior JS 9,85 kB / 4,09 kB gzip; lazy interior CSS 17,51 kB / 4,26 kB gzip.
+- Kontrakt wydajności: **PASS** — raster bazowy i efekty wnętrza są ładowane wyłącznie po otwarciu drill-downu; mapa pozostaje pauzowana pod modalem; nie dodano timerów per element.
+- Kontrakt semantyczny: **PASS** — zachowano `evidenceEventId`, operacyjne fazy i realne metryki; warstwa wizualna nie emituje nowych stanów.
+- Przejście wejściowe: **PASS po poprawce** — usunięto animację opacity całej płyty, która w pierwszej klatce ujawniała mapę pod wnętrzem.
+- Automatyczna finalna walidacja 393×852: **MANUAL ACTION REQUIRED** — końcowe GL/RL autora na realnym telefonie przez Tailscale; nie zapisano fałszywego PASS.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.
