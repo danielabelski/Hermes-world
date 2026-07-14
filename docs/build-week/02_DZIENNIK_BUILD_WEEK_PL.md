@@ -173,3 +173,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Produkcja: nietknięta; brak zmian `server.js`, API, Hermes OS CAT, deploymentu i geometrii mapy.
 - Następny krok po GL: wynieść stan wnętrza do wspólnego kontrolera i dopisać kolejne budynki na tym samym kontrakcie.
+
+## BW-2026-07-14-015 — Zamknięcie Faz 2–3 i checkpoint dowodowy
+
+- Czas Europe/Warsaw: 2026-07-14 03:09+.
+- Czas UTC: 2026-07-14 01:09+.
+- Korekta zakresu czasu: wpisy 013–014 opisują implementację i walidację do 02:44; formalne commity, snapshot i clean-tree validation zakończono po tej godzinie i są udokumentowane tutaj bez nadpisywania wcześniejszych wpisów.
+- Commit Fazy 2: `7704220` — `feat(build-week): drive weather from real telemetry`.
+- Commit Fazy 3: `cf49347` — `feat(build-week): add Forge interior vertical slice`.
+- Snapshot: `20260714T010938Z-git-snapshot.txt`, Session ID `019f4f11-14e9-70e0-8d61-26226257864c`.
+- Końcowa walidacja bloku: 97/97 testów PASS; world-life PASS; lint PASS; build PASS (848 modułów); `git diff --check` PASS.
+- Produkcja Correct v1, jej serwer, API, Hermes OS CAT i geometria mapy pozostały nietknięte.
+- Stan decyzji: demo jest gotowe do oceny GL/RL. Bez GL nie rozszerzać mechanizmu na pozostałe budynki.
