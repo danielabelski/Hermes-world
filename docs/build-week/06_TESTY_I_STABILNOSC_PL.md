@@ -150,6 +150,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `git diff --check`: **PASS**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-011 — Globalna pogoda bez regresji ruchu
+
+- Czas: 2026-07-14 13:00 Europe/Warsaw / 2026-07-14 11:00 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d257223`.
+- Testy reżyserów pogody i operacji: **PASS 26/26**.
+- Kontrakt kosztu: **PASS** — `telemetry-weather-grade` obejmuje stage, ma `animation-name: none`, nie dodaje schedulera, filtra ani cząstek; `prefers-reduced-motion` wyłącza również przejście tonalne.
+- Adaptive quality: **PASS** — w trybie minimalnym usuwany jest `will-change`; duże prawdziwe operacje eventowe nadal pozostają w osobnej warstwie i nie są tłumione.
+- Build: **PASS**, 848 modułów, 3,46 s; główny JS 407,99 kB / 124,74 kB gzip; CSS wzrósł wyłącznie o reguły stanowe do 75,53 kB / 16,31 kB gzip.
+- Ograniczenie: odczyt FPS osadzonej przeglądarki nie jest traktowany jako miarodajny dla aktywnego telefonu; brak regresji potwierdzono przez niezmienioną liczbę animacji pogodowych i brak nowej animacji pełnoekranowej.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

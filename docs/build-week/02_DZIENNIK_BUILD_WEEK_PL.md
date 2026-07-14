@@ -210,3 +210,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Kontrola 393×852: wszystkie cztery nowe wnętrza otwierają się i wracają do mapy; focus wraca do właściwego hotspotu; etykiety wejść zostały wizualnie wyciszone w spoczynku i wzmacniają się na hover/focus.
 - Walidacja: 100/100 testów PASS; pełny lint PASS; build PASS (848 modułów, 18,23 s); `git diff --check` PASS.
 - Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
+
+## BW-2026-07-14-018 — Lekki globalny język pogody
+
+- Czas Europe/Warsaw: 2026-07-14 12:56+.
+- Czas UTC: 2026-07-14 10:56+.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d257223`.
+- Cel: sprawić, aby zmiana obciążenia CPU/temperatury była odczuwalna na całej mapie, bez kosztownego pełnoekranowego ruchu i bez naruszania płynności.
+- Wykonano: jedna nieruchoma warstwa tonalna obejmująca cały stage i reagująca na istniejące tiery `clear`, `cloudy`, `rain`, `storm`; istniejące powierzchnie wody przyspieszają wraz z presją telemetrii; chmury i lokalny deszcz zachowują dotychczasowy ograniczony budżet.
+- Koszt stały: 0 nowych timerów, 0 nowych keyframes, 0 nowych cząstek, 0 filtrów i 0 animacji pełnoekranowych. Globalna warstwa zmienia jedynie `background-color`/`opacity` przy faktycznej zmianie tieru.
+- Semantyka: źródłem pozostają wyłącznie istniejące `system.cpuPercent` i `system.temperatureC`; warstwa nie emituje stanów operacyjnych ani alertów.
+- Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
