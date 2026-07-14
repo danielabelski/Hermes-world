@@ -4,12 +4,12 @@ import archiveWindowsStrip from '../../assets/world-effects/archive-window-glow-
 import citadelCoreStrip from '../../assets/world-effects/citadel-core-pulse-strip.runtime.png'
 import citadelEnergyStrip from '../../assets/world-effects/citadel-energy-wave-strip.runtime.png'
 import citadelRuneStrip from '../../assets/world-effects/citadel-rune-ring-strip.runtime.png'
-import forgeFireStrip from '../../assets/world-effects/forge-fire-strip.runtime.png'
 import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.runtime.png'
 import forgeSparksStrip from '../../assets/world-effects/forge-sparks-strip.runtime.png'
 import sanctumOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
 import watcherLensStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
 import watcherScanStrip from '../../assets/world-effects/watcher-scan-beam-strip.runtime.png'
+import forgeInteriorFireStrip from '../../assets/building-interior-effects/forge-interior-fire-strip.runtime.png'
 import { CINEMATIC_INTERIOR_PLATES } from './interiorPlateManifest.js'
 
 const freeze = Object.freeze
@@ -48,7 +48,7 @@ const EFFECTS = freeze({
     freeze({ id: 'canopy' }),
   ]),
   forge: freeze([
-    freeze({ id: 'fire', strip: forgeFireStrip }),
+    freeze({ id: 'fire', strip: forgeInteriorFireStrip }),
     freeze({ id: 'smoke', strip: forgeSmokeStrip }),
     freeze({ id: 'impact-left', strip: forgeSparksStrip }),
     freeze({ id: 'impact-right', strip: forgeSparksStrip }),

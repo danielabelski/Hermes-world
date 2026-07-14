@@ -57,6 +57,8 @@ describe('building entry config', () => {
     }
     assert.match(plates, /plateReady \? EFFECTS\[buildingId\]/)
     assert.match(plates, /fetchPriority="low"/)
+    assert.match(plates, /building-interior-effects\/forge-interior-fire-strip\.runtime\.png/)
+    assert.doesNotMatch(plates, /world-effects\/forge-fire-strip\.runtime\.png/)
     assert.match(world, /requestIdleCallback\(warmInteriorCode/)
     assert.match(world, /preloadInteriorPlate\(entry\.buildingId\)/)
     assert.match(styles, /@media\(max-width:700px\)\{\.cinematic-interior__backdrop\{display:none\}\}/)
