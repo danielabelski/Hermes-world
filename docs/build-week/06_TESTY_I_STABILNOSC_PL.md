@@ -190,6 +190,22 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Automatyczna walidacja w przeglądarce Codexa: **MANUAL ACTION REQUIRED** — runtime sterowania przeglądarką nie zainicjalizował się; finalne GL/RL na 393×852 należy do autora. Nie oznaczono tego kroku jako PASS bez dowodu.
 - Produkcja: **PASS — branch `main` czysty i nietknięty**.
 
+## TEST-BW-014 — Atomowe progi, premium spatial integration i audyt CAT
+
+- Czas: 2026-07-14 21:21 Europe/Warsaw / 2026-07-14 19:21 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `5fcbea00cdd879086b9eb5dc401b91f031a507ae`.
+- Read-only audyt CAT: **PASS** — potwierdzono endpointy i pola używane przez dashboard, benchmarki, providerów, crony, logi i pamięć; brak zmian w CAT.
+- Kontrakt progu wejścia: **PASS** — testy Kowala i Uczonego potwierdzają pełną sylwetkę przed progiem, ukrycie całej sylwetki wewnątrz i pełne pojawienie przy wyjściu; 10 pozostałych profili pozostaje renderowanych.
+- Kontrakt przestrzenny: **PASS** — test wymaga łuku tylnego, żeber, posadzki, lokalnej plamy światła, progów pierwszego planu i unikalnych landmarków czterech wnętrz.
+- Kontrakt wydajności: **PASS** — premium blok nie zawiera `animation` ani `@keyframes`; 0 nowych assetów, timerów i schedulerów.
+- `npm.cmd test`: **PASS 101/101**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów, 21,20 s; główny JS 408,19 kB / 124,82 kB gzip; lazy interior JS 15,35 kB / 4,04 kB gzip; lazy interior CSS 51,16 kB / 12,21 kB gzip.
+- `git diff --check`: **PASS**.
+- Automatyczna walidacja przeglądarkowa 393×852: **MANUAL ACTION REQUIRED** — brak działającego sterowania przeglądarką w tej sesji; nie zapisano fałszywego PASS.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

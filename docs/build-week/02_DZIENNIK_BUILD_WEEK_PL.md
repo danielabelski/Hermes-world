@@ -248,3 +248,20 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Ograniczenie dowodowe: automatyczne sterowanie przeglądarką Codexa nie zainicjalizowało się w tej sesji; nie zapisano fałszywego wizualnego PASS. Ostateczny odbiór estetyczny pozostaje do GL/RL użytkownika na telefonie.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
 - Produkcja: nietknięta i czysta na branchu `main`; zmiany wyłącznie demo/Build Week.
+
+## BW-2026-07-14-021 — Premium spatial integration, atomowe progi i audyt telemetrii CAT
+
+- Czas Europe/Warsaw: 2026-07-14 20:42–21:21.
+- Czas UTC: 2026-07-14 18:42–19:21.
+- Branch/startowy HEAD: `build-week/hermes-world` / `5fcbea00cdd879086b9eb5dc401b91f031a507ae`.
+- Cel: zwiększyć przestrzenność czterech wnętrz bez kosztu płynności, naprawić pikselowe znikanie agentów przy wejściu oraz ustalić, które realne metryki Hermes OS CAT można uczciwie wykorzystać w subsystemach.
+- Audyt CAT wykonano read-only. Potwierdzono wspólny backend Hermes i równoważne endpointy dla sesji/kosztu, logów, cronów, modeli, providerów, pamięci oraz metryk hosta. Nie zmieniono CAT, `server.js` ani API.
+- Granica semantyczna: koszt, logi, historia cronów, tokeny, modele, providery, fallbacki, CPU/RAM/temperatura są realnymi wejściami. Health score, cron success, model effectiveness i provider health są agregatami/heurystykami produktu i muszą być tak opisywane. `/memory` zwraca pamięć, lecz nie stanowi RAG health; brak potwierdzonego endpointu Obsidian/index health.
+- Wejście agentów: dla budynków z `workVisibility: inside` pełna sylwetka przechodzi na warstwę fasady, a następnie znika jako całość po logicznym progu; przy wyjściu pojawia się jako całość po przekroczeniu progu. Trasy, waypointy, FSM i anchory pozostają bez zmian.
+- Wnętrza: wspólny system otrzymał materialny tylny łuk, żebra sklepienia, lokalną plamę światła i cięższe boczne progi. Archiwum dostało fizyczną lampę i nawę do kodeksu; Cytadela — oculus i reprezentacyjną oś sali; Watcher — masywne przesłony obserwatorium; Sanctum — organiczny baldachim i materialny ołtarz. Światło jest lokalnie modulowane istniejącą fazą operacyjną.
+- Budżet: 0 nowych rasterów, schedulerów, timerów i keyframes. Premium pass jest statyczny; mapa nadal jest pauzowana pod otwartym wnętrzem. Główny JS: 408,19 kB / 124,82 kB gzip; lazy interior JS: 15,35 kB / 4,04 kB gzip; lazy interior CSS: 51,16 kB / 12,21 kB gzip.
+- Walidacja: 101/101 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (848 modułów); `git diff --check` PASS. Finalna ocena estetyczna na 393×852 pozostaje GL/RL autora, ponieważ sterowanie przeglądarką Codexa nie było dostępne.
+- Commity: `f099dcc` (`fix(build-week): make building thresholds hide agents atomically`), `1027a08` (`feat(build-week): deepen subsystem interiors with physical architecture`), `2e8b63c` (`test(build-week): lock premium interior spatial contract`).
+- Snapshot startowy: `20260714T184519Z-git-snapshot.txt`.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Produkcja Correct v1 i branch `main`: nietknięte.

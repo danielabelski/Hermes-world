@@ -66,3 +66,28 @@ Centralna konfiguracja ról, semantic nodes, wspólny renderer i normalizacja ev
 ## Zmiany po rozpoczęciu Submission Period
 
 Pierwszy blok funkcjonalny po granicy został wykonany w commitach `08ad9aa`, `4d5870e`, `3f03073` i `fdb75f4`. Dodaje stale widoczną, map-aligned wodę i atmosferę, oddzielone kanały intensywności, sterowanie rytmem budynków prawdziwą telemetrią oraz audytowalną choreografię realnego runu. Produkcyjny `main` pozostaje nietknięty; funkcje wymagają jeszcze GL przed jakimkolwiek przeniesieniem z demo.
+
+## Audyt gotowej telemetrii Hermes OS CAT — 2026-07-14
+
+Audyt wykonano read-only na aktualnych plikach Hermes OS CAT. Hermes World korzysta już z tego samego backendu Hermes pod `127.0.0.1:8787` i z równoważnych endpointów same-origin. Nie jest potrzebne kopiowanie kodu CAT ani tworzenie równoległego API; potrzebna jest wyłącznie normalizacja i przypisanie istniejących payloadów do metafor budynków.
+
+| Sygnał | Źródło rzeczywiste | Stan w CAT | Stan w Hermes World | Uczciwa interpretacja |
+|---|---|---|---|---|
+| koszt API | `/api/sessions/search`, pole `estimated_cost` | suma w Dashboard | już normalizowany jako `system.totalEstimatedCost` i `tokenRiver.totalEstimatedCost` | koszt sesji zwróconych przez endpoint; przy limicie 50 nie nazywać go bezwarunkowo kosztem lifetime |
+| health score | profile agentów + świeże logi + metryki + crony | heurystyka UI | własna, jawna heurystyka `deriveHealth()` już działa | realne wejścia, ale score wyliczony przez produkt, nie natywny score backendu |
+| last error | `/api/logs?lines=500` | filtrowany ostatni error/warning | logi są w `activity` i `alerts`, brak osobnego pola summary | można wyprowadzić bez nowego endpointu, zachowując timestamp, źródło i wiadomość |
+| cron engine | `/api/crons` + `/api/crons/recent` | lista, enablement, historia, success/fail | crony i ostatni status są już normalizowane | gotowe do Watchera; procent sukcesu jest agregatem prezentacyjnym |
+| benchmark modeli | historia sesji | usage, koszt, tokeny, cache hit, heurystyczna skuteczność | sesje i modele są już odczytywane; `modelSources` zawiera provider/model i liczbę sesji | usage/koszt/tokeny są realne; `output_tokens > 5` z CAT nie jest miarą jakości odpowiedzi i wymaga lepszej nazwy lub definicji |
+| provider usage | sesje + modele + logi + routing history | requests, latency estimate, błędy, 429, fallbacki | provider/model są dostępne, lecz pełny agregat provider health nie jest jeszcze w snapshot | można policzyć lokalnie bez API; latency i health pozostają heurystykami |
+| pamięć Hermesa | `/api/memory` | surowa zawartość pamięci | metoda API istnieje, ale WorldBridge jej nie odczytuje | zawartość pamięci to nie RAG health |
+| RAG / Obsidian health | brak potwierdzonego endpointu w CAT | brak | brak; słownik metafor oznacza `new-api-required` | nie wolno udawać health score; potrzebny osobny pomiar indeksu, świeżości i probe query |
+
+Docelowe przypisanie bez zmian endpointów:
+
+- Cytadela: global health, aktywni agenci i sesje, realny koszt sesji.
+- Kuźnia: CPU, temperatura, RAM i realne zadania build/execution.
+- Watcher: harmonogramy, ostatnie wykonania, fail/success i najnowszy błąd operacyjny.
+- Archiwum: historia sesji, użycie modeli/providerów, koszt, tokeny, cache i fallback routing.
+- Sanctum: global health i obciążenie pamięci systemowej; RAG health dopiero po dodaniu prawdziwego źródła pomiarowego.
+
+Minimalny kontrakt przyszłego realnego RAG health powinien zawierać co najmniej: dostępność źródła Obsidian, liczbę dokumentów źródłowych, liczbę dokumentów zindeksowanych, liczbę elementów nieaktualnych/failed, czas ostatniego udanego indeksowania oraz latency i wynik kontrolnego retrieval probe. Do czasu istnienia tych danych Sanctum nie może nazywać RAM lub samej zawartości `/memory` zdrowiem RAG.
