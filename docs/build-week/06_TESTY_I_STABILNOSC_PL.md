@@ -96,6 +96,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Ograniczenie: osadzona przeglądarka automatyzacyjna działała jako `document.visibilityState=hidden` i poprawnie wstrzymała `requestAnimationFrame`; nie użyto tej próbki jako fałszywego wyniku FPS. Rzeczywisty aktywny klient zapisuje wynik w `data-measured-fps` i sam dobiera `data-motion-quality`.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-007 — Pogoda z realnej telemetrii
+
+- Czas: 2026-07-14 02:05 Europe/Warsaw / 2026-07-14 00:05 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d8f7e3d6f2e1f59ad5918984674378f7f28207db`.
+- Środowisko: demo Build Week, jeden istniejący serwer na porcie 4176, dane wejściowe z istniejącego snapshotu `system`.
+- `node --test src/world/directors/telemetryWeatherDirector.test.js`: **PASS 4/4** — realne CPU/temperatura, dwell i awaryjny skok, histereza, brak telemetrii.
+- `npm.cmd run lint`: **PASS** — bez wyłączania reguł i bez zmiany konfiguracji testowej.
+- Semantyka: **PASS** — wynik reżysera nie zawiera `operationalState`; brak fake `Working` i `Success`.
+- Zakres integracji: **PASS** — brak zmian `server.js`, API, Hermes OS CAT i produkcyjnego worktree.
+- Ograniczenie: pogoda jest reprezentacją telemetrycznego obciążenia hosta, nie odrębnym alarmem; krytyczne zdarzenia nadal pochodzą wyłącznie z prawdziwego pipeline’u Hermesa.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

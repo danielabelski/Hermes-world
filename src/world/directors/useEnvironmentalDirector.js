@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { deriveEnvironmentalPresentation } from './environmentalDirector.js'
 import { deriveWorldOperations } from './worldOperationsDirector.js'
+import { updateTelemetryWeather } from './telemetryWeatherDirector.js'
 
 export function useEnvironmentalDirector({ now, layout, choreography, operationalPresentations, lifecycle, telemetry, visualDebug = false }) {
   const [startedAt] = useState(now)
+  const [telemetryWeather, setTelemetryWeather] = useState(() => updateTelemetryWeather(null, {}, now))
   const [visible, setVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden')
   const [reducedMotion, setReducedMotion] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
 
@@ -47,12 +49,23 @@ export function useEnvironmentalDirector({ now, layout, choreography, operationa
     tasks: (telemetry?.tasks ?? []).map((task) => ({ id: task.id, status: task.status })),
     crons: (telemetry?.crons ?? []).map((cron) => ({ id: cron.id, lastCompletionStatus: cron.lastCompletionStatus })),
   })
+  useEffect(() => {
+    const stableTelemetry = JSON.parse(telemetrySnapshot)
+    const timer = window.setTimeout(() => {
+      setTelemetryWeather((previous) => updateTelemetryWeather(previous, {
+        cpuPercent: stableTelemetry.system?.cpuPercent,
+        temperatureC: stableTelemetry.system?.temperatureC,
+        connected: !['offline', 'stale'].includes(lifecycleConnection),
+      }, Date.now()))
+    }, 0)
+    return () => window.clearTimeout(timer)
+  }, [lifecycleConnection, telemetrySnapshot])
   return useMemo(() => {
     const stableChoreography = JSON.parse(choreographySnapshot)
     const stableOperational = JSON.parse(operationalSnapshot)
     const stableTelemetry = JSON.parse(telemetrySnapshot)
     const environment = deriveEnvironmentalPresentation({ now: controlNow, startedAt, visible, reducedMotion, visualDebug, layout, choreography: stableChoreography, operationalPresentations: stableOperational, lifecycle: { connection: lifecycleConnection }, telemetry: stableTelemetry })
     const worldOperations = deriveWorldOperations({ now: controlNow, startedAt, visible, reducedMotion, layout, choreography: stableChoreography, operationalPresentations: stableOperational, lifecycle: { connection: lifecycleConnection } })
-    return { ...environment, worldOperations }
-  }, [choreographySnapshot, controlNow, layout, lifecycleConnection, operationalSnapshot, reducedMotion, startedAt, telemetrySnapshot, visible, visualDebug])
+    return { ...environment, telemetryWeather, worldOperations }
+  }, [choreographySnapshot, controlNow, layout, lifecycleConnection, operationalSnapshot, reducedMotion, startedAt, telemetrySnapshot, telemetryWeather, visible, visualDebug])
 }

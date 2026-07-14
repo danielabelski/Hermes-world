@@ -143,3 +143,17 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Tryb ambient: niekrytyczne panele są usuwane przez `display:none`, zamiast pozostawiać transformowane/backdrop-filter warstwy powodujące czarne wycięcia. Header, komunikat i sygnał stanu pozostają widoczne.
 - Walidacja: 88/88 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (843 moduły); mobilny ambient po 7,6 s bez czarnych pasów.
 - Produkcja: nietknięta; zmiany wyłącznie na demo/Build Week.
+
+## BW-2026-07-14-013 — Pogoda sterowana realną telemetrią hosta
+
+- Czas Europe/Warsaw: 2026-07-14 01:30–02:05.
+- Czas UTC: 2026-07-13 23:30 – 2026-07-14 00:05.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d8f7e3d6f2e1f59ad5918984674378f7f28207db`.
+- Cel: wykorzystać istniejące realne odczyty CPU i temperatury jako spokojny język pogody świata, bez zmiany event pipeline’u, API, serwera ani stanów operacyjnych.
+- Wykonano: centralny `telemetryWeatherDirector` z wygładzaniem EWMA, histerezą i minimalnym czasem przebywania w zwykłym progu; natychmiastowa reakcja pozostaje zarezerwowana dla potwierdzonego skoku awaryjnego. Warstwa prezentacyjna rozróżnia `clear`, `cloudy`, `rain`, `storm` i `unknown`.
+- Semantyka: pogoda nie zapisuje `operationalState`, nie zwiększa licznika aktywnych agentów i nie emituje `Working`, `Success`, `Warning` ani `Critical`. CPU może zmieniać rytm świata, ale nie udaje zdarzenia Hermesa.
+- Mobile/performance: użyto ograniczonych lokalnych chmur i deszczu bez pełnoekranowego przesuwającego się pasa; adaptive quality zachowuje jeden tani, podstawowy ruch chmury także w trybie minimalnym.
+- Dane: wyłącznie istniejące `system.cpuPercent` i `system.temperatureC`; brak zmian w Hermes OS CAT, `server.js`, endpointach i produkcji.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Walidacja: testy reżysera obejmują spokojny stan, dwell, skok awaryjny, histerezę oraz brak telemetrii; pełny lint, testy, world-life validation i build zakończyły się powodzeniem w tym samym bloku.
+- Następny krok wykonany w ramach tej samej sesji: wzorcowe, nieinwazyjne wejście do jednego budynku — Kuźni.

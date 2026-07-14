@@ -17,6 +17,7 @@ function resolveMotionTier(fps) {
 
 function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
   const telemetry = presentation.infrastructureTelemetry ?? {}
+  const weather = presentation.telemetryWeather ?? {}
   const lifeRootRef = useRef(null)
 
   useEffect(() => {
@@ -81,6 +82,8 @@ function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
       data-environment-intensity={presentation.ambientIntensity}
       data-infrastructure-connected={telemetry.connected ? 'true' : 'false'}
       data-world-life-role={preset?.role ?? 'default'}
+      data-weather-tier={weather.tier ?? 'unknown'}
+      data-weather-source={weather.source ?? 'unknown'}
       data-visual-effect={presentation.visualVerification?.id ?? 'none'}
       style={{
         '--environment-intensity': presentation.infrastructureIntensity,
@@ -94,6 +97,11 @@ function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
         '--sanctum-flow': telemetry.sanctumFlow ?? 0,
         '--watcher-sweep': telemetry.watcherSweep ?? 0,
         '--distribution-density': telemetry.distributionDensity ?? 0,
+        '--weather-pressure': weather.smoothedPressure ?? 0,
+        '--weather-wind': weather.wind ?? 0.12,
+        '--weather-cloud-cover': weather.cloudCover ?? 0.12,
+        '--weather-precipitation': weather.precipitation ?? 0,
+        '--weather-quick-pulse': weather.quickPulse ?? 0,
         '--citadel-life-opacity': 0.58 + (telemetry.heartbeat ?? 0) * 0.42,
         '--forge-life-opacity': 0.58 + (telemetry.forgeLoad ?? 0) * 0.42,
         '--archive-life-opacity': 0.52 + (telemetry.archiveRate ?? 0) * 0.48,

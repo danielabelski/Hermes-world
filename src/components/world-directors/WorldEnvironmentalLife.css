@@ -1,6 +1,15 @@
 .world-environmental-life{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:layout paint;opacity:1}
 .world-environmental-life.is-paused *{animation-play-state:paused!important}
 .atmosphere-life-layer{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;opacity:var(--atmosphere-intensity,1);transition:opacity .45s ease}
+.telemetry-weather-layer{position:absolute;inset:0;overflow:hidden;contain:strict;opacity:1}
+.telemetry-cloud{position:absolute;display:block;width:34%;height:10%;border-radius:48% 62% 54% 46%;background:radial-gradient(ellipse at 18% 62%,#d4e4efb8 0 18%,transparent 42%),radial-gradient(ellipse at 46% 42%,#b8cbdab5 0 28%,transparent 57%),radial-gradient(ellipse at 76% 62%,#d7e6ef9e 0 22%,transparent 48%);opacity:calc(.28 + var(--weather-cloud-cover,.12)*.58);will-change:transform;animation:telemetry-cloud-drift calc(24s - var(--weather-wind,.12)*8s) ease-in-out infinite alternate}
+.telemetry-cloud--primary{left:58%;top:15%;transform:translate3d(-6%,0,0) scale(1)}
+.telemetry-cloud--secondary{left:4%;top:52%;width:28%;height:8%;opacity:calc(.08 + var(--weather-cloud-cover,.12)*.42);animation-duration:31s;animation-delay:-13s;animation-direction:alternate-reverse}
+.telemetry-rain{position:absolute;display:none;width:18%;height:20%;opacity:calc(.12 + var(--weather-precipitation,0)*.58);background:repeating-linear-gradient(112deg,transparent 0 10px,#9dd9e4a8 11px 12px,transparent 13px 21px);clip-path:polygon(10% 0,100% 12%,88% 100%,0 82%);will-change:transform;background-size:100% 26px;animation:telemetry-rain-fall 1.25s linear infinite}
+.telemetry-rain--west{left:12%;top:24%}.telemetry-rain--east{right:9%;top:58%;animation-delay:-.58s}
+.world-environmental-life[data-weather-tier="clear"] .telemetry-cloud--secondary{opacity:.05}
+.world-environmental-life[data-weather-tier="rain"] .telemetry-rain,.world-environmental-life[data-weather-tier="storm"] .telemetry-rain{display:block}
+.world-environmental-life[data-weather-tier="storm"] .telemetry-cloud{filter:saturate(.55) brightness(.68)}
 
 .persistent-world-life{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;contain:layout paint;opacity:var(--infrastructure-intensity,1);transition:opacity .45s ease}
 .persistent-water-flow{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:.92;contain:strict}
@@ -50,12 +59,15 @@
 .world-environmental-life[data-motion-quality="reduced"] .persistent-window-lights,
 .world-environmental-life[data-motion-quality="reduced"] .atmosphere-fog--lower,
 .world-environmental-life[data-motion-quality="reduced"] .persistent-life__archive-window:nth-child(n+3){display:none}
-.world-environmental-life[data-motion-quality="minimal"] .atmosphere-life-layer,
+.world-environmental-life[data-motion-quality="minimal"] .atmosphere-fog,
+.world-environmental-life[data-motion-quality="minimal"] .telemetry-cloud--secondary,
+.world-environmental-life[data-motion-quality="minimal"] .telemetry-rain--east,
 .world-environmental-life[data-motion-quality="minimal"] .persistent-window-lights,
 .world-environmental-life[data-motion-quality="minimal"] .persistent-life--watcher:not(.has-response):not(.is-operation-active),
 .world-environmental-life[data-motion-quality="minimal"] .persistent-life--archive:not(.has-response):not(.is-operation-active),
 .world-environmental-life[data-motion-quality="minimal"] .persistent-life--sanctum:not(.has-response):not(.is-operation-active),
 .world-environmental-life[data-motion-quality="minimal"] .persistent-life--gate:not(.has-response):not(.is-operation-active){display:none}
+.world-environmental-life[data-motion-quality="minimal"] .telemetry-cloud--primary{animation-duration:34s}
 
 .atmosphere-fog{position:absolute;left:12%;top:24%;width:50%;height:11%;opacity:.2;background:radial-gradient(ellipse at 25% 55%,#d5ecff4d,transparent 38%),radial-gradient(ellipse at 66% 42%,#c4e2f33d,transparent 44%);clip-path:polygon(0 48%,12% 22%,29% 31%,43% 9%,61% 26%,78% 17%,100% 46%,87% 73%,66% 64%,49% 91%,30% 69%,10% 82%);animation:fog-drift 16s ease-in-out infinite}
 .atmosphere-fog--lower{left:54%;top:61%;width:38%;height:9%;opacity:.12;animation-duration:21s;animation-direction:reverse}
@@ -71,6 +83,8 @@
 @keyframes water-surface-flow-horizontal{0%{transform:translate3d(-34px,-2px,0);opacity:.5}46%{opacity:1}100%{transform:translate3d(36px,3px,0);opacity:.74}}
 @keyframes water-surface-flow-diagonal{0%{transform:translate3d(-24px,-14px,0);opacity:.48}50%{opacity:.98}100%{transform:translate3d(26px,16px,0);opacity:.72}}
 @keyframes fog-drift{0%,100%{opacity:.14;transform:translateX(-14%)}50%{opacity:.28;transform:translateX(16%)}}
+@keyframes telemetry-cloud-drift{0%{transform:translate3d(-10%,0,0) scale(.94)}100%{transform:translate3d(18%,4%,0) scale(1.06)}}
+@keyframes telemetry-rain-fall{from{background-position:0 -26px;transform:translate3d(0,-3%,0)}to{background-position:0 26px;transform:translate3d(5%,7%,0)}}
 @keyframes visual-verification-ring{50%{opacity:.48;transform:translate(-50%,-50%) scale(1.16)}}
 
 @media(max-width:700px){.persistent-life--citadel{width:76px;height:70px}.persistent-life__citadel-core{left:28px;top:7px;width:20px;height:28px;opacity:var(--citadel-life-opacity,.76);filter:blur(.2px) drop-shadow(0 0 2px #52d8ff80)}.persistent-life--forge{width:56px;height:78px}.persistent-life__forge-fire{left:16px;top:23px;width:25px;height:32px;opacity:var(--forge-life-opacity,.82);filter:saturate(.8) brightness(.94) drop-shadow(0 0 2px #ff863d66)}.persistent-life__forge-smoke{left:13px;top:-1px;width:30px;height:40px;opacity:.34;filter:saturate(.58) brightness(.82)}.persistent-life--watcher{width:132px;height:100px}.persistent-life__watcher-lens{left:53px;top:37px;width:26px;height:26px;opacity:var(--watcher-life-opacity,.66);filter:blur(.2px) drop-shadow(0 0 2px #54dfff70)}.persistent-life--archive{width:68px;height:70px}.persistent-life__archive-windows{left:6px;top:15px;width:56px;height:41px;grid-template-columns:repeat(2,15px);grid-auto-rows:20px}.persistent-life__archive-window{width:15px;height:20px;opacity:var(--archive-life-opacity,.46)}.persistent-life--sanctum{width:64px;height:64px}.persistent-life__sanctum-orbit{left:0;top:0;width:64px;height:64px;opacity:var(--sanctum-life-opacity,.42);filter:blur(.25px) drop-shadow(0 0 2px #4bdcff66)}.persistent-life--gate{width:48px;height:42px}.persistent-life__gate-lock{left:6px;top:3px;width:36px;height:36px;opacity:.42;filter:blur(.2px)}.environment-debug-panel{font-size:10px}}
