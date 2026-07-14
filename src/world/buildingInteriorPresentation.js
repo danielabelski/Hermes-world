@@ -1,29 +1,84 @@
+import { BUILDING_INTERIOR_CONFIG } from './buildingEntryConfig.js'
+
 const ACTIVE_TASK_STATES = new Set(['running', 'working', 'active', 'in_progress'])
 const WARNING_TASK_STATES = new Set(['blocked', 'warning'])
-
 const stateOf = (value) => String(value ?? '').toLowerCase()
-const matchesForge = (item = {}) => item.buildingId === 'forge' || item.sourceBuildingId === 'forge' || item.assignee === 'coder' || item.ownerAgentId === 'coder' || item.entityId === 'coder' || item.entityId === 'forge'
+const finite = (value) => Number.isFinite(Number(value)) ? Number(value) : null
+const countState = (items, states) => items.filter((item) => states.has(stateOf(item.status))).length
+const profileOf = (item = {}) => item.assignee ?? item.ownerAgentId ?? item.profile ?? item.entityId ?? null
 
-export function deriveForgeInteriorPresentation({ system = {}, lifecycle = {}, agent = null, building = null, tasks = [], alerts = [] } = {}) {
-  const relevantTasks = tasks.filter(matchesForge)
-  const relevantAlerts = alerts.filter(matchesForge)
+function matchesInterior(item = {}, config) {
+  const profile = profileOf(item)
+  return item.buildingId === config.buildingId
+    || item.sourceBuildingId === config.buildingId
+    || config.canonicalBuildingIds.includes(item.buildingId)
+    || config.canonicalBuildingIds.includes(item.sourceBuildingId)
+    || profile === config.agentProfile
+    || item.entityId === config.buildingId
+}
+
+const metric = (label, value, suffix = '') => Object.freeze({ label, value, suffix })
+const displayCount = (value) => Number.isFinite(Number(value)) ? Number(value) : 0
+
+function metricsFor(buildingId, context, relevantTasks, relevantAlerts) {
+  const { system = {}, tokenRiver = {}, activityItems = [], crons = [], modelSources = [] } = context
+  if (buildingId === 'forge') return [
+    metric('CPU', finite(system.cpuPercent), '%'),
+    metric('TEMP.', finite(system.temperatureC), '°'),
+    metric('AKTYWNE BUILDY', countState(relevantTasks, ACTIVE_TASK_STATES)),
+  ]
+  if (buildingId === 'archive') return [
+    metric('ZDARZENIA', activityItems.length),
+    metric('MODELE', modelSources.length),
+    metric('W TOKU', countState(relevantTasks, ACTIVE_TASK_STATES)),
+  ]
+  if (buildingId === 'citadel') return [
+    metric('AKTYWNI', displayCount(system.activeAgentCount)),
+    metric('AGENTÓW', displayCount(system.totalAgentCount)),
+    metric('SESJE', displayCount(tokenRiver.activeSessionCount ?? system.activeSessionCount)),
+  ]
+  if (buildingId === 'watcher') return [
+    metric('CRONY', crons.length),
+    metric('AKTYWNE', crons.filter((cron) => cron.enabled !== false).length),
+    metric('ALERTY', relevantAlerts.length),
+  ]
+  return [
+    metric('PAMIĘĆ', finite(system.memoryPercent), '%'),
+    metric('HEALTH', finite(system.health?.score), '%'),
+    metric('INCYDENTY', relevantAlerts.length),
+  ]
+}
+
+export function deriveBuildingInteriorPresentation(buildingId, context = {}) {
+  const config = BUILDING_INTERIOR_CONFIG[buildingId]
+  if (!config) return null
+  const { lifecycle = {}, agent = null, building = null, tasks = [], alerts = [], activityItems = [] } = context
+  const relevantTasks = tasks.filter((item) => matchesInterior(item, config))
+  const relevantAlerts = alerts.filter((item) => matchesInterior(item, config))
   const criticalAlert = relevantAlerts.find((alert) => ['critical', 'error'].includes(stateOf(alert.severity)))
   const warningAlert = relevantAlerts.find((alert) => stateOf(alert.severity) === 'warning')
   const activeTask = relevantTasks.find((task) => ACTIVE_TASK_STATES.has(stateOf(task.status)))
   const blockedTask = relevantTasks.find((task) => WARNING_TASK_STATES.has(stateOf(task.status)))
   const connected = !['offline', 'stale'].includes(stateOf(lifecycle.connection))
   const phase = !connected ? 'offline' : criticalAlert ? 'critical' : warningAlert || blockedTask ? 'warning' : activeTask ? 'working' : 'standby'
+  const latestActivity = activityItems.find((item) => matchesInterior(item, config)) ?? null
 
   return Object.freeze({
-    buildingId: 'forge',
+    buildingId,
     phase,
     connected,
-    cpuPercent: Number.isFinite(Number(system.cpuPercent)) ? Number(system.cpuPercent) : null,
-    temperatureC: Number.isFinite(Number(system.temperatureC)) ? Number(system.temperatureC) : null,
-    activeTaskCount: relevantTasks.filter((task) => ACTIVE_TASK_STATES.has(stateOf(task.status))).length,
-    taskTitle: activeTask?.title ?? blockedTask?.title ?? null,
+    metrics: Object.freeze(metricsFor(buildingId, context, relevantTasks, relevantAlerts)),
+    activeTaskCount: countState(relevantTasks, ACTIVE_TASK_STATES),
+    taskTitle: activeTask?.title ?? blockedTask?.title ?? latestActivity?.title ?? latestActivity?.message ?? null,
     agentAvailable: Boolean(agent && connected),
     buildingState: stateOf(building?.state) || 'normal',
     evidenceEventId: criticalAlert?.evidenceEventId ?? warningAlert?.evidenceEventId ?? activeTask?.evidenceEventId ?? null,
+    source: lifecycle.source ?? 'unknown',
   })
+}
+
+export function deriveForgeInteriorPresentation(context = {}) {
+  const presentation = deriveBuildingInteriorPresentation('forge', context)
+  const [cpu, temperature] = presentation.metrics
+  return Object.freeze({ ...presentation, cpuPercent: cpu.value, temperatureC: temperature.value })
 }

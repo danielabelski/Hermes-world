@@ -86,10 +86,11 @@
 
 .building-interior-loading{position:fixed;inset:0;z-index:79;display:grid;place-items:center;background:#070b0ef2;color:#f3d3a4;font:700 12px/1 ui-monospace,monospace;letter-spacing:.12em}
 .fallback-world.has-open-interior .fallback-map-stage,.fallback-world.has-open-interior .fallback-map-stage *{animation-play-state:paused!important}
-.building-entry-hotspot{position:absolute;z-index:31;left:var(--entry-x);top:var(--entry-y);width:52px;height:62px;transform:translate(-50%,-54%);border:0;background:transparent;color:#ffe7b5;cursor:pointer;pointer-events:auto;touch-action:manipulation}
-.building-entry-hotspot::before{content:"";position:absolute;left:50%;bottom:9px;width:25px;height:15px;transform:translateX(-50%);border:1px solid #ffc66a99;border-radius:50%;background:#170b04a8;box-shadow:0 0 12px #ff8a3270;animation:building-entry-breathe 2.8s ease-in-out infinite}
-.building-entry-hotspot::after{content:"WEJDŹ";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);padding:2px 5px;border:1px solid #e9b76770;border-radius:999px;background:#0c1113d9;color:#ffe6b2;font:800 7px/1.2 ui-sans-serif,system-ui;letter-spacing:.13em;white-space:nowrap;opacity:.78}
-.building-entry-hotspot:focus-visible{outline:2px solid #9eeeff;outline-offset:3px;border-radius:14px}.building-entry-hotspot:hover::after{opacity:1}
+.building-entry-hotspot{--entry-accent:#ffc66a;position:absolute;z-index:31;left:var(--entry-x);top:var(--entry-y);width:var(--entry-width,52px);height:var(--entry-height,62px);transform:translate(-50%,-54%);border:0;background:transparent;color:#ffe7b5;cursor:pointer;pointer-events:auto;touch-action:manipulation}
+.building-entry-hotspot::before{content:"";position:absolute;left:50%;bottom:9px;width:25px;height:15px;transform:translateX(-50%);border:1px solid color-mix(in srgb,var(--entry-accent) 68%,transparent);border-radius:50%;background:#071016b8;box-shadow:0 0 10px color-mix(in srgb,var(--entry-accent) 38%,transparent);animation:building-entry-breathe 3.2s ease-in-out infinite}
+.building-entry-hotspot::after{content:"WEJDŹ";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%) scale(.92);padding:2px 5px;border:1px solid color-mix(in srgb,var(--entry-accent) 40%,transparent);border-radius:999px;background:#071014d9;color:#dff8f5;font:800 7px/1.2 ui-sans-serif,system-ui;letter-spacing:.13em;white-space:nowrap;opacity:.2;transition:opacity .16s ease,transform .16s ease}
+.building-entry-hotspot--forge{--entry-accent:#ffb661}.building-entry-hotspot--archive{--entry-accent:#6ed9ea}.building-entry-hotspot--citadel{--entry-accent:#8ddfff}.building-entry-hotspot--watcher{--entry-accent:#63d6ef}.building-entry-hotspot--sanctum{--entry-accent:#75e5c8}
+.building-entry-hotspot:focus-visible{outline:2px solid #9eeeff;outline-offset:3px;border-radius:14px}.building-entry-hotspot:hover::after,.building-entry-hotspot:focus-visible::after{opacity:1;transform:translateX(-50%) scale(1)}
 @keyframes building-entry-breathe{50%{opacity:.5;transform:translateX(-50%) scale(.82)}}
 
 @media (max-width: 700px) {

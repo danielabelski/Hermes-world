@@ -136,6 +136,20 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `git diff --check`: **PASS**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-010 — Pięć wnętrz subsystemów i wspólny kontrakt
+
+- Czas: 2026-07-14 12:55 Europe/Warsaw / 2026-07-14 10:55 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `3da2925`.
+- Viewport 393×852: **PASS** — Archiwum, Cytadela, Watcher i Sanctum otwierają właściwy dialog, zachowują czytelny header/readout i zamykają się do niezmienionej mapy.
+- Focus/return: **PASS** — po wyjściu z Sanctum aktywnym elementem ponownie jest `Wejdź do Sanctum Regeneracji`; liczba otwartych dialogów wynosi 0.
+- Kontrakt danych: **PASS** — fazy budynków korzystają z istniejących danych i nie emitują `operationalState`, `Success` ani fikcyjnego evidence ID.
+- Kontrakt mapy: **PASS** — testy potwierdzają semantic nodes dla Kuźni, Archiwum, Cytadeli i Watchera oraz jawny istniejący landmark Sanctum; brak zmian routingu.
+- `npm.cmd test`: **PASS 100/100**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów; główny JS 407,94 kB / 124,74 kB gzip; lazy JS wnętrz 11,80 kB / 3,68 kB gzip; CSS wnętrz 27,52 kB / 7,07 kB gzip.
+- `git diff --check`: **PASS**.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.

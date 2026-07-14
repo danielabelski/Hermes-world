@@ -19,7 +19,7 @@ import WorldEnvironmentalLife from '../components/world-directors/WorldEnvironme
 import { useEnvironmentalDirector } from './directors/useEnvironmentalDirector.js'
 import WorldOperationsLayer from '../components/world-directors/WorldOperationsLayer.jsx'
 import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
-import { resolveBuildingEntry } from './buildingEntryConfig.js'
+import { BUILDING_INTERIOR_CONFIG, BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -35,13 +35,13 @@ export default function WorldFallback() {
   const mapVariant = getMapVariant(typeof window === 'undefined' ? '' : window.location.search)
   const worldLifePreset = resolveWorldLifePreset(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
-  const forgeEntry = resolveBuildingEntry('forge', mapLayout)
+  const buildingEntries = BUILDING_INTERIOR_IDS.map((buildingId) => resolveBuildingEntry(buildingId, mapLayout)).filter(Boolean)
   const [mapLoaded, setMapLoaded] = useState(false)
   const [agentAnimationReady, setAgentAnimationReady] = useState(false)
   const [activeInterior, setActiveInterior] = useState(null)
   const closeInterior = useCallback(() => setActiveInterior(null), [])
   const entryPointerRef = useRef(null)
-  const forgeEntryRef = useRef(null)
+  const activeEntryRef = useRef(null)
   useEffect(() => {
     const query = window.matchMedia?.(MOBILE_MAP_QUERY)
     if (!query) return undefined
@@ -62,6 +62,7 @@ export default function WorldFallback() {
   const system = useWorldStore((state) => state.system ?? {})
   const activityItems = useWorldStore((state) => state.activity?.items ?? [])
   const tokenRiver = useWorldStore((state) => state.tokenRiver ?? {})
+  const modelSources = useWorldStore((state) => state.modelSources ?? [])
   const crons = useWorldStore((state) => state.crons ?? [])
   const buildings = useWorldStore((state) => state.buildings ?? [])
   const zoomPreference = useWorldStore((state) => state.camera?.zoomPreference ?? 'standard')
@@ -99,35 +100,34 @@ export default function WorldFallback() {
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
       <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} />
-      <button
-        ref={forgeEntryRef}
-        className="building-entry-hotspot building-entry-hotspot--forge"
+      {buildingEntries.map((entry) => <button
+        key={entry.buildingId}
+        className={`building-entry-hotspot building-entry-hotspot--${entry.buildingId}`}
         type="button"
-        style={{ '--entry-x': `${forgeEntry.xPercent}%`, '--entry-y': `${forgeEntry.yPercent}%` }}
-        data-entry-node={forgeEntry.nodeId}
-        aria-label={forgeEntry.ariaLabel}
+        style={{ '--entry-x': `${entry.xPercent}%`, '--entry-y': `${entry.yPercent}%`, '--entry-width': `${entry.hitWidth}px`, '--entry-height': `${entry.hitHeight}px` }}
+        data-building-entry={entry.buildingId}
+        data-entry-node={entry.nodeId}
+        data-entry-anchor-kind={entry.anchorKind}
+        aria-label={entry.ariaLabel}
         onPointerDown={(event) => {
           event.stopPropagation()
-          entryPointerRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, moved: false }
+          entryPointerRef.current = { buildingId: entry.buildingId, pointerId: event.pointerId, x: event.clientX, y: event.clientY, moved: false }
           event.currentTarget.setPointerCapture?.(event.pointerId)
         }}
         onPointerMove={(event) => {
           const pointer = entryPointerRef.current
-          if (!pointer || pointer.pointerId !== event.pointerId) return
+          if (!pointer || pointer.pointerId !== event.pointerId || pointer.buildingId !== entry.buildingId) return
           if (Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) > 8) pointer.moved = true
         }}
-        onPointerUp={(event) => {
-          event.stopPropagation()
-          event.currentTarget.releasePointerCapture?.(event.pointerId)
-        }}
+        onPointerUp={(event) => { event.stopPropagation(); event.currentTarget.releasePointerCapture?.(event.pointerId) }}
         onPointerCancel={() => { entryPointerRef.current = null }}
         onClick={(event) => {
           event.stopPropagation()
           const wasDrag = entryPointerRef.current?.moved
           entryPointerRef.current = null
-          if (!wasDrag) setActiveInterior('forge')
+          if (!wasDrag) { activeEntryRef.current = event.currentTarget; setActiveInterior(entry.buildingId) }
         }}
-      />
+      />)}
       <MapAgentLayer
         presentations={groundPresentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}
@@ -149,17 +149,21 @@ export default function WorldFallback() {
       {routeDebug.enabled ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} config={routeDebug} /> : null}
       <div className="fallback-fountain"><i /><i /><i /></div>
     </div>
-    {activeInterior ? <Suspense fallback={<div className="building-interior-loading" role="status">Otwieranie Kuźni…</div>}>
+    {activeInterior ? <Suspense fallback={<div className="building-interior-loading" role="status">Otwieranie subsystemu…</div>}>
       <BuildingInteriorScene
         buildingId={activeInterior}
         system={system}
         lifecycle={lifecycle}
-        agent={agents.find((agent) => agent.profile === 'coder' || agent.id === 'coder') ?? null}
-        building={buildings.find((building) => building.id === 'forge') ?? null}
+        agent={agents.find((agent) => agent.profile === BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile || agent.id === BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile) ?? null}
+        building={buildings.find((building) => BUILDING_INTERIOR_CONFIG[activeInterior]?.canonicalBuildingIds.includes(building.id)) ?? null}
         tasks={tasks}
         alerts={alerts}
+        activityItems={activityItems}
+        tokenRiver={tokenRiver}
+        crons={crons}
+        modelSources={modelSources}
         onExitComplete={closeInterior}
-        returnFocusRef={forgeEntryRef}
+        returnFocusRef={activeEntryRef}
       />
     </Suspense> : null}
   </div>

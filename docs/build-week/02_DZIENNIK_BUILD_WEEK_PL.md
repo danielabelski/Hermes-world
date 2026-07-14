@@ -197,3 +197,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Wydajność: 65 elementów DOM we wnętrzu, 9 animowanych elementów i 4 lokalne filtry przy 393×852; animacje ograniczone do transform/opacity, mapa pozostaje pauzowana pod wnętrzem.
 - Walidacja wizualna 393×852: PASS — scena zyskała wyraźne plany, perspektywę, wspólną architekturę i czytelny punkt pracy bez zmiany mechanizmu wejścia.
 - Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
+
+## BW-2026-07-14-017 — Wspólny system pięciu wnętrz subsystemów
+
+- Czas Europe/Warsaw: 2026-07-14 12:20–12:55.
+- Czas UTC: 2026-07-14 10:20–10:55.
+- Branch/startowy HEAD: `build-week/hermes-world` / `3da2925`.
+- Cel: rozszerzyć zaakceptowany mechanizm Kuźni na główne budynki bez pięciu osobnych rendererów, bez zmiany geometrii mapy i bez syntetycznych stanów operacyjnych.
+- Wykonano: centralny rejestr wejść i semantyki dla Kuźni, Archiwum, Cytadeli, Watchera i Sanctum; jeden leniwie ładowany shell wnętrza; pięć odmiennych komór wizualnych; wspólny model wejścia, focus trapu, powrotu i przywracania focusu.
+- Dane: każda komora wyprowadza fazę i metryki wyłącznie z istniejących tasków, alertów, lifecycle, telemetrii, aktywności, cronów i źródeł modeli. Usunięto fallback, który mógł podpisać budynek niepowiązaną aktywnością globalną.
+- Mapa: użyto istniejących zamrożonych semantic nodes; Sanctum korzysta z już renderowanego landmarku środowiskowego. Nie zmieniono waypointów, tras, wejść agentów ani depth zones.
+- Kontrola 393×852: wszystkie cztery nowe wnętrza otwierają się i wracają do mapy; focus wraca do właściwego hotspotu; etykiety wejść zostały wizualnie wyciszone w spoczynku i wzmacniają się na hover/focus.
+- Walidacja: 100/100 testów PASS; pełny lint PASS; build PASS (848 modułów, 18,23 s); `git diff --check` PASS.
+- Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
