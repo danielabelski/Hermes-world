@@ -37,6 +37,7 @@ describe('building entry config', () => {
 
   it('keeps every main interior architecturally identifiable without duplicating Forge', () => {
     const scene = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.jsx', import.meta.url), 'utf8')
+    const styles = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.css', import.meta.url), 'utf8')
     const identityLandmarks = [
       'archive-chamber__shelves', 'archive-chamber__codex',
       'citadel-chamber__banner', 'citadel-chamber__war-table',
@@ -46,5 +47,12 @@ describe('building entry config', () => {
     for (const landmark of identityLandmarks) assert.match(scene, new RegExp(landmark))
     assert.equal((scene.match(/function ForgeChamber/g) ?? []).length, 1)
     assert.equal((scene.match(/function (Archive|Citadel|Watcher|Sanctum)Chamber/g) ?? []).length, 4)
+    assert.equal((scene.match(/<RoomDepth kind=/g) ?? []).length, 4)
+    for (const depthLayer of ['interior-depth__ceiling', 'interior-depth__wall', 'interior-depth__floor', 'interior-depth__light']) {
+      assert.match(scene, new RegExp(depthLayer))
+      assert.match(styles, new RegExp(`\\.${depthLayer}`))
+    }
+    const depthContract = styles.slice(styles.indexOf('.interior-depth{'), styles.indexOf('.building-interior--citadel{'))
+    assert.doesNotMatch(depthContract, /animation\s*:/)
   })
 })

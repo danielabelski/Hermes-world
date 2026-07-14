@@ -233,3 +233,18 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Zakres zamrożony: bez zmian wejść, współrzędnych, routingu, telemetrii, kontraktu danych, FSM, serwera, API i produkcji.
 - Kontrola 393×852: każde wnętrze jest rozpoznawalne bez tekstu; wspólny header i readout zachowują hierarchię produktu, a geometria pomieszczeń pozostaje odmienna.
 - Produkcja: nietknięta; zmiany wyłącznie demo/Build Week.
+
+## BW-2026-07-14-020 — Depth and material pass wnętrz subsystemów
+
+- Czas Europe/Warsaw: 2026-07-14 13:49–14:30.
+- Czas UTC: 2026-07-14 11:49–12:30.
+- Branch/startowy HEAD: `build-week/hermes-world` / `c95006b31674c006728e7121ace802dcb47f745f`.
+- Cel: zachować zaakceptowaną tożsamość Archiwum, Cytadeli, Watchera i Sanctum, ale usunąć wrażenie płaskich ilustracji przez wspólną, tanią warstwę głębi i materiałów.
+- Wykonano: wspólny `RoomDepth` z łukiem sklepienia, bocznymi ścianami, perspektywiczną posadzką i lokalnym stożkiem światła; każda komora ma własną paletę kamienia, rytm fug i materiał podłoża.
+- Archiwum otrzymało cieplejszy kamień i drewno, cienie regałów, światło kodeksu oraz cięższy foreground; Cytadela — kamienną salę dowodzenia, cienie chorągwi, podium i stołu-mapę osadzoną na posadzce; Watcher — otwartą wieżę, czytelniejszy metal teleskopu i cień parapetu; Sanctum — zielony kamień, odbicie basenu, cienie aptecznych półek i organicznego fokusu.
+- Warstwowanie: elementy tła pozostają za bryłą pomieszczenia, landmarki operacyjne na planie środkowym, a foreground zasłania dolną krawędź sceny. Nie zmieniono wejść, routingu, telemetrii, FSM ani kontraktu danych.
+- Budżet: 0 nowych rasterów, 0 nowych timerów i 0 nowych deklaracji animacji/filtrów w kontrakcie `interior-depth`; główny JS pozostał 407,99 kB / 124,74 kB gzip. Zmiana dotyczy tylko lazy-loadowanego wnętrza: CSS 45,13 kB / 11,02 kB gzip, JS 14,19 kB / 3,92 kB gzip.
+- Walidacja: `npm.cmd test` PASS 101/101; lint PASS; `validate:world-life` PASS; build PASS (848 modułów); `git diff --check` PASS. Test kontraktowy wymaga czterech warstw głębi i potwierdza brak dodatkowej animacji w nowym kontrakcie.
+- Ograniczenie dowodowe: automatyczne sterowanie przeglądarką Codexa nie zainicjalizowało się w tej sesji; nie zapisano fałszywego wizualnego PASS. Ostateczny odbiór estetyczny pozostaje do GL/RL użytkownika na telefonie.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol.
+- Produkcja: nietknięta i czysta na branchu `main`; zmiany wyłącznie demo/Build Week.

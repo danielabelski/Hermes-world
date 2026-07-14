@@ -175,6 +175,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `git diff --check`: **PASS**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-013 — Głębia, materiały i budżet wnętrz
+
+- Czas: 2026-07-14 14:30 Europe/Warsaw / 2026-07-14 12:30 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `c95006b31674c006728e7121ace802dcb47f745f`.
+- Kontrakt renderera: **PASS** — dokładnie cztery nowe komory korzystają ze wspólnego `RoomDepth`; wymagane są sklepienie, ściany boczne, posadzka i lokalne światło.
+- Kontrakt wydajności: **PASS** — 0 nowych assetów rastrowych, timerów, filtrów i deklaracji animacji w bloku głębi; główny bundle JS pozostał bez wzrostu 407,99 kB / 124,74 kB gzip.
+- Lazy interior bundle: JS 14,19 kB / 3,92 kB gzip; CSS 45,13 kB / 11,02 kB gzip. Mapa nadal jest pauzowana pod otwartym wnętrzem.
+- `npm.cmd test`: **PASS 101/101**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 848 modułów, 3,26 s.
+- `git diff --check`: **PASS**.
+- Automatyczna walidacja w przeglądarce Codexa: **MANUAL ACTION REQUIRED** — runtime sterowania przeglądarką nie zainicjalizował się; finalne GL/RL na 393×852 należy do autora. Nie oznaczono tego kroku jako PASS bez dowodu.
+- Produkcja: **PASS — branch `main` czysty i nietknięty**.
+
 ## TEST-BW-005 — Perceptual visibility bez regresji wydajności
 
 - Czas: 2026-07-14 00:15 Europe/Warsaw / 2026-07-13 22:15 UTC.
