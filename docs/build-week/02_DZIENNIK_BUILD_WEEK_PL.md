@@ -386,3 +386,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Automatyczny podgląd w przeglądarce Codexa: **MANUAL ACTION REQUIRED** — integracja ponownie zwróciła `Cannot redefine property: process`; nie zapisano fałszywego PASS. Końcowa ocena 393×852 należy do autora przez działające demo/Tailscale.
 - Commity: `b28a3e2` (`fix(build-week): perfect agent visibility and interior ownership`), `5e406ce` (`test(build-week): lock agent visibility matrix`), `ba85507` (`fix(build-week): preserve role visibility while agents work`).
 - Produkcja: `main` na `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
+
+## BW-2026-07-15-029 — Percepcyjny review stanów i osadzenie Kowala w Kuźni
+
+- Czas Europe/Warsaw: 2026-07-15 11:52–12:01.
+- Czas UTC: 2026-07-15 09:52–10:01.
+- Branch/startowy HEAD: `build-week/hermes-world` / `1973302d2d07b51bfcbe1945cba73dce42ffa902`.
+- Wykonano dwa lokalne, tymczasowe render-review bez zmiany assetów aplikacji: macierz reprezentatywnych stanów wszystkich 12 ról na rzeczywistych fragmentach mapy oraz Kowal/Uczony w docelowej płycie 393×491. Pliki kontrolne usunięto po ocenie; nie zostały przedstawione jako screenshot przeglądarkowy.
+- Wynik: wszystkie role pozostają rozpoznawalne w zakresie 40–49 px; niższe klatki pracy wynikają z pozy i narzędzia. Uczony jest czytelny przy stanowisku. Kowal miał poprawny rozmiar, ale na ciemnej linii produkcyjnej tracił lokalny kontrast.
+- Korekta: bez powiększania sprite’a i bez halo dodano we wnętrzu Kuźni ten sam subtelny profil kontrastu/krawędzi, który chroni jego ciężką metalową sylwetkę na mapie.
+- Walidacja: testy kontraktu wnętrz 11/11 PASS; lint PASS; `git diff --check` PASS; build PASS, 869 modułów, 3,29 s. Lazy CSS 12,76 kB / 3,22 kB gzip; main JS bez zmiany 412,55 kB / 126,26 kB gzip.
+- Commit: `40282ed` (`fix(build-week): seat Kowal clearly inside the Forge`). Produkcja nietknięta.

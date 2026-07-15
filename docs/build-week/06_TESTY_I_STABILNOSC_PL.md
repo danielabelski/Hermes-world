@@ -329,3 +329,15 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - HTTP/cache: **PASS** dla statusu 200 i immutable cache assetów; pomiar nie jest FPS/browser-paint.
 - Podgląd automatyczny 393×852: **MANUAL ACTION REQUIRED** — niedostępna integracja sterowania kartą; końcowe estetyczne GL/RL autora na realnym telefonie.
 - Produkcja: **PASS — `main` czysty i nietknięty**.
+
+## TEST-BW-021 — Percepcyjna integracja Kowala w cinematic Forge
+
+- Czas: 2026-07-15 12:01 Europe/Warsaw / 2026-07-15 10:01 UTC.
+- Branch/HEAD: `build-week/hermes-world` / `40282ed`.
+- Render-review: **PASS techniczny** — docelowe kompozycje 393 px potwierdziły właściwy anchor, rozmiar i stanowisko; review nie zastępuje screenshotu z przeglądarki ani GL autora.
+- Korekta kontrastu: **PASS** — wyłącznie zmienne tonu istniejącego renderera; bez zmiany skali, pozycji, assetu, filtra pełnoekranowego, timera lub operational state.
+- Testy wnętrz: **PASS 11/11**.
+- Lint: **PASS**.
+- Build: **PASS**, 869 modułów, 3,29 s; main JS 412,55 kB / 126,26 kB gzip; lazy interior CSS 12,76 kB / 3,22 kB gzip.
+- Mobile estetyczne GL/RL: **MANUAL ACTION REQUIRED**.
+- Produkcja: **PASS — nietknięta**.
