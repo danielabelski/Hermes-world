@@ -455,3 +455,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Zatwierdzony zakres obejmuje wspólny renderer 12 ról, prawdziwe sprite’y, anchor stóp, cień kontaktowy, role-aware ruch `PRACA`, evidence-backed ownership wnętrz oraz demo-only macierz QA. Nie zmienia to granicy prawdy: normalne wnętrza pokazują wyłącznie agentów z potwierdzonym task/evidence i routingiem.
 - Autor zatwierdził następną kolejność: pełny zweryfikowany recovery package → kontrolowany audyt różnic demo/produkcja → selektywna promocja zatwierdzonego zakresu → pełny audyt i benchmarki produkcyjne → małe poprawki regresji, jeśli będą konieczne.
 - Produkcja w chwili GL nadal pozostawała czysta i nietknięta na `7f586fe19f0f48dcdbee06aee573a3caf0689784`.
+
+## BW-2026-07-15-035 — Pełny zweryfikowany recovery package przed promocją
+
+- Czas Europe/Warsaw: 2026-07-15 13:58–14:10.
+- Czas UTC: 2026-07-15 11:58–12:10.
+- Punkt wejściowy: `build-week/hermes-world` / `88f8ddc2ba9a087b49adf10090cc8bac249ce1f1`; produkcja `main` / `7f586fe19f0f48dcdbee06aee573a3caf0689784`; oba drzewa czyste.
+- Preflight: `git fsck --full --strict` nie wykrył korupcji; cztery dangling blobs są nieosiągalnymi obiektami roboczymi, nie błędem historii. Skan śledzonych źródeł wykrył 0 plików z wysokoprawdopodobnym sekretem. Prywatne `.env`, cache i `node_modules` zostały świadomie wyłączone.
+- Pakiet zawiera pełny `git bundle --all`, dwa niezależne snapshoty źródeł, build demo i build produkcji sprzed promocji, manifest, listę refów, instrukcję odtworzenia, raport weryfikacji oraz wewnętrzne SHA-256.
+- Próba odtworzenia: bundle zweryfikowany jako kompletna historia, sklonowany do nowego repo, branch `build-week/hermes-world` przełączony poprawnie na `88f8ddc`; odtworzono 719 śledzonych plików. Wszystkie cztery ZIP-y wewnętrzne przeszły listowanie.
+- Finalny plik na Pulpicie: `Hermes_Citadel_FULL_RECOVERY_2026-07-15_GL.zip`, 321 836 131 B / 306,93 MiB. SHA-256 źródła i kopii na Pulpicie są identyczne: `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
+- Wynik: **PASS**. Bramka bezpieczeństwa przed audytem i promocją produkcji jest zamknięta.

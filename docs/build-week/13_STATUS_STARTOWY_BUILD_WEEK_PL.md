@@ -98,3 +98,9 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Następny obowiązkowy krok: utworzyć i zweryfikować pełny recovery package z ZIP, `git bundle --all`, manifestem, SHA-256 i instrukcją odtworzenia. Dopiero później wolno rozpocząć selektywną promocję.
 - Produkcja ma otrzymać wszystko z zatwierdzonego zakresu, ale jej konfiguracja 24/7, Tailscale, porty, API, dane i sekrety pozostają źródłem prawdy. Po wdrożeniu obowiązuje pełny audyt testów, bundla, cold/warm load, HTTP/cache, mobile, desktop, pamięci, konsoli i realnego pipeline’u Hermesa.
 - Dalsze eksperymenty po promocji nadal prowadzić wyłącznie na demo/Build Week.
+
+## Aktualizacja handoffu — 2026-07-15 14:10 Europe/Warsaw
+
+- Pełny recovery package przed promocją został utworzony, odtworzony próbnie i zweryfikowany. Kopia na Pulpicie: `Hermes_Citadel_FULL_RECOVERY_2026-07-15_GL.zip`, 306,93 MiB, SHA-256 `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
+- Bundle obejmuje wszystkie lokalne branche i tagi, w tym produkcyjny `main` sprzed promocji oraz pełny Build Week. Dwa źródłowe snapshoty i dwa gotowe buildy stanowią dodatkowe ścieżki odzyskania.
+- Można rozpocząć audyt różnic i kontrolowaną promocję. Przed pierwszą zmianą produkcji utworzyć jednoznaczny tag/checkpoint obecnego `main`; nie nadpisywać konfiguracji usługi, Tailscale, portów, API ani sekretów.

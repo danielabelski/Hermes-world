@@ -404,3 +404,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Granica prawdy: **PASS** — review pozostaje demo-only; GL nie aktywuje fikcyjnych tasków, eventów, `Working`, `Success` ani lokalizacji w normalnym runtime.
 - Gate recovery/promocji: **OTWARTY** — można utworzyć pełny backup, a po jego zweryfikowaniu rozpocząć kontrolowane wdrożenie na produkcję.
 - Produkcja w chwili odbioru: **PASS — czysta i nietknięta**.
+
+## TEST-BW-027 — Integralność pełnego backupu przed promocją
+
+- Czas: 2026-07-15 14:10 Europe/Warsaw / 2026-07-15 12:10 UTC.
+- `git fsck --full --strict`: **PASS** — brak korupcji; tylko cztery dangling blobs.
+- High-confidence tracked secret scan: **PASS — 0 plików**.
+- `git bundle verify`: **PASS** — pełna historia, 8 refów.
+- Restore test: **PASS** — clone z bundle, switch na `build-week/hermes-world`, HEAD `88f8ddc2ba9a087b49adf10090cc8bac249ce1f1`, 719 śledzonych plików.
+- Archive listing: **PASS** — demo source 780 wpisów, production source 562, demo build 328, production build 297.
+- Kopia Pulpit: **PASS** — 321 836 131 B / 306,93 MiB; SHA-256 kopii zgodny ze źródłem: `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
+- Produkcja podczas backupu: **PASS — czysta i nietknięta**.
