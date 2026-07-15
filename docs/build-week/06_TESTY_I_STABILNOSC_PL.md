@@ -16,6 +16,23 @@
 - Automatyczne sterowanie wbudowaną przeglądarką: **FAIL — narzędzie**, błąd inicjalizacji kontrolera `Cannot redefine property: process`; nie jest to błąd aplikacji. Desktop został zaakceptowany przez autora; finalny telefon 393×852: **MANUAL ACTION REQUIRED**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-019 — Wydajność wejścia i evidence-backed interior agents
+
+- Czas: 2026-07-15 04:56 Europe/Warsaw / 2026-07-15 02:56 UTC.
+- Branch/HEAD: `build-week/hermes-world` / `a754475c1f2bc0181592ee703ba687624914fc40`.
+- Zakres: cold/warm entry, pauzowanie ukrytej mapy, jeden wspólny renderer agentów we wnętrzu, routing Kowala i Uczonego, atomowa własność map/interior oraz ochrona przed fake evidence.
+- `npm.cmd test`: **PASS 109/109**, 0 fail, 0 skipped. Sześć nowych testów obejmuje brak agenta przed progiem, wejście, dojście do stanowiska, pracę, wyjście, odrzucenie syntetycznego evidence, blokadę niezweryfikowanych pokoi oraz zweryfikowane Archiwum.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS** — evidence-backed journeys, bezpieczny initial state, persistence polling, pełny FSM, stuck oraz rozdzielenie portrait/map.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 868 modułów, 3,53 s; build wykonany poza sandboxem po znanym EPERM procesu Vite, bez zmiany konfiguracji.
+- Bundle: main JS 410,32 kB / 125,54 kB gzip; lazy interior JS 14,55 kB / 5,73 kB gzip; lazy interior CSS 12,34 kB / 3,13 kB gzip.
+- HTTP/cache: **PASS** — lokalnie HTML 2 382 B / 0,0166 s, lazy chunk 14 558 B / 0,0177 s, plansza Kuźni 347 498 B / 0,0096 s warm; przez Tailscale HTML 200 / 0,0067 s i plansza 200 / 0,0077 s. Plansza ma immutable cache. Wyniki nie są deklarowane jako browser-paint/FPS.
+- Brak podwójnego renderingu: **PASS** — `MapAgentLayer` filtruje `isInside`; test kontraktowy wymaga wyłącznej własności sprite’u przez jedną warstwę.
+- Truthfulness: **PASS** — Kuźnia/Kowal i Archiwum/Uczony aktywne; Cytadela, Sanctum i Watcher świadomie nie renderują fikcyjnego agenta wewnątrz.
+- Reduced motion i przejścia: **PASS kontraktowy** — lokalny ruch jest wyłączany/redukowany przez istniejące media query; anchor i logical position pozostają stabilne.
+- Finalna walidacja wizualna na realnym 393×852: **MANUAL ACTION REQUIRED** — kontroler przeglądarki Codexa nie uruchomił się; bez fałszywego oznaczania PASS.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-PRE-001 — Końcowa walidacja pre-build baseline
 
 - Czas: 2026-07-13, przed 16:47:03 Europe/Warsaw.

@@ -137,3 +137,13 @@
 - Decyzja człowieka: generowanie źródeł pojedynczo w ChatGPT, specjalnie dla projektu, aby wykorzystać dostępne generowanie obrazów i zachować limit Codexa na architekturę oraz implementację.
 - Konsekwencje: światowe efekty nie są usuwane przed gotowym zamiennikiem; migracja odbywa się atomowo per wnętrze i podlega GL/RL na demo.
 - Możliwość zmiany: liczba klatek i rozdzielczość runtime mogą zostać obniżone po benchmarku bez ponownego generowania źródła.
+
+## DEC-BW-016 — Agent we wnętrzu wyłącznie z dowiedzionego `isInside`
+
+- Problem: dekoracyjne umieszczenie agentów w pięciu cinematic interiors wyglądałoby atrakcyjnie, ale mogłoby fałszować prawdziwą lokalizację, pracę lub sukces i tworzyć podwójny rendering map/interior.
+- Warianty: stale dekoracyjni agenci; osobny interior FSM; wspólny renderer aktywowany wyłącznie przez istniejący task, FSM, route visibility i evidence.
+- Decyzja: `presentation.isInside` jest atomowym przełącznikiem własności sprite’u. Wnętrze pokazuje agenta tylko przy zgodnym profilu, budynku, tasku, lifecycle i etapie `enter/work/exit`; nieświeże dane wymagają świeżego `evidenceEventId`.
+- Wkład Codexa: audyt routingu, centralna konfiguracja lokalnych tras, ponowne użycie `MapAgentSprite`, zabezpieczenie snapshotu startowego i testy pełnego handoffu.
+- Decyzja człowieka: najpierw dopracować wzorcowego Kowala, nie robić agentów jednym strzałem, nie akceptować fake ruchu i utrzymać produkcję bez zmian do GL.
+- Konsekwencje: Kuźnia/Kowal i Archiwum/Uczony działają. Watcher pozostaje na zewnętrznym punkcie obserwacyjnym, a Cytadela i Sanctum nie pokazują fikcyjnego wnętrzowego agenta do czasu dowiedzenia trasy.
+- Możliwość zmiany: kolejne wnętrze aktywuje się przez dopisanie zweryfikowanej konfiguracji do wspólnego kontraktu, bez nowego renderera i bez zmiany FSM.

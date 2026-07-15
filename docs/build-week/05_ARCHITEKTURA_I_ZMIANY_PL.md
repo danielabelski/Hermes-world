@@ -102,3 +102,16 @@ Przepływ renderowania:
 - **Działa podczas Submission Period:** faza wnętrza i metryki pochodzą z istniejącego stanu świata; `evidenceEventId` zachowuje powiązanie z realnym eventem.
 - **Warstwa wizualna:** ilustracja jest nieruchomą bazą; małe efekty są zakotwiczone do fizycznych elementów i nie zmieniają `operationalState`.
 - **Niezaimplementowane:** agent widoczny we wnętrzu, interior waypoints i klikany drill-down agenta. Funkcja może zostać dodana po GL bez tworzenia nowego stanu operacyjnego.
+
+## Agenci we wnętrzach — stan po evidence-backed integration
+
+Przepływ prawdy i renderowania:
+
+`task/event + lifecycle + route` → `resolveMapAgentPresentation` → `presentation.isInside` → dokładnie jeden właściciel sprite’u (`MapAgentLayer` albo `InteriorAgentPresence`) → lokalna trasa cinematic interior → istniejący drill-down profilu.
+
+- **Działa podczas Submission Period:** jeden wspólny renderer używa dokładnie tych samych sprite’ów, anchoru przy stopach, cienia kontaktowego, statusów i danych co mapa.
+- **Działa podczas Submission Period:** Kowal/Kuźnia i Uczony/Archiwum mają zweryfikowane trasy `inside`; wejście, praca, wyjście i powrót wynikają z istniejącego FSM oraz tasku.
+- **Działa podczas Submission Period:** ukryta mapa nie renderuje duplikatu agenta. Pierwszy snapshot aktywnego taska nie tworzy fikcyjnego observed edge, a stare zakończenie bez wiarygodnego czasu nie udaje świeżego Success.
+- **Świadomie zablokowane:** Citadel i Sanctum nie mają jeszcze zweryfikowanej trasy wewnętrznej; Watcher ma semantyczny punkt pracy na zewnątrz. Brak sprite’u w tych wnętrzach jest prawidłową ochroną observability, nie brakiem renderera.
+- **Wydajność:** ukryty presentation clock i Ambient Director są pauzowane, prawdziwy transport SSE pozostaje aktywny, a lokalny zegar wnętrza działa tylko dla kwalifikującego się agenta.
+- **Do ręcznego odbioru:** finalne GL/RL skali, rytmu pracy i integracji z tłem na realnym 393×852; automatyczne kontrakty i build przeszły.

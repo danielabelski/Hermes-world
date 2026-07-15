@@ -336,3 +336,33 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 101/101 testów PASS; lint PASS; build PASS (856 modułów, 3,36 s poza sandboxem po powtarzalnym EPERM Vite); kontrakt testowy blokuje ponowny import mapowego ognia do wnętrza.
 - Commit funkcjonalny: `7ed6f77` (`feat(build-week): add cinematic forge interior fire`).
 - Ograniczenie: finalne dopasowanie wielkości i intensywności wymaga percepcyjnej oceny autora na realnym telefonie; produkcja pozostaje nietknięta.
+
+## BW-2026-07-15-026 — Domknięcie wydajności cinematic interiors
+
+- Czas Europe/Warsaw: 2026-07-15 01:36–03:36.
+- Czas UTC: 2026-07-14 23:36 – 2026-07-15 01:36.
+- Branch/startowy HEAD: `build-week/hermes-world` / `ef3ea43`.
+- Cel: przed dodaniem agentów potwierdzić koszt zimnego i ciepłego wejścia do pięciu wnętrz oraz usunąć pracę niewidocznej mapy, bez pogorszenia jakości ilustracji i efektów.
+- Audyt: aktywny pokój pobiera jeden lazy chunk, jedną planszę 1024×1280 i własny mały zestaw VFX; pozostałe cztery pokoje nie są pobierane. Szacowany zimny transfer aktywnego pokoju wynosi około 0,43–0,59 MB, ciepłe ponowne wejście korzysta z `Cache-Control: public, max-age=31536000, immutable`, a zdekodowany koszt aktywnej sceny wynosi około 6 MB.
+- Implementacja: ukryta mapa zatrzymuje prezentacyjny zegar i Ambient Director na czas otwartego wnętrza; prawdziwy transport SSE pozostaje aktywny. Plansza ma wysoki priorytet pobrania, a VFX mogą zostać zdekodowane równolegle, pozostając niewidoczne do chwili gotowości planszy.
+- Pomiar HTTP po buildzie: lokalny HTML 2 382 B / 0,0166 s; lazy chunk 14 558 B / 0,0177 s; plansza Kuźni 347 498 B / 0,0096 s przy ciepłym cache. Przez Tailscale: HTML 200 / 0,0067 s, plansza Kuźni 200 / 0,0077 s. Są to pomiary transferu/cache, nie browser-paint ani miarodajny FPS telefonu.
+- Commit: `8a9de6a` (`perf(build-week): preload interior vfx and pause hidden world`).
+- Produkcja: nietknięta; brak zmian serwera, API, Hermes OS CAT i deploymentu.
+
+## BW-2026-07-15-027 — Evidence-backed agenci we wnętrzach
+
+- Czas Europe/Warsaw: 2026-07-15 03:36–04:56.
+- Czas UTC: 2026-07-15 01:36–02:56.
+- Branch/startowy HEAD: `build-week/hermes-world` / `8a9de6a`.
+- Cel: zbudować jeden wspólny system obecności agenta w cinematic interior bez portretów, duplikacji i fałszywego `Working`/`Success`/położenia.
+- Wzorzec Kuźni: Kowal używa dokładnie tego samego prawdziwego sprite’u, anchoru przy stopach, cienia kontaktowego i gramatyki statusu co na mapie. Po potwierdzonym logicznym wejściu przechodzi krótką lokalną trasą do stanowiska, pracuje przy fizycznym punkcie iskier i opuszcza wnętrze zgodnie z istniejącym FSM.
+- Wspólny renderer: `InteriorAgentPresence` korzysta z `MapAgentSprite`, `resolveMapAgentPresentation`, istniejących tasków, lifecycle, alertów i `evidenceEventId`. Kliknięcie agenta otwiera istniejący drill-down profilu, a kompaktowa karta pokazuje task i źródło dowodu.
+- Atomowa własność renderu: `presentation.isInside` jest jedynym przełącznikiem map/interior. Gdy agent jest wewnątrz, `MapAgentLayer` w ogóle nie tworzy jego mapowego DOM; wnętrze nie pokazuje go przed progiem ani po wyjściu.
+- Ochrona prawdy: pierwszy snapshot aktywnego taska nie odtwarza fikcyjnego początku podróży. Stare `done` bez wiarygodnego timestampu nie udaje świeżego `Success`. Przy nieświeżej domenie tasków agent wymaga świeżego evidence event.
+- Routing: Kuźnia/Kowal i Archiwum/Uczony mają zweryfikowane `workVisibility: inside` i są aktywne. Watcher pozostaje prawdziwym zewnętrznym punktem obserwacyjnym. Cytadela i Sanctum nie mają jeszcze dowiedzionej trasy wewnętrznej, dlatego wspólny renderer świadomie ich nie pokazuje zamiast wymyślać lokalizację.
+- Walidacja: 109/109 testów PASS, w tym pełny handoff Kowala mobile+desktop, wejście/praca/wyjście Uczonego, odrzucenie fake evidence i blokada trzech niezweryfikowanych pomieszczeń; lint PASS; `validate:world-life` PASS; build PASS, Vite 8.0.16, 868 modułów, 3,53 s; `git diff --check` PASS.
+- Bundle po zmianie: lazy interior JS 14,55 kB / 5,73 kB gzip; lazy interior CSS 12,34 kB / 3,13 kB gzip; main JS 410,32 kB / 125,54 kB gzip. Nie dodano nowego rastera ani osobnego renderera per agent.
+- Commity: `09c119b` (`feat(build-week): add evidence-backed interior agents`), `60ed803` (`fix(build-week): harden interior agent evidence`), `a754475` (`test(build-week): verify interior agent handoff`).
+- Ograniczenie dowodowe: automatyczne sterowanie przeglądarką nie zainicjalizowało się w tej sesji (`Cannot redefine property: process`), dlatego finalne estetyczne GL/RL na 393×852 pozostaje świadomie oznaczone jako manualne, a nie fałszywy PASS.
+- Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol. Dwa lekkie audyty pomocnicze objęły wydajność i prawdziwe punkty routingu; implementację i integrację wykonał główny agent.
+- Produkcja Correct v1: nietknięta; całość wyłącznie na demo/Build Week.
