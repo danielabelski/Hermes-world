@@ -311,3 +311,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 843 moduły; główny JS 401,66 kB / 122,70 kB gzip; CSS 70,32 kB / 15,22 kB gzip.
 - Ograniczenie: ostateczna ocena naturalności i intensywności przepływu należy do użytkownika na realnym telefonie przez Tailscale; kontrakt techniczny i brak artefaktów zostały potwierdzone.
 - Produkcja: **PASS — nietknięta**.
+
+## TEST-BW-020 — Agent perfection, truth ownership i pełna macierz 12 ról
+
+- Czas: 2026-07-15 11:40 Europe/Warsaw / 2026-07-15 09:40 UTC.
+- Branch/HEAD funkcjonalny: `build-week/hermes-world` / `ba85507`.
+- Kontrakt sprite’ów: **PASS** — 12/12 unikalnych profili, canvas 128×128, stopa `y=124`, anchor `0.96875`, brak portretów UI i brak fallbackowego kaptura.
+- Kontrakt skali: **PASS** — efektywny canvas mapowy wszystkich ról 40–49 px; `mapVisibilityScale` 1.00–1.10; Kowal map-only 1.10, fizyczny `renderScale` bez zmian.
+- Kontrakt stanu: **PASS** — `Working` nie kasuje profilu widoczności roli; `Offline` pozostaje jawnym grayscale/brightness override; markery Uczonego i Zwiadowcy uwzględniają pochyloną klatkę.
+- Kontrakt ownership: **PASS** — ten sam gate task/evidence steruje mapą i wnętrzem; brak taska lub stale bez evidence nie może ukryć sprite’a z obu powierzchni.
+- Truth audit: **PASS** — wewnątrz aktywne wyłącznie Kowal/Kuźnia i Uczony/Archiwum; Zwiadowca pozostaje exterior; Cytadela/Sanctum bez wymyślonej obecności.
+- `npm.cmd test`: **PASS 112/112**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 869 modułów, 2,87 s poza sandboxem po znanym EPERM pliku `.vite-temp`; konfiguracji nie zmieniono.
+- Bundle: main JS 412,55 kB / 126,26 kB gzip; lazy interior JS 14,47 kB / 5,72 kB gzip; lazy CSS 12,55 kB / 3,19 kB gzip.
+- HTTP/cache: **PASS** dla statusu 200 i immutable cache assetów; pomiar nie jest FPS/browser-paint.
+- Podgląd automatyczny 393×852: **MANUAL ACTION REQUIRED** — niedostępna integracja sterowania kartą; końcowe estetyczne GL/RL autora na realnym telefonie.
+- Produkcja: **PASS — `main` czysty i nietknięty**.

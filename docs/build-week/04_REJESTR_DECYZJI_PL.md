@@ -147,3 +147,13 @@
 - Decyzja człowieka: najpierw dopracować wzorcowego Kowala, nie robić agentów jednym strzałem, nie akceptować fake ruchu i utrzymać produkcję bez zmian do GL.
 - Konsekwencje: Kuźnia/Kowal i Archiwum/Uczony działają. Watcher pozostaje na zewnętrznym punkcie obserwacyjnym, a Cytadela i Sanctum nie pokazują fikcyjnego wnętrzowego agenta do czasu dowiedzenia trasy.
 - Możliwość zmiany: kolejne wnętrze aktywuje się przez dopisanie zweryfikowanej konfiguracji do wspólnego kontraktu, bez nowego renderera i bez zmiany FSM.
+
+## DEC-BW-017 — Oddzielna korekta widoczności mapowej od fizycznej skali sprite’a
+
+- Problem: pojedyncze ciężkie lub smukłe sylwetki miały podobny canvas, lecz różną percepcyjną czytelność na 393×852; globalne powiększenie psułoby skalę miasta i wnętrz.
+- Warianty: globalnie powiększyć wszystkie postacie; modyfikować assety i anchory; dodać ograniczoną map-only korektę percepcyjnej powierzchni przy wspólnym rendererze.
+- Decyzja: `renderScale` pozostaje fizyczną normalizacją assetu na wszystkich powierzchniach, a `mapVisibilityScale` jest małą, centralną korektą wyłącznie mapy. Zakres jest testowo ograniczony do 1.00–1.12 i 40–49 px efektywnego canvasa.
+- Wkład Codexa: pomiar alpha bounds, contact sheet na realnym tle mapy, macierz 12 ról, zachowanie anchoru stóp, korekta markerów i testy regresji `Working`/`Offline`.
+- Decyzja człowieka: Kowal ma być bardziej widoczny, ale nie dominować; najpierw dopracować go jako wzorzec, następnie cały roster, bez fałszywych wnętrz.
+- Konsekwencje: Kowal ma korektę 1.10 tylko na mapie; Uczony i kilka smukłych ról mają mniejsze korekty. Wnętrza i routing nie zmieniają skali logicznej ani pozycji stóp.
+- Możliwość zmiany: po GL autora na realnym telefonie dopuszczalne są wyłącznie mikroregulacje w centralnej macierzy, bez zmian geometrii i FSM.

@@ -366,3 +366,23 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Ograniczenie dowodowe: automatyczne sterowanie przeglądarką nie zainicjalizowało się w tej sesji (`Cannot redefine property: process`), dlatego finalne estetyczne GL/RL na 393×852 pozostaje świadomie oznaczone jako manualne, a nie fałszywy PASS.
 - Sesja Codexa: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol. Dwa lekkie audyty pomocnicze objęły wydajność i prawdziwe punkty routingu; implementację i integrację wykonał główny agent.
 - Produkcja Correct v1: nietknięta; całość wyłącznie na demo/Build Week.
+
+## BW-2026-07-15-028 — Agent perfection pass: Kowal jako wzorzec i pełny roster
+
+- Czas Europe/Warsaw: 2026-07-15 10:54–11:40.
+- Czas UTC: 2026-07-15 08:54–09:40.
+- Branch/startowy HEAD: `build-week/hermes-world` / `8b5454a0b6db5aacf81f190d257728d57334841d`.
+- Cel autora: nie akceptować pierwszego przybliżenia; doprowadzić Kowala do poprawnej widoczności mobile, a następnie zastosować jeden spójny kontrakt do wszystkich 12 ról bez powiększania portretów, fałszowania lokalizacji i duplikowania rendererów.
+- Snapshot startowy: `20260715T085540Z-git-snapshot.txt`; Session ID `019f4f11-14e9-70e0-8d61-26226257864c`; model GPT-5.6 Sol.
+- Audyt wizualny: wszystkie runtime sprite’y mają wspólny canvas 128×128, stopy na `y=124` i prawidłowy `footAnchorY=0.96875`. Perspektywa Y pozostała bez zmian. Zidentyfikowano różnice percepcyjnej powierzchni sylwetek oraz odklejone markery nad pochylonymi klatkami Uczonego i Zwiadowcy.
+- Implementacja Kowala: map-only `mapVisibilityScale=1.10`, zachowany mniejszy rozmiar we wnętrzu, ciepła separacja krawędzi bez dużej aury, pełny cień kontaktowy i zachowanie tożsamości podczas `Working`. Stan pracy nie nadpisuje już profilu kontrastu roli.
+- Pełny roster: centralna macierz 12 profili reguluje minimalnie mapową widoczność, tonalność i cień. Efektywna wysokość canvasa mapowego jest ograniczona testem do 40–49 px. Role nadal wynikają z własnej sylwetki, narzędzia i koloru.
+- Markery: pozycja statusu uwzględnia rzeczywisty górny margines klatki; niższa poza Zwiadowcy z lunetą pozostaje semantyczną pozą, a nie jest sztucznie rozciągana.
+- Atomowa własność: mapa i wnętrze korzystają z jednego `hasInteriorOwnershipEvidence`. Brak taska lub stale/offline bez świeżego dowodu pozostawia sprite na mapie; dopiero zgodny task/evidence przekazuje go wnętrzu. Usunięto stan pośredni „agent niewidoczny nigdzie”.
+- Truth boundary: tylko Kowal→Kuźnia i Uczony→Archiwum mają potwierdzone `inside`. Watcher/Zwiadowca pozostaje przy realnym zewnętrznym punkcie obserwacyjnym; Cytadela i Sanctum pozostają bez wymyślonego agenta wewnątrz.
+- Walidacja końcowa: `npm.cmd test` PASS 112/112; lint PASS; `validate:world-life` PASS; build PASS (Vite 8.0.16, 869 modułów, 2,87 s poza sandboxem po znanym EPERM pliku tymczasowego); `git diff --check` PASS.
+- Bundle: main JS 412,55 kB / 126,26 kB gzip; lazy interior JS 14,47 kB / 5,72 kB gzip; lazy interior CSS 12,55 kB / 3,19 kB gzip. Nie dodano rasterów, timerów ani rendererów per rola.
+- HTTP/cache: HTML ma `no-store`; hashowane assety mają `public, max-age=31536000, immutable`. Pomiary PowerShell są kontrolą serwera/cache, nie dowodem browser-paint ani FPS telefonu.
+- Automatyczny podgląd w przeglądarce Codexa: **MANUAL ACTION REQUIRED** — integracja ponownie zwróciła `Cannot redefine property: process`; nie zapisano fałszywego PASS. Końcowa ocena 393×852 należy do autora przez działające demo/Tailscale.
+- Commity: `b28a3e2` (`fix(build-week): perfect agent visibility and interior ownership`), `5e406ce` (`test(build-week): lock agent visibility matrix`), `ba85507` (`fix(build-week): preserve role visibility while agents work`).
+- Produkcja: `main` na `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.

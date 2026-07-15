@@ -49,3 +49,14 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Citadel/Sanctum pozostają zablokowane do czasu zweryfikowania wewnętrznych tras; Watcher prawidłowo pracuje na zewnętrznym observation point.
 - Walidacja automatyczna: 109/109 testów, lint, world-life validator, build i HTTP/cache benchmark PASS. Finalne estetyczne GL/RL agentów na 393×852 pozostaje ręczne.
 - Najbliższy meaningful krok po GL: pełny live Hermes E2E z rzeczywistym eventem i evidence ID, następnie ewentualne aktywowanie kolejnego wnętrza tylko po potwierdzeniu prawdziwego routingu. Produkcji nie zmieniać bez osobnego GL.
+
+## Aktualizacja handoffu — 2026-07-15 11:40 Europe/Warsaw
+
+- Funkcjonalny HEAD: `ba85507`; branch `build-week/hermes-world`.
+- Kowal jest wzorcem mobile-first: map-only korekta 1.10, czytelny ciężki profil, zachowana fizyczna skala wnętrza, cień i anchor stóp. `Working` nie kasuje indywidualnego kontrastu roli.
+- Wszystkie 12 ról korzysta z centralnej macierzy widoczności/tonalności/cienia i jednego renderera; canvasy mapowe są ograniczone testem do 40–49 px.
+- Uczony ma czytelniejszą mapę i Archiwum. Zwiadowca zachowuje prawdziwą zewnętrzną pozycję i pochyloną pozę obserwacji; marker nie odkleja się od sylwetki.
+- Mapa i wnętrze współdzielą jeden kontrakt task/evidence. Nie ma już ścieżki, w której mapa ukrywa agenta, a wnętrze nie potrafi go przejąć.
+- Automatyczna walidacja: 112/112 testów, lint, world-life validator, build i truth audit PASS. Finalne estetyczne GL/RL 393×852 pozostaje ręczne z powodu błędu integracji przeglądarki Codexa.
+- Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
+- Po GL: wykonać pełny live Hermes E2E z realnym `evidenceEventId`. Kolejne wnętrza aktywować wyłącznie po dowiedzeniu prawdziwej trasy; nie przenosić zmian na produkcję bez osobnej decyzji autora.

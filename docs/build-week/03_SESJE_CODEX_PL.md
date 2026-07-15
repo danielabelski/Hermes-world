@@ -5,6 +5,7 @@
 | Data i czas Europe/Warsaw | Session ID | Model | Cel i wkład | Decyzje autora | Okres | Znaczenie dla core | `/feedback` |
 |---|---|---|---|---|---|---|---|
 | 2026-07-15 01:33–03:25 | `019f4f11-14e9-70e0-8d61-26226257864c` | GPT-5.6 Sol + wbudowane image generation | Sekwencyjne wygenerowanie dziesięciu brakujących źródeł, cleanup i normalizacja całego zestawu 11 stripów, integracja pięciu wnętrz, testy kontraktowe, build, benchmark first-open i checkpoint | Autor zezwolił na maksymalnie dwa lekkie subtaski, wymagał pełnego zestawu przed wspólną walidacją i zachowania produkcji do GL | podczas Submission Period | BARDZO WYSOKIE — kompletny pipeline assetowy, architektura jednego renderera, performance i dowody Build Week | TAK — mocny kandydat; finalny wybór nadal po live integration |
+| 2026-07-15 10:54–11:40 | `019f4f11-14e9-70e0-8d61-26226257864c` | GPT-5.6 Sol | Iteracyjny agent perfection pass: pomiary 12 sprite’ów, Kowal mobile-first, wspólna macierz widoczności, atomowa własność map/interior, markery pochylonych póz, testy i build | Autor odrzucił podejście „pierwsza wersja wystarczy”, zatwierdził pracę do jakości finalnej i zażądał pełnego zapisu od godziny 10:54 | podczas Submission Period | BARDZO WYSOKIE — prawdziwy kontrakt lokalizacji, wspólny renderer, pełny roster i rygor testowy | TAK — mocny kandydat; finalny wybór nadal po live Hermes E2E |
 
 Rejestr oddziela dowód sesji od zrzutów zbiorczych statystyk konta. Modele podajemy na podstawie strukturalnych rekordów `turn_context`.
 
