@@ -32,6 +32,12 @@ Widoczny napis „Top model: gpt-5.5” jest agregatem ostatnich 30 dni. Nie ozn
 | GIT-SNAPSHOT-003 | snapshot Git | 13.07.2026 18:53:01 UTC / 20:53:01 Europe/Warsaw | Kompletne metadane z prawidłowym Europe/Warsaw | podczas | `20260713T185301Z-git-snapshot.txt` | SILNA |
 | GIT-SNAPSHOT-004 | snapshot Git | 13.07.2026 19:25:57 UTC / 21:25:57 Europe/Warsaw | Korekta strategii prywatnego repo, audyt Hermes Agent i provenance assetów | podczas | `20260713T192557Z-git-snapshot.txt` | SILNA |
 
+## Dowody podczas Submission Period
+
+| ID | Nazwa / lokalizacja | Typ | Data | Co udowadnia | SHA-256 | Prywatność | Siła |
+|---|---|---|---|---|---|---|---|
+| BW-IMG-001 | `submission-period/20260715T141931Z-production-mobile-cold.png` | screenshot diagnostyczny 393×852 | 15.07.2026 16:19 Europe/Warsaw | Reprodukuje regresję po promocji: niegotowa mapa i rastry agentów przy widocznych cieniach/warstwach. Jest dowodem znalezienia błędu, nie poprawnego produktu. | `C559DC6752D27B7B87E2AFB8924150E62E5C90616B2233E5793027303D70DEBC` | brak danych prywatnych; dopuszczony do prywatnego repo konkursowego | SILNA |
+
 ## Metadane oryginałów
 
 - Wymiary i rozmiary plików zapisano podczas audytu.

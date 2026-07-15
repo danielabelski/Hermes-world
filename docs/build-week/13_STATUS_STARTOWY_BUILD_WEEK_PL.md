@@ -112,3 +112,12 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Na branchu Build Week dodano bezpośredni, evidence-backed edge wbudowanego czatu: potwierdzony `stream_id` i realne eventy SSE publikują kolejno Assigned/Thinking/Working/Waiting/Success/Critical. Treść rozmowy nie jest kopiowana, kliknięcie nie emituje stanu, a błąd wizualizacji nie przerywa Hermesa.
 - Automatyczna walidacja: 123/123 testów, lint i build PASS; demo ingestion i replay SSE PASS; niezalogowany endpoint panelowy 401 PASS. Poprawka nie została jeszcze promowana na produkcję.
 - Następna kolejność: commit atomowego edge → realny zalogowany chat smoke na demo → pełny cold/warm/mobile audit → tylko po PASS fast-forward produkcji → realny chat smoke na 4175 → zapis benchmarków i snapshot Build Week.
+
+## Aktualizacja handoffu — 2026-07-15 17:14 Europe/Warsaw
+
+- Autor wykrył po promocji dwie regresje odbiorcze produkcji: bardzo wolny, niekompletny cold-start oraz pełne niebieskie przewody przypominające debug/GPS. Poprzedniego niedomkniętego audytu nie traktować jako PASS.
+- Na branchu Build Week naprawiono kolejność ładowania: responsive map preload z HTML, mapa przed efektami, początkowe sprite’y przed całą warstwą agentów, brak osieroconych cieni i markerów. Globalne oczekiwanie na `decode()` nie jest używane.
+- Pełne tła przewodów usunięto; aktywne są tylko krótkie pakiety i lokalny ślad 6% trasy. Nie zmieniono waypointów, FSM, danych ani semantyki eventów.
+- Automatycznie przechodzą 125/125 testów, lint, world-life validator i build. Autor potwierdził manualny cold/warm mobile **PASS / GL**: kompletny świat pojawia się natychmiast, bez zauważalnej fazy ładowania.
+- Poprawkę cold-startu zapisano jako `6a8d13e59e95124b7a33b624ac18f6a438b97370`; wcześniejszy evidence-backed real chat edge to `ee58011dd0a03fa136d343126ca66728a7ec2361`.
+- Produkcyjny `main` nadal jest na `be61d2d`. Następny krok: snapshot i commit dowodów → fast-forward produkcji → real chat smoke i pełna kontrola produkcyjna.

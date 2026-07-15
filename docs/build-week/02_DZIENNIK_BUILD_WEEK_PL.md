@@ -477,3 +477,18 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Prywatność i granica prawdy: treść wiadomości nie jest kopiowana do world hub. Endpoint panelowy wymaga ważnego cookie panelu i jawnego nagłówka źródła. Błąd publikacji wizualizacji nigdy nie przerywa prawdziwej rozmowy. `apperror` jest terminalnym Critical i nie może zostać później zamieniony w fałszywy Success.
 - Walidacja demo: testy 123/123 PASS, lint PASS, build PASS; osobny test live endpointu potwierdził `assigned → thinking → success`, kolejność 0/1/2 i replay SSE. Niezalogowany panel POST zwraca 401. Testowy run powstał wyłącznie na demo i zostanie wyczyszczony restartem przed odbiorem.
 - Produkcja nie otrzyma tej poprawki przed osobnym realnym chat smoke i pełnym powtórzeniem benchmarków.
+
+## BW-2026-07-15-037 — Audyt regresji cold-startu i bramka gotowości świata
+
+- Czas Europe/Warsaw: 2026-07-15 15:56–17:14; czas UTC: 13:56–15:14.
+- Branch/startowy HEAD: `build-week/hermes-world` / `ee58011dd0a03fa136d343126ca66728a7ec2361`. Produkcyjny `main` pozostaje na `be61d2d014f9640b7450179c48fb791a8eb48cf6`.
+- Audyt po promocji ujawnił realną regresję percepcyjną: w zimnym starcie widoczne były warstwy efektów, kryształy i cienie agentów przed mapą oraz rasterami postaci. Pełne semantyczne przewody infrastruktury wyglądały jak debugowa trasa GPS. Wcześniejszy niedomknięty browser audit nie został zaliczony jako PASS.
+- Przyczyna: efekty środowiskowe montowały się bez oczekiwania na `onLoad` mapy, kontener sprite’a renderował cień i status przed pierwszym `img.onload`, a `.hermes-conduit` posiadał widoczne tło na całej długości. Mapa rozpoczynała pobieranie dopiero po uruchomieniu głównego modułu JS.
+- Implementacja demo: responsive preload rozpoczyna pobieranie właściwej mapy już z HTML; mapa i 12 początkowych sprite’ów mają wysoki priorytet; warstwa agentów ujawnia się atomowo po gotowości początkowych obrazów; pojedynczy sprite nie pokazuje osieroconego cienia/markera; efekty świata montują się dopiero po mapie. Nie użyto blokującego globalnego `decode()`.
+- Linie: pełne tło przewodów zostało usunięte. Przewód przechowuje wyłącznie geometrię, a widoczny jest tylko krótki 20 px pakiet. Ślad `data-transit` skrócono z 16% do 6% trasy; segmenty zajmują tylko lokalne otoczenie pakietu.
+- Koszt startowy: mapa mobile 531 412 B, 12 początkowych klatek idle 159 758 B, główny JS 415,44 kB / 127,20 kB gzip, CSS 78,07 kB / 16,80 kB gzip. Lokalny serwer zwraca skompresowany JS w 0,053 s i mapę w 0,011 s; są to pomiary HTTP, nie browser-paint ani FPS telefonu.
+- Walidacja automatyczna: 125/125 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (871 modułów); `git diff --check` PASS. Serwowany build 4176 zawiera responsive preload, readiness gate i krótki ślad.
+- Automatyczna kontrola karty: **NIEZALICZONA** — integracja Browser zwróciła `Cannot redefine property: process`, a izolowany CDP nie ukończył inicjalizacji. Nie zapisano fałszywego FPS ani cold-start PASS.
+- Manualny test autora na telefonie: **PASS / GL** — cold-start załadował kompletny świat natychmiast, bez momentu widocznego dla oka; brak osieroconych cieni i pełnych niebieskich linii. Warm-start również pozostaje natychmiastowy.
+- Commit funkcjonalny: `6a8d13e59e95124b7a33b624ac18f6a438b97370` (`perf(build-week): make world cold start atomic`).
+- Produkcja: podczas tego passu nietknięta; poprawki działają wyłącznie na demo 4176 do chwili kontrolowanej promocji.

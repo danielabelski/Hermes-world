@@ -427,3 +427,20 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Kontrola dostępu: **PASS** — panel ingestion bez cookie zwraca HTTP 401; zwykły lokalny adapter pozostaje ograniczony do loopback/token.
 - Pełny zestaw: **PASS 123/123**, 0 fail, 0 skipped. Lint: **PASS**. Build: **PASS**, 871 modułów, 4,24 s; main JS 414,78 kB / 127,01 kB gzip, bez wzrostu bundla względem promowanej wersji.
 - Realny zalogowany chat na produkcji: **MANUAL ACTION REQUIRED** po promocji tej poprawki; nie jest jeszcze oznaczony jako PASS.
+
+## TEST-BW-029 — Cold-start readiness i usunięcie pełnych przewodów
+
+- Czas: 2026-07-15 17:14 Europe/Warsaw / 15:14 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `ee58011dd0a03fa136d343126ca66728a7ec2361`.
+- Reprodukcja regresji produkcyjnej: **PASS diagnostyczny** — zapisano cold-start z mapą i rasterami agentów niegotowymi, przy widocznych cieniach/efektach oraz pełnych przewodach. Nie został przedstawiony jako poprawny stan produktu.
+- Readiness contract: **PASS** — mapa ma responsive preload w HTML, efekty montują się po `mapLoaded`, 12 początkowych sprite’ów ma wysoki priorytet, a cała warstwa agentów ujawnia się atomowo po gotowości obrazów. Pojedynczy sprite nie pokazuje cienia, ringu ani markera przed `onLoad`.
+- Transit contract: **PASS** — pełny background przewodu jest wymuszony na `none`; aktywny sygnał ma 20 px. Lokalny wake zajmuje 6% ścieżki, nie 16%; test blokuje powrót pełnego route bed.
+- `npm.cmd test`: **PASS 125/125**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 871 modułów; main JS 415,44 kB / 127,20 kB gzip; CSS 78,07 kB / 16,80 kB gzip.
+- HTTP/cache: **PASS** — HTML i wszystkie krytyczne zasoby 200; JS gzip 126 128 B w 0,053 s, mapa 531 412 B w 0,011 s, sprite 15 278 B w 0,008 s na localhost. Pomiar PowerShell `Invoke-WebRequest` został odrzucony jako niereprezentatywny narzut klienta; zapisano wynik `curl`.
+- Automatyczny browser audit: **FAIL / NIEZALICZONY** — Browser bootstrap `Cannot redefine property: process`; izolowany CDP nie ukończył `Page.enable`. Nie zapisano fałszywego FPS.
+- Realny telefon, cold i warm: **PASS / GL AUTORA** — kompletny świat pojawia się natychmiast, bez widocznej fazy ładowania, osieroconych cieni i pełnych niebieskich linii.
+- Zweryfikowany commit funkcjonalny: `6a8d13e59e95124b7a33b624ac18f6a438b97370`.
+- Produkcja: **PASS — nietknięta podczas naprawy**, promocja dopiero po commicie i snapshotcie.
