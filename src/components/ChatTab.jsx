@@ -1,6 +1,7 @@
 ﻿import { useState, useRef, useEffect, useCallback } from 'react';
 import { api, getApiUrl } from '../api';
 import HermesMascot from './HermesMascot';
+import { createChatWorldEventPublisher } from '../world/events/chatWorldEventPublisher.js';
 
 const COMPANION_SLEEP_AFTER_MS = 15000;
 const MAX_CHAT_ERROR_CHARS = 520;
@@ -1107,6 +1108,12 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
 
       const streamId = startRes.stream_id;
       setActiveStreamId(streamId);
+      const worldLifecycle = createChatWorldEventPublisher({
+        runId: streamId,
+        sessionId: currentSessionId,
+        profile,
+      });
+      void worldLifecycle.started();
       const source = new EventSource(`${getApiUrl()}/chat/stream?stream_id=${encodeURIComponent(streamId)}`);
       sourceRef.current = source;
       
@@ -1145,6 +1152,7 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
       });
 
       const handleReasoningEvent = (e) => {
+        void worldLifecycle.thinking();
         try {
           const payload = JSON.parse(e.data || '{}');
           const reasoning = extractReasoning(payload) || payload.text || payload.content || '';
@@ -1166,6 +1174,7 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
         try {
           const d = JSON.parse(e.data || '{}');
           const toolName = d.name || d.function?.name || 'unknown_tool';
+          void worldLifecycle.working(toolName);
           setMessages(prev => {
             const newMsgs = [...prev];
             const lastMsg = { ...newMsgs[newMsgs.length - 1] };
@@ -1186,6 +1195,7 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
         try {
           const d = JSON.parse(e.data || '{}');
           const toolName = d.name || d.function?.name || 'tool';
+          void worldLifecycle.working(toolName);
           setMessages(prev => {
             const newMsgs = [...prev];
             const lastMsg = { ...newMsgs[newMsgs.length - 1] };
@@ -1211,6 +1221,7 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
       source.addEventListener('approval', e => {
         try {
           const d = JSON.parse(e.data || '{}');
+          void worldLifecycle.waiting();
           console.log('[SSE] Received approval event:', d);
           if (d && (d.command || d.question || d.pattern_key)) {
             setPendingApproval(d);
@@ -1218,7 +1229,8 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
         } catch { /* ignore */ }
       });
 
-      const handleDone = (finalText) => {
+      const handleDone = (finalText, { publishSuccess = true } = {}) => {
+        if (publishSuccess) void worldLifecycle.success();
         setIsTyping(false);
         setActiveStreamId(null);
         if (throttleTimerRef.current) {
@@ -1249,7 +1261,8 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
       source.addEventListener('apperror', (e) => {
         const errData = e.data ? ` (${e.data})` : '';
         currentAnswer += `\n> [ERROR] ${formatStreamError(e.data)}`;
-        handleDone(currentAnswer);
+        void worldLifecycle.critical();
+        handleDone(currentAnswer, { publishSuccess: false });
       });
 
       source.onerror = () => {

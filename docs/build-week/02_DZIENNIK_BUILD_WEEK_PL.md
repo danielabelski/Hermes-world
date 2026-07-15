@@ -466,3 +466,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Próba odtworzenia: bundle zweryfikowany jako kompletna historia, sklonowany do nowego repo, branch `build-week/hermes-world` przełączony poprawnie na `88f8ddc`; odtworzono 719 śledzonych plików. Wszystkie cztery ZIP-y wewnętrzne przeszły listowanie.
 - Finalny plik na Pulpicie: `Hermes_Citadel_FULL_RECOVERY_2026-07-15_GL.zip`, 321 836 131 B / 306,93 MiB. SHA-256 źródła i kopii na Pulpicie są identyczne: `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
 - Wynik: **PASS**. Bramka bezpieczeństwa przed audytem i promocją produkcji jest zamknięta.
+
+## BW-2026-07-15-036 — Promocja GL na produkcję i domknięcie prawdziwego chat → world edge
+
+- Czas Europe/Warsaw: 2026-07-15 14:10–15:56; czas UTC: 12:10–13:56.
+- Po zweryfikowanym backupie wykonano bezpieczny fast-forward produkcyjnego `main` z Correct v1 `7f586fe` do zatwierdzonego zakresu Build Week `be61d2d`. Przed zmianą utworzono tag `production-correct-v1-before-build-week-promotion-2026-07-15`.
+- Produkcyjna usługa 24/7 zachowała port 4175, istniejący watchdog, Tailscale Funnel i backend Hermesa 8787. Po kontrolowanym restarcie istnieje dokładnie jeden listener produkcji; `/`, `/api/system/metrics` i `/api/world/events/snapshot` odpowiadają HTTP 200.
+- Audyt ujawnił ważną lukę: renderer, reducer, choreografia i SSE world hub działały, ale usługa produkcyjna uruchamiała wyłącznie `server.js`. Sidecar `hermes-world-event-adapter.mjs` nadal domyślnie publikował do demo 4176 i nie był uruchomiony, więc każda wiadomość z wbudowanego czatu nie miała gwarantowanego połączenia z wizualnym światem.
+- Implementacja na branchu Build Week: po potwierdzonym `stream_id` wbudowany chat publikuje edge `stream_start`; kolejne eventy pochodzą wyłącznie z prawdziwego SSE Hermesa: `reasoning/thinking`, `tool`, `approval`, `done` i `apperror`. Każdy run zachowuje jeden uporządkowany łańcuch `evidenceEventId`; kliknięcie przycisku ani token tekstowy nie tworzą stanu świata.
+- Prywatność i granica prawdy: treść wiadomości nie jest kopiowana do world hub. Endpoint panelowy wymaga ważnego cookie panelu i jawnego nagłówka źródła. Błąd publikacji wizualizacji nigdy nie przerywa prawdziwej rozmowy. `apperror` jest terminalnym Critical i nie może zostać później zamieniony w fałszywy Success.
+- Walidacja demo: testy 123/123 PASS, lint PASS, build PASS; osobny test live endpointu potwierdził `assigned → thinking → success`, kolejność 0/1/2 i replay SSE. Niezalogowany panel POST zwraca 401. Testowy run powstał wyłącznie na demo i zostanie wyczyszczony restartem przed odbiorem.
+- Produkcja nie otrzyma tej poprawki przed osobnym realnym chat smoke i pełnym powtórzeniem benchmarków.

@@ -415,3 +415,15 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Archive listing: **PASS** — demo source 780 wpisów, production source 562, demo build 328, production build 297.
 - Kopia Pulpit: **PASS** — 321 836 131 B / 306,93 MiB; SHA-256 kopii zgodny ze źródłem: `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
 - Produkcja podczas backupu: **PASS — czysta i nietknięta**.
+
+## TEST-BW-028 — Produkcyjny preflight i realny chat world-event edge
+
+- Czas: 2026-07-15 15:56 Europe/Warsaw / 13:56 UTC.
+- Produkcyjny preflight po fast-forward: **PASS** — testy 120/120, lint, world-life validator i build; root, metryki oraz world snapshot HTTP 200; pojedynczy listener 4175; backend 8787 i Tailscale Funnel 10000 zachowane.
+- Diagnoza E2E: **FAIL → NAPRAWIONE NA DEMO** — produkcyjny world hub był pusty, a runner 24/7 nie uruchamiał sidecara. Sam renderer nie stanowił dowodu połączenia każdej wiadomości z ruchem.
+- Test czystego źródła: **PASS** — publisher nie emituje nic bez prawdziwego `stream_id`; późniejsze edge pochodzą z realnych eventów SSE, nie z tokenów ani kliknięcia.
+- Dedup/terminal: **PASS** — wielokrotne `thinking`, `tool`, `done` nie dublują stanu; `apperror` blokuje późniejszy Success.
+- Live demo ingestion: **PASS** — trzy eventy `stream_start`, `reasoning`, `done` przyjęte jako 202 i znormalizowane do `assigned`, `thinking`, `success`; SSE replay zachował `runId`, `seq` i źródło.
+- Kontrola dostępu: **PASS** — panel ingestion bez cookie zwraca HTTP 401; zwykły lokalny adapter pozostaje ograniczony do loopback/token.
+- Pełny zestaw: **PASS 123/123**, 0 fail, 0 skipped. Lint: **PASS**. Build: **PASS**, 871 modułów, 4,24 s; main JS 414,78 kB / 127,01 kB gzip, bez wzrostu bundla względem promowanej wersji.
+- Realny zalogowany chat na produkcji: **MANUAL ACTION REQUIRED** po promocji tej poprawki; nie jest jeszcze oznaczony jako PASS.

@@ -422,6 +422,10 @@ app.get('/api/world/events/stream', (req, res) => {
 
 app.post('/api/world/events', pushJsonParser, (req, res) => {
   if (!canIngestWorldEvent(req)) return res.status(403).json({ ok: false, error: 'World event ingestion is local-only or requires HERMES_WORLD_INGEST_TOKEN.' });
+  return publishWorldEvent(req, res);
+});
+
+const publishWorldEvent = (req, res) => {
   try {
     const event = normalizeHermesWorldEvent(req.body);
     const result = worldEventHub.publish(event);
@@ -431,6 +435,13 @@ app.post('/api/world/events', pushJsonParser, (req, res) => {
     console.error('[World Events] ingestion failed:', error);
     return res.status(500).json({ ok: false, error: 'world_event_ingestion_failed' });
   }
+};
+
+app.post('/api/world/events/panel', requirePanelAuthCookie, pushJsonParser, (req, res) => {
+  if (req.get('x-hermes-world-source') !== 'panel-chat') {
+    return res.status(403).json({ ok: false, error: 'Invalid world event source.' });
+  }
+  return publishWorldEvent(req, res);
 });
 
 

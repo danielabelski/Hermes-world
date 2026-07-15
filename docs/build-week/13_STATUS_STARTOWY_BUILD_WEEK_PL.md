@@ -104,3 +104,11 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Pełny recovery package przed promocją został utworzony, odtworzony próbnie i zweryfikowany. Kopia na Pulpicie: `Hermes_Citadel_FULL_RECOVERY_2026-07-15_GL.zip`, 306,93 MiB, SHA-256 `aa1c67d04413b1cfd2a558c5bfd959d6dfe39bbcd3bc945831ad79c2f169ff40`.
 - Bundle obejmuje wszystkie lokalne branche i tagi, w tym produkcyjny `main` sprzed promocji oraz pełny Build Week. Dwa źródłowe snapshoty i dwa gotowe buildy stanowią dodatkowe ścieżki odzyskania.
 - Można rozpocząć audyt różnic i kontrolowaną promocję. Przed pierwszą zmianą produkcji utworzyć jednoznaczny tag/checkpoint obecnego `main`; nie nadpisywać konfiguracji usługi, Tailscale, portów, API ani sekretów.
+
+## Aktualizacja handoffu — 2026-07-15 15:56 Europe/Warsaw
+
+- Zatwierdzony Build Week został bezpiecznie promowany fast-forwardem na produkcyjny `main` do `be61d2d`; tag starego Correct v1 to `production-correct-v1-before-build-week-promotion-2026-07-15`. Produkcja 4175, backend 8787, watchdog i publiczny Funnel pozostały działające.
+- Audyt prawdy wykazał, że world hub/SSE i wszystkie wizualne reakcje istniały, ale adapter nie był uruchomiony w produkcyjnej usłudze, więc wymaganie „każda wiadomość powoduje ruch” nie było jeszcze spełnione E2E.
+- Na branchu Build Week dodano bezpośredni, evidence-backed edge wbudowanego czatu: potwierdzony `stream_id` i realne eventy SSE publikują kolejno Assigned/Thinking/Working/Waiting/Success/Critical. Treść rozmowy nie jest kopiowana, kliknięcie nie emituje stanu, a błąd wizualizacji nie przerywa Hermesa.
+- Automatyczna walidacja: 123/123 testów, lint i build PASS; demo ingestion i replay SSE PASS; niezalogowany endpoint panelowy 401 PASS. Poprawka nie została jeszcze promowana na produkcję.
+- Następna kolejność: commit atomowego edge → realny zalogowany chat smoke na demo → pełny cold/warm/mobile audit → tylko po PASS fast-forward produkcji → realny chat smoke na 4175 → zapis benchmarków i snapshot Build Week.
