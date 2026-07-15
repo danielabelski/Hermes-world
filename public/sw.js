@@ -1,6 +1,6 @@
 ﻿/* global clients */
 
-const CACHE_NAME = 'hermes-citadel-v3';
+const CACHE_NAME = 'hermes-citadel-v4-production-reset';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(Promise.resolve());
@@ -12,6 +12,15 @@ self.addEventListener('activate', (event) => {
     caches.keys()
       .then((keys) => Promise.all(keys.map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
+      .then(() => self.clients.matchAll({ type: 'window', includeUncontrolled: true }))
+      .then((windowClients) => {
+        // Demo has its own origin on 4176 and must retain query-driven fixtures.
+        // Every production client is deliberately reloaded once after this SW
+        // upgrade so an old Home Screen shell cannot keep CAT/demo assets alive.
+        if (self.location.port === '4176') return undefined;
+        const productionRoot = new URL('/', self.location.origin).href;
+        return Promise.all(windowClients.map((client) => client.navigate(productionRoot)));
+      })
   );
 });
 
