@@ -29,6 +29,11 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(spriteSet)
     const normalizedHeight = spriteSet.renderHeight * spriteSet.scale * profile.renderScale
     assert.ok(normalizedHeight >= 40 && normalizedHeight <= 46, `${profile.id}: normalized height ${normalizedHeight}`)
+    const mapHeight = normalizedHeight * profile.mapVisibilityScale
+    assert.ok(mapHeight >= 40 && mapHeight <= 49, `${profile.id}: map height ${mapHeight}`)
+    for (const ratio of Object.values(profile.markerContentTopByState)) {
+      assert.ok(ratio >= 0.09 && ratio <= 0.35, `${profile.id}: invalid marker content top ${ratio}`)
+    }
     assert.ok(profile.beforeNormalizationScale >= 1 && profile.beforeNormalizationScale <= 1.37)
     assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
