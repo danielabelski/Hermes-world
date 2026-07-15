@@ -65,6 +65,16 @@
   pointer-events: none;
 }
 
+/* Never expose orphan shadows, rings or markers while the first sprite is loading. */
+.map-agent-sprite.is-asset-pending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.map-agent-sprite.is-asset-ready {
+  opacity: 1;
+}
+
 .map-agent-sprite__shadow {
   position: absolute;
   left: 50%;

@@ -20,6 +20,10 @@
 
     <!-- Manifest -->
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- Start the frozen map request before the JavaScript renderer boots. -->
+    <link rel="preload" as="image" href="/src/assets/hermes-citadel-mobile-v2.webp" type="image/webp" media="(max-width: 700px)" fetchpriority="high" />
+    <link rel="preload" as="image" href="/src/assets/hermes-citadel-hd-v2.webp" type="image/webp" media="(min-width: 701px)" fetchpriority="high" />
   </head>
   <body style="background-color: #091311; margin: 0; color: #f6ecd6; font-family: system-ui, sans-serif;">
     <div id="root">

@@ -145,10 +145,18 @@ test('data transit renders only a local wake and segments, never a full GPS rout
   assert.match(jsx, /pathLength="100"/)
   assert.match(jsx, /repeatCount="1"/)
   assert.doesNotMatch(jsx, /repeatCount="indefinite"/)
-  assert.match(css, /stroke-dasharray:16 84/)
-  assert.match(css, /stroke-dasharray:2 1\.5 2 1\.5 2 1\.5 3 86\.5/)
+  assert.match(css, /stroke-dasharray:6 94/)
+  assert.match(css, /stroke-dasharray:1 1 1 1 1 95/)
   assert.match(css, /operation-local-transit var\(--transit-duration\) linear 1 both/)
   assert.doesNotMatch(css, /operation-local-transit[^;}]*infinite/)
+})
+
+test('semantic conduits expose only a short moving packet, never the full route bed', () => {
+  const css = readFileSync(new URL('../hermesInfrastructureLayer.css', import.meta.url), 'utf8')
+  assert.match(css, /The conduit is geometry only/)
+  assert.match(css, /background:\s*none\s*!important/)
+  assert.match(css, /\.hermes-conduit::after\s*\{[^}]*width:\s*20px/s)
+  assert.match(css, /\.hermes-conduit\.is-waiting,[\s\S]*\.hermes-conduit\.is-dormant\s*\{\s*opacity:\s*0/)
 })
 
 test('delegation ingress ends in the selected subsystem and only real success returns to Archive', () => {

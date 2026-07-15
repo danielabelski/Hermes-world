@@ -55,6 +55,20 @@
   filter: var(--map-readability-filter);
 }
 
+.fallback-map-stage.is-map-pending > :not(.fallback-world__art):not(.map-agent-layer) {
+  visibility: hidden;
+}
+
+.fallback-map-stage.is-agents-pending .map-agent-layer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fallback-map-stage.is-agents-ready .map-agent-layer {
+  opacity: 1;
+  transition: opacity 140ms ease-out;
+}
+
 .fallback-world::before,
 .fallback-buildings,
 .fallback-fountain {

@@ -56,6 +56,7 @@ function MapAgentLayer({
         ambientState={model.ambientState}
         evidenceEventId={model.evidenceEventId}
         lod={getMapAgentLod(model, selectedId)}
+        fetchPriority={index < 12 ? 'high' : 'auto'}
         onSelect={(event) => {
           if (shouldSuppressSelection?.()) {
             event.preventDefault()

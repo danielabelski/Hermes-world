@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
 import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
 import { resolveMapAgentStatusMarker } from '../../world/mapAgentStatusGrammar.js'
@@ -44,6 +44,7 @@ function MapAgentSprite({
   fetchPriority = 'auto',
   renderSurface = 'map',
 }) {
+  const [assetReady, setAssetReady] = useState(false)
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
@@ -64,6 +65,7 @@ function MapAgentSprite({
     `lod-${lod}`,
     selected ? 'is-selected' : '',
     hidden ? 'is-inside' : '',
+    assetReady ? 'is-asset-ready' : 'is-asset-pending',
     'visual-normalized',
   ].filter(Boolean).join(' ')
 
@@ -104,6 +106,7 @@ function MapAgentSprite({
     data-map-agent-src={src}
     data-visual-mode="production"
     data-render-surface={renderSurface}
+    data-asset-ready={assetReady ? 'true' : 'false'}
     data-status-marker={statusMarker?.tone ?? 'none'}
     data-presentation-source={presentationSource ?? 'operational'}
     data-choreography-state={choreographyState ?? 'none'}
@@ -116,7 +119,7 @@ function MapAgentSprite({
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
-      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} />
+      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}

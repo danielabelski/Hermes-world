@@ -84,8 +84,27 @@ export default function WorldFallback() {
   }, [])
   useEffect(() => {
     if (!mapLoaded) return undefined
-    const timer = window.setTimeout(() => setAgentAnimationReady(true), 700)
-    return () => window.clearTimeout(timer)
+    let cancelled = false
+    const images = Array.from(document.querySelectorAll('.fallback-map-stage .map-agent-sprite__image'))
+    const waits = images.map((image) => {
+      if (image.complete && image.naturalWidth > 0) return Promise.resolve()
+      return new Promise((resolve) => {
+        image.addEventListener('load', resolve, { once: true })
+        image.addEventListener('error', resolve, { once: true })
+      })
+    })
+    const safetyTimer = window.setTimeout(() => {
+      if (!cancelled) setAgentAnimationReady(true)
+    }, 3_000)
+    Promise.all(waits).then(() => {
+      if (cancelled) return
+      window.clearTimeout(safetyTimer)
+      setAgentAnimationReady(true)
+    })
+    return () => {
+      cancelled = true
+      window.clearTimeout(safetyTimer)
+    }
   }, [mapLoaded])
   useEffect(() => {
     if (!mapLoaded) return undefined
@@ -134,15 +153,15 @@ export default function WorldFallback() {
     availableProfiles: presentations.map((model) => model.profileId),
   })
   return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}${activeInterior ? ' has-open-interior' : ''}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-world-life-preset={worldLifePreset.id} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" aria-hidden={activeInterior ? 'true' : undefined} inert={activeInterior ? true : undefined} {...cameraHandlers}>
-    <div ref={stageRef} className="fallback-map-stage" style={stageStyle}>
+    <div ref={stageRef} className={`fallback-map-stage${mapLoaded ? ' is-map-ready' : ' is-map-pending'}${agentAnimationReady ? ' is-agents-ready' : ' is-agents-pending'}`} style={stageStyle} data-map-ready={mapLoaded ? 'true' : 'false'} data-agents-ready={agentAnimationReady ? 'true' : 'false'}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
-      <WorldEnvironmentalLife presentation={environment} debug={worldDebug} preset={worldLifePreset} />
-      <HermesInfrastructureLayer layout={mapLayout} />
-      <WorldOperationsLayer presentation={environment.worldOperations} />
+      {mapLoaded ? <WorldEnvironmentalLife presentation={environment} debug={worldDebug} preset={worldLifePreset} /> : null}
+      {mapLoaded ? <HermesInfrastructureLayer layout={mapLayout} /> : null}
+      {mapLoaded ? <WorldOperationsLayer presentation={environment.worldOperations} /> : null}
       <div className="fallback-roads" />
       <div className="fallback-buildings">{BUILDINGS.map(([id, label], index) => <div className={`fallback-building fallback-building--${id}`} key={id} style={{ '--i': index }}><i /><b>{label}</b></div>)}</div>
-      <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} />
-      {buildingEntries.map((entry) => <button
+      {mapLoaded ? <WorldChoreographyLayer presentation={directors.choreography} layout={mapLayout} /> : null}
+      {mapLoaded ? buildingEntries.map((entry) => <button
         key={entry.buildingId}
         className={`building-entry-hotspot building-entry-hotspot--${entry.buildingId}`}
         type="button"
@@ -177,7 +196,7 @@ export default function WorldFallback() {
             else setActiveInterior(entry.buildingId)
           }
         }}
-      />)}
+      />) : null}
       <MapAgentLayer
         presentations={groundPresentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}
@@ -186,7 +205,7 @@ export default function WorldFallback() {
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
-      <MapForegroundOcclusion layout={mapLayout} />
+      {mapLoaded ? <MapForegroundOcclusion layout={mapLayout} /> : null}
       <MapAgentLayer
         presentations={facadePresentations}
         layer="facade"
@@ -196,7 +215,7 @@ export default function WorldFallback() {
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
-      {routeDebug.enabled ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} config={routeDebug} /> : null}
+      {mapLoaded && routeDebug.enabled ? <RouteDebugOverlay layout={mapLayout} presentations={presentations} config={routeDebug} /> : null}
       <div className="fallback-fountain"><i /><i /><i /></div>
     </div>
     {activeInterior ? <Suspense fallback={<div className="building-interior-loading" role="status">Otwieranie subsystemu…</div>}>

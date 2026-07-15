@@ -6,8 +6,8 @@
 .world-operation--data-transit{inset:0;width:100%;height:100%;overflow:visible}
 
 .operation-artery__wake,.operation-artery__segments{fill:none;stroke-linejoin:round;stroke-linecap:round;stroke-dashoffset:100;animation:operation-local-transit var(--transit-duration) linear 1 both}
-.operation-artery__wake{stroke:#70dfff68;stroke-width:3;stroke-dasharray:16 84;opacity:.46}
-.operation-artery__segments{stroke:#c0f6ff;stroke-width:1.25;stroke-dasharray:2 1.5 2 1.5 2 1.5 3 86.5;opacity:.9}
+.operation-artery__wake{stroke:#70dfff68;stroke-width:3;stroke-dasharray:6 94;opacity:.46}
+.operation-artery__segments{stroke:#c0f6ff;stroke-width:1.25;stroke-dasharray:1 1 1 1 1 95;opacity:.9}
 .operation-artery__halo{fill:#72dcff4d;stroke:#75e6ff80;stroke-width:.2}.operation-artery__core{fill:#e3fbff;stroke:#6de1ff;stroke-width:.22}
 .world-operation--data-transit.mode-event .operation-artery__wake{stroke:#b8f6ffbd;stroke-width:4.2;opacity:.7}
 .world-operation--data-transit.mode-event .operation-artery__segments{stroke:#efffff;stroke-width:1.8;opacity:1}

@@ -18,3 +18,31 @@
 .site-phase--warning,.site-phase--stuck { opacity: .82; filter: hue-rotate(50deg) drop-shadow(0 0 6px #ffb95e); }
 .hermes-crystal.crystal--resting:not(.hermes-crystal--core) { opacity: .2; animation: none; }
 @keyframes hermes-problem-trace { 0% { left: 0; opacity: 0; } 18% { opacity: 1; } 82% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+
+/* The conduit is geometry only. Never expose its full length as a HUD/GPS line. */
+.hermes-conduit,
+.hermes-infrastructure--critical .hermes-conduit,
+.hermes-conduit.flow-warning,
+.hermes-conduit.flow-error {
+  height: 4px;
+  background: none !important;
+  filter: none;
+  opacity: 0;
+}
+.hermes-conduit::after {
+  left: -20px;
+  top: 0;
+  width: 20px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #6bdcff 52%, #efffff 100%);
+  box-shadow: 0 0 6px #52d6ff;
+}
+.hermes-conduit.is-flowing,
+.hermes-conduit.is-problem {
+  opacity: 1;
+}
+.hermes-conduit.is-waiting,
+.hermes-conduit.is-dormant {
+  opacity: 0;
+}

@@ -58,3 +58,15 @@ test('role visibility survives working state while offline remains an explicit o
   assert.doesNotMatch(css, /\.map-agent-sprite\.is-work\s+\.map-agent-sprite__image\s*\{[^}]*filter:/s)
   assert.match(css, /\.map-agent-sprite\.is-offline\s+\.map-agent-sprite__image\s*\{[^}]*filter:/s)
 })
+
+test('cold start hides orphan agent chrome until the map and initial sprites are ready', () => {
+  const sprite = readFileSync(path.join(PROJECT_ROOT, 'src/components/map-agents/MapAgentSprite.jsx'), 'utf8')
+  const spriteCss = readFileSync(path.join(PROJECT_ROOT, 'src/components/map-agents/MapAgentSprite.css'), 'utf8')
+  const fallback = readFileSync(path.join(PROJECT_ROOT, 'src/world/WorldFallback.jsx'), 'utf8')
+  assert.match(sprite, /is-asset-pending/)
+  assert.match(sprite, /onLoad=\{\(\) => setAssetReady\(true\)\}/)
+  assert.match(spriteCss, /\.map-agent-sprite\.is-asset-pending\s*\{[^}]*opacity:\s*0/s)
+  assert.match(fallback, /data-map-ready=/)
+  assert.match(fallback, /data-agents-ready=/)
+  assert.match(fallback, /mapLoaded \? <WorldEnvironmentalLife/)
+})
