@@ -97,6 +97,27 @@
   animation: map-agent-work-ring 1.4s ease-in-out infinite;
 }
 
+/* One role-aware work grammar shared by map and interior surfaces. */
+.map-agent-sprite.is-work[data-behavior-type="building-worker"] .map-agent-sprite__motion {
+  animation: map-agent-work-build 1.16s cubic-bezier(.35,.05,.35,1) infinite;
+}
+
+.map-agent-sprite.is-work[data-behavior-type="research-worker"] .map-agent-sprite__motion {
+  animation: map-agent-work-research 2.45s ease-in-out infinite;
+}
+
+.map-agent-sprite.is-work[data-behavior-type="monitoring"] .map-agent-sprite__motion {
+  animation: map-agent-work-monitor 2.1s ease-in-out infinite;
+}
+
+.map-agent-sprite.is-work[data-behavior-type="patrol"] .map-agent-sprite__motion {
+  animation: map-agent-work-patrol 1.85s ease-in-out infinite;
+}
+
+.map-agent-sprite.is-work[data-behavior-type="courier"] .map-agent-sprite__motion {
+  animation: map-agent-work-courier 1.55s ease-in-out infinite;
+}
+
 .map-agent-sprite.is-thinking .map-agent-sprite__state-ring {
   display: block;
   border-style: dotted;
@@ -143,6 +164,28 @@
 
 @keyframes map-agent-work-ring {
   50% { opacity: .32; transform: translateX(-50%) scaleX(1.16); }
+}
+@keyframes map-agent-work-build {
+  0%, 24%, 100% { transform: translateY(var(--map-agent-bob)) rotate(0deg); }
+  43% { transform: translateY(-1.7px) rotate(-2.1deg); }
+  58% { transform: translateY(.5px) rotate(1.1deg); }
+}
+@keyframes map-agent-work-research {
+  0%, 100% { transform: translateY(var(--map-agent-bob)) rotate(-.45deg); }
+  50% { transform: translateY(-1.05px) rotate(.55deg); }
+}
+@keyframes map-agent-work-monitor {
+  0%, 100% { transform: translate3d(-.35px,var(--map-agent-bob),0) rotate(-.35deg); }
+  50% { transform: translate3d(.55px,-.85px,0) rotate(.55deg); }
+}
+@keyframes map-agent-work-patrol {
+  0%, 100% { transform: translate3d(-.55px,var(--map-agent-bob),0) rotate(-.65deg); }
+  50% { transform: translate3d(.7px,-.8px,0) rotate(.75deg); }
+}
+@keyframes map-agent-work-courier {
+  0%, 100% { transform: translateY(var(--map-agent-bob)) rotate(-.4deg); }
+  45% { transform: translateY(-1.15px) rotate(1deg); }
+  62% { transform: translateY(-.25px) rotate(.15deg); }
 }
 @keyframes map-agent-thinking-ring { to { transform: translateX(-50%) rotate(360deg); } }
 @keyframes map-agent-success-ring { to { opacity: 0; transform: translateX(-50%) scaleX(1.55) scaleY(1.4); } }
@@ -298,7 +341,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .map-agent-sprite { transition: none; }
-  .map-agent-sprite__motion { transform: none; }
+  .map-agent-sprite__motion { animation: none !important; transform: none; }
   .map-agent-sprite.signal-success::after { animation: none; opacity: .8; }
   .map-agent-sprite__state-ring { animation: none !important; }
   .map-agent-sprite__marker { animation: none !important; }

@@ -91,6 +91,7 @@ function MapAgentSprite({
       '--map-agent-world-y': `${clamp(Number(worldY) || 0, -10, 110)}cqh`,
     }}
     data-profile-id={profileId}
+    data-behavior-type={profile.behaviorType}
     data-sprite-profile={profile.spriteProfile}
     data-fallback={profile.isFallback ? 'true' : 'false'}
     data-visual-state={normalizedState}
