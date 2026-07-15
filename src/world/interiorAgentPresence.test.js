@@ -94,4 +94,20 @@ describe('interior agent evidence contract', () => {
       assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: outsideModel, tasks: [done], lifecycle: { connection: 'online' } }), null)
     }
   })
+
+  it('keeps map ownership when the interior cannot prove the same task', () => {
+    const agent = { id: 'coder', profile: 'coder', displayName: 'Kowal', buildingId: 'forge', state: 'working', active: true }
+    const withoutTask = resolveMapAgentPresentation({ agent, tasks: [], lifecycle: { connection: 'online' }, now: Date.parse('2026-07-15T09:00:00Z'), layout: 'mobile' })
+    assert.equal(withoutTask.isInside, false)
+    assert.equal(withoutTask.interiorOwnershipEligible, false)
+
+    const staleTask = { ...task, evidenceEventId: null }
+    const stale = resolveMapAgentPresentation({ agent, tasks: [staleTask], lifecycle: { connection: 'online', domains: { tasks: { state: 'stale' } } }, now: Date.parse('2026-07-15T09:00:00Z'), layout: 'mobile' })
+    assert.equal(stale.isInside, false)
+    assert.equal(stale.interiorOwnershipEligible, false)
+
+    const evidenced = resolveMapAgentPresentation({ agent, tasks: [{ ...staleTask, evidenceEventId: 'event-live-7' }], lifecycle: { connection: 'online', domains: { tasks: { state: 'stale' } } }, now: Date.parse('2026-07-15T09:00:00Z'), layout: 'mobile' })
+    assert.equal(evidenced.isInside, true)
+    assert.equal(evidenced.interiorOwnershipEligible, true)
+  })
 })

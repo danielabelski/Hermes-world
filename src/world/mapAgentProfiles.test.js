@@ -16,6 +16,10 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
   for (const profile of Object.values(MAP_AGENT_PROFILES)) {
     assert.ok(['building-worker', 'research-worker', 'patrol', 'courier', 'monitoring', 'idle-ambient'].includes(profile.behaviorType))
     assert.ok(profile.renderScale >= 0.8 && profile.renderScale <= 0.92)
+    assert.ok(profile.mapVisibilityScale >= 1 && profile.mapVisibilityScale <= 1.12)
+    assert.ok(profile.mapTone.saturation >= 0.9 && profile.mapTone.saturation <= 1.1)
+    assert.ok(profile.mapTone.contrast >= 0.95 && profile.mapTone.contrast <= 1.1)
+    assert.ok(profile.mapTone.brightness >= 0.95 && profile.mapTone.brightness <= 1.1)
     assert.ok(profile.shadowScale >= 0.7 && profile.shadowScale <= 1)
     assert.ok(profile.movementSpeed > 0.7 && profile.movementSpeed <= 1.1)
     assert.ok(profile.homeNode.desktop && profile.homeNode.mobile)
@@ -29,6 +33,14 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
   }
+})
+
+test('map visibility correction lifts the Kowal without changing shared sprite normalization', () => {
+  const coder = getMapAgentProfile('coder')
+  const researcher = getMapAgentProfile('researcher')
+  assert.equal(coder.renderScale, 0.84)
+  assert.equal(coder.mapVisibilityScale, 1.1)
+  assert.equal(researcher.mapVisibilityScale, 1.03)
 })
 
 test('all twelve agents stay at valid interaction points while interior workers hide only beyond the threshold', () => {

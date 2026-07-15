@@ -42,6 +42,7 @@ function MapAgentSprite({
   ambientState = null,
   evidenceEventId = null,
   fetchPriority = 'auto',
+  renderSurface = 'map',
 }) {
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
@@ -53,6 +54,8 @@ function MapAgentSprite({
   const facingScale = getMapAgentFacingScale(direction)
   const bob = getAgentBob(normalizedState, frameIndex, animationPhase)
   const statusMarker = resolveMapAgentStatusMarker({ visualState: normalizedState, severity, signalState })
+  const mapTone = renderSurface === 'map' ? profile.mapTone : null
+  const markerContentTop = renderSize * (profile.markerContentTopByState[normalizedState] ?? (12 / 128))
   const className = [
     'map-agent-sprite',
     `is-${normalizedState}`,
@@ -78,6 +81,12 @@ function MapAgentSprite({
       '--map-agent-accent': profile.accent,
       '--map-agent-anchor-y-offset': `${profile.anchorCorrection.yPx}px`,
       '--map-agent-shadow-scale': profile.shadowScale,
+      '--map-agent-content-top': `${markerContentTop}px`,
+      '--agent-saturation': mapTone?.saturation,
+      '--agent-contrast': mapTone?.contrast,
+      '--agent-brightness': mapTone?.brightness,
+      '--agent-edge-radius': mapTone?.edgeRadiusPx != null ? `${mapTone.edgeRadiusPx}px` : undefined,
+      '--agent-edge-color': mapTone?.edgeColor,
       '--map-agent-world-x': `${clamp(Number(worldX) || 0, -10, 110)}cqw`,
       '--map-agent-world-y': `${clamp(Number(worldY) || 0, -10, 110)}cqh`,
     }}
@@ -93,6 +102,7 @@ function MapAgentSprite({
     data-lod={lod}
     data-map-agent-src={src}
     data-visual-mode="production"
+    data-render-surface={renderSurface}
     data-status-marker={statusMarker?.tone ?? 'none'}
     data-presentation-source={presentationSource ?? 'operational'}
     data-choreography-state={choreographyState ?? 'none'}

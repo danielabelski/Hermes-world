@@ -1,4 +1,5 @@
 import { BUILDING_INTERIOR_CONFIG } from './buildingEntryConfig.js'
+import { hasInteriorOwnershipEvidence } from './interiorOwnership.js'
 
 const freeze = Object.freeze
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, Number(value) || 0))
@@ -10,7 +11,7 @@ export const INTERIOR_AGENT_PLACEMENTS = freeze({
     route: freeze([freeze({ x: 50, y: 94 }), freeze({ x: 49, y: 82 }), freeze({ x: 42, y: 75 }), freeze({ x: 36, y: 68 })]),
   }),
   archive: freeze({
-    profileId: 'researcher', enabled: true, entranceThreshold: 0.62, scale: 1.18,
+    profileId: 'researcher', enabled: true, entranceThreshold: 0.62, scale: 1.24,
     route: freeze([freeze({ x: 50, y: 94 }), freeze({ x: 50, y: 80 }), freeze({ x: 51, y: 68 })]),
   }),
   // These rooms are visually complete, but their mapped agents still work at
@@ -68,15 +69,13 @@ export function deriveInteriorAgentPresence({ buildingId, presentation, tasks = 
   const config = BUILDING_INTERIOR_CONFIG[buildingId]
   const placement = INTERIOR_AGENT_PLACEMENTS[buildingId]
   if (!config || !placement?.enabled || !presentation) return null
-  if (['offline', 'stale'].includes(String(lifecycle.connection ?? '').toLowerCase())) return null
-  const taskDomainStale = ['stale', 'offline', 'error'].includes(String(lifecycle.domains?.tasks?.state ?? '').toLowerCase())
-  if (taskDomainStale && !presentation.evidenceEventId) return null
   if (presentation.profileId !== config.agentProfile || presentation.profileId !== placement.profileId) return null
   if (presentation.buildingId !== config.buildingId && !config.canonicalBuildingIds.includes(presentation.buildingId)) return null
   if (presentation.isInside !== true || !['enter', 'work', 'exit'].includes(presentation.journeyStage)) return null
 
   const task = findEvidenceTask(presentation, tasks, placement.profileId)
   if (!task || String(task.id) !== String(presentation.taskId)) return null
+  if (!hasInteriorOwnershipEvidence({ task, lifecycle, evidenceEventId: presentation.evidenceEventId })) return null
   const progress = interiorProgress(presentation, placement)
   const position = pointOnRoute(placement.route, progress)
   const stage = presentation.journeyStage === 'enter' ? 'entering' : presentation.journeyStage === 'exit' ? 'exiting' : 'station'

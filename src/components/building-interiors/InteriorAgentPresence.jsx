@@ -37,6 +37,7 @@ function InteriorAgentPresence({ buildingId, agent, tasks = [], alerts = [], lif
       presentationSource="operational-interior"
       evidenceEventId={presence.evidenceEventId}
       fetchPriority="high"
+      renderSurface="interior"
       onSelect={() => setExpanded((value) => !value)}
     />
     {expanded ? <aside className="interior-agent-card" style={{ '--agent-card-x': `${presence.x}cqw`, '--agent-card-y': `${presence.y}cqh` }} aria-live="polite">

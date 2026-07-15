@@ -55,7 +55,13 @@
   image-rendering: auto;
   transform: scaleX(var(--map-agent-facing));
   transform-origin: 50% 100%;
-  filter: saturate(0.88) contrast(0.96) brightness(0.98) sepia(0.02) drop-shadow(0 1px 1px rgb(3 8 8 / 0.38));
+  filter:
+    saturate(var(--agent-saturation, .88))
+    contrast(var(--agent-contrast, .96))
+    brightness(var(--agent-brightness, .98))
+    sepia(var(--agent-sepia, .02))
+    drop-shadow(0 1px 1px rgb(3 8 8 / .38))
+    drop-shadow(0 0 var(--agent-edge-radius, 0) var(--agent-edge-color, transparent));
   pointer-events: none;
 }
 
@@ -147,7 +153,7 @@
 .map-agent-sprite__marker {
   position: absolute;
   left: 50%;
-  top: -13px;
+  top: calc(var(--map-agent-content-top, 0px) - 13px);
   display: grid;
   place-items: center;
   width: 14px;

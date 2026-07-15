@@ -1,6 +1,8 @@
 import { resolveLivingAgentState } from './LivingWorldStateMachine.js'
 import { getAgentDefinition } from './data/agentDefinitions.js'
+import { getMapAgentProfile } from './data/mapAgentProfiles.js'
 import { getWorldLifeJourney } from './data/roadGraph.js'
+import { hasInteriorOwnershipEvidence } from './interiorOwnership.js'
 
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value))
 const point = (x, y) => ({ x: Number(x) || 0, y: Number(y) || 0 })
@@ -94,6 +96,11 @@ function genericPosition(agent, atWork) {
   return point((source?.x ?? 5) * 10, (source?.y ?? 5) * 10)
 }
 
+function mapPerspectiveScale(profileId, worldY) {
+  const perspective = 0.9 + clamp(Number(worldY) / 100, 0, 1) * 0.12
+  return perspective * getMapAgentProfile(profileId).mapVisibilityScale
+}
+
 function visualStateForPhase(phase) {
   if (['walking-to-work', 'walking-home', 'arriving'].includes(phase)) return 'walk'
   if (['working', 'carrying'].includes(phase)) return 'work'
@@ -110,6 +117,7 @@ function visualStateForPhase(phase) {
 
 function buildBaseModel({ agent, living, task, lifecycle }) {
   const explicitlyOffline = agent.presence === 'offline' || agent.online === false || agent.state === 'offline' || lifecycle?.connection === 'offline' || lifecycle?.phase === 'unavailable'
+  const evidenceEventId = task?.evidenceEventId ?? agent.lastEventId ?? null
   return {
     profileId: agent.profile,
     buildingId: living.buildingId ?? agent.buildingId,
@@ -131,7 +139,8 @@ function buildBaseModel({ agent, living, task, lifecycle }) {
     carryPackage: Boolean(living.carryPackage),
     buildingEffect: living.buildingEffect ?? 'idle',
     taskId: task?.id ?? null,
-    evidenceEventId: task?.evidenceEventId ?? agent.lastEventId ?? null,
+    evidenceEventId,
+    interiorOwnershipEligible: hasInteriorOwnershipEvidence({ task, lifecycle, evidenceEventId }),
     walkCycleMs: agent.profile === 'coder' ? 720 : agent.profile === 'prospecting' ? 520 : 620,
   }
 }
@@ -144,7 +153,7 @@ function resolveGenericModel({ base, agent, living }) {
     worldX: position.x,
     worldY: position.y,
     sortY: position.y,
-    baseScale: 0.9 + clamp(position.y / 100, 0, 1) * 0.12,
+    baseScale: mapPerspectiveScale(agent.profile, position.y),
   }
 }
 
@@ -183,7 +192,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     visualState = 'walk'
     isMoving = true
     occupancyMode = journey.occupancyMode
-    isInside = usesInteriorThreshold && routeProgress >= entranceThreshold
+    isInside = usesInteriorThreshold && base.interiorOwnershipEligible && routeProgress >= entranceThreshold
   } else if (['working', 'carrying'].includes(living.phase)) {
     const interaction = point((journey.interactionPoint?.x ?? journey.workPoint.x) * 10, (journey.interactionPoint?.y ?? journey.workPoint.y) * 10)
     sampled = { worldX: interaction.x, worldY: interaction.y, direction: 'se' }
@@ -191,7 +200,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'work'
     visualState = 'work'
     occupancyMode = journey.occupancyMode
-    isInside = usesInteriorThreshold
+    isInside = usesInteriorThreshold && base.interiorOwnershipEligible
   } else if (living.phase === 'observing') {
     sampled = { worldX: work.x, worldY: work.y, direction: 'se' }
     routeProgress = 1
@@ -209,7 +218,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
       visualState = 'walk'
       isMoving = true
       occupancyMode = journey.occupancyMode
-      isInside = usesInteriorThreshold && routeProgress < 1 - entranceThreshold
+      isInside = usesInteriorThreshold && base.interiorOwnershipEligible && routeProgress < 1 - entranceThreshold
     } else {
       sampled = { worldX: entrance.x, worldY: entrance.y, direction: 'se' }
       routeProgress = 1
@@ -255,7 +264,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     isMoving,
     isInside,
     occupancyMode,
-    baseScale: 0.9 + clamp(sampled.worldY / 100, 0, 1) * 0.12,
+    baseScale: mapPerspectiveScale(agent.profile, sampled.worldY),
   }
 }
 

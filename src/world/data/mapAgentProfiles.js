@@ -22,18 +22,48 @@ const SCALE_BY_PROFILE = freeze({
   synthesizer: 0.88,
   verifier: 0.84,
 })
+// `renderScale` normalizes the source canvases on every surface. This second
+// value is deliberately map-only and compensates for the perceived area of a
+// tiny silhouette without inflating the same sprite inside a cinematic room.
+const MAP_VISIBILITY_SCALE_BY_PROFILE = freeze({
+  coder: 1.1,
+  komandos: 1.04,
+  orchestrator: 1.06,
+  outreach: 1.07,
+  researcher: 1.03,
+})
+const MAP_TONE_BY_PROFILE = freeze({
+  default: freeze({ saturation: 0.94, contrast: 1, brightness: 1.01 }),
+  coder: freeze({ saturation: 1.02, contrast: 1.06, brightness: 1.035, edgeRadiusPx: 0.7, edgeColor: 'rgb(247 213 159 / .24)' }),
+  developer: freeze({ saturation: 0.96, contrast: 1.01, brightness: 1.02 }),
+  devops: freeze({ saturation: 0.98, contrast: 1.04, brightness: 1.04 }),
+  komandos: freeze({ saturation: 0.98, contrast: 1.04, brightness: 1.04 }),
+  orchestrator: freeze({ saturation: 1, contrast: 1.05, brightness: 1.05 }),
+  outreach: freeze({ saturation: 1, contrast: 1.03, brightness: 1.03 }),
+  prospecting: freeze({ saturation: 0.98, contrast: 1.04, brightness: 1.04 }),
+  researcher: freeze({ saturation: 1, contrast: 1.04, brightness: 1.04, edgeRadiusPx: 0.55, edgeColor: 'rgb(244 211 146 / .18)' }),
+  reviewer: freeze({ saturation: 0.96, contrast: 1.02, brightness: 1.02 }),
+  synthesizer: freeze({ saturation: 1.02, contrast: 1.04, brightness: 1.03 }),
+  verifier: freeze({ saturation: 1, contrast: 1.03, brightness: 1.03 }),
+})
+const MARKER_CONTENT_TOP_BY_PROFILE = freeze({
+  coder: freeze({ alert: 26 / 128, blocked: 26 / 128, stuck: 26 / 128 }),
+  devops: freeze({ alert: 24 / 128, blocked: 24 / 128, stuck: 24 / 128 }),
+  researcher: freeze({ work: 30 / 128, thinking: 30 / 128, observe: 30 / 128, alert: 18 / 128, blocked: 18 / 128, stuck: 18 / 128 }),
+  prospecting: freeze({ work: 41 / 128, alert: 43 / 128, blocked: 43 / 128, stuck: 43 / 128 }),
+})
 const SHADOW_BY_PROFILE = freeze({
-  default: 0.72,
+  default: 0.76,
   coder: 1,
   developer: 0.82,
-  devops: 0.84,
+  devops: 0.88,
   komandos: 0.92,
-  orchestrator: 0.8,
-  outreach: 0.74,
+  orchestrator: 0.84,
+  outreach: 0.78,
   prospecting: 0.86,
   researcher: 0.9,
   reviewer: 0.8,
-  synthesizer: 0.74,
+  synthesizer: 0.8,
   verifier: 0.84,
 })
 const BEFORE_NORMALIZATION_SCALE_BY_PROFILE = freeze({
@@ -73,6 +103,9 @@ const createProfile = (id) => {
     isFallback: !hasUniqueSprite,
     behaviorType: BEHAVIOR_BY_PROFILE[id],
     renderScale: SCALE_BY_PROFILE[id] ?? 0.84,
+    mapVisibilityScale: MAP_VISIBILITY_SCALE_BY_PROFILE[id] ?? 1,
+    mapTone: MAP_TONE_BY_PROFILE[id] ?? MAP_TONE_BY_PROFILE.default,
+    markerContentTopByState: MARKER_CONTENT_TOP_BY_PROFILE[id] ?? freeze({}),
     beforeNormalizationScale: BEFORE_NORMALIZATION_SCALE_BY_PROFILE[id] ?? 1,
     anchorCorrection: freeze({ x: 0, yPx: 0 }),
     shadowScale: SHADOW_BY_PROFILE[id] ?? 0.8,
