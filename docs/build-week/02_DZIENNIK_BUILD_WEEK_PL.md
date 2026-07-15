@@ -397,3 +397,17 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Korekta: bez powiększania sprite’a i bez halo dodano we wnętrzu Kuźni ten sam subtelny profil kontrastu/krawędzi, który chroni jego ciężką metalową sylwetkę na mapie.
 - Walidacja: testy kontraktu wnętrz 11/11 PASS; lint PASS; `git diff --check` PASS; build PASS, 869 modułów, 3,29 s. Lazy CSS 12,76 kB / 3,22 kB gzip; main JS bez zmiany 412,55 kB / 126,26 kB gzip.
 - Commit: `40282ed` (`fix(build-week): seat Kowal clearly inside the Forge`). Produkcja nietknięta.
+
+## BW-2026-07-15-030 — Kontrolowany przegląd 12 agentów we wnętrzach
+
+- Czas Europe/Warsaw: sesja rozpoczęta 2026-07-15 10:54; blok przeglądu obsady domknięty 12:45.
+- Czas UTC: sesja rozpoczęta 2026-07-15 08:54; blok przeglądu obsady domknięty 10:45.
+- Branch/startowy HEAD: `build-week/hermes-world` / `0370be5fd70cf72247a040ebd78e14fd9e90b6d9`.
+- Problem odbiorczy: prawdziwy tryb wnętrza poprawnie pokazywał tylko agenta z potwierdzonym ownership task/evidence, dlatego autor nie miał jednego miejsca do percepcyjnej oceny rozmiaru, anchoru, kontrastu i pozy wszystkich 12 sprite’ów.
+- Implementacja: dodano jawnie developerski `?demo=1&interiorReview=1`. Strzałki przełączają 12/12 ról, automatycznie otwierając jedną z pięciu istniejących płyt wnętrz; `IDLE/PRACA` pozwala porównać najważniejsze klatki. Tryb korzysta z tego samego `MapAgentSprite`, assetów, foot anchoru i cienia co świat.
+- Granica prawdy: review nie tworzy taska, eventu, `evidenceEventId`, `Working`, `Success`, nie zmienia FSM ani liczników. Zwykłe demo i runtime nadal korzystają wyłącznie z `InteriorAgentPresence` oraz potwierdzonego ownership. Rycerz jest jawnie oznaczony jako przegląd w zastępczej sali Cytadeli, ponieważ osobne wnętrze ochrony nie istnieje.
+- Wydajność: po pierwszym teście usunięto kosztowny `backdrop-filter`; panel QA używa statycznego półprzezroczystego tła. Nie dodano rasterów ani nowego renderera per postać.
+- Walidacja: `npm.cmd test` PASS 115/115; lint PASS; `validate:world-life` PASS; build PASS (Vite 8.0.16). Main JS 414,63 kB / 126,97 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy CSS 14,19 kB / 3,57 kB gzip.
+- Commit funkcjonalny: `32d93f0` (`feat(build-week): add interior roster review`).
+- Odbiór wizualny: **MANUAL ACTION REQUIRED** na telefonie; tryb powstał właśnie po to, aby autor mógł wydać GL/RL osobno dla każdej roli.
+- Produkcja Correct v1: nietknięta.

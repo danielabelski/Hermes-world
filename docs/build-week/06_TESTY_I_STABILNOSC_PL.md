@@ -16,6 +16,21 @@
 - Automatyczne sterowanie wbudowaną przeglądarką: **FAIL — narzędzie**, błąd inicjalizacji kontrolera `Cannot redefine property: process`; nie jest to błąd aplikacji. Desktop został zaakceptowany przez autora; finalny telefon 393×852: **MANUAL ACTION REQUIRED**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-022 — Macierz QA 12/12 agentów we wnętrzach
+
+- Czas: 2026-07-15 12:45 Europe/Warsaw / 2026-07-15 10:45 UTC.
+- Branch/commit: `build-week/hermes-world` / `32d93f0`.
+- Pokrycie rosteru: **PASS 12/12** — każdy kanoniczny profil występuje dokładnie raz, bez duplikatów i fallbacków.
+- Bezpieczne pozycje: **PASS** — każda pozycja korzysta z istniejącej płyty wnętrza, zakresów 25–75 cqw / 55–88 cqh i skali 1,10–1,30.
+- Truth boundary: **PASS** — review jest aktywne wyłącznie dla `demo=1&interiorReview=1`; nie przechodzi przez operational ownership i nie emituje stanów/eventów.
+- Pierwszy przebieg: **FAIL → FIXED** — test wydajności wykrył `backdrop-filter`; filtr usunięto przed ponowną walidacją.
+- `npm.cmd test`: **PASS 115/115**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, main JS 414,63 kB / 126,97 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy CSS 14,19 kB / 3,57 kB gzip.
+- Percepcyjna ocena 393×852: **MANUAL ACTION REQUIRED**.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-BW-019 — Wydajność wejścia i evidence-backed interior agents
 
 - Czas: 2026-07-15 04:56 Europe/Warsaw / 2026-07-15 02:56 UTC.

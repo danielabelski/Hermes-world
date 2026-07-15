@@ -60,3 +60,12 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Automatyczna walidacja: 112/112 testów, lint, world-life validator, build i truth audit PASS. Finalne estetyczne GL/RL 393×852 pozostaje ręczne z powodu błędu integracji przeglądarki Codexa.
 - Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
 - Po GL: wykonać pełny live Hermes E2E z realnym `evidenceEventId`. Kolejne wnętrza aktywować wyłącznie po dowiedzeniu prawdziwej trasy; nie przenosić zmian na produkcję bez osobnej decyzji autora.
+
+## Aktualizacja handoffu — 2026-07-15 12:45 Europe/Warsaw
+
+- Funkcjonalny HEAD: `32d93f0`; branch `build-week/hermes-world`.
+- Do manualnego GL/RL dodano demo-only macierz 12/12 agentów we wnętrzach: `?demo=1&interiorReview=1`. Strzałki przełączają role i pokoje, a `IDLE/PRACA` porównuje dwa podstawowe stany.
+- Tryb QA nie emituje tasków, eventów, evidence ani stanów operacyjnych. Prawdziwy renderer wnętrz nadal wymaga dowiedzionego ownership.
+- Walidacja: 115/115 testów, lint, world-life validator i build PASS; pierwszy fail kosztownego `backdrop-filter` został naprawiony przed checkpointem.
+- **Obowiązkowy krok po GL agentów we wnętrzach:** utworzyć pełny off-device recovery package do Google Drive. Pakiet ma zawierać źródła i assety, komplet historii/branchy/tagów jako `git bundle --all`, aktualną dokumentację Build Week, manifest wersji, sumy SHA-256 i krótką instrukcję odtworzenia. Nie umieszczać sekretów, prywatnych `.env`, cache ani `node_modules`; zależności odtwarzać deterministycznie z lockfile. Zweryfikować archiwum próbą listowania i checksumą przed przekazaniem autorowi.
+- Produkcja Correct v1 pozostaje nietknięta; backup wykonać dopiero po percepcyjnym GL/RL i finalnych mikroregulacjach rosteru.

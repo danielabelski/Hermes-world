@@ -157,3 +157,13 @@
 - Decyzja człowieka: Kowal ma być bardziej widoczny, ale nie dominować; najpierw dopracować go jako wzorzec, następnie cały roster, bez fałszywych wnętrz.
 - Konsekwencje: Kowal ma korektę 1.10 tylko na mapie; Uczony i kilka smukłych ról mają mniejsze korekty. Wnętrza i routing nie zmieniają skali logicznej ani pozycji stóp.
 - Możliwość zmiany: po GL autora na realnym telefonie dopuszczalne są wyłącznie mikroregulacje w centralnej macierzy, bez zmian geometrii i FSM.
+
+## DEC-BW-018 — Jawny roster review zamiast fałszywej obecności operacyjnej
+
+- Problem: truth-gated wnętrza słusznie nie pokazują agenta bez taska/evidence, ale autor potrzebuje porównać wszystkie 12 assetów we wnętrzach przed GL.
+- Warianty: wymuszać fake taski; tworzyć osobne screenshoty; dodać jawny, parametryzowany tryb percepcyjnego QA korzystający z produkcyjnego renderera.
+- Decyzja: `interiorReview=1` działa tylko razem z `demo=1`, pokazuje jedną wybraną postać, jej nazwę i pozycję testową oraz pozwala przełączyć `IDLE/PRACA`. Nie dotyka operational state ani evidence contract.
+- Wkład Codexa: centralna macierz 12/12, jeden przełącznik pomieszczeń, test pokrycia i zakresów, usunięcie kosztownego `backdrop-filter` po pierwszym failu.
+- Decyzja człowieka: wszystkie postacie muszą zostać ocenione we wnętrzach pod kątem rozmiaru, wyglądu, pozy i dopasowania; sam Kowal nie wystarcza.
+- Konsekwencje: możliwy jest szybki GL/RL całego rosteru bez udawania, że agenci faktycznie pracują wewnątrz. Zwykłe demo i runtime pozostają bez zmian.
+- Możliwość zmiany: po GL tryb może pozostać dev-only lub zostać usunięty bez wpływu na renderer operacyjny.
