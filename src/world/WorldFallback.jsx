@@ -181,6 +181,8 @@ export default function WorldFallback() {
         tokenRiver={tokenRiver}
         crons={crons}
         modelSources={modelSources}
+        layout={mapLayout}
+        onAgentSelect={(profileId) => selectEntity('agent', profileId)}
         onExitComplete={closeInterior}
         returnFocusRef={activeEntryRef}
       />

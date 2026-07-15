@@ -39,7 +39,12 @@ const payload = (status, completedAt = null) => ({
 })
 const provenance = { source: 'live', connection: 'online', domains: {} }
 
-const first = createWorldSnapshot(payload('running'), null, () => origin, provenance)
+const initialRunning = createWorldSnapshot(payload('running'), null, () => origin, provenance)
+assert.equal(initialRunning.tasks[0].motionEvidence, 'initial-state')
+assert.equal(resolveLivingAgentState({ agent: initialRunning.agents[0], tasks: initialRunning.tasks, now: origin + 100 }).phase, 'carrying')
+
+const idleBaseline = createWorldSnapshot(payload('todo'), null, () => origin - 1_000, provenance)
+const first = createWorldSnapshot(payload('running'), idleBaseline, () => origin, provenance)
 const firstTask = first.tasks[0]
 const coder = first.agents[0]
 const journey = WORLD_LIFE_JOURNEYS.coder
@@ -63,4 +68,4 @@ const blockedPresentation = resolveMapAgentPresentation({ agent: blocked.agents[
 assert.equal(blockedPresentation.visualState, 'stuck')
 assert.ok(Number.isFinite(blockedPresentation.worldX) && Number.isFinite(blockedPresentation.worldY))
 
-console.log('World Life validation passed: journeys, polling persistence, FSM cycle, stuck state and portrait/map separation.')
+console.log('World Life validation passed: evidence-backed journeys, initial-state safety, polling persistence, FSM cycle, stuck state and portrait/map separation.')

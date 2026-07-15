@@ -11,6 +11,7 @@ import sanctumPoolStrip from '../../assets/building-interior-effects/sanctum-int
 import watcherArmillaryStrip from '../../assets/building-interior-effects/watcher-interior-armillary-calibration-strip.runtime.png'
 import watcherLensScanStrip from '../../assets/building-interior-effects/watcher-interior-lens-scan-strip.runtime.png'
 import { CINEMATIC_INTERIOR_PLATES } from './interiorPlateManifest.js'
+import InteriorAgentPresence from './InteriorAgentPresence.jsx'
 
 const freeze = Object.freeze
 
@@ -44,7 +45,7 @@ function SpriteStrip({ src }) {
   return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" /></span>
 }
 
-function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null }) {
+function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null, agent, tasks, alerts, lifecycle, layout, onAgentDrillDown }) {
   const [plateReady, setPlateReady] = useState(false)
   const scene = CINEMATIC_INTERIOR_PLATES[buildingId]
   if (!scene) return null
@@ -64,7 +65,7 @@ function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], e
     '--forge-smoke-opacity': 0.28 + telemetryLoad * 0.18,
   }
 
-  return <div className={`cinematic-interior cinematic-interior--${buildingId}${plateReady ? ' is-plate-ready' : ''}`} data-phase={phase} data-evidence-event={evidenceEventId ? 'true' : 'false'} style={style} aria-hidden="true">
+  return <div className={`cinematic-interior cinematic-interior--${buildingId}${plateReady ? ' is-plate-ready' : ''}`} data-phase={phase} data-evidence-event={evidenceEventId ? 'true' : 'false'} style={style}>
     <div className="cinematic-interior__backdrop" />
     <div className="cinematic-interior__frame">
       <img className="cinematic-interior__plate" src={scene.src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" onLoad={() => setPlateReady(true)} />
@@ -74,6 +75,7 @@ function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], e
           {effect.strip ? <SpriteStrip src={effect.strip} /> : null}
         </span>)}
       </div>
+      <InteriorAgentPresence buildingId={buildingId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onDrillDown={onAgentDrillDown} />
       <div className="cinematic-interior__grade" />
     </div>
   </div>

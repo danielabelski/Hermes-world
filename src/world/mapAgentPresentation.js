@@ -131,6 +131,7 @@ function buildBaseModel({ agent, living, task, lifecycle }) {
     carryPackage: Boolean(living.carryPackage),
     buildingEffect: living.buildingEffect ?? 'idle',
     taskId: task?.id ?? null,
+    evidenceEventId: task?.evidenceEventId ?? agent.lastEventId ?? null,
     walkCycleMs: agent.profile === 'coder' ? 720 : agent.profile === 'prospecting' ? 520 : 620,
   }
 }

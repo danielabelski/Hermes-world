@@ -16,7 +16,7 @@ const INTERIOR_META = Object.freeze({
 
 const formatMetric = ({ value, suffix = '' }) => value === null || value === undefined ? '—' : `${Math.round(value)}${suffix}`
 
-export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, onExitComplete, returnFocusRef }) {
+export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, layout, onExitComplete, onAgentSelect, returnFocusRef }) {
   const [closing, setClosing] = useState(false)
   const sceneRef = useRef(null)
   const backButtonRef = useRef(null)
@@ -27,6 +27,10 @@ export default function BuildingInteriorScene({ buildingId, system, lifecycle, a
   const detail = presentation?.phase === 'working' ? meta?.working : presentation?.phase === 'warning' ? 'Lokalny proces wymaga uwagi.' : presentation?.phase === 'critical' ? 'Lokalny incydent wymaga szybkiej reakcji.' : presentation?.phase === 'offline' ? 'Brak aktualnego połączenia z Hermes runtime.' : meta?.idle
 
   const requestClose = useCallback(() => setClosing(true), [])
+  const handleAgentDrillDown = useCallback((profileId) => {
+    onAgentSelect?.(profileId)
+    requestClose()
+  }, [onAgentSelect, requestClose])
   useEffect(() => {
     const appRoot = document.getElementById('root')
     const returnFocusTarget = returnFocusRef?.current
@@ -63,7 +67,7 @@ export default function BuildingInteriorScene({ buildingId, system, lifecycle, a
       <div><p>{meta.eyebrow}</p><h1 id={`${buildingId}-interior-title`}>{config.title}</h1></div>
       <span className="building-interior__phase" data-phase={presentation.phase}>{phaseLabel}</span>
     </header>
-    <CinematicInteriorPlate buildingId={buildingId} phase={presentation.phase} metrics={presentation.metrics} evidenceEventId={presentation.evidenceEventId} />
+    <CinematicInteriorPlate buildingId={buildingId} phase={presentation.phase} metrics={presentation.metrics} evidenceEventId={presentation.evidenceEventId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onAgentDrillDown={handleAgentDrillDown} />
     <div className="building-interior__readout">
       <div className="building-interior__summary"><span className="building-interior__status-dot" data-phase={presentation.phase} aria-hidden="true" /><div><strong>{phaseLabel}</strong><p>{detail}</p></div></div>
       <dl className="building-interior__metrics">{presentation.metrics.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{formatMetric(item)}</dd></div>)}</dl>

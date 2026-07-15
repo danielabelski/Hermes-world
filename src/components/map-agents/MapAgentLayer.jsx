@@ -15,7 +15,7 @@ function MapAgentLayer({
   layer = 'ground',
 }) {
   const sorted = selectMapAgentRenderSet(
-    presentations.filter((model) => Number.isFinite(Number(model?.worldX)) && Number.isFinite(Number(model?.worldY))),
+    presentations.filter((model) => !model.isInside && Number.isFinite(Number(model?.worldX)) && Number.isFinite(Number(model?.worldY))),
     selectedId,
   )
 
@@ -23,7 +23,7 @@ function MapAgentLayer({
     className={`map-agent-layer map-agent-layer--${layer}`}
     data-map-agent-count={sorted.length}
     data-culled-count={Math.max(0, presentations.length - sorted.length)}
-    data-inside-count={sorted.filter((model) => model.isInside).length}
+    data-inside-count={presentations.filter((model) => model.isInside).length}
     aria-label="Agenci na mapie"
   >
     {sorted.map((model, index) => {

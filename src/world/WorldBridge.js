@@ -86,8 +86,10 @@ function normaliseTask(task, previousTask = null, observedAt = Date.now()) {
   const priority = String(task.priority ?? 'normal').toLowerCase();
   const status = String(task.status ?? 'todo').toLowerCase();
   const previousStatus = previousTask?.status ?? null;
-  const beginsJourney = status === 'running' && previousStatus !== 'running';
-  const completesJourney = status === 'done' && previousStatus !== 'done';
+  // Only a freshly observed edge may replay motion. The first snapshot is a
+  // statement of current location, not proof that a transition started now.
+  const beginsJourney = Boolean(previousTask) && status === 'running' && previousStatus !== 'running';
+  const completesJourney = Boolean(previousTask) && status === 'done' && previousStatus !== 'done';
   const walkDurationMs = journey?.walkDurationMs ?? 5_800;
   const arriveDurationMs = journey?.arriveDurationMs ?? 700;
   const successDurationMs = journey?.successDurationMs ?? 1_800;
@@ -123,6 +125,8 @@ function normaliseTask(task, previousTask = null, observedAt = Date.now()) {
     visualCompletedAt,
     returnUntil,
     journeyId: journey?.profile ?? null,
+    evidenceEventId: task.evidenceEventId ?? task.event_id ?? task.last_event_id ?? previousTask?.evidenceEventId ?? null,
+    motionEvidence: beginsJourney || completesJourney ? 'observed-edge' : task.started_at || task.completed_at ? 'backend-timestamp' : 'initial-state',
   };
 }
 

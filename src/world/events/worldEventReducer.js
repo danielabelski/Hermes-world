@@ -61,6 +61,9 @@ export function applyWorldEventToSnapshot(snapshot, event) {
     startedAt: previousTask.startedAt ?? event.occurredAt,
     transitionStartedAt: previousTask.transitionStartedAt ?? event.occurredAt,
     updatedAt: event.occurredAt,
+    buildingId: event.buildingId ?? previousTask.buildingId ?? definition.buildingId,
+    evidenceEventId: event.eventId,
+    runId: event.runId ?? previousTask.runId ?? null,
     ...(operationalState === 'success' ? { completedAt: event.occurredAt, visualCompletedAt: event.occurredAt } : {}),
   }
 

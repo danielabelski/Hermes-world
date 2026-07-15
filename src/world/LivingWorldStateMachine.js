@@ -80,7 +80,13 @@ export function resolveLivingAgentState({ agent, tasks = [], alerts = [], now = 
     return Object.freeze({ phase: 'observing', task, alert, visible: true, location: 'observation-point', buildingEffect: journey?.workEffect ?? 'scout-signal', carryPackage: false })
   }
   if (task?.status === 'done') {
-    const completedAt = asTime(task.visualCompletedAt ?? task.completedAt ?? task.completed_at, now)
+    const completionEvidence = task.visualCompletedAt ?? task.completedAt ?? task.completed_at
+    // A historical done item without a trustworthy timestamp is resting.
+    // Falling back to now would fabricate a fresh Success on first ingest.
+    if (!completionEvidence) {
+      return Object.freeze({ phase: 'resting', task, visible: true, location: 'home', buildingEffect: 'idle', carryPackage: false })
+    }
+    const completedAt = asTime(completionEvidence, now)
     const successWindow = journey?.successDurationMs ?? SUCCESS_WINDOW_MS
     const returnUntil = asTime(task.returnUntil, completedAt + (journey?.walkDurationMs ?? RETURN_WINDOW_MS))
     if (now - completedAt < successWindow) {

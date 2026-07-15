@@ -44,6 +44,8 @@ test('reduces a real Watcher run into route, observation, success and return', (
   const success = normalizeHermesWorldEvent(raw(12, 'done'))
 
   const outbound = applyWorldEventToSnapshot(base, assigned)
+  assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).evidenceEventId, assigned.eventId)
+  assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).buildingId, 'scout-lodge')
   const outboundAgent = outbound.agents.find((agent) => agent.profile === 'prospecting')
   const outboundModel = resolveMapAgentPresentation({ agent: { ...outboundAgent, state: 'walking' }, tasks: outbound.tasks, now: Date.parse(at) + 2_000 })
   assert.equal(outboundModel.visualState, 'walk')

@@ -38,10 +38,16 @@ describe('building entry config', () => {
   it('renders every main interior through one cinematic plate contract', () => {
     const scene = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.jsx', import.meta.url), 'utf8')
     const plates = readFileSync(new URL('../components/building-interiors/CinematicInteriorPlate.jsx', import.meta.url), 'utf8')
+    const presence = readFileSync(new URL('../components/building-interiors/InteriorAgentPresence.jsx', import.meta.url), 'utf8')
+    const layer = readFileSync(new URL('../components/map-agents/MapAgentLayer.jsx', import.meta.url), 'utf8')
     const manifest = readFileSync(new URL('../components/building-interiors/interiorPlateManifest.js', import.meta.url), 'utf8')
     const styles = readFileSync(new URL('../components/building-interiors/BuildingInteriorScene.css', import.meta.url), 'utf8')
     const world = readFileSync(new URL('./WorldFallback.jsx', import.meta.url), 'utf8')
     assert.equal((scene.match(/<CinematicInteriorPlate/g) ?? []).length, 1)
+    assert.match(plates, /<InteriorAgentPresence/)
+    assert.match(presence, /deriveInteriorAgentPresence/)
+    assert.match(presence, /<MapAgentSprite/)
+    assert.match(layer, /!model\.isInside/)
     assert.doesNotMatch(scene, /RoomDepth|ForgeChamber|archive-chamber|citadel-chamber|watcher-chamber|sanctum-chamber/)
     const plateAssets = {
       forge: 'forge-execution-hall.jpg',

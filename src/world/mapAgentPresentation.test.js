@@ -384,6 +384,27 @@ test('living-world building effects prefer a real active task over stale complet
   assert.equal(state.buildingEffect, 'forge-fire')
 })
 
+test('initial runtime snapshots do not fabricate a fresh journey or Success', () => {
+  const observedAt = START
+  const payload = {
+    profiles: { profiles: [{ name: 'coder', is_active: true }] },
+    tasks: { tasks: [
+      { id: 'already-running', title: 'Existing build', assignee: 'coder', status: 'running' },
+      { id: 'historical-done', title: 'Old build', assignee: 'researcher', status: 'done' },
+    ] },
+    logs: { lines: [] }, crons: { jobs: [] }, cronHistory: { completions: [] }, sessions: { sessions: [] }, skills: { skills: [] }, models: { groups: [] },
+  }
+  const snapshot = createWorldSnapshot(payload, null, () => observedAt, { source: 'live', connection: 'online' })
+  const runningTask = snapshot.tasks.find((item) => item.id === 'already-running')
+  const historicalTask = snapshot.tasks.find((item) => item.id === 'historical-done')
+  assert.equal(runningTask.transitionStartedAt, null)
+  assert.equal(runningTask.motionEvidence, 'initial-state')
+  assert.equal(historicalTask.visualCompletedAt, null)
+  assert.equal(historicalTask.motionEvidence, 'initial-state')
+  assert.equal(resolveLivingAgentState({ agent: snapshot.agents.find((item) => item.profile === 'coder'), tasks: [runningTask], now: observedAt }).phase, 'carrying')
+  assert.equal(resolveLivingAgentState({ agent: { profile: 'researcher' }, tasks: [historicalTask], now: observedAt }).phase, 'resting')
+})
+
 test('mobile observability fixtures expose waiting, stuck and error as distinct agent states', () => {
   const observedAt = Date.UTC(2026, 6, 10, 7, 15, 0)
   const snapshotFor = (scenario) => createWorldSnapshot(
