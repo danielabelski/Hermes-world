@@ -57,8 +57,26 @@ describe('building entry config', () => {
     }
     assert.match(plates, /plateReady \? EFFECTS\[buildingId\]/)
     assert.match(plates, /fetchPriority="low"/)
-    assert.match(plates, /building-interior-effects\/forge-interior-fire-strip\.runtime\.png/)
-    assert.doesNotMatch(plates, /world-effects\/forge-fire-strip\.runtime\.png/)
+    const interiorEffects = [
+      'archive-interior-codex-armillary-strip.runtime.png',
+      'archive-interior-shelf-ingestion-strip.runtime.png',
+      'citadel-interior-command-table-strip.runtime.png',
+      'citadel-interior-core-charge-strip.runtime.png',
+      'forge-interior-fire-strip.runtime.png',
+      'forge-interior-impact-sparks-strip.runtime.png',
+      'forge-interior-smoke-strip.runtime.png',
+      'sanctum-interior-energy-column-strip.runtime.png',
+      'sanctum-interior-pool-circulation-strip.runtime.png',
+      'watcher-interior-armillary-calibration-strip.runtime.png',
+      'watcher-interior-lens-scan-strip.runtime.png',
+    ]
+    for (const asset of interiorEffects) {
+      assert.equal((plates.match(new RegExp(asset.replaceAll('.', '\\.'), 'g')) ?? []).length, 1)
+    }
+    assert.equal((plates.match(/assets\/building-interior-effects\//g) ?? []).length, interiorEffects.length)
+    assert.doesNotMatch(plates, /assets\/world-effects\//)
+    assert.doesNotMatch(plates, /artifacts\/interior-vfx|chromakey|rgba\.png/)
+    assert.doesNotMatch(plates, /rings|conduit|lamps-left|lamps-right|beam|shelves-left|shelves-right|floor-path|watcher-base|cron-dial|floor-channels|vats-left|vats-right|canopy|production-line|coolant|machinery/)
     assert.match(world, /requestIdleCallback\(warmInteriorCode/)
     assert.match(world, /preloadInteriorPlate\(entry\.buildingId\)/)
     assert.match(styles, /@media\(max-width:700px\)\{\.cinematic-interior__backdrop\{display:none\}\}/)
@@ -66,6 +84,7 @@ describe('building entry config', () => {
     assert.match(styles, /aspect-ratio:4\/5/)
     assert.match(styles, /prefers-reduced-motion:reduce/)
     assert.doesNotMatch(styles, /filter\s*:|backdrop-filter\s*:|blur\s*\(/)
+    assert.doesNotMatch(styles, /citadel-rings|citadel-conduit|archive-beam|archive-floor-path|watcher-base|watcher-cron-dial|sanctum-floor-channels|sanctum-vats|forge-production-line|forge-coolant|forge-machinery/)
     assert.doesNotMatch(styles, /interior-depth|forge-chamber|archive-chamber|citadel-chamber|watcher-chamber|sanctum-chamber/)
   })
 })

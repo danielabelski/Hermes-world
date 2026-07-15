@@ -9,3 +9,8 @@ data/*.json
 # Local, unredacted Build Week evidence. Keep hashes and redacted copies in Git,
 # never the private originals prepared for jury-facing repository access.
 docs/build-week/evidence/private-originals/
+
+# Reproducible local intermediates and visual QA montages. Raw chroma sources,
+# canonical strips and lightweight runtime exports remain tracked.
+artifacts/interior-vfx/alpha/
+artifacts/interior-vfx/review/

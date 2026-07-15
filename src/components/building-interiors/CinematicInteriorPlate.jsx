@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import archiveRunesStrip from '../../assets/world-effects/archive-data-runes-strip.runtime.png'
-import archiveWindowsStrip from '../../assets/world-effects/archive-window-glow-strip.runtime.png'
-import citadelCoreStrip from '../../assets/world-effects/citadel-core-pulse-strip.runtime.png'
-import citadelEnergyStrip from '../../assets/world-effects/citadel-energy-wave-strip.runtime.png'
-import citadelRuneStrip from '../../assets/world-effects/citadel-rune-ring-strip.runtime.png'
-import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.runtime.png'
-import forgeSparksStrip from '../../assets/world-effects/forge-sparks-strip.runtime.png'
-import sanctumOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
-import watcherLensStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
-import watcherScanStrip from '../../assets/world-effects/watcher-scan-beam-strip.runtime.png'
+import archiveCodexStrip from '../../assets/building-interior-effects/archive-interior-codex-armillary-strip.runtime.png'
+import archiveShelfStrip from '../../assets/building-interior-effects/archive-interior-shelf-ingestion-strip.runtime.png'
+import citadelCommandTableStrip from '../../assets/building-interior-effects/citadel-interior-command-table-strip.runtime.png'
+import citadelCoreStrip from '../../assets/building-interior-effects/citadel-interior-core-charge-strip.runtime.png'
 import forgeInteriorFireStrip from '../../assets/building-interior-effects/forge-interior-fire-strip.runtime.png'
+import forgeImpactSparksStrip from '../../assets/building-interior-effects/forge-interior-impact-sparks-strip.runtime.png'
+import forgeInteriorSmokeStrip from '../../assets/building-interior-effects/forge-interior-smoke-strip.runtime.png'
+import sanctumEnergyColumnStrip from '../../assets/building-interior-effects/sanctum-interior-energy-column-strip.runtime.png'
+import sanctumPoolStrip from '../../assets/building-interior-effects/sanctum-interior-pool-circulation-strip.runtime.png'
+import watcherArmillaryStrip from '../../assets/building-interior-effects/watcher-interior-armillary-calibration-strip.runtime.png'
+import watcherLensScanStrip from '../../assets/building-interior-effects/watcher-interior-lens-scan-strip.runtime.png'
 import { CINEMATIC_INTERIOR_PLATES } from './interiorPlateManifest.js'
 
 const freeze = Object.freeze
@@ -17,44 +17,24 @@ const freeze = Object.freeze
 const EFFECTS = freeze({
   citadel: freeze([
     freeze({ id: 'core', strip: citadelCoreStrip }),
-    freeze({ id: 'rings', strip: citadelRuneStrip }),
-    freeze({ id: 'table' }),
-    freeze({ id: 'conduit', strip: citadelEnergyStrip }),
-    freeze({ id: 'lamps-left' }),
-    freeze({ id: 'lamps-right' }),
+    freeze({ id: 'table', strip: citadelCommandTableStrip }),
   ]),
   archive: freeze([
-    freeze({ id: 'codex' }),
-    freeze({ id: 'armillary', strip: archiveRunesStrip }),
-    freeze({ id: 'beam' }),
-    freeze({ id: 'shelves-left', strip: archiveWindowsStrip }),
-    freeze({ id: 'shelves-right', strip: archiveWindowsStrip }),
-    freeze({ id: 'floor-path' }),
+    freeze({ id: 'codex', strip: archiveCodexStrip }),
+    freeze({ id: 'shelf-ingestion', strip: archiveShelfStrip }),
   ]),
   watcher: freeze([
-    freeze({ id: 'lens', strip: watcherLensStrip }),
-    freeze({ id: 'scan', strip: watcherScanStrip }),
-    freeze({ id: 'armillary' }),
-    freeze({ id: 'base' }),
-    freeze({ id: 'cron-dial' }),
+    freeze({ id: 'lens-scan', strip: watcherLensScanStrip }),
+    freeze({ id: 'armillary', strip: watcherArmillaryStrip }),
   ]),
   sanctum: freeze([
-    freeze({ id: 'pool' }),
-    freeze({ id: 'orbit', strip: sanctumOrbitStrip }),
-    freeze({ id: 'energy-column' }),
-    freeze({ id: 'floor-channels' }),
-    freeze({ id: 'vats-left' }),
-    freeze({ id: 'vats-right' }),
-    freeze({ id: 'canopy' }),
+    freeze({ id: 'pool', strip: sanctumPoolStrip }),
+    freeze({ id: 'energy-column', strip: sanctumEnergyColumnStrip }),
   ]),
   forge: freeze([
     freeze({ id: 'fire', strip: forgeInteriorFireStrip }),
-    freeze({ id: 'smoke', strip: forgeSmokeStrip }),
-    freeze({ id: 'impact-left', strip: forgeSparksStrip }),
-    freeze({ id: 'impact-right', strip: forgeSparksStrip }),
-    freeze({ id: 'production-line' }),
-    freeze({ id: 'coolant' }),
-    freeze({ id: 'machinery' }),
+    freeze({ id: 'smoke', strip: forgeInteriorSmokeStrip }),
+    freeze({ id: 'impact', strip: forgeImpactSparksStrip }),
   ]),
 })
 
