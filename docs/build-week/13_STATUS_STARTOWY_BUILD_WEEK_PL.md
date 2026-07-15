@@ -78,3 +78,15 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Walidacja: 119/119 testów, lint, world-life validator, build oraz HTTP 200 PASS. Końcowa estetyczna ocena Komnaty i czytelności ruchu pracy na telefonie pozostaje manualnym gate’em autora.
 - Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
 - Po finalnym GL nadal obowiązuje pełny recovery ZIP + `git bundle --all`, manifest, SHA-256 i instrukcja odtworzenia przed dalszym rozszerzaniem zakresu.
+
+## Aktualizacja handoffu — 2026-07-15 13:38 Europe/Warsaw
+
+- Skale i animacje agentów otrzymały GL autora. Ostatni RL kompozycji wycentrował Pazia w Komnacie oraz Zwiadowcę i Herolda w Obserwatorium (`x=50`) bez zmiany skali, Y, anchoru, routingu lub prawdy operacyjnej.
+- Walidacja po korekcie: 120/120 testów, lint i build PASS; bundle bez wzrostu. Finalny gate dotyczy wyłącznie manualnego odbioru centrowania.
+- Po finalnym GL wykonać w tej kolejności:
+  1. pełny recovery ZIP, `git bundle --all`, manifest wersji, SHA-256 i test odtworzenia/listowania;
+  2. kontrolowany diff demo ↔ produkcja i plan promocji wyłącznie zatwierdzonego zakresu;
+  3. przeniesienie zmian na produkcję bez naruszenia konfiguracji 24/7, Tailscale, portów, API i danych;
+  4. pełny audyt produkcyjny: testy, lint, build, cold/warm load, bundle, HTTP/cache, mobile 393×852, desktop, pamięć, console errors oraz realny Hermes event pipeline;
+  5. produkcyjne GL dopiero po wszystkich PASS; dalsze zmiany i eksperymenty nadal prowadzić wyłącznie na demo/Build Week.
+- Nie traktować promocji jako prostego kopiowania całego worktree. Zachować produkcyjne sekrety, deployment i konfigurację; integrować zatwierdzone commity lub precyzyjny diff po audycie.

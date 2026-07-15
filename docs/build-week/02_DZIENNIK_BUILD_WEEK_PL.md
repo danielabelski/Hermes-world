@@ -434,3 +434,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 119/119 testów PASS; lint PASS; `validate:world-life` PASS; build PASS, 871 modułów. Main JS 414,78 kB / 127,01 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy CSS 14,19 kB / 3,57 kB gzip.
 - Demo HTTP: PASS 200 na istniejącym serwerze 4176. Automatyczne sterowanie kartą nadal niedostępne (`Cannot redefine property: process`); końcowe estetyczne GL/RL pozostaje manualne i nie jest fałszywie oznaczone jako PASS.
 - Produkcja: `main` na `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
+
+## BW-2026-07-15-033 — Finalne centrowanie obsady QA
+
+- Czas Europe/Warsaw: 2026-07-15 13:28–13:38.
+- Branch/startowy HEAD: `build-week/hermes-world` / `2886983`.
+- Autor zatwierdził skale i animacje wszystkich ról. Ostatni RL dotyczył wyłącznie kompozycji: Paź w Komnacie oraz Zwiadowca i Herold w Obserwatorium byli przesunięci za daleko w bok.
+- Korekta demo-only: `default.x 47 → 50`, `prospecting.x 57 → 50`, `outreach.x 57 → 50`. Pozycja stóp Y, skala, anchor, cień, sprite, routing i operational state pozostały bez zmian.
+- Granica prawdy: korekta dotyczy wyłącznie kontrolowanego `interiorReview`; normalny runtime nie otrzymał nowej obecności we wnętrzu ani zmiany lokalizacji.
+- Walidacja: 120/120 testów PASS; lint PASS; build PASS, 871 modułów. Bundle bez wzrostu: main JS 414,78 kB / 127,01 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; CSS 14,19 kB / 3,57 kB gzip.
+- Produkcja: nietknięta.
+- Następna zatwierdzona kolejność po finalnym GL: pełny recovery backup → kontrolowana promocja zatwierdzonego zakresu na produkcję → szczegółowy diff, audyt i benchmarki produkcyjne → dalsze eksperymenty wyłącznie na demo.

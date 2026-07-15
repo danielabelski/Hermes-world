@@ -383,3 +383,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 871 modułów; main JS 414,78 kB / 127,01 kB gzip; lazy interior JS/CSS bez wzrostu względem poprzedniego passu.
 - Istniejący serwer demo: **PASS HTTP 200**; nie uruchomiono drugiego serwera.
 - Produkcja: **PASS — czysta i nietknięta**.
+
+## TEST-BW-025 — Centrowanie focal axis Komnaty i Watchera
+
+- Czas: 2026-07-15 13:38 Europe/Warsaw / 2026-07-15 11:38 UTC.
+- Kontrakt pozycji QA: **PASS** — Paź, Zwiadowca i Herold mają `x=50`; skale i Y pozostają zatwierdzone bez zmian.
+- Truth boundary: **PASS** — test review nadal potwierdza brak tasków, eventów, `evidenceEventId` i ingerencji w normalny `InteriorAgentPresence`.
+- `npm.cmd test`: **PASS 120/120**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 871 modułów; bundle bez wzrostu.
+- Mobile/desktop estetyczne GL: **MANUAL ACTION REQUIRED** — wyłącznie ocena końcowego centrowania.
+- Produkcja: **PASS — nietknięta**.
