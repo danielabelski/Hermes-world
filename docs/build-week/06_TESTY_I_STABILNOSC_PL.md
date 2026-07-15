@@ -368,3 +368,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build: **PASS**, 869 modułów, 3,29 s; main JS 412,55 kB / 126,26 kB gzip; lazy interior CSS 12,76 kB / 3,22 kB gzip.
 - Mobile estetyczne GL/RL: **MANUAL ACTION REQUIRED**.
 - Produkcja: **PASS — nietknięta**.
+
+## TEST-BW-024 — Ruch pracy i skala Komnaty
+
+- Czas: 2026-07-15 13:20 Europe/Warsaw / 2026-07-15 11:20 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d952234`; working tree zawierał wyłącznie ten atomowy pass i dokumentację.
+- Audyt klatek alpha: **PASS diagnostyczny** — wszystkie sprite’y zachowują canvas 128×128 i stopę `y=124`; potwierdzono, że `work` jest pojedynczą pozą, nie wieloklatkową animacją. Największa różnica wysokości pozy dotyczy Zwiadowcy, ale jest to zamierzona pochylona obserwacja, nie utrata anchoru.
+- Wspólny kontrakt pracy: **PASS** — renderer wystawia istniejący `behaviorType`, a CSS zawiera ruch dla pięciu typów zachowania, wspólny dla mapy i wnętrza. Ruch powstaje tylko dla `is-work`.
+- Reduced motion: **PASS** — test źródłowy blokuje brak centralnego `animation:none!important` dla warstwy ruchu.
+- Skala QA Komnaty: **PASS kontraktu** — Kasztelan 1,34; Rycerz 1,45; limit 1,45 zachowany. Ocena estetyczna na telefonie: **MANUAL ACTION REQUIRED**.
+- `npm.cmd test`: **PASS 119/119**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 871 modułów; main JS 414,78 kB / 127,01 kB gzip; lazy interior JS/CSS bez wzrostu względem poprzedniego passu.
+- Istniejący serwer demo: **PASS HTTP 200**; nie uruchomiono drugiego serwera.
+- Produkcja: **PASS — czysta i nietknięta**.

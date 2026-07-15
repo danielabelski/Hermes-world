@@ -69,3 +69,12 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Walidacja: 115/115 testów, lint, world-life validator i build PASS; pierwszy fail kosztownego `backdrop-filter` został naprawiony przed checkpointem.
 - **Obowiązkowy krok po GL agentów we wnętrzach:** utworzyć pełny off-device recovery package do Google Drive. Pakiet ma zawierać źródła i assety, komplet historii/branchy/tagów jako `git bundle --all`, aktualną dokumentację Build Week, manifest wersji, sumy SHA-256 i krótką instrukcję odtworzenia. Nie umieszczać sekretów, prywatnych `.env`, cache ani `node_modules`; zależności odtwarzać deterministycznie z lockfile. Zweryfikować archiwum próbą listowania i checksumą przed przekazaniem autorowi.
 - Produkcja Correct v1 pozostaje nietknięta; backup wykonać dopiero po percepcyjnym GL/RL i finalnych mikroregulacjach rosteru.
+
+## Aktualizacja handoffu — 2026-07-15 13:20 Europe/Warsaw
+
+- Po manualnym RL Komnaty Kasztelan został zwiększony do 1,34, a Rycerz do maksymalnej bezpiecznej skali review 1,45. Kuźnia i Archiwum pozostają zatwierdzonym wzorcem percepcyjnym; skale mapowe nie zostały zmienione.
+- Audyt potwierdził, że `PRACA` wcześniej była przeważnie statyczną pojedynczą pozą z praktycznie niewidocznym bobem. Wspólny `MapAgentSprite` ma teraz pięć lekkich transform-only rytmów pracy według istniejącego behavior type, działających na mapie i we wnętrzach tylko przy `visualState=work`.
+- Nie dodano fake Working, tasków, eventów, timerów per agent, rasterów ani nowego renderera. `prefers-reduced-motion` wyłącza ruch centralnie.
+- Walidacja: 119/119 testów, lint, world-life validator, build oraz HTTP 200 PASS. Końcowa estetyczna ocena Komnaty i czytelności ruchu pracy na telefonie pozostaje manualnym gate’em autora.
+- Produkcyjny `main`: `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
+- Po finalnym GL nadal obowiązuje pełny recovery ZIP + `git bundle --all`, manifest, SHA-256 i instrukcja odtworzenia przed dalszym rozszerzaniem zakresu.

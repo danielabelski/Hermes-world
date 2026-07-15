@@ -421,3 +421,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 118/118 testów PASS; lint PASS; world-life validator PASS; build PASS. Main JS 414,74 kB / 126,99 kB gzip; lazy interior bez wzrostu 16,16 kB / 6,19 kB gzip; CSS bez wzrostu 14,19 kB / 3,57 kB gzip.
 - Commit: `e3bf035` (`fix(build-week): rebalance interior roster scale`).
 - Kolejny gate: manualne GL/RL Rycerza i Watchera na tym samym URL; produkcja nietknięta.
+
+## BW-2026-07-15-032 — Czytelna praca ról i druga korekta Komnaty
+
+- Czas Europe/Warsaw: 2026-07-15 13:05–13:20.
+- Branch/startowy HEAD: `build-week/hermes-world` / `d952234`.
+- Informacja autora z manualnego QA: Kasztelan w Komnacie nadal był trochę za mały, Rycerz wymagał jeszcze lekkiego podniesienia, a zmiana pozy `IDLE → PRACA` nie dawała zauważalnego ruchu.
+- Audyt renderera potwierdził problem: zestawy mają pojedynczą klatkę `work`, a wspólny ruch pracy poza dwoma historycznymi wyjątkami ograniczał się do około `0,2 px` pionowego bobu i ringu. Na telefonie nie był to wiarygodnie widoczny ruch.
+- Implementacja: jeden `MapAgentSprite` otrzymał transform-only gramatykę pracy według istniejącego `behaviorType`: build, research, monitoring, patrol i courier. Animacja działa na mapie oraz we wnętrzu wyłącznie przy prawdziwym `visualState=work`; nie tworzy stanu, taska, eventu ani osobnego timera.
+- Dostępność i wydajność: wszystkie animacje używają wyłącznie `transform`; `prefers-reduced-motion` wyłącza je centralnie. Nie dodano rasterów, bibliotek ani renderera per rola.
+- Komnata QA: Kasztelan `1,20 → 1,34` i `y=78 → 79`; Rycerz `1,40 → 1,45`, czyli do bezpiecznego maksimum wspólnego renderera. Skala mapowa i operacyjna nie zostały zmienione.
+- Walidacja: 119/119 testów PASS; lint PASS; `validate:world-life` PASS; build PASS, 871 modułów. Main JS 414,78 kB / 127,01 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy CSS 14,19 kB / 3,57 kB gzip.
+- Demo HTTP: PASS 200 na istniejącym serwerze 4176. Automatyczne sterowanie kartą nadal niedostępne (`Cannot redefine property: process`); końcowe estetyczne GL/RL pozostaje manualne i nie jest fałszywie oznaczone jako PASS.
+- Produkcja: `main` na `7f586fe19f0f48dcdbee06aee573a3caf0689784`, czysty i nietknięty.
