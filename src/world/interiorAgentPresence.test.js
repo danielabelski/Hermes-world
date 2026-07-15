@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { deriveInteriorAgentPresence, INTERIOR_AGENT_PLACEMENTS } from './interiorAgentPresence.js'
+import { resolveMapAgentPresentation } from './mapAgentPresentation.js'
+import { getWorldLifeJourney } from './data/roadGraph.js'
 
 const task = { id: 'build-42', assignee: 'coder', status: 'running', title: 'Build Hermes World', evidenceEventId: 'event-42' }
 const forgePresentation = {
@@ -60,5 +62,36 @@ describe('interior agent evidence contract', () => {
     })
     assert.equal(result.profileId, 'researcher')
     assert.equal(result.evidenceSource, 'controlled-demo')
+  })
+
+  it('keeps the full Forge handoff exclusive and continuous on mobile and desktop', () => {
+    const startedAt = Date.parse('2026-07-15T02:00:00.000Z')
+    const agent = { id: 'coder', profile: 'coder', buildingId: 'forge', displayName: 'Kowal', state: 'working', active: true, isActive: true }
+    for (const layout of ['mobile', 'desktop']) {
+      const journey = getWorldLifeJourney('coder', layout)
+      const running = { id: `forge-${layout}`, assignee: 'coder', status: 'running', title: 'Real build', transitionStartedAt: new Date(startedAt).toISOString(), transitionUntil: new Date(startedAt + journey.walkDurationMs + journey.arriveDurationMs).toISOString() }
+      const beforeThreshold = resolveMapAgentPresentation({ agent, tasks: [running], now: startedAt + journey.walkDurationMs + journey.arriveDurationMs * 0.5, layout })
+      assert.equal(beforeThreshold.isInside, false)
+      assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: beforeThreshold, tasks: [running], lifecycle: { connection: 'online' } }), null)
+
+      const enteringModel = resolveMapAgentPresentation({ agent, tasks: [running], now: startedAt + journey.walkDurationMs + journey.arriveDurationMs * 0.75, layout })
+      const entering = deriveInteriorAgentPresence({ buildingId: 'forge', presentation: enteringModel, tasks: [running], lifecycle: { connection: 'online' } })
+      assert.equal(enteringModel.isInside, true)
+      assert.equal(entering.stage, 'entering')
+      assert.ok(entering.interiorProgress > 0 && entering.interiorProgress < 1)
+
+      const workingModel = resolveMapAgentPresentation({ agent, tasks: [running], now: startedAt + journey.walkDurationMs + journey.arriveDurationMs + 100, layout })
+      const working = deriveInteriorAgentPresence({ buildingId: 'forge', presentation: workingModel, tasks: [running], lifecycle: { connection: 'online' } })
+      assert.equal(working.stage, 'station')
+      assert.equal(working.visualState, 'work')
+
+      const completedAt = startedAt + journey.walkDurationMs + journey.arriveDurationMs + 1_000
+      const done = { ...running, status: 'done', completedAt: new Date(completedAt).toISOString(), visualCompletedAt: new Date(completedAt).toISOString() }
+      const exitingModel = resolveMapAgentPresentation({ agent: { ...agent, active: false, isActive: false }, tasks: [done], now: completedAt + 100, layout })
+      assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: exitingModel, tasks: [done], lifecycle: { connection: 'online' } }).stage, 'exiting')
+      const outsideModel = resolveMapAgentPresentation({ agent: { ...agent, active: false, isActive: false }, tasks: [done], now: completedAt + 700, layout })
+      assert.equal(outsideModel.isInside, false)
+      assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: outsideModel, tasks: [done], lifecycle: { connection: 'online' } }), null)
+    }
   })
 })
