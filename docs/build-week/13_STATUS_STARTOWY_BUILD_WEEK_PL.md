@@ -90,3 +90,11 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
   4. pełny audyt produkcyjny: testy, lint, build, cold/warm load, bundle, HTTP/cache, mobile 393×852, desktop, pamięć, console errors oraz realny Hermes event pipeline;
   5. produkcyjne GL dopiero po wszystkich PASS; dalsze zmiany i eksperymenty nadal prowadzić wyłącznie na demo/Build Week.
 - Nie traktować promocji jako prostego kopiowania całego worktree. Zachować produkcyjne sekrety, deployment i konfigurację; integrować zatwierdzone commity lub precyzyjny diff po audycie.
+
+## Aktualizacja handoffu — 2026-07-15 13:48 Europe/Warsaw
+
+- Autor wydał finalne **GL** po ręcznej ocenie telefonu: pełny roster, skale, role-aware animacje pracy i końcowe centrowanie są zatwierdzone.
+- Zamknięty punkt demo przed backupem: branch `build-week/hermes-world`, commit `e85c6c1c8f27118cda47f8e3649025694ddc0426`, 120/120 testów, lint, build i HTTP 200 PASS.
+- Następny obowiązkowy krok: utworzyć i zweryfikować pełny recovery package z ZIP, `git bundle --all`, manifestem, SHA-256 i instrukcją odtworzenia. Dopiero później wolno rozpocząć selektywną promocję.
+- Produkcja ma otrzymać wszystko z zatwierdzonego zakresu, ale jej konfiguracja 24/7, Tailscale, porty, API, dane i sekrety pozostają źródłem prawdy. Po wdrożeniu obowiązuje pełny audyt testów, bundla, cold/warm load, HTTP/cache, mobile, desktop, pamięci, konsoli i realnego pipeline’u Hermesa.
+- Dalsze eksperymenty po promocji nadal prowadzić wyłącznie na demo/Build Week.

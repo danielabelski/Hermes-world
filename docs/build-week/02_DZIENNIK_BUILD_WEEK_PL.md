@@ -445,3 +445,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 120/120 testów PASS; lint PASS; build PASS, 871 modułów. Bundle bez wzrostu: main JS 414,78 kB / 127,01 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; CSS 14,19 kB / 3,57 kB gzip.
 - Produkcja: nietknięta.
 - Następna zatwierdzona kolejność po finalnym GL: pełny recovery backup → kontrolowana promocja zatwierdzonego zakresu na produkcję → szczegółowy diff, audyt i benchmarki produkcyjne → dalsze eksperymenty wyłącznie na demo.
+
+## BW-2026-07-15-034 — Finalne GL obsady i zgoda na zabezpieczenie oraz promocję
+
+- Czas Europe/Warsaw: 2026-07-15 13:48.
+- Czas UTC: 2026-07-15 11:48.
+- Branch/HEAD ocenione przez autora: `build-week/hermes-world` / `e85c6c1c8f27118cda47f8e3649025694ddc0426`.
+- Autor wykonał końcową ocenę na telefonie po wycentrowaniu Pazia, Zwiadowcy i Herolda i wydał jednoznaczne **GL**: „jest zajebiście”. Tym samym zamknięto ręczny gate 393×852 dla skali, animacji pracy i kompozycji pełnego rosteru.
+- Zatwierdzony zakres obejmuje wspólny renderer 12 ról, prawdziwe sprite’y, anchor stóp, cień kontaktowy, role-aware ruch `PRACA`, evidence-backed ownership wnętrz oraz demo-only macierz QA. Nie zmienia to granicy prawdy: normalne wnętrza pokazują wyłącznie agentów z potwierdzonym task/evidence i routingiem.
+- Autor zatwierdził następną kolejność: pełny zweryfikowany recovery package → kontrolowany audyt różnic demo/produkcja → selektywna promocja zatwierdzonego zakresu → pełny audyt i benchmarki produkcyjne → małe poprawki regresji, jeśli będą konieczne.
+- Produkcja w chwili GL nadal pozostawała czysta i nietknięta na `7f586fe19f0f48dcdbee06aee573a3caf0689784`.

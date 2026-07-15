@@ -394,3 +394,13 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 871 modułów; bundle bez wzrostu.
 - Mobile/desktop estetyczne GL: **MANUAL ACTION REQUIRED** — wyłącznie ocena końcowego centrowania.
 - Produkcja: **PASS — nietknięta**.
+
+## TEST-BW-026 — Końcowy odbiór rosteru przez autora
+
+- Czas: 2026-07-15 13:48 Europe/Warsaw / 2026-07-15 11:48 UTC.
+- Branch/HEAD: `build-week/hermes-world` / `e85c6c1c8f27118cda47f8e3649025694ddc0426`.
+- Realny telefon 393×852: **PASS / GL AUTORA** — skala, ruch pracy i końcowe centrowanie Pazia, Zwiadowcy oraz Herolda zostały zaakceptowane bez kolejnego RL.
+- Zakres automatyczny poprzedzający GL: **PASS 120/120 testów**, lint PASS, build PASS, HTTP demo 200; szczegóły i rozmiary bundla zapisano w TEST-BW-025 oraz BW-2026-07-15-033.
+- Granica prawdy: **PASS** — review pozostaje demo-only; GL nie aktywuje fikcyjnych tasków, eventów, `Working`, `Success` ani lokalizacji w normalnym runtime.
+- Gate recovery/promocji: **OTWARTY** — można utworzyć pełny backup, a po jego zweryfikowaniu rozpocząć kontrolowane wdrożenie na produkcję.
+- Produkcja w chwili odbioru: **PASS — czysta i nietknięta**.
