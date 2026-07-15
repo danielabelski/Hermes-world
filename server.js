@@ -98,6 +98,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// A Home Screen shortcut created while reviewing the demo may retain
+// `?demo=1`. Production must never bypass authentication or boot fixtures
+// from such a historical launch URL. Keep the demo server (4176) untouched,
+// but canonicalize the production entry point before the app shell loads.
+app.get('/', (req, res, next) => {
+  if (Number(PORT) === 4175 && req.query.demo === '1') {
+    return res.redirect(302, '/');
+  }
+  return next();
+});
+
 
 
 // Codex panel metrics: lightweight host telemetry + Core Temp CSV reader.
