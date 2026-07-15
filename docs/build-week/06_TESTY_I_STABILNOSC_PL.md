@@ -31,6 +31,18 @@
 - Percepcyjna ocena 393×852: **MANUAL ACTION REQUIRED**.
 - Produkcja: **PASS — nietknięta**.
 
+## TEST-BW-023 — Regresja po RL skali Rycerza i Watchera
+
+- Czas: 2026-07-15 13:05 Europe/Warsaw / 2026-07-15 11:05 UTC.
+- Branch/commit: `build-week/hermes-world` / `e3bf035`.
+- Test wzorca: **PASS** — Kuźnia i Archiwum pozostają w zakresie 1,20–1,25; Watcher ma minimum 1,34; Rycerz minimum 1,38.
+- Izolacja review: **PASS** — pięć pokoi ma deterministyczny pierwszy profil, a zwykły renderer evidence pozostaje alternatywą aktywną bez `demo=1&interiorReview=1`.
+- `npm.cmd test`: **PASS 118/118**.
+- Lint: **PASS**.
+- `validate:world-life`: **PASS**.
+- Build: **PASS**, main 414,74 kB / 126,99 kB gzip; lazy interior 16,16 kB / 6,19 kB gzip; CSS 14,19 kB / 3,57 kB gzip.
+- Finalna percepcja: **MANUAL ACTION REQUIRED** — autor ocenia poprawioną skalę na realnym telefonie.
+
 ## TEST-BW-019 — Wydajność wejścia i evidence-backed interior agents
 
 - Czas: 2026-07-15 04:56 Europe/Warsaw / 2026-07-15 02:56 UTC.

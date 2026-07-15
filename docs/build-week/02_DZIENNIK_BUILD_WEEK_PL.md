@@ -411,3 +411,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Commit funkcjonalny: `32d93f0` (`feat(build-week): add interior roster review`).
 - Odbiór wizualny: **MANUAL ACTION REQUIRED** na telefonie; tryb powstał właśnie po to, aby autor mógł wydać GL/RL osobno dla każdej roli.
 - Produkcja Correct v1: nietknięta.
+
+## BW-2026-07-15-031 — RL skali: Rycerz i Obserwatorium Watchera
+
+- Czas Europe/Warsaw: 2026-07-15 12:45–13:05.
+- Autor wykonał ręczny przegląd 12/12 i wskazał dwa konkretne problemy: Rycerz Elitarny był zdecydowanie za mały, a postacie na planszy Watchera były umiarkowanie za małe. Kuźnia i Archiwum zostały zatwierdzone jako wzorzec percepcyjnej skali.
+- Korekta wyłącznie w demo QA: Rycerz `1,12 → 1,40` oraz punkt stóp `y=79 → 80`; Zwiadowca `1,22 → 1,36`, Herold `1,24 → 1,38`, oba punkty stóp `y=76 → 78`. Skale mapowe, produkcyjny renderer, FSM, routing i evidence nie zostały zmienione.
+- Usprawnienie review: po zamknięciu wnętrza i kliknięciu budynku tryb QA wybiera deterministycznie pierwszą przypisaną rolę tego pokoju, zamiast przenosić poprzednią postać do niewłaściwego wnętrza.
+- Walidacja: 118/118 testów PASS; lint PASS; world-life validator PASS; build PASS. Main JS 414,74 kB / 126,99 kB gzip; lazy interior bez wzrostu 16,16 kB / 6,19 kB gzip; CSS bez wzrostu 14,19 kB / 3,57 kB gzip.
+- Commit: `e3bf035` (`fix(build-week): rebalance interior roster scale`).
+- Kolejny gate: manualne GL/RL Rycerza i Watchera na tym samym URL; produkcja nietknięta.
