@@ -1,5 +1,21 @@
 # 06 — Testy i stabilność
 
+## TEST-BW-018 — Kompletny zestaw cinematic interior VFX
+
+- Czas: 2026-07-15 03:25 Europe/Warsaw / 2026-07-15 01:25 UTC.
+- Branch/startowy HEAD: `build-week/hermes-world` / `36c1ed1`.
+- `npm.cmd test`: **PASS 102/102**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 warnings.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 866 modułów, 7,92 s; lazy `BuildingInteriorScene` JS 9,70 kB, CSS 10,18 kB.
+- `git diff --check`: **PASS**.
+- Kontrakt assetów: **PASS** — dokładnie 11 runtime PNG; każdy 1024×128 RGBA, źródło 2048×256 RGBA, limit 250 kB per-file i 1,8 MB łącznie.
+- Kontrakt importów: **PASS** — 11 dedykowanych importów z `building-interior-effects`, 0 importów `assets/world-effects` w rendererze wnętrz i brak użycia źródeł/artifacts w runtime.
+- Zimny transfer aktywnego wnętrza: **PASS względem budżetów** — Cytadela ~424 kB, Archiwum ~491 kB, Watcher ~578 kB, Sanctum ~506 kB, Kuźnia ~495 kB. Każdy pokój mieści się w przyjętym budżecie 650–900 kB.
+- HTTP smoke: **PASS** — mapa oraz `interior=citadel|forge|archive|watcher|sanctum` zwracają 200 na jednym istniejącym serwerze demo 4176.
+- Automatyczne sterowanie wbudowaną przeglądarką: **FAIL — narzędzie**, błąd inicjalizacji kontrolera `Cannot redefine property: process`; nie jest to błąd aplikacji. Desktop został zaakceptowany przez autora; finalny telefon 393×852: **MANUAL ACTION REQUIRED**.
+- Produkcja: **PASS — nietknięta**.
+
 ## TEST-PRE-001 — Końcowa walidacja pre-build baseline
 
 - Czas: 2026-07-13, przed 16:47:03 Europe/Warsaw.

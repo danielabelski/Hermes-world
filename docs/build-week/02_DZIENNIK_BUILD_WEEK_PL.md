@@ -1,5 +1,24 @@
 # 02 — Dziennik Build Week
 
+## BW-2026-07-15-025 — Kompletny cinematic interior VFX suite
+
+- Czas Europe/Warsaw: 2026-07-15 01:33–03:25.
+- Czas UTC: 2026-07-14 23:33 – 2026-07-15 01:25.
+- Branch/startowy HEAD: `build-week/hermes-world` / `36c1ed1`.
+- Cel: zastąpić odziedziczone z mapy i kodowo rysowane hotspoty jedenastoma dedykowanymi efektami pasującymi do pięciu cinematic interior plates, bez obciążania startu mapy i bez zmian produkcji.
+- Generowanie: dziesięć brakujących źródeł wygenerowano pojedynczo, każde z właściwym wnętrzem jako referencją. Razem z wcześniej zaakceptowanym ogniem powstał zestaw 11 efektów: Cytadela 2, Archiwum 2, Watcher 2, Sanctum 2 i Kuźnia 3. Nie uruchamiano równoległych generatorów ani ciężkich procesów wieloinstancyjnych.
+- Pipeline: źródło chroma-key 4×2 → alpha cleanup → lokalny despill → fixed-pivot normalization → source strip 2048×256 → runtime strip 1024×128 RGBA. Oryginały, deterministyczne pochodne i wersje runtime mają osobne ścieżki oraz SHA-256.
+- Integracja: `CinematicInteriorPlate` importuje wyłącznie `building-interior-effects`; wnętrza nie importują już żadnego `world-effects`. Efekty mapy pozostają nadal używane przez mapę główną i nie zostały usunięte z produktu.
+- Semantyka: animacje reagują na istniejące fazy oraz realne evidence events. Nie dodano operational state, fake Working ani fake Success. Iskry Kuźni są widoczne tylko przy fazie pracy/alertu.
+- Warstwowanie: dedykowane hotspoty są zakotwiczone na fizycznych elementach ilustracji, mają lokalne clipping/maski i dziedziczą z-index sceny. Warstwa efektów używa tego samego mikroskalowania co plansza, co usuwa dryf względem architektury.
+- Wydajność: wszystkie runtime stripy mają po 1024×128 RGBA i mniej niż 250 kB; łączny budżet efektów wynosi około 0,87 MB, ale pojedyncze wejście pobiera tylko efekty aktywnego wnętrza. Szacowany zimny transfer: Cytadela ~424 kB, Archiwum ~491 kB, Watcher ~578 kB, Sanctum ~506 kB, Kuźnia ~495 kB; Kuźnia spadła z ~795 kB.
+- Walidacja: 102/102 testów PASS; lint PASS; `validate:world-life` PASS; build PASS (866 modułów, 7,92 s); `git diff --check` PASS. Test assetowy weryfikuje liczbę, PNG signature, format RGBA, rozdzielczości, budżety per-file i budżet łączny.
+- Audyty równoległe: dwa lekkie subtaski read-only sprawdziły anchory/hotspoty oraz budżety first-open; nie generowały assetów, nie uruchamiały serwerów i nie modyfikowały kodu.
+- Demo: jeden istniejący serwer na porcie 4176; mapa oraz wszystkie pięć bezpośrednich URL-i zwracają HTTP 200. Produkcja Correct v1 pozostaje nietknięta.
+- Ograniczenie dowodowe: kontroler wbudowanej przeglądarki Codexa nie zainicjalizował się (`Cannot redefine property: process`), dlatego automatycznego desktop/mobile visual PASS nie zapisano. Autor potwierdził, że desktop wygląda dobrze; finalne GL/RL telefonu przez Tailscale pozostaje otwarte.
+- Snapshot przed commitem: `20260715T012153Z-git-snapshot.txt`.
+- Sesja: `019f4f11-14e9-70e0-8d61-26226257864c`, GPT-5.6 Sol; narzędzie obrazu pozostaje opisane bez wymyślania nieujawnionej nazwy modelu.
+
 Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 
 ## BW-2026-07-13-001 — Zabezpieczenie provenance i systemu dowodów

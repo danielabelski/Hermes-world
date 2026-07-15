@@ -1,5 +1,11 @@
 # 03 — Sesje Codexa
 
+## Aktualizacja 2026-07-15 — kompletny cinematic interior VFX suite
+
+| Data i czas Europe/Warsaw | Session ID | Model | Cel i wkład | Decyzje autora | Okres | Znaczenie dla core | `/feedback` |
+|---|---|---|---|---|---|---|---|
+| 2026-07-15 01:33–03:25 | `019f4f11-14e9-70e0-8d61-26226257864c` | GPT-5.6 Sol + wbudowane image generation | Sekwencyjne wygenerowanie dziesięciu brakujących źródeł, cleanup i normalizacja całego zestawu 11 stripów, integracja pięciu wnętrz, testy kontraktowe, build, benchmark first-open i checkpoint | Autor zezwolił na maksymalnie dwa lekkie subtaski, wymagał pełnego zestawu przed wspólną walidacją i zachowania produkcji do GL | podczas Submission Period | BARDZO WYSOKIE — kompletny pipeline assetowy, architektura jednego renderera, performance i dowody Build Week | TAK — mocny kandydat; finalny wybór nadal po live integration |
+
 Rejestr oddziela dowód sesji od zrzutów zbiorczych statystyk konta. Modele podajemy na podstawie strukturalnych rekordów `turn_context`.
 
 ## Główne sesje
