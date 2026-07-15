@@ -52,3 +52,9 @@ test('portrait assets are rejected from the map contract and absent from active 
     assert.ok(!source.includes('/heroes/'), `${relativePath}: contains a portrait URL`)
   }
 })
+
+test('role visibility survives working state while offline remains an explicit override', () => {
+  const css = readFileSync(path.join(PROJECT_ROOT, 'src/components/map-agents/MapAgentSprite.css'), 'utf8')
+  assert.doesNotMatch(css, /\.map-agent-sprite\.is-work\s+\.map-agent-sprite__image\s*\{[^}]*filter:/s)
+  assert.match(css, /\.map-agent-sprite\.is-offline\s+\.map-agent-sprite__image\s*\{[^}]*filter:/s)
+})
