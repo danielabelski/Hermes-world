@@ -69,6 +69,8 @@ export function deriveInteriorAgentPresence({ buildingId, presentation, tasks = 
   const placement = INTERIOR_AGENT_PLACEMENTS[buildingId]
   if (!config || !placement?.enabled || !presentation) return null
   if (['offline', 'stale'].includes(String(lifecycle.connection ?? '').toLowerCase())) return null
+  const taskDomainStale = ['stale', 'offline', 'error'].includes(String(lifecycle.domains?.tasks?.state ?? '').toLowerCase())
+  if (taskDomainStale && !presentation.evidenceEventId) return null
   if (presentation.profileId !== config.agentProfile || presentation.profileId !== placement.profileId) return null
   if (presentation.buildingId !== config.buildingId && !config.canonicalBuildingIds.includes(presentation.buildingId)) return null
   if (presentation.isInside !== true || !['enter', 'work', 'exit'].includes(presentation.journeyStage)) return null
@@ -106,4 +108,3 @@ export function deriveInteriorAgentPresence({ buildingId, presentation, tasks = 
     canDrillDown: true,
   })
 }
-

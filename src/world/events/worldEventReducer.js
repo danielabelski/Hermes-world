@@ -64,6 +64,7 @@ export function applyWorldEventToSnapshot(snapshot, event) {
     buildingId: event.buildingId ?? previousTask.buildingId ?? definition.buildingId,
     evidenceEventId: event.eventId,
     runId: event.runId ?? previousTask.runId ?? null,
+    motionEvidence: 'observed-edge',
     ...(operationalState === 'success' ? { completedAt: event.occurredAt, visualCompletedAt: event.occurredAt } : {}),
   }
 
@@ -77,6 +78,8 @@ export function applyWorldEventToSnapshot(snapshot, event) {
         buildingId: event.buildingId ?? definition.buildingId,
         message: event.message ?? `${definition.displayName}: ${operationalState}`,
         timestamp: event.occurredAt,
+        evidenceEventId: event.eventId,
+        runId: event.runId ?? null,
       }]
     : retainedAlerts
   const nextAgents = replaceById(agents, event.agentId, nextAgent, 'profile')

@@ -41,6 +41,7 @@ function MapAgentSprite({
   choreographyState = null,
   ambientState = null,
   evidenceEventId = null,
+  fetchPriority = 'auto',
 }) {
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
@@ -104,7 +105,7 @@ function MapAgentSprite({
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
-      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} />
+      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}

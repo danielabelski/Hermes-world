@@ -41,6 +41,8 @@ describe('interior agent evidence contract', () => {
     assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: forgePresentation, tasks: [{ ...task, id: 'other' }], lifecycle: { connection: 'online' } }), null)
     assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: { ...forgePresentation, profileId: 'researcher' }, tasks: [task], lifecycle: { connection: 'online' } }), null)
     assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: forgePresentation, tasks: [task], lifecycle: { connection: 'stale' } }), null)
+    assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: { ...forgePresentation, evidenceEventId: null }, tasks: [{ ...task, evidenceEventId: null }], lifecycle: { connection: 'online', domains: { tasks: { state: 'stale' } } } }), null)
+    assert.equal(deriveInteriorAgentPresence({ buildingId: 'forge', presentation: forgePresentation, tasks: [task], lifecycle: { connection: 'online', domains: { tasks: { state: 'stale' } } } }).evidenceEventId, 'event-42')
   })
 
   it('keeps unverified interior routes disabled instead of faking location', () => {
