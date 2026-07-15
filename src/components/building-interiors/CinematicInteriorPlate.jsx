@@ -12,6 +12,7 @@ import watcherArmillaryStrip from '../../assets/building-interior-effects/watche
 import watcherLensScanStrip from '../../assets/building-interior-effects/watcher-interior-lens-scan-strip.runtime.png'
 import { CINEMATIC_INTERIOR_PLATES } from './interiorPlateManifest.js'
 import InteriorAgentPresence from './InteriorAgentPresence.jsx'
+import InteriorRosterReviewPresence from './InteriorRosterReviewPresence.jsx'
 
 const freeze = Object.freeze
 
@@ -45,7 +46,7 @@ function SpriteStrip({ src }) {
   return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" /></span>
 }
 
-function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null, agent, tasks, alerts, lifecycle, layout, onAgentDrillDown }) {
+function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null, agent, tasks, alerts, lifecycle, layout, onAgentDrillDown, rosterReview = null }) {
   const [plateReady, setPlateReady] = useState(false)
   const scene = CINEMATIC_INTERIOR_PLATES[buildingId]
   if (!scene) return null
@@ -75,7 +76,9 @@ function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], e
           {effect.strip ? <SpriteStrip src={effect.strip} /> : null}
         </span>)}
       </div>
-      <InteriorAgentPresence buildingId={buildingId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onDrillDown={onAgentDrillDown} />
+      {rosterReview?.enabled
+        ? <InteriorRosterReviewPresence profileId={rosterReview.profileId} visualState={rosterReview.visualState} />
+        : <InteriorAgentPresence buildingId={buildingId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onDrillDown={onAgentDrillDown} />}
       <div className="cinematic-interior__grade" />
     </div>
   </div>

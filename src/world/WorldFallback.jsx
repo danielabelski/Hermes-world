@@ -21,6 +21,7 @@ import WorldOperationsLayer from '../components/world-directors/WorldOperationsL
 import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
 import { BUILDING_INTERIOR_CONFIG, BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
 import { preloadInteriorPlate } from '../components/building-interiors/interiorPlateManifest.js'
+import { getInteriorReviewEntry, INTERIOR_ROSTER_REVIEW, resolveInteriorReviewProfile, stepInteriorReviewProfile } from './interiorRosterReview.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -34,6 +35,10 @@ const BUILDINGS = [
 ]
 
 export default function WorldFallback() {
+  const initialParams = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
+  const rosterReviewEnabled = initialParams.get('demo') === '1' && initialParams.get('interiorReview') === '1'
+  const [reviewProfileId, setReviewProfileId] = useState(() => resolveInteriorReviewProfile(initialParams.get('agent')))
+  const [reviewVisualState, setReviewVisualState] = useState(() => initialParams.get('reviewState') === 'idle' ? 'idle' : 'work')
   const mapVariant = getMapVariant(typeof window === 'undefined' ? '' : window.location.search)
   const worldLifePreset = resolveWorldLifePreset(typeof window === 'undefined' ? '' : window.location.search)
   const [mapLayout, setMapLayout] = useState(getMapLayout)
@@ -42,9 +47,30 @@ export default function WorldFallback() {
   const [agentAnimationReady, setAgentAnimationReady] = useState(false)
   const [activeInterior, setActiveInterior] = useState(() => {
     const params = new URLSearchParams(window.location.search)
+    if (rosterReviewEnabled) return getInteriorReviewEntry(resolveInteriorReviewProfile(params.get('agent'))).buildingId
     const requested = params.get('interior')
     return params.get('demo') === '1' && BUILDING_INTERIOR_IDS.includes(requested) ? requested : null
   })
+  const selectReviewProfile = useCallback((profileId) => {
+    const resolved = resolveInteriorReviewProfile(profileId)
+    const entry = getInteriorReviewEntry(resolved)
+    setReviewProfileId(resolved)
+    setActiveInterior(entry.buildingId)
+    const params = new URLSearchParams(window.location.search)
+    params.set('demo', '1')
+    params.set('interiorReview', '1')
+    params.set('agent', resolved)
+    params.set('interior', entry.buildingId)
+    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`)
+  }, [])
+  const stepReviewProfile = useCallback((delta) => selectReviewProfile(stepInteriorReviewProfile(reviewProfileId, delta)), [reviewProfileId, selectReviewProfile])
+  const changeReviewState = useCallback((state) => {
+    const resolved = state === 'idle' ? 'idle' : 'work'
+    setReviewVisualState(resolved)
+    const params = new URLSearchParams(window.location.search)
+    params.set('reviewState', resolved)
+    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`)
+  }, [])
   const closeInterior = useCallback(() => setActiveInterior(null), [])
   const entryPointerRef = useRef(null)
   const activeEntryRef = useRef(null)
@@ -173,7 +199,7 @@ export default function WorldFallback() {
         buildingId={activeInterior}
         system={system}
         lifecycle={lifecycle}
-        agent={agents.find((agent) => agent.profile === BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile || agent.id === BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile) ?? null}
+        agent={agents.find((agent) => agent.profile === (rosterReviewEnabled ? reviewProfileId : BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile) || agent.id === (rosterReviewEnabled ? reviewProfileId : BUILDING_INTERIOR_CONFIG[activeInterior]?.agentProfile)) ?? null}
         building={buildings.find((building) => BUILDING_INTERIOR_CONFIG[activeInterior]?.canonicalBuildingIds.includes(building.id)) ?? null}
         tasks={tasks}
         alerts={alerts}
@@ -185,6 +211,9 @@ export default function WorldFallback() {
         onAgentSelect={(profileId) => selectEntity('agent', profileId)}
         onExitComplete={closeInterior}
         returnFocusRef={activeEntryRef}
+        rosterReview={rosterReviewEnabled ? { enabled: true, ...getInteriorReviewEntry(reviewProfileId), visualState: reviewVisualState, index: INTERIOR_ROSTER_REVIEW.findIndex((entry) => entry.profileId === reviewProfileId), total: INTERIOR_ROSTER_REVIEW.length } : null}
+        onReviewStep={stepReviewProfile}
+        onReviewStateChange={changeReviewState}
       />
     </Suspense> : null}
   </div>

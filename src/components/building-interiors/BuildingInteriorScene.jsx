@@ -16,7 +16,7 @@ const INTERIOR_META = Object.freeze({
 
 const formatMetric = ({ value, suffix = '' }) => value === null || value === undefined ? '—' : `${Math.round(value)}${suffix}`
 
-export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, layout, onExitComplete, onAgentSelect, returnFocusRef }) {
+export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, layout, onExitComplete, onAgentSelect, returnFocusRef, rosterReview = null, onReviewStep, onReviewStateChange }) {
   const [closing, setClosing] = useState(false)
   const sceneRef = useRef(null)
   const backButtonRef = useRef(null)
@@ -67,7 +67,14 @@ export default function BuildingInteriorScene({ buildingId, system, lifecycle, a
       <div><p>{meta.eyebrow}</p><h1 id={`${buildingId}-interior-title`}>{config.title}</h1></div>
       <span className="building-interior__phase" data-phase={presentation.phase}>{phaseLabel}</span>
     </header>
-    <CinematicInteriorPlate buildingId={buildingId} phase={presentation.phase} metrics={presentation.metrics} evidenceEventId={presentation.evidenceEventId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onAgentDrillDown={handleAgentDrillDown} />
+    {rosterReview?.enabled ? <nav className="interior-roster-review" aria-label="Kontrolowany przegląd postaci we wnętrzach">
+      <button type="button" onClick={() => onReviewStep?.(-1)} aria-label="Poprzednia postać">‹</button>
+      <div><span>TRYB OCENY · {rosterReview.index + 1}/{rosterReview.total}</span><strong>{rosterReview.displayName}</strong><small>{rosterReview.note ?? 'Pozycja testowa — bez zmiany stanu operacyjnego'}</small></div>
+      <button type="button" onClick={() => onReviewStep?.(1)} aria-label="Następna postać">›</button>
+      <button type="button" className={rosterReview.visualState === 'idle' ? 'is-active' : ''} onClick={() => onReviewStateChange?.('idle')}>IDLE</button>
+      <button type="button" className={rosterReview.visualState === 'work' ? 'is-active' : ''} onClick={() => onReviewStateChange?.('work')}>PRACA</button>
+    </nav> : null}
+    <CinematicInteriorPlate buildingId={buildingId} phase={presentation.phase} metrics={presentation.metrics} evidenceEventId={presentation.evidenceEventId} agent={agent} tasks={tasks} alerts={alerts} lifecycle={lifecycle} layout={layout} onAgentDrillDown={handleAgentDrillDown} rosterReview={rosterReview} />
     <div className="building-interior__readout">
       <div className="building-interior__summary"><span className="building-interior__status-dot" data-phase={presentation.phase} aria-hidden="true" /><div><strong>{phaseLabel}</strong><p>{detail}</p></div></div>
       <dl className="building-interior__metrics">{presentation.metrics.map((item) => <div key={item.label}><dt>{item.label}</dt><dd>{formatMetric(item)}</dd></div>)}</dl>
