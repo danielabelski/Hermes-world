@@ -23,10 +23,10 @@ export const INTERIOR_ROSTER_REVIEW = freeze([
   review('reviewer', 'archive', 51, 70, 1.20, 'ne'),
   review('verifier', 'archive', 51, 70, 1.22, 'ne'),
   review('orchestrator', 'citadel', 50, 79, 1.34, 'ne'),
-  review('default', 'citadel', 47, 79, 1.24, 'ne'),
+  review('default', 'citadel', 50, 79, 1.24, 'ne'),
   review('komandos', 'citadel', 50, 80, 1.45, 'ne', 'Sala testowa: docelowy subsystem ochrony nie ma jeszcze osobnego wnętrza.'),
-  review('prospecting', 'watcher', 57, 78, 1.36, 'nw'),
-  review('outreach', 'watcher', 57, 78, 1.38, 'nw'),
+  review('prospecting', 'watcher', 50, 78, 1.36, 'nw'),
+  review('outreach', 'watcher', 50, 78, 1.38, 'nw'),
   review('synthesizer', 'sanctum', 50, 76, 1.22, 'ne'),
 ])
 

@@ -32,6 +32,12 @@ test('RL scale corrections preserve Forge and Archive as the perceptual baseline
   for (const profileId of ['prospecting', 'outreach']) assert.ok(getInteriorReviewEntry(profileId).scale >= 1.34, profileId)
 })
 
+test('RL centering keeps the Citadel page and Watcher roles on the room focal axis', () => {
+  for (const profileId of ['default', 'prospecting', 'outreach']) {
+    assert.equal(getInteriorReviewEntry(profileId).x, 50, profileId)
+  }
+})
+
 test('review stepping wraps without changing operational state', () => {
   assert.equal(stepInteriorReviewProfile('coder', -1), 'synthesizer')
   assert.equal(stepInteriorReviewProfile('synthesizer', 1), 'coder')
