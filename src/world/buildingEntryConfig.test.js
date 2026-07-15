@@ -55,8 +55,9 @@ describe('building entry config', () => {
       assert.match(manifest, new RegExp(asset.replace('.', '\\.')))
       assert.match(styles, new RegExp(`cinematic-effect--${buildingId}-`))
     }
-    assert.match(plates, /plateReady \? EFFECTS\[buildingId\]/)
-    assert.match(plates, /fetchPriority="low"/)
+    assert.match(plates, /EFFECTS\[buildingId\]\.map/)
+    assert.doesNotMatch(plates, /plateReady \? EFFECTS\[buildingId\]/)
+    assert.match(plates, /fetchPriority="high"/)
     const interiorEffects = [
       'archive-interior-codex-armillary-strip.runtime.png',
       'archive-interior-shelf-ingestion-strip.runtime.png',
@@ -79,6 +80,8 @@ describe('building entry config', () => {
     assert.doesNotMatch(plates, /rings|conduit|lamps-left|lamps-right|beam|shelves-left|shelves-right|floor-path|watcher-base|cron-dial|floor-channels|vats-left|vats-right|canopy|production-line|coolant|machinery/)
     assert.match(world, /requestIdleCallback\(warmInteriorCode/)
     assert.match(world, /preloadInteriorPlate\(entry\.buildingId\)/)
+    assert.match(world, /usePresentationClock\(!activeInterior\)/)
+    assert.match(world, /ambientEnabled: !activeInterior/)
     assert.match(styles, /@media\(max-width:700px\)\{\.cinematic-interior__backdrop\{display:none\}\}/)
     assert.doesNotMatch(styles, /interior-camera-settle/)
     assert.match(styles, /aspect-ratio:4\/5/)

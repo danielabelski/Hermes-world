@@ -47,10 +47,11 @@ function subscribe(subscriber) {
 
 const getSnapshot = () => currentNow
 const getServerSnapshot = () => currentNow
+const subscribePaused = () => () => undefined
 
 /** One presentation-only scheduler shared by every map/UI subscriber. */
-export function usePresentationClock() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+export function usePresentationClock(enabled = true) {
+  return useSyncExternalStore(enabled ? subscribe : subscribePaused, getSnapshot, getServerSnapshot)
 }
 
 if (import.meta.hot) {

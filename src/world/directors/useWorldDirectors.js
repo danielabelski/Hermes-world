@@ -5,7 +5,7 @@ import { createChoreographyState, deriveChoreographyPresentation, pruneChoreogra
 const AMBIENT_TICK_MS = 1_000
 const SNAPSHOT_EVENT_FRESHNESS_MS = 15_000
 
-export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', enabled = true } = {}) {
+export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', enabled = true, ambientEnabled = enabled } = {}) {
   const agentsRef = useRef(agents)
   const layoutRef = useRef(layout)
   const seenEventIdsRef = useRef(new Set())
@@ -27,14 +27,14 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
   }, [])
 
   useEffect(() => {
-    if (!enabled || !pageVisible) return undefined
+    if (!ambientEnabled || !pageVisible) return undefined
     const timer = window.setInterval(() => {
       const tickAt = Date.now()
       setAmbientState((state) => advanceAmbientDirector(state, { agents: agentsRef.current, now: tickAt, layout: layoutRef.current }))
       setChoreographyState((state) => pruneChoreographyState(state, tickAt))
     }, AMBIENT_TICK_MS)
     return () => window.clearInterval(timer)
-  }, [enabled, pageVisible])
+  }, [ambientEnabled, pageVisible])
 
   useEffect(() => {
     if (!enabled || typeof EventSource === 'undefined') return undefined

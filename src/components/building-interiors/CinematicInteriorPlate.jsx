@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import archiveCodexStrip from '../../assets/building-interior-effects/archive-interior-codex-armillary-strip.runtime.png'
 import archiveShelfStrip from '../../assets/building-interior-effects/archive-interior-shelf-ingestion-strip.runtime.png'
 import citadelCommandTableStrip from '../../assets/building-interior-effects/citadel-interior-command-table-strip.runtime.png'
@@ -41,10 +41,10 @@ const EFFECTS = freeze({
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, Number(value) || 0))
 
 function SpriteStrip({ src }) {
-  return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" decoding="async" fetchPriority="low" /></span>
+  return <span className="cinematic-effect__sprite"><img src={src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" /></span>
 }
 
-export default function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null }) {
+function CinematicInteriorPlate({ buildingId, phase = 'standby', metrics = [], evidenceEventId = null }) {
   const [plateReady, setPlateReady] = useState(false)
   const scene = CINEMATIC_INTERIOR_PLATES[buildingId]
   if (!scene) return null
@@ -70,11 +70,13 @@ export default function CinematicInteriorPlate({ buildingId, phase = 'standby', 
       <img className="cinematic-interior__plate" src={scene.src} alt="" draggable="false" loading="eager" decoding="async" fetchPriority="high" onLoad={() => setPlateReady(true)} />
       <div className="cinematic-interior__camera" />
       <div className="cinematic-interior__effects">
-        {plateReady ? EFFECTS[buildingId].map((effect) => <span key={effect.id} className={`cinematic-effect cinematic-effect--${buildingId}-${effect.id}${effect.strip ? ' is-sprite' : ''}`} data-effect={effect.id}>
+        {EFFECTS[buildingId].map((effect) => <span key={effect.id} className={`cinematic-effect cinematic-effect--${buildingId}-${effect.id}${effect.strip ? ' is-sprite' : ''}`} data-effect={effect.id}>
           {effect.strip ? <SpriteStrip src={effect.strip} /> : null}
-        </span>) : null}
+        </span>)}
       </div>
       <div className="cinematic-interior__grade" />
     </div>
   </div>
 }
+
+export default memo(CinematicInteriorPlate)

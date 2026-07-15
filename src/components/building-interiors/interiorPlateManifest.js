@@ -23,6 +23,7 @@ export function preloadInteriorPlate(buildingId) {
 
   const image = new Image()
   image.decoding = 'async'
+  image.fetchPriority = 'high'
   image.src = scene.src
   const loaded = (typeof image.decode === 'function'
     ? image.decode()
@@ -30,7 +31,10 @@ export function preloadInteriorPlate(buildingId) {
       image.onload = resolve
       image.onerror = resolve
     }))
-    .catch(() => undefined)
+    .catch(() => {
+      pendingPlateLoads.delete(buildingId)
+      return undefined
+    })
 
   pendingPlateLoads.set(buildingId, loaded)
   return loaded

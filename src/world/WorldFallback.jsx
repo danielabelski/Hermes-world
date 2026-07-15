@@ -91,8 +91,8 @@ export default function WorldFallback() {
     stageStyle,
     shouldSuppressSelection,
   } = useDomWorldCamera({ zoomPreference })
-  const presentationNow = usePresentationClock()
-  const directors = useWorldDirectors({ agents, now: presentationNow, layout: mapLayout })
+  const presentationNow = usePresentationClock(!activeInterior)
+  const directors = useWorldDirectors({ agents, now: presentationNow, layout: mapLayout, ambientEnabled: !activeInterior })
   const operationalPresentations = resolveMapAgentPresentations({ agents: agents.slice(0, 12), tasks, alerts, lifecycle, now: presentationNow, layout: mapLayout })
   const worldDebugParam = typeof window === 'undefined' ? '' : new URLSearchParams(window.location.search).get('worldDebug')
   const worldDebug = worldDebugParam === 'visual' ? 'visual' : worldDebugParam === '1' ? 'panel' : 'off'
