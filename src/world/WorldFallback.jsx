@@ -21,7 +21,7 @@ import WorldOperationsLayer from '../components/world-directors/WorldOperationsL
 import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
 import { BUILDING_INTERIOR_CONFIG, BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
 import { preloadInteriorPlate } from '../components/building-interiors/interiorPlateManifest.js'
-import { getInteriorReviewEntry, INTERIOR_ROSTER_REVIEW, resolveInteriorReviewProfile, stepInteriorReviewProfile } from './interiorRosterReview.js'
+import { getInteriorReviewEntry, getInteriorReviewProfiles, INTERIOR_ROSTER_REVIEW, resolveInteriorReviewProfile, stepInteriorReviewProfile } from './interiorRosterReview.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -170,7 +170,12 @@ export default function WorldFallback() {
           event.stopPropagation()
           const wasDrag = entryPointerRef.current?.moved
           entryPointerRef.current = null
-          if (!wasDrag) { activeEntryRef.current = event.currentTarget; setActiveInterior(entry.buildingId) }
+          if (!wasDrag) {
+            activeEntryRef.current = event.currentTarget
+            const reviewProfile = rosterReviewEnabled ? getInteriorReviewProfiles(entry.buildingId)[0]?.profileId : null
+            if (reviewProfile) selectReviewProfile(reviewProfile)
+            else setActiveInterior(entry.buildingId)
+          }
         }}
       />)}
       <MapAgentLayer

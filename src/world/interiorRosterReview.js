@@ -24,9 +24,9 @@ export const INTERIOR_ROSTER_REVIEW = freeze([
   review('verifier', 'archive', 51, 70, 1.22, 'ne'),
   review('orchestrator', 'citadel', 50, 78, 1.20, 'ne'),
   review('default', 'citadel', 47, 79, 1.24, 'ne'),
-  review('komandos', 'citadel', 50, 79, 1.12, 'ne', 'Sala testowa: docelowy subsystem ochrony nie ma jeszcze osobnego wnętrza.'),
-  review('prospecting', 'watcher', 57, 76, 1.22, 'nw'),
-  review('outreach', 'watcher', 57, 76, 1.24, 'nw'),
+  review('komandos', 'citadel', 50, 80, 1.40, 'ne', 'Sala testowa: docelowy subsystem ochrony nie ma jeszcze osobnego wnętrza.'),
+  review('prospecting', 'watcher', 57, 78, 1.36, 'nw'),
+  review('outreach', 'watcher', 57, 78, 1.38, 'nw'),
   review('synthesizer', 'sanctum', 50, 76, 1.22, 'ne'),
 ])
 
@@ -38,6 +38,10 @@ export function resolveInteriorReviewProfile(value = 'coder') {
 
 export function getInteriorReviewEntry(profileId = 'coder') {
   return byProfile[resolveInteriorReviewProfile(profileId)]
+}
+
+export function getInteriorReviewProfiles(buildingId) {
+  return INTERIOR_ROSTER_REVIEW.filter((entry) => entry.buildingId === buildingId)
 }
 
 export function stepInteriorReviewProfile(profileId, delta = 1) {
