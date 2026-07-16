@@ -522,3 +522,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Finalny artifact: **PASS** — `index-DTndlvuC.js`, 421 496 B / 129,24 kB gzip; CSS 77,25 kB / 16,61 kB gzip. Publiczny root podaje dokładnie ten fingerprint i ma `no-store`; publiczny root, asset oraz auth: HTTP 200.
 - Procesy: **PASS** — jeden listener Cytadeli 4175 (PID 6764), istniejący Hermes WebUI 8787 i Tailscale 10000; brak 4176 i brak nowego procesu serwera/przeglądarki.
 - Ręczny retest zalogowanego telefonu po fixie: **MANUAL ACTION REQUIRED**. Do chwili obserwacji nie oznaczać pełnego mobile/live E2E jako PASS.
+
+## TEST-BW-035 — Demo narrative/water/lifecycle gate
+
+- Czas: 2026-07-16 12:04 Europe/Warsaw / 10:04 UTC.
+- Branch/HEAD: `build-week/hermes-world` / `6d0e073bb75a939dedf8660e1ce3538a5945a117`.
+- Zakres produkcji: **PASS — brak zmian**; test i implementacja dotyczą wyłącznie repo demo.
+- Narracja: **PASS** — górny ticker pobiera tylko `state.raw.logs`; dolny feed pomija typ `log` i pokazuje semantic activity/alerts. Testy zachowują `rawMessage` i blokują surowy log w komunikacie narracyjnym.
+- Woda: **PASS automatyczny** — finalny raster jest RGBA, ma 1024×256 px i 35 089 B; renderer zawiera 8 regionów mobile i 6 desktop; animacja używa ciągłego `translate3d(0 → -50%)`, bez `alternate`, opacity-only i dawnych reflection blobs. Reduced motion ma statyczny fallback.
+- Weather stripes: **PASS** — renderer i CSS nie zawierają `telemetry-rain`.
+- Event transport: **PASS** — wielu subskrybentów korzysta z jednego EventSource; ostatni unsubscribe zamyka połączenie; nie powstaje druga równoległa sesja SSE.
+- Synchronizacja domen: **PASS** — równoległe wywołania `sync()` współdzielą jeden request; ukryta karta nie wykonuje polling sync; `visibilitychange`, `pageshow` i `online` wywołują kontrolowany refresh; listenery są usuwane przy unmount.
+- Lifecycle renderera: **PASS** — sampler FPS ma ograniczone okna pracy i cleanup; otwarte wnętrze pauzuje mapę; zegar prezentacji i opóźnione zamknięcie wnętrza mają cleanup.
+- `npm.cmd test`: **PASS 136/136**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 875 modułów, 2,77 s. Main JS 420,45 kB / 129,06 kB gzip; CSS 76,73 kB / 16,48 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy interior CSS 14,19 kB / 3,57 kB gzip.
+- Pierwsza próba builda w sandboxie: **FAIL — ENVIRONMENTAL EPERM** na pliku tymczasowym Vite. Identyczna komenda poza sandboxem: **PASS**; nie zmieniono kodu ani konfiguracji testów.
+- Realny telefon 393×852, desktop, wejście/wyjście wszystkich wnętrz, background/foreground i dłuższa obserwacja: **MANUAL ACTION REQUIRED** po uruchomieniu pojedynczego serwera demo.

@@ -162,3 +162,12 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Nie zmieniono Hermes OS CAT, Hermes WebUI, serwera, API, portów, Tailscale ani procesu 24/7. Jeden listener 4175 serwuje publicznie `index-DTndlvuC.js`; root i auth odpowiadają HTTP 200.
 - Walidacja automatyczna: 139/139 testów, lint, world-life validator i build PASS; fingerprint publiczny zgodny z lokalnym buildem; HTML `no-store`.
 - Otwarty gate: autor odświeża zwykły zapisany adres produkcyjny i potwierdza przez kilka cykli odświeżania, że 12 ról nie znika, status nie przechodzi fałszywie Offline, nie ma ukośnych pasów i UI pozostaje płynne. Następnie jedna prawdziwa wiadomość ma potwierdzić agent → wnętrze → terminalny stan. Nie oznaczać E2E jako PASS przed tą obserwacją.
+
+## Aktualizacja handoffu — 2026-07-16 12:04 Europe/Warsaw
+
+- Aktualny branch demo: `build-week/hermes-world`; HEAD funkcjonalny: `6d0e073bb75a939dedf8660e1ce3538a5945a117`.
+- Nowy zakres pozostaje wyłącznie na demo i nie został promowany: `67b03c8` rozdziela surowe logi od czytelnej narracji, `5aa7e22` dodaje ciągłą maskowaną wodę z własnym assetem autora, `6d0e073` scala SSE i wzmacnia lifecycle mobile.
+- Automatyczny gate: 136/136 testów, lint, world-life validator i build PASS. Build: 875 modułów, 2,77 s; JS 420,45 kB / 129,06 kB gzip; CSS 76,73 kB / 16,48 kB gzip; woda 35,08 kB.
+- Produkcyjny `main`, serwer 4175, Tailscale, Hermes WebUI, API i proces 24/7 pozostają nietknięte przez ten pass.
+- Następny gate to wyłącznie manualny odbiór demo: widoczny stały przepływ wody na właściwych powierzchniach, brak ukośnych pasów, górny ticker jako raw logs, dolny panel jako czytelne komunikaty, płynne wejścia/wyjścia wnętrz, poprawny powrót z tła i brak regresji szybkości.
+- Bez jednoznacznego GL autora nie wolno promować żadnej z tych zmian na produkcję.
