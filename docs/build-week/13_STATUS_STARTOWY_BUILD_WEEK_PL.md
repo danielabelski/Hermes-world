@@ -171,3 +171,12 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Produkcyjny `main`, serwer 4175, Tailscale, Hermes WebUI, API i proces 24/7 pozostają nietknięte przez ten pass.
 - Następny gate to wyłącznie manualny odbiór demo: widoczny stały przepływ wody na właściwych powierzchniach, brak ukośnych pasów, górny ticker jako raw logs, dolny panel jako czytelne komunikaty, płynne wejścia/wyjścia wnętrz, poprawny powrót z tła i brak regresji szybkości.
 - Bez jednoznacznego GL autora nie wolno promować żadnej z tych zmian na produkcję.
+
+## Aktualizacja handoffu — 2026-07-16 13:10 Europe/Warsaw
+
+- Wersja wody z commita `5aa7e22` otrzymała manualny **RL**; przybliżone regiony zostały całkowicie zastąpione, nie tylko przygaszone.
+- Aktualny funkcjonalny HEAD demo: `539144663bf789e1e5ad71d25cb4f40458222e25`. Woda korzysta z pikselowych masek wynikających z realnej geometrii map mobile/desktop i dwóch lekkich warstw transform-only.
+- Automatyczny gate: fokus 24/24, pełne 136/136 testów, lint, validator i build PASS. Main JS jest mniejszy niż przed zmianą; nowe binarne zasoby runtime mają łącznie około 91,6 kB.
+- Produkcja nadal nietknięta. Manualny test nowej wody na telefonie pozostaje jedynym otwartym gate tego passu.
+- Po GL wody następny meaningful zakres pozostaje na demo: wzmocnienie widocznego łańcucha jednego prawdziwego eventu oraz uczciwego ambientu. Nie generować fake Working/Success; nie budzić niewłaściwych agentów; zachować jeden `evidenceEventId` i istniejącą architekturę directorów.
+- Szczegółowe instrukcje wznowienia znajdują się na samej górze `NEXT_WINDOW_HANDOFF.md`.

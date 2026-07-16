@@ -540,3 +540,20 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 875 modułów, 2,77 s. Main JS 420,45 kB / 129,06 kB gzip; CSS 76,73 kB / 16,48 kB gzip; lazy interior JS 16,16 kB / 6,19 kB gzip; lazy interior CSS 14,19 kB / 3,57 kB gzip.
 - Pierwsza próba builda w sandboxie: **FAIL — ENVIRONMENTAL EPERM** na pliku tymczasowym Vite. Identyczna komenda poza sandboxem: **PASS**; nie zmieniono kodu ani konfiguracji testów.
 - Realny telefon 393×852, desktop, wejście/wyjście wszystkich wnętrz, background/foreground i dłuższa obserwacja: **MANUAL ACTION REQUIRED** po uruchomieniu pojedynczego serwera demo.
+
+## TEST-BW-036 — Pixel-aligned water geometry and cost gate
+
+- Czas: 2026-07-16 13:10 Europe/Warsaw / 11:10 UTC.
+- Branch/commit: `build-week/hermes-world` / `539144663bf789e1e5ad71d25cb4f40458222e25`.
+- Poprzednia percepcyjna wersja: **FAIL / RL** na realnym telefonie — efekt był oparty na przybliżonych prostokątnych regionach i nie czytał się jako przepływ rzeczywistej wody.
+- Źródło geometrii: **PASS** — aktywny renderer importuje osobne pikselowe maski map mobile i desktop; brak `WATER_SURFACES`, ręcznych `clipPath` i `data-water-region`.
+- Zakres maski: **PASS statyczny** — maski zostały porównane wizualnie z bazowymi mapami; mobile obejmuje zewnętrzne koryta/wodospady, desktop zatokę, bez pełnego prostokąta. Ostateczna ocena animacji pozostaje manualna.
+- Asset contract: **PASS** — mobile mask RGBA `470×836`, 43 967 B; desktop mask RGBA `767×512`, 8 479 B; pionowa tekstura RGBA `256×1024`, 39 202 B. Wszystkie mieszczą się w testowanych budżetach.
+- Motion contract: **PASS** — dwa ciągłe poziomy nurtu używają wyłącznie transform, osobnych skali/czasów i kierunku zależnego od layoutu; brak timera JS, `stroke-dasharray`, SVG turbulence i animowania layout properties.
+- Reduced motion: **PASS** — animacje są wyłączane, pozostaje jedynie statyczny substytut o obniżonej opacity.
+- Test fokusowy: **PASS 24/24**.
+- Pełne `npm.cmd test`: **PASS 136/136**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 878 modułów, 6,31 s. Main JS 417,70 kB / 128,09 kB gzip; CSS 77,47 kB / 16,58 kB gzip.
+- Percepcyjny test nowej animacji na telefonie 393×852: **MANUAL ACTION REQUIRED**; nie oznaczać GL automatycznie.

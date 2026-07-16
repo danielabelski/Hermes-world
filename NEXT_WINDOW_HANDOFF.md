@@ -1,5 +1,61 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## ACTIVE HANDOFF — PIXEL-ALIGNED WATER + NEXT REAL-EVENT LIFE PASS (2026-07-16 13:10 CEST)
+
+Ta sekcja jest aktualnym źródłem prawdy. Niższe sekcje pozostają historią projektu.
+
+### Repo i granice
+
+- Repo demo: `hermes-os-living-world-demo`.
+- Branch: `build-week/hermes-world`.
+- Ostatni commit funkcjonalny: `539144663bf789e1e5ad71d25cb4f40458222e25` (`fix(build-week): align flowing water to map geometry`).
+- Produkcja pozostaje nietknięta. Nie promować niczego bez osobnego GL po manualnym teście demo.
+- Nie zmieniać mapy bazowej, geometrii, cropu, waypointów, tras, FSM, API, `server.js`, portów ani Tailscale.
+
+### Co właśnie ukończono na demo
+
+- Poprzednia woda z ośmiu/sześciu przybliżonych prostokątnych regionów otrzymała jednoznaczny **RL** od autora i została usunięta.
+- Nowe maski zostały wyprowadzone z pikseli dwóch faktycznie renderowanych map: mobile `941×1672` oraz desktop `1535×1024`. Mobile obejmuje wyłącznie zewnętrzne koryta i wodospady; desktop wyłącznie zatokę pod murami.
+- Runtime maski są lekkimi RGBA: mobile `470×836`, 43 967 B; desktop `767×512`, 8 479 B. Kierunkowy wariant pionowy tekstury ma `256×1024`, 39 202 B.
+- Dwa poziomy transform-only: wolniejszy głęboki nurt i szybsze refleksy. Brak JS timera, SVG turbulence, prostokątnych clipów, pełnych linii, pasków i ruchu poza maską.
+- CSS maskuje pełną warstwę 1:1 do mapy; mobile płynie pionowo ku wodospadom, desktop poziomo przez zatokę. Reduced motion zachowuje statyczny, spokojny substytut.
+
+### Walidacja
+
+- Test fokusowy: 24/24 PASS.
+- Pełny `npm.cmd test`: 136/136 PASS.
+- `npm.cmd run lint`: PASS.
+- `npm.cmd run validate:world-life`: PASS.
+- `npm.cmd run build`: PASS, Vite 8.0.16, 878 modułów, 6,31 s.
+- Main JS: 417,70 kB / 128,09 kB gzip — mniej niż poprzednie 420,45 kB / 129,06 kB gzip.
+- CSS: 77,47 kB / 16,58 kB gzip.
+- Manualna percepcyjna ocena nowej wody na telefonie: **PENDING — nie oznaczać GL przed testem autora**.
+
+### Najnowszy feedback autora o żywotności
+
+- Prawdziwa wiadomość uruchomiła ruch Kowala do celu i powrót, więc podstawowy evidence-backed lifecycle działa.
+- Odbiór nadal nie wygląda jak pełny „żywy event”; większość czasu agenci pozostają bezczynni, przez co świat sprawia wrażenie martwego.
+- Nie każda wiadomość ma automatycznie budzić Kowala. Worker musi wynikać z prawdziwego mapowania/delegacji.
+- Następny zakres po GL wody: **REAL EVENT VISUAL CHAIN + HONEST AMBIENT LIFE**, nadal wyłącznie na demo:
+  1. realny pakiet wejściowy z bramy do Cytadeli;
+  2. widoczna reakcja Kasztelana i command point;
+  3. sygnał do faktycznie wybranego subsystemu;
+  4. ruch wyłącznie właściwego workera i reakcja jego budynku;
+  5. terminalny rezultat i zapis Archiwum na tym samym `evidenceEventId`;
+  6. ambientowe patrol/inspect/rest/converse oddzielone od `operationalState`, maksymalnie 2–3 jednocześnie, bez fake Working/Success i bez zwiększania licznika aktywnych.
+- Najpierw audyt istniejącej choreografii i Ambient Directora; nie budować drugiego systemu i nie powtarzać zakończonych analiz.
+
+### Dokładne wznowienie w nowym oknie
+
+1. Przeczytać w całości tę sekcję, `docs/build-week/13_STATUS_STARTOWY_BUILD_WEEK_PL.md` i ostatnie wpisy `02_DZIENNIK_BUILD_WEEK_PL.md` / `06_TESTY_I_STABILNOSC_PL.md`.
+2. Sprawdzić branch, HEAD i `git status`; nie resetować i nie przepisywać historii.
+3. Uruchomić/pozostawić dokładnie jeden serwer demo 4176; produkcji 4175 nie dotykać.
+4. Autor ocenia wodę na `http://100.69.167.105:4176/?demo=1`.
+5. RL: poprawić wyłącznie wskazany defekt wody i powtórzyć pełny gate.
+6. GL: zapisać wynik i rozpocząć audit istniejącego real-event/ambient systemu według zakresu wyżej.
+
+---
+
 ## ACTIVE DEMO GATE — WORLD CHOREOGRAPHY + AMBIENT DIRECTOR
 
 - Scope: branch `demo` only. Production is frozen until explicit GL.

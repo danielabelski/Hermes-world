@@ -565,3 +565,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Zachowano istniejącą optymalizację wnętrz: po otwarciu pokoju animacje całej mapy są pauzowane, a zegar prezentacji zatrzymuje się w ukrytej karcie. Nie przebudowano sprawnych mechanizmów.
 - Walidacja: `npm.cmd test` **PASS 136/136**; `npm.cmd run lint` **PASS**; `npm.cmd run validate:world-life` **PASS**; build produkcyjny **PASS**, Vite 8.0.16, 875 modułów, 2,77 s. Główny JS: 420,45 kB / 129,06 kB gzip; CSS: 76,73 kB / 16,48 kB gzip; asset wody: 35,08 kB. Pierwszy build w sandboxie napotkał znany Windows/Vite `EPERM`; identyczna komenda poza sandboxem przeszła bez zmiany kodu lub konfiguracji.
 - Automaty potwierdzają semantykę, cleanup, singleton SSE i zakres assetu. Manualna ocena widoczności ruchu wody, hierarchii dwóch feedów, wejść do wnętrz oraz płynności na realnym telefonie pozostaje **MANUAL ACTION REQUIRED** przed jakąkolwiek promocją.
+
+## BW-2026-07-16-044 — RL przybliżonej wody i pixel-aligned rebuild
+
+- Czas Europe/Warsaw: 2026-07-16 12:15–13:10; czas UTC: 10:15–11:10.
+- Autor ocenił pierwszą wersję ciągłej wody na realnym telefonie przez LTE jako **RL**: zamysł był poprawny, lecz przybliżone regiony nie były dopasowane do prawdziwych koryt i efekt nie przypominał płynącej wody.
+- Przyczyna została usunięta, a nie zamaskowana większą opacity. Skasowano tablicę ośmiu prostokątnych regionów mobile i sześciu desktop wraz z ręcznymi `clipPath`.
+- Nowe maski wyprowadzono deterministycznie z pikseli bazowych map i ograniczono ręcznie do obszarów, które rzeczywiście są wodą. Segmentacja używa relacji kanałów RGB, morfologicznego domknięcia oraz odrzucenia małych komponentów, aby nie animować kryształów, okien, dróg i murów.
+- Mobile maskuje zewnętrzne rzeki/koryta i wodospady; desktop maskuje zatokę. Maski runtime są połową natywnej rozdzielczości, nadal powyżej docelowej rozdzielczości telefonu, i ważą 43 967 B oraz 8 479 B.
+- Ruch składa się z dwóch warstw CSS transform: głębokiego nurtu oraz refleksów o innej skali i czasie. Mobile używa pionowej tekstury zgodnej z odpływem ku wodospadom, desktop poziomej zgodnej z zatoką. Nie dodano timera JS ani ciężkiego filtra.
+- Commit funkcjonalny: `539144663bf789e1e5ad71d25cb4f40458222e25` (`fix(build-week): align flowing water to map geometry`).
+- Walidacja: fokus 24/24 PASS; pełne testy 136/136 PASS; lint PASS; world-life validator PASS; build PASS, 878 modułów, 6,31 s. Main JS zmalał do 417,70 kB / 128,09 kB gzip; CSS 77,47 kB / 16,58 kB gzip.
+- Produkcja pozostała nietknięta. Nowa woda czeka na percepcyjny RL/GL autora na realnym telefonie.
+- Dodatkowy feedback z produkcyjnej obserwacji został zapisany jako przyszły zakres, nie jako wykonana funkcja: prawdziwy event uruchamia Kowala i powrót, lecz całemu lifecycle brakuje czytelnego łańcucha wejście → Cytadela → worker/budynek → Archiwum, a idle wymaga uczciwego ambientu niezmieniającego operational state.
