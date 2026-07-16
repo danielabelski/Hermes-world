@@ -649,3 +649,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 4,80 s. Main JS 423,05 kB / 129,98 kB gzip; CSS 76,69 kB / 16,56 kB gzip.
 - Mikrobenchmark czystego utworzenia i próbkowania handoffu: 50 000 iteracji, 1 338,470 ms, średnio 26,769 µs/iterację. To pomiar logiki bez DOM, nie pomiar FPS telefonu.
 - Serwer demo 4176 podaje `index-Cm90ARzU.js`; bundle zawiera kontrakty gait oraz `operational-handoff`. Manualna ocena rytmu kroku na realnym telefonie pozostaje **MANUAL ACTION REQUIRED**.
+
+## BW-2026-07-16-051 — Drugi pass biomechaniki chodu po pozytywnym kierunku
+
+- Czas Europe/Warsaw: 2026-07-16 18:05–18:23; czas UTC: 16:05–16:23.
+- Autor potwierdził poprawę i poprosił o dalsze dopracowanie, aby przesunięcie jeszcze wyraźniej przypominało chód. Zakres pozostał ograniczony do demo i warstwy prezentacji.
+- Cztery klatki chodu nie mają już równego czasu. Fazy kontaktu stopy trwają dłużej niż fazy przeniesienia, co ogranicza wrażenie stałego ślizgu przy zachowaniu tej samej prędkości i trasy świata.
+- Dodano kierunkowy mikrokrok zgodny z ruchem NE/NW/SE/SW, wyraźniejszy transfer ciężaru, minimalny docisk/wyprost sylwetki i zmianę opacity/kompresji cienia podczas fazy lotnej. Amplitudy pozostają subpikselowe lub bliskie 1 px, aby agent nie wyglądał kreskówkowo.
+- Transformacje obracają się i skalują względem rzeczywistego `footAnchorY` konkretnego sprite’a, a nie umownego środka. Nie zmieniono logicznej pozycji stóp, waypointów, prędkości, FSM ani event pipeline.
+- Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 5,00 s. Main JS 423,69 kB / 130,30 kB gzip; CSS 76,91 kB / 16,61 kB gzip.
+- Runtime demo 4176 podaje `index-dUUrp4or.js` i `index-DqtBZKb-.css`; kontrakty kadencji oraz anchoru stóp są obecne. Produkcja pozostała nietknięta.

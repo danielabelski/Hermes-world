@@ -963,3 +963,14 @@ Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at 
 4. Return GL or name the exact agent/phase that still looks wrong. Production stays untouched until a separate explicit GL.
 
 ---
+
+## DEMO WALKING BIOMECHANICS PASS 2 — 2026-07-16
+
+- Demo only; production unchanged at `c9a3205`.
+- Contact frames are held longer than passing frames, reducing constant-speed skating without changing world speed.
+- Each direction receives a subpixel stride vector, alternating weight transfer, body compression and synchronized shadow response.
+- Rotation/scaling use each asset's actual foot anchor, preserving the logical point between the feet.
+- Verification: focused 44/44, full 146/146, lint PASS, validator PASS, build PASS.
+- Served demo artifact: `index-dUUrp4or.js`; manual phone GL/RL remains the only gate.
+
+---

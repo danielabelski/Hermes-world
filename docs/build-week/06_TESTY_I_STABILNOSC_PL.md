@@ -642,3 +642,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Ciągłość: **PASS** — początek handoffu jest identyczny z ostatnią pozycją ambientu; handoff tego samego runu nie działa w fazie `working`; pełny powrót Kowala pozostaje bez teleportu.
 - Mikrobenchmark handoffu: 50 000 iteracji / 1 338,470 ms / 26,769 µs na iterację. To nie jest pomiar FPS ani energii telefonu.
 - Manualna ocena naturalności kroku 393×852: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-043 — Second-pass walking biomechanics gate
+
+- Czas Europe/Warsaw: 2026-07-16 18:18–18:23.
+- Testy fokusowe ruchu/dyrektorów/tras: **PASS 44/44**.
+- Pełne `npm.cmd test`: **PASS 146/146**, 0 fail.
+- ESLint: **PASS**.
+- World-life validator: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 5,00 s.
+- Main JS: 423,69 kB / 130,30 kB gzip; CSS: 76,91 kB / 16,61 kB gzip.
+- Runtime 4176: **PASS** — `index-dUUrp4or.js`; wykryto kontrakty nierównej kadencji kontaktu i `--map-agent-foot-origin`.
+- Produkcja `c9a3205`: **UNCHANGED**.
+- Percepcyjna ocena chodu na realnym telefonie: **MANUAL ACTION REQUIRED**.

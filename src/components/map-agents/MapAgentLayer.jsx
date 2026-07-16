@@ -5,6 +5,14 @@ import { getMapAgentLod, selectMapAgentRenderSet } from '../../world/mapAgentRen
 
 assertMapAgentManifestSeparation()
 
+function getWalkFrameIndex(elapsedMs, cycleMs) {
+  const phase = ((elapsedMs % cycleMs) + cycleMs) % cycleMs / cycleMs
+  if (phase < 0.28) return 0
+  if (phase < 0.5) return 1
+  if (phase < 0.78) return 2
+  return 3
+}
+
 function MapAgentLayer({
   presentations = [],
   selectedId = null,
@@ -30,7 +38,9 @@ function MapAgentLayer({
       const cycleMs = model.walkCycleMs ?? (model.profileId === 'coder' ? 720 : model.profileId === 'prospecting' ? 520 : 620)
       const stagger = index * 43
       const frameIndex = animationEnabled
-        ? model.frameIndex ?? Math.floor((animationNow + stagger) / Math.max(120, cycleMs / 4)) % 4
+        ? model.frameIndex ?? (model.isMoving
+          ? getWalkFrameIndex(animationNow + stagger, Math.max(480, cycleMs))
+          : Math.floor((animationNow + stagger) / Math.max(120, cycleMs / 4)) % 4)
         : 0
       const animationPhase = animationEnabled
         ? ((animationNow + stagger) % Math.max(900, model.idleCycleMs ?? 3_600)) / Math.max(900, model.idleCycleMs ?? 3_600)

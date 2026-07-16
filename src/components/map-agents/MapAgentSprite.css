@@ -40,8 +40,15 @@
   bottom: calc(-1 * var(--map-agent-tail));
   width: var(--map-agent-canvas);
   height: var(--map-agent-canvas);
-  transform: translate3d(var(--map-agent-step-x, 0px), var(--map-agent-bob), 0) rotate(var(--map-agent-step-lean, 0deg));
-  transform-origin: 50% 92%;
+  transform:
+    translate3d(
+      calc(var(--map-agent-step-x, 0px) + var(--map-agent-stride-x, 0px)),
+      calc(var(--map-agent-bob) + var(--map-agent-stride-y, 0px)),
+      0
+    )
+    rotate(var(--map-agent-step-lean, 0deg))
+    scale(var(--map-agent-step-scale-x, 1), var(--map-agent-step-scale-y, 1));
+  transform-origin: 50% var(--map-agent-foot-origin, 92%);
   transition: transform 82ms cubic-bezier(.22,.62,.32,1);
   will-change: transform;
   pointer-events: none;
@@ -84,6 +91,7 @@
   height: clamp(3px, 6%, 4px);
   border-radius: 50%;
   background: radial-gradient(ellipse, rgb(2 7 6 / 0.52) 0 32%, rgb(2 7 6 / 0.22) 56%, transparent 78%);
+  opacity: var(--map-agent-shadow-opacity, 1);
   transform: translateX(calc(-50% + var(--map-agent-shadow-shift, 0px))) scaleX(calc(var(--map-agent-shadow-scale, 1) * var(--map-agent-shadow-step, 1)));
   transform-origin: center;
   transition: transform 82ms cubic-bezier(.22,.62,.32,1), opacity 82ms linear;
