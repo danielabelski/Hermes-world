@@ -13,6 +13,40 @@ import { subscribeWorldEventStream } from '../world/events/worldEventStream.js';
 const RETRY_INTERVAL_MS = 5_000;
 const DEMO_SCENE_TICK_MS = 250;
 const DEMO_SCENE_SPEED = 1.25;
+const TERMINAL_WORLD_STATES = new Set(['success', 'idle', 'critical']);
+
+/**
+ * A dropped browser SSE can leave the last observed edge at `working` even
+ * after Hermes has already closed the corresponding session.  The session
+ * inventory is authoritative for whether that stream still exists.  When it
+ * explicitly says a session is no longer streaming and no terminal edge was
+ * observed, discard that run's transient overlay and let the live snapshot
+ * describe the agent.  This never fabricates Success/Idle.
+ */
+export function reconcileWorldEventHistory(liveSnapshot, events = []) {
+  const sessions = Array.isArray(liveSnapshot?.raw?.sessions) ? liveSnapshot.raw.sessions : [];
+  if (!sessions.length || !events.length) return events;
+
+  const sessionById = new Map(sessions.map((session) => [String(session?.id ?? session?.session_id ?? ''), session]));
+  const eventsByRun = new Map();
+  for (const event of events) {
+    const runId = String(event?.runId ?? '');
+    if (!runId) continue;
+    const bucket = eventsByRun.get(runId) ?? [];
+    bucket.push(event);
+    eventsByRun.set(runId, bucket);
+  }
+
+  const abandonedRuns = new Set();
+  for (const [runId, runEvents] of eventsByRun) {
+    const latest = [...runEvents].sort((a, b) => Number(a?.seq ?? 0) - Number(b?.seq ?? 0)).at(-1);
+    if (!latest?.sessionId || TERMINAL_WORLD_STATES.has(latest.state)) continue;
+    const session = sessionById.get(String(latest.sessionId));
+    if (session && session.is_streaming === false) abandonedRuns.add(runId);
+  }
+
+  return abandonedRuns.size ? events.filter((event) => !abandonedRuns.has(String(event?.runId ?? ''))) : events;
+}
 
 /**
  * A snapshot made from empty API fallbacks is not a trustworthy representation
@@ -70,6 +104,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   const applyLiveSnapshot = useCallback((liveSnapshot) => {
     if (!mountedRef.current) return;
     if (hasUsableHermesData(liveSnapshot)) {
+      eventHistoryRef.current = reconcileWorldEventHistory(liveSnapshot, eventHistoryRef.current);
       const resolvedSnapshot = eventHistoryRef.current.length ? applyWorldEventsToSnapshot(liveSnapshot, eventHistoryRef.current) : liveSnapshot;
       const source = eventDrivenRef.current ? 'live' : liveSnapshot.lifecycle?.source ?? 'live';
       setState({

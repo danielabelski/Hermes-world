@@ -623,3 +623,17 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Kontrolowany fixture demo zawiera jedynie syntetyczny, jawny tekst pamięci; produkcyjny runtime korzysta wyłącznie z endpointu. Nie zmieniono API serwera ani event pipeline.
 - Walidacja: testy fokusowe 46/46 PASS; pełny zestaw 137/137 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 5,28 s. Main JS 419,83 kB / 128,96 kB gzip; CSS 76,41 kB / 16,48 kB gzip. Istniejący serwer demo przyjął unikalny testowy event i podał nowy fingerprint bundla; nie uruchomiono drugiego serwera.
 - Rzeczywista jakość percepcyjna fali reakcji i czytelność metryk w pięciu wnętrzach na telefonie pozostają **MANUAL ACTION REQUIRED** przed GL i jakąkolwiek promocją.
+
+## BW-2026-07-16-049 — Domknięcie odpornego lifecycle’u prawdziwej wiadomości
+
+- Czas Europe/Warsaw: 2026-07-16 16:58–17:22; czas UTC: 14:58–15:22.
+- Zakres: wyłącznie demo `build-week/hermes-world`. Produkcyjny katalog, `main`, proces 4175, Tailscale, Hermes WebUI i API pozostały nietknięte.
+- Audyt pełnego łańcucha wykrył cztery konkretne problemy: pakiet danych kończył animację później niż jego faza prezentacji, fallback powrotu agenta pomijał czas ekspozycji Success, publikator oznaczał edge jako wysłany przed potwierdzeniem HTTP, a zerwane SSE mogło pozostawić historyczne `Working` mimo zakończonej sesji.
+- Zsynchronizowano długość tranzytu z czasem operacji i wydłużono sygnał Archiwum tak, aby pakiet faktycznie docierał do celu. Powrót agenta bez jawnego `returnUntil` obejmuje teraz Success hold oraz pełny marsz do domu.
+- Publikator prawdziwych edge’y czatu ma kolejkę zachowującą kolejność, ograniczone ponowienia oraz ten sam `eventId`/`seq` przy retry. Edge jest zapamiętywany dopiero po potwierdzonym przyjęciu; trwała awaria publikacji nie przerywa samego czatu i nie tworzy fałszywego Success.
+- Historia zdarzeń jest uzgadniana z rzeczywistym inventory sesji. Jeżeli API jednoznacznie potwierdza `is_streaming: false`, a terminalny edge nie dotarł, transient overlay danego runu jest usuwany i kontrolę odzyskuje live snapshot. Nie jest syntetyzowany `Success` ani `Idle`.
+- Równoległe runy wybierają najświeższą aktywną sekwencję, ale terminal starszego prawdziwego runu nadal może dotrzeć do Archiwum.
+- Benchmark CPU czystej derivacji lifecycle: 20 000 przebiegów w 1412,7 ms, średnio około 70,635 µs na przebieg na tym laptopie. To pomiar logiki, nie FPS ani paint telefonu.
+- Ograniczenia zapisane jawnie: aktualny worker delegacji pochodzi z wybranego profilu czatu, nie z dowodu wewnętrznego delegowania upstream; animacja zapisu Archiwum przedstawia prawdziwy terminalny event, ale sama nie dowodzi zapisu do pamięci/RAG.
+- Walidacja: testy celowane 75/75 PASS; pełne testy 144/144 PASS; ESLint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 3,65 s. Main JS 420,47 kB / 129,21 kB gzip; CSS 76,41 kB / 16,48 kB gzip.
+- Następny gate: manualny real-phone test jednego prawdziwego lifecycle’u na istniejącym demo 4176. Produkcja nadal wymaga osobnego GL i osobnej promocji.

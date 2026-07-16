@@ -19,8 +19,7 @@ function SpriteStrip({ src, className = '', staticFrame = false }) {
 function DataTransitOperation({ operation }) {
   const path = pathData(operation.route)
   const destination = operation.route.at(-1)
-  const baseDuration = Math.max(4, Math.min(8, operation.durationMs / 1_000))
-  const duration = operation.mode === 'event' ? Math.max(4, baseDuration * 0.78) : baseDuration
+  const duration = Math.max(2.4, Math.min(8, Number(operation.durationMs ?? 6_000) / 1_000))
   return <svg className={`world-operation world-operation--data-transit mode-${operation.mode}`} style={{ '--transit-duration': `${duration}s`, '--operation-lifetime': `${operation.durationMs ?? 6_000}ms` }} viewBox="0 0 100 100" preserveAspectRatio="none" data-world-operation={operation.type} data-operation-mode={operation.mode} data-evidence-event-id={operation.evidenceEventId ?? ''}>
     {operation.phase === 'static' ? <circle className="operation-artery__core is-static" cx={destination.x} cy={destination.y} r=".68" /> : <>
       <path className="operation-artery__wake" d={path} pathLength="100" vectorEffect="non-scaling-stroke" />

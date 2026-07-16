@@ -39,17 +39,33 @@ export function createChatWorldEventPublisher({
   profile = 'default',
   publish = publishThroughPanel,
   now = () => new Date().toISOString(),
+  retryDelaysMs = Object.freeze([160, 420]),
+  sleep = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs)),
 } = {}) {
   let seq = 0
   let terminal = false
+  let queue = Promise.resolve()
   const emitted = new Set()
+  const pending = new Set()
 
-  const emitOnce = async (key, eventType, payload = {}) => {
-    if (!runId || emitted.has(key) || (terminal && key !== 'critical')) return false
-    emitted.add(key)
+  const publishWithRetry = async (event) => {
+    for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
+      try {
+        if (await publish(event)) return true
+      } catch {
+        // A failed visualization edge must not interrupt the Hermes response.
+      }
+      if (attempt < retryDelaysMs.length) await sleep(retryDelaysMs[attempt])
+    }
+    return false
+  }
+
+  const emitOnce = (key, eventType, payload = {}) => {
+    if (!runId || emitted.has(key) || pending.has(key) || (terminal && key !== 'critical')) return Promise.resolve(false)
+    pending.add(key)
     if (key === 'success' || key === 'critical') terminal = true
     const eventSeq = seq++
-    return publish({
+    const event = {
       event_id: `${runId}:${eventSeq}`,
       run_id: runId,
       seq: eventSeq,
@@ -61,7 +77,15 @@ export function createChatWorldEventPublisher({
       message: EVENT_MESSAGES[eventType] ?? 'Hermes zaktualizował stan.',
       source: 'hermes-chat-sse',
       payload,
+    }
+    const operation = queue.then(async () => {
+      const accepted = await publishWithRetry(event)
+      pending.delete(key)
+      if (accepted) emitted.add(key)
+      return accepted
     })
+    queue = operation.catch(() => false)
+    return operation
   }
 
   return Object.freeze({

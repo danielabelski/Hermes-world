@@ -614,3 +614,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 874 moduły, 5,28 s. Main JS 419,83 kB / 128,96 kB gzip; CSS 76,41 kB / 16,48 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
 - Event hub/bundle: **PASS techniczny** — istniejący serwer demo przyjął pojedynczy unikalny event, snapshot zawierał event, a root wskazał aktualny fingerprint bundla. Nie uruchomiono dodatkowego listenera.
 - Manualny test telefonu: **MANUAL ACTION REQUIRED** — ocenić, czy po realnej wiadomości reakcja Kasztelana, czterech fal agentów, Cytadeli, właściwego budynku i Archiwum jest czytelna bez wyglądu fake work.
+
+## TEST-BW-041 — Full real-event lifecycle resilience gate
+
+- Czas: 2026-07-16 17:22 Europe/Warsaw / 15:22 UTC.
+- Zakres: **PASS — wyłącznie demo**; produkcyjny kod i runtime nie zostały zmienione.
+- Testy celowane: **PASS 75/75** — kolejność i retry publikacji, brak fake Success, pełny powrót, konkurencyjne runy, dokładne czasy tranzytu i cztery warianty uzgodnienia SSE z inventory sesji.
+- Pełne `npm.cmd test`: **PASS 144/144**, 0 fail, 0 skipped.
+- `npm.cmd run lint -- --quiet`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 874 moduły, 3,65 s. Main JS 420,47 kB / 129,21 kB gzip; CSS 76,41 kB / 16,48 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
+- `git diff --check`: **PASS**; wyłącznie ostrzeżenia Windows LF/CRLF, bez błędów whitespace.
+- Benchmark derivacji lifecycle: **PASS budżetowy**, 20 000 przebiegów / 1412,7 ms / około 70,635 µs na przebieg. Ograniczenie: nie jest to browser FPS ani cold paint.
+- Manualny prawdziwy chat przez LTE/telefon: **MANUAL ACTION REQUIRED** przed GL; test automatyczny nie może uczciwie zastąpić zalogowanej sesji autora i percepcyjnej oceny ruchu.

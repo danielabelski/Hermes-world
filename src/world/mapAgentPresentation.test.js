@@ -161,6 +161,14 @@ test('Kowal exits before success, returns by road and settles at home without te
   assert.equal(home.visualState, 'idle')
   closeTo(home.worldX, 46)
   closeTo(home.worldY, 36.5)
+
+  const inferredReturn = { ...doneTask, returnUntil: undefined }
+  const inferredAlmostHome = modelAt(completedAt + 8_199, inferredReturn)
+  assert.equal(inferredAlmostHome.journeyStage, 'return', 'fallback return window must include the Success hold')
+  closeTo(inferredAlmostHome.worldX, 46, 0.12)
+  closeTo(inferredAlmostHome.worldY, 36.5, 0.12)
+  const inferredHome = modelAt(completedAt + 8_201, inferredReturn)
+  assert.equal(inferredHome.journeyStage, 'idle')
 })
 
 test('presentation timestamps survive polling and an active task outranks stale done work', () => {

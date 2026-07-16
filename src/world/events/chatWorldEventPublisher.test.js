@@ -55,3 +55,46 @@ test('does not publish anything without a confirmed stream id', async () => {
   assert.equal(await publisher.started(), false)
   assert.deepEqual(events, [])
 })
+
+test('retries a failed panel edge with the same evidence id and preserves lifecycle order', async () => {
+  const attempts = []
+  const sleeps = []
+  let failStartedOnce = true
+  const publisher = createChatWorldEventPublisher({
+    runId: 'stream-retry-1',
+    retryDelaysMs: [10, 20],
+    sleep: async (delayMs) => { sleeps.push(delayMs) },
+    publish: async (event) => {
+      attempts.push({ id: event.event_id, event: event.event })
+      if (event.event === 'stream_start' && failStartedOnce) {
+        failStartedOnce = false
+        return false
+      }
+      return true
+    },
+  })
+
+  const started = publisher.started()
+  const thinking = publisher.thinking()
+  assert.equal(await started, true)
+  assert.equal(await thinking, true)
+  assert.deepEqual(attempts, [
+    { id: 'stream-retry-1:0', event: 'stream_start' },
+    { id: 'stream-retry-1:0', event: 'stream_start' },
+    { id: 'stream-retry-1:1', event: 'reasoning' },
+  ])
+  assert.deepEqual(sleeps, [10])
+})
+
+test('does not mark a permanently failed edge as emitted', async () => {
+  let attempts = 0
+  const publisher = createChatWorldEventPublisher({
+    runId: 'stream-retry-2',
+    retryDelaysMs: [0],
+    sleep: async () => {},
+    publish: async () => { attempts += 1; return false },
+  })
+  assert.equal(await publisher.started(), false)
+  assert.equal(await publisher.started(), false)
+  assert.equal(attempts, 4)
+})

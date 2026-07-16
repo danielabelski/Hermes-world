@@ -897,3 +897,40 @@ Scope: demo repository only, branch `build-week/hermes-world`. Production `main`
 5. Only after GL prepare a strict file/commit promotion manifest. Production changes remain a separate audited operation.
 
 ---
+
+## REAL EVENT LIFECYCLE RESILIENCE CHECKPOINT — 2026-07-16
+
+Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at `c9a32051a3367990ceae266adeed16366cbd4738` and was not touched in this block.
+
+### Completed
+
+- Data packets now complete within the exact operation phase instead of disappearing before the destination.
+- Archive return remains visible for its complete 5.8 s evidence-backed cycle.
+- Agent fallback return includes the Success hold and full route home, preventing a final jump.
+- Chat world-event publishing is ordered, acknowledged and retried with stable evidence IDs; permanent publication failure does not interrupt chat or fabricate terminal state.
+- A dropped SSE cannot keep stale `Working` forever when the real session inventory explicitly proves that stream ended. No synthetic Success/Idle is generated.
+- Concurrent real runs retain the newest active presentation while a genuine terminal edge from an older run can still reach Archive.
+
+### Verification
+
+- Targeted: 75/75 PASS.
+- Full tests: 144/144 PASS.
+- ESLint: PASS.
+- World-life validator: PASS.
+- Build: PASS, 874 modules, 3.65 s; main JS 420.47 kB / 129.21 kB gzip.
+- Pure lifecycle derivation benchmark: about 70.635 µs per lifecycle over 20,000 iterations on this laptop.
+
+### Honest limitations
+
+- The selected chat profile is the current delegation target. Internal upstream delegation to another worker is not claimed without an explicit worker edge in Hermes SSE.
+- Archive ingestion visualizes a real completed event; it is not proof that Obsidian/RAG persisted a memory record.
+- Authenticated, perceptual real-phone E2E remains the next manual gate.
+
+### Exact next action
+
+1. Use the existing demo URL `http://100.69.167.105:4176/?demo=1`.
+2. Send one real message and observe Gate → Citadel/Kasztelan → selected subsystem → real terminal → Archive → return.
+3. Confirm no stale Working after background/reconnect and no agent teleport at the end.
+4. Return GL or exact RL. Do not touch production before GL.
+
+---

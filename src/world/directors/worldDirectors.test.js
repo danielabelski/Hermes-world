@@ -105,6 +105,11 @@ test('Archive record retains the true source subsystem only after evidence-backe
   const archive = presentation.signals.find((signal) => signal.kind === 'archive-record')
   assert.equal(archive.sourceAgentId, 'coder')
   assert.equal(archive.sourceBuildingId, 'forge')
+
+  const nearCompletion = deriveChoreographyPresentation(state, { now: START + 5_000 + CHOREOGRAPHY_TIMING.ARCHIVE_DELAY_MS + CHOREOGRAPHY_TIMING.ARCHIVE_SIGNAL_MS - 1, layout: 'mobile' })
+  assert.ok(nearCompletion.signals.some((signal) => signal.kind === 'archive-record'), 'Archive response must remain mounted for its full visible cycle')
+  const completed = deriveChoreographyPresentation(state, { now: START + 5_000 + CHOREOGRAPHY_TIMING.ARCHIVE_DELAY_MS + CHOREOGRAPHY_TIMING.ARCHIVE_SIGNAL_MS + 500, layout: 'mobile' })
+  assert.equal(completed.signals.some((signal) => signal.kind === 'archive-record'), false)
 })
 
 test('ambient director is deterministic, opens with two visible journeys and schedules every 20–40 seconds', () => {
@@ -188,6 +193,17 @@ test('a concurrent real run continues Kasztelan motion from the current visual p
   const after = deriveChoreographyPresentation(state, { now: START + 1_000, layout: 'mobile' }).motionByAgent.orchestrator
   assert.ok(Math.abs(after.worldX - before.worldX) < 0.001)
   assert.ok(Math.abs(after.worldY - before.worldY) < 0.001)
+})
+
+test('a terminal update from an older concurrent run still reaches Archive', () => {
+  let state = reduceChoreographyEvent(createChoreographyState(), { ...event(0, 'assigned', 'coder'), runId: 'run-old', eventId: 'run-old:0', buildingId: 'forge' }, START)
+  state = reduceChoreographyEvent(state, { ...event(0, 'assigned', 'researcher'), runId: 'run-new', eventId: 'run-new:0', buildingId: 'archive' }, START + 1_000)
+  state = reduceChoreographyEvent(state, { ...event(1, 'success', 'coder'), runId: 'run-old', eventId: 'run-old:1', buildingId: 'forge' }, START + 2_000)
+  const presentation = deriveChoreographyPresentation(state, { now: START + 2_000 + CHOREOGRAPHY_TIMING.ARCHIVE_DELAY_MS + 1, layout: 'mobile' })
+  const archive = presentation.signals.find((signal) => signal.kind === 'archive-record')
+  assert.equal(presentation.activeRunId, 'run-old')
+  assert.equal(archive?.sourceAgentId, 'coder')
+  assert.equal(archive?.sourceBuildingId, 'forge')
 })
 
 test('interrupting one ambient conversation partner removes the pair', () => {

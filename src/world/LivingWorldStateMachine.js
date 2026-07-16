@@ -88,7 +88,7 @@ export function resolveLivingAgentState({ agent, tasks = [], alerts = [], now = 
     }
     const completedAt = asTime(completionEvidence, now)
     const successWindow = journey?.successDurationMs ?? SUCCESS_WINDOW_MS
-    const returnUntil = asTime(task.returnUntil, completedAt + (journey?.walkDurationMs ?? RETURN_WINDOW_MS))
+    const returnUntil = asTime(task.returnUntil, completedAt + successWindow + (journey?.walkDurationMs ?? RETURN_WINDOW_MS))
     if (now - completedAt < successWindow) {
       return Object.freeze({ phase: 'success', task, visible: true, location: 'entrance', buildingEffect: 'success', carryPackage: Boolean(journey) })
     }

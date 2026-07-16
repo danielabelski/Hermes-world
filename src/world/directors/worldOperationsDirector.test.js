@@ -148,6 +148,8 @@ test('data transit renders only a local wake and segments, never a full GPS rout
   assert.match(css, /stroke-dasharray:6 94/)
   assert.match(css, /stroke-dasharray:1 1 1 1 1 95/)
   assert.match(css, /operation-local-transit var\(--transit-duration\) linear 1 both/)
+  assert.match(jsx, /Number\(operation\.durationMs \?\? 6_000\) \/ 1_000/)
+  assert.doesNotMatch(jsx, /baseDuration \* 0\.78/)
   assert.doesNotMatch(css, /operation-local-transit[^;}]*infinite/)
 })
 

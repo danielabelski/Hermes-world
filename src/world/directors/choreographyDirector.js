@@ -9,7 +9,8 @@ const RETURN_DELAY_MS = 1_650
 const RETURN_MS = 2_400
 const COMPLETE_MS = RETURN_DELAY_MS + RETURN_MS
 const COMMAND_SIGNAL_MS = 4_800
-const DELEGATION_SIGNAL_MS = 5_600
+const DELEGATION_SIGNAL_MS = 6_000
+const ARCHIVE_SIGNAL_MS = 5_800
 const MAX_SEQUENCES = 12
 const AWARENESS_START_MS = 260
 const AWARENESS_STAGGER_MS = 620
@@ -92,7 +93,7 @@ export function reduceChoreographyEvent(state = createChoreographyState(), event
 }
 
 function sequenceExpired(sequence, now) {
-  if (sequence.terminalAt) return now - sequence.terminalAt > COMPLETE_MS + 800
+  if (sequence.terminalAt) return now - sequence.terminalAt > Math.max(COMPLETE_MS + 800, ARCHIVE_DELAY_MS + ARCHIVE_SIGNAL_MS + 400)
   return now - sequence.latestAt > 10 * 60_000
 }
 
@@ -173,7 +174,7 @@ function awarenessMotion(sequence, profileId, waveIndex, now, layout) {
 
 export function deriveChoreographyPresentation(state, { now = Date.now(), layout = 'desktop' } = {}) {
   const active = state.sequences.filter((sequence) => !sequenceExpired(sequence, now))
-  const sequence = active.at(-1) ?? null
+  const sequence = active.reduce((latest, candidate) => (!latest || candidate.latestAt >= latest.latestAt ? candidate : latest), null)
   if (!sequence) return freeze({ motionByAgent: freeze({}), signals: freeze([]), activeRunId: null })
   const elapsed = Math.max(0, now - sequence.receivedAt)
   const sinceTerminal = sequence.terminalAt === null ? null : Math.max(0, now - sequence.terminalAt)
@@ -185,7 +186,7 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   if (sequence.kind === 'delegation' && sequence.targetAgentId && elapsed < DELEGATION_SIGNAL_MS && sinceTerminal === null) {
     signals.push(freeze({ kind: 'delegation', runId: sequence.runId, targetAgentId: sequence.targetAgentId, buildingId: sequence.buildingId, evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   }
-  if (sequence.terminalState === 'success' && sinceTerminal >= ARCHIVE_DELAY_MS && sinceTerminal < RETURN_DELAY_MS + 1_600) {
+  if (sequence.terminalState === 'success' && sinceTerminal >= ARCHIVE_DELAY_MS && sinceTerminal < ARCHIVE_DELAY_MS + ARCHIVE_SIGNAL_MS) {
     signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', sourceAgentId: sequence.targetAgentId, sourceBuildingId: sequence.buildingId, evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   }
   const motion = actorMotion(sequence, now, layout)
@@ -208,4 +209,4 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   })
 }
 
-export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS, COMMAND_SIGNAL_MS, DELEGATION_SIGNAL_MS, AWARENESS_START_MS, AWARENESS_STAGGER_MS, AWARENESS_DURATION_MS })
+export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, ARCHIVE_SIGNAL_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS, COMMAND_SIGNAL_MS, DELEGATION_SIGNAL_MS, AWARENESS_START_MS, AWARENESS_STAGGER_MS, AWARENESS_DURATION_MS })
