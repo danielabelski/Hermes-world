@@ -246,7 +246,7 @@ test('persistent world life keeps fire and water mounted while transit remains e
   const director = readFileSync(new URL('./worldOperationsDirector.js', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-life__forge-fire/)
   assert.match(persistent, /PersistentWaterFlow/)
-  assert.match(persistent, /data-water-region/)
+  assert.match(persistent, /data-water-mask="pixel-derived"/)
   assert.match(persistent, /data-persistent-world-life="active"/)
   assert.equal((persistent.match(/fetchPriority="high"/g) ?? []).length, 2)
   const ambientSource = director.slice(director.indexOf('function ambientOperations'), director.indexOf('function choreographyOperations'))
@@ -254,21 +254,27 @@ test('persistent world life keeps fire and water mounted while transit remains e
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
-test('mobile world life uses masked map-surface currents and removes the broad moving cloud band', () => {
+test('world life uses pixel-derived map water masks without approximate rectangles', () => {
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const atmosphere = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-water-flow/)
-  assert.match(persistent, /persistent-water-surface/)
-  assert.match(persistent, /left-upper/)
-  assert.match(persistent, /right-upper/)
-  assert.match(persistent, /upper-left-channel/)
+  assert.match(persistent, /hermes-water-mask-mobile\.runtime\.png/)
+  assert.match(persistent, /hermes-water-mask-desktop\.runtime\.png/)
   assert.match(persistent, /hermes-water-current-ribbon\.user-v2\.png/)
-  assert.match(persistent, /persistent-water-current__track/)
+  assert.match(persistent, /hermes-water-current-ribbon-vertical\.runtime\.png/)
+  assert.match(persistent, /persistent-water-current--depth/)
+  assert.match(persistent, /persistent-water-current--highlight/)
+  assert.doesNotMatch(persistent, /WATER_SURFACES/)
+  assert.doesNotMatch(persistent, /clipPath/)
+  assert.doesNotMatch(persistent, /data-water-region/)
   assert.doesNotMatch(persistent, /<svg className=\{`persistent-water-flow/)
   assert.doesNotMatch(persistent, /<image className="persistent-water-flow/)
-  assert.match(css, /persistent-water-current__track\{[^}]*animation:water-current-advance[^}]*linear/)
-  assert.match(css, /@keyframes water-current-advance\{from\{transform:translate3d\(0,0,0\)\}to\{transform:translate3d\(-50%,0,0\)\}\}/)
+  assert.match(css, /mask-image:var\(--water-mask-image\)/)
+  assert.match(css, /persistent-water-flow--mobile \.persistent-water-current--depth\{[^}]*animation:water-current-mobile-depth[^}]*linear/)
+  assert.match(css, /persistent-water-flow--desktop \.persistent-water-current--highlight\{[^}]*animation:water-current-desktop-highlight[^}]*linear/)
+  assert.match(css, /@keyframes water-current-mobile-depth\{from\{transform:translate3d\(0,-384px,0\)\}to\{transform:translate3d\(0,0,0\)\}\}/)
+  assert.match(css, /@keyframes water-current-desktop-depth\{from\{transform:translate3d\(-520px,0,0\)\}to\{transform:translate3d\(0,0,0\)\}\}/)
   assert.doesNotMatch(css, /water-surface-flow-(?:vertical|horizontal|diagonal)/)
   assert.doesNotMatch(css, /stroke-dasharray/)
   assert.doesNotMatch(persistent, /water-reflection-strip\.runtime\.png/)
@@ -292,6 +298,21 @@ test('continuous water ribbon is a bounded RGBA asset rather than a painted rect
   assert.equal(png.readUInt32BE(20), 256)
   assert.equal(png[25], 6, 'water ribbon must retain RGBA alpha')
   assert.ok(statSync(url).size < 50_000, `water ribbon must stay below 50 KB, received ${statSync(url).size}`)
+
+  const runtimeAssets = [
+    ['hermes-water-current-ribbon-vertical.runtime.png', 256, 1024, 50_000],
+    ['hermes-water-mask-mobile.runtime.png', 470, 836, 60_000],
+    ['hermes-water-mask-desktop.runtime.png', 767, 512, 20_000],
+  ]
+  for (const [name, width, height, byteBudget] of runtimeAssets) {
+    const runtimeUrl = new URL(`../../assets/world-effects/${name}`, import.meta.url)
+    const runtimePng = readFileSync(runtimeUrl)
+    assert.equal(runtimePng.subarray(1, 4).toString('ascii'), 'PNG', `${name} must be PNG`)
+    assert.equal(runtimePng.readUInt32BE(16), width, `${name} width`)
+    assert.equal(runtimePng.readUInt32BE(20), height, `${name} height`)
+    assert.equal(runtimePng[25], 6, `${name} must retain RGBA alpha`)
+    assert.ok(statSync(runtimeUrl).size < byteBudget, `${name} must stay below ${byteBudget} B`)
+  }
 })
 
 test('ambient motion quality adapts to measured frame rate without suppressing real operations', () => {
