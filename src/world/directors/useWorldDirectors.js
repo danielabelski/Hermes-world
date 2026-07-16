@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { advanceAmbientDirector, createAmbientDirectorState, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
 import { createChoreographyState, deriveChoreographyPresentation, pruneChoreographyState, reduceChoreographyEvent } from './choreographyDirector.js'
+import { subscribeWorldEventStream } from '../events/worldEventStream.js'
 
 const AMBIENT_TICK_MS = 1_000
 const SNAPSHOT_EVENT_FRESHNESS_MS = 15_000
@@ -37,12 +38,11 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
   }, [ambientEnabled, pageVisible])
 
   useEffect(() => {
-    if (!enabled || typeof EventSource === 'undefined') return undefined
+    if (!enabled) return undefined
     try {
       const persisted = JSON.parse(window.sessionStorage.getItem('hermes-world-director-seen-v1') || '[]')
       seenEventIdsRef.current = new Set(Array.isArray(persisted) ? persisted.slice(-500) : [])
     } catch { /* session cursor is an optional replay guard */ }
-    const source = new EventSource('/api/world/events/stream')
     const receive = (event) => {
       if (!event?.eventId || seenEventIdsRef.current.has(event.eventId)) return
       seenEventIdsRef.current.add(event.eventId)
@@ -56,22 +56,14 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
       setChoreographyState((state) => reduceChoreographyEvent(state, event, receivedAt))
       window.requestAnimationFrame(() => setReactionLatencyMs(Math.round(transportLatencyMs + window.performance.now() - receivedAtPerformance)))
     }
-    const handleEvent = (message) => {
-      try { receive(JSON.parse(message.data || '{}')) } catch { /* ingestion validates event payloads */ }
+    const handleSnapshot = (snapshotEvents) => {
+      const receivedAt = Date.now()
+      const events = snapshotEvents
+        .filter((event) => Math.abs(receivedAt - Date.parse(event.occurredAt ?? '')) <= SNAPSHOT_EVENT_FRESHNESS_MS)
+        .sort((left, right) => left.seq - right.seq)
+      events.forEach(receive)
     }
-    const handleSnapshot = (message) => {
-      try {
-        const payload = JSON.parse(message.data || '{}')
-        const receivedAt = Date.now()
-        const events = (Array.isArray(payload.events) ? payload.events : [])
-          .filter((event) => Math.abs(receivedAt - Date.parse(event.occurredAt ?? '')) <= SNAPSHOT_EVENT_FRESHNESS_MS)
-          .sort((left, right) => left.seq - right.seq)
-        events.forEach(receive)
-      } catch { /* ingestion validates event payloads */ }
-    }
-    source.addEventListener('snapshot', handleSnapshot)
-    source.addEventListener('world_event', handleEvent)
-    return () => source.close()
+    return subscribeWorldEventStream({ onSnapshot: handleSnapshot, onEvent: receive })
   }, [enabled])
 
   return useMemo(() => ({

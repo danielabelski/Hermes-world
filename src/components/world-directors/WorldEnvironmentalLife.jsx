@@ -6,6 +6,7 @@ import PersistentWorldLifeLayer from './PersistentWorldLifeLayer.jsx'
 import './WorldEnvironmentalLife.css'
 
 const MOTION_SAMPLE_MS = 2_000
+const MOTION_RESAMPLE_DELAY_MS = 4_000
 const MOTION_RECOVERY_SAMPLES = 3
 const MOTION_TIER_RANK = Object.freeze({ full: 0, reduced: 1, minimal: 2 })
 
@@ -35,12 +36,15 @@ function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
     }
 
     let animationFrame = 0
+    let resampleTimer = 0
+    let cancelled = false
     let frames = 0
     let sampleStartedAt = 0
     let currentTier = 'full'
     let recoverySamples = 0
 
     const measureFrame = (timestamp) => {
+      if (cancelled) return
       if (!sampleStartedAt) sampleStartedAt = timestamp
       frames += 1
       const elapsed = timestamp - sampleStartedAt
@@ -63,14 +67,27 @@ function WorldEnvironmentalLife({ presentation, debug = 'off', preset }) {
         root.dataset.measuredFps = String(fps)
         frames = 0
         sampleStartedAt = timestamp
+        resampleTimer = window.setTimeout(startSample, MOTION_RESAMPLE_DELAY_MS)
+        return
       }
+      animationFrame = window.requestAnimationFrame(measureFrame)
+    }
+
+    function startSample() {
+      if (cancelled) return
+      frames = 0
+      sampleStartedAt = 0
       animationFrame = window.requestAnimationFrame(measureFrame)
     }
 
     root.dataset.motionQuality = currentTier
     root.dataset.measuredFps = 'warming-up'
-    animationFrame = window.requestAnimationFrame(measureFrame)
-    return () => window.cancelAnimationFrame(animationFrame)
+    startSample()
+    return () => {
+      cancelled = true
+      window.cancelAnimationFrame(animationFrame)
+      window.clearTimeout(resampleTimer)
+    }
   }, [presentation.reducedMotion, presentation.visible])
 
   return <>

@@ -296,6 +296,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
   let snapshot = null;
   let running = false;
   let timer = null;
+  let syncPromise = null;
   let lastSuccessfulAt = null;
   const lastPayloadByDomain = new Map();
   const lastAttemptByDomain = new Map();
@@ -409,16 +410,20 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     return buildResult();
   }
 
-  async function sync() {
-    let emitted = false;
-    const publish = ({ payloads, provenance }) => {
-      snapshot = createWorldSnapshot(payloads, snapshot, now, provenance);
-      emit(snapshot);
-      emitted = true;
-    };
-    const result = await fetchPayloads({ onProgress: publish });
-    if (!emitted) publish(result);
-    return snapshot;
+  function sync() {
+    if (syncPromise) return syncPromise;
+    syncPromise = (async () => {
+      let emitted = false;
+      const publish = ({ payloads, provenance }) => {
+        snapshot = createWorldSnapshot(payloads, snapshot, now, provenance);
+        emit(snapshot);
+        emitted = true;
+      };
+      const result = await fetchPayloads({ onProgress: publish });
+      if (!emitted) publish(result);
+      return snapshot;
+    })();
+    return syncPromise.finally(() => { syncPromise = null; });
   }
 
   function schedule() {

@@ -7,6 +7,7 @@ import { DEMO_WORLD_PAYLOADS } from '../data/demoWorldData.js'
 import { resolveMapAgentPresentation } from '../mapAgentPresentation.js'
 import { getWorldLifeJourney } from '../data/roadGraph.js'
 import { createWorldEventHub } from '../../../server/worldEventHub.js'
+import { resetWorldEventStreamForTests, subscribeWorldEventStream } from './worldEventStream.js'
 
 const at = '2026-07-12T18:00:00.000Z'
 const raw = (seq, event, extra = {}) => ({
@@ -85,4 +86,29 @@ test('event hub deduplicates and rejects old sequence numbers', () => {
   const older = normalizeHermesWorldEvent({ ...raw(0, 'run_started'), event_id: 'watcher-run:older' })
   assert.equal(hub.publish(older).reason, 'out_of_order')
   assert.equal(hub.snapshot().length, 1)
+})
+
+test('world state and choreography share one SSE connection and close it after the last unmount', () => {
+  class FakeEventSource {
+    static instances = []
+    constructor(url) { this.url = url; this.listeners = new Map(); this.closed = false; FakeEventSource.instances.push(this) }
+    addEventListener(type, listener) { this.listeners.set(type, listener) }
+    emit(type, data) { this.listeners.get(type)?.({ data: JSON.stringify(data) }) }
+    close() { this.closed = true }
+  }
+  resetWorldEventStreamForTests()
+  const received = []
+  const unsubscribeWorld = subscribeWorldEventStream({ onEvent: (event) => received.push(`world:${event.eventId}`) }, { EventSourceImpl: FakeEventSource })
+  const unsubscribeDirector = subscribeWorldEventStream({ onEvent: (event) => received.push(`director:${event.eventId}`) }, { EventSourceImpl: FakeEventSource })
+
+  assert.equal(FakeEventSource.instances.length, 1)
+  assert.equal(FakeEventSource.instances[0].url, '/api/world/events/stream')
+  FakeEventSource.instances[0].emit('world_event', { eventId: 'evt-1' })
+  assert.deepEqual(received, ['world:evt-1', 'director:evt-1'])
+
+  unsubscribeWorld()
+  assert.equal(FakeEventSource.instances[0].closed, false)
+  unsubscribeDirector()
+  assert.equal(FakeEventSource.instances[0].closed, true)
+  resetWorldEventStreamForTests()
 })

@@ -550,6 +550,31 @@ test('production bridge publishes real metrics before an unrelated slow domain f
   assert.equal(finalSnapshot.lifecycle.source, 'live')
 })
 
+test('concurrent resume and polling reuse one in-flight domain synchronization', async () => {
+  let releaseProfiles
+  let profileCalls = 0
+  const profiles = new Promise((resolve) => { releaseProfiles = resolve })
+  const apiClient = {
+    async getProfiles() { profileCalls += 1; return profiles },
+    async getSystemMetrics() { return { ok: true, cpuPercent: 37, memoryPercent: 51, temperatureC: 56 } },
+    async getKanbanTasks() { return { tasks: [] } },
+    async getLogs() { return { lines: [] } },
+    async getCrons() { return { jobs: [] } },
+    async getCronHistory() { return { completions: [] } },
+    async getSessions() { return { sessions: [] } },
+    async getSkills() { return { skills: [] } },
+    async getModels() { return { groups: [] } },
+  }
+  const bridge = createWorldBridge({ apiClient })
+  const polling = bridge.sync()
+  const resume = bridge.sync()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  assert.equal(profileCalls, 1)
+  releaseProfiles({ profiles: [{ name: 'coder', is_active: false }] })
+  const [pollingSnapshot, resumeSnapshot] = await Promise.all([polling, resume])
+  assert.equal(pollingSnapshot, resumeSnapshot)
+})
+
 test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'thinking' }), { symbol: '⌬', tone: 'thinking' })
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'waiting' }), { symbol: '◷', tone: 'waiting' })

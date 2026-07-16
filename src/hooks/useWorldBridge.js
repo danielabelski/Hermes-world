@@ -6,6 +6,7 @@ import { getDemoScenario } from '../world/data/demoScenarios.js';
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from '../world/data/demoObservabilityFocus.js';
 import { createWorldSceneScript, shouldRunDemoScene } from '../world/WorldSceneScript.js';
 import { applyWorldEventToSnapshot, applyWorldEventsToSnapshot } from '../world/events/worldEventReducer.js';
+import { subscribeWorldEventStream } from '../world/events/worldEventStream.js';
 
 // sync() runs every 5s so metrics stay live; WorldBridge independently reuses
 // 15s/60s domain caches for profiles, tasks and slower inventories.
@@ -119,7 +120,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
 
     let cancelled = false;
     const attempt = async () => {
-      await refresh();
+      if (typeof document === 'undefined' || document.visibilityState !== 'hidden') await refresh();
       if (!cancelled) retryTimerRef.current = setTimeout(attempt, retryIntervalMs);
     };
     attempt();
@@ -136,8 +137,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   }, [clearRetry, demoMode, enabled, refresh, retryIntervalMs]);
 
   useEffect(() => {
-    if (!enabled || demoMode || typeof EventSource === 'undefined') return undefined;
-    const source = new EventSource('/api/world/events/stream');
+    if (!enabled || demoMode) return undefined;
     const applyEvents = (events) => {
       if (!events.length) return;
       const known = new Set(eventHistoryRef.current.map((event) => event.eventId));
@@ -154,30 +154,35 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
         };
       });
     };
-    const handleSnapshot = (message) => {
-      try {
-        const payload = JSON.parse(message.data || '{}');
-        applyEvents(Array.isArray(payload.events) ? payload.events : []);
-      } catch { /* malformed server events are ignored; ingestion validates them */ }
+    const handleEvent = (event) => {
+      if (!eventHistoryRef.current.some((item) => item.eventId === event.eventId)) eventHistoryRef.current = [...eventHistoryRef.current, event].slice(-500);
+      eventDrivenRef.current = true;
+      sceneScriptRef.current?.stop?.();
+      setState((previous) => ({
+        snapshot: applyWorldEventToSnapshot(previous.snapshot ?? demoSnapshotRef.current, event),
+        source: 'live',
+        connection: 'online',
+        error: null,
+      }));
     };
-    const handleEvent = (message) => {
-      try {
-        const event = JSON.parse(message.data || '{}');
-        if (!eventHistoryRef.current.some((item) => item.eventId === event.eventId)) eventHistoryRef.current = [...eventHistoryRef.current, event].slice(-500);
-        eventDrivenRef.current = true;
-        sceneScriptRef.current?.stop?.();
-        setState((previous) => ({
-          snapshot: applyWorldEventToSnapshot(previous.snapshot ?? demoSnapshotRef.current, event),
-          source: 'live',
-          connection: 'online',
-          error: null,
-        }));
-      } catch { /* malformed server events are ignored; ingestion validates them */ }
+    return subscribeWorldEventStream({ onSnapshot: applyEvents, onEvent: handleEvent });
+  }, [demoMode, enabled]);
+
+  useEffect(() => {
+    if (!enabled || demoMode) return undefined;
+    const resume = () => {
+      if (document.visibilityState === 'hidden') return;
+      refresh();
     };
-    source.addEventListener('snapshot', handleSnapshot);
-    source.addEventListener('world_event', handleEvent);
-    return () => source.close();
-  }, [applyLiveSnapshot, demoMode, enabled]);
+    document.addEventListener('visibilitychange', resume);
+    window.addEventListener('pageshow', resume);
+    window.addEventListener('online', resume);
+    return () => {
+      document.removeEventListener('visibilitychange', resume);
+      window.removeEventListener('pageshow', resume);
+      window.removeEventListener('online', resume);
+    };
+  }, [demoMode, enabled, refresh]);
 
   /**
    * Give the offline preview an honest heartbeat: it is a deterministic
