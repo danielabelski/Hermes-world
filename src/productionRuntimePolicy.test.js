@@ -41,3 +41,10 @@ test('mobile lifecycle pauses hidden work, resumes immediately and cleans up eve
   assert.match(environment, /cancelAnimationFrame\(animationFrame\)/)
   assert.match(environment, /clearTimeout\(resampleTimer\)/)
 })
+
+test('raw log ticker uses a stable empty selector before the first live snapshot', () => {
+  const ticker = readFileSync(new URL('./components/overlays/WorldEventTicker.jsx', import.meta.url), 'utf8')
+  assert.match(ticker, /const EMPTY_RAW_LOGS = Object\.freeze\(\[\]\)/)
+  assert.match(ticker, /state\.raw\?\.logs \?\? EMPTY_RAW_LOGS/)
+  assert.doesNotMatch(ticker, /state\.raw\?\.logs \?\? \[\]/)
+})

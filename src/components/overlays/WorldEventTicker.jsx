@@ -9,6 +9,8 @@ const SEVERITY_COLOR = Object.freeze({
   critical: '#ff7564',
 })
 
+const EMPTY_RAW_LOGS = Object.freeze([])
+
 const TICKER_STYLE = {
   position: 'absolute',
   zIndex: 3,
@@ -29,7 +31,7 @@ function compactRawLog(item) {
  * narration belongs to ActivityFeed and WorldMomentToast below the map.
  */
 export function WorldEventTicker() {
-  const rawLogs = useWorldStore((state) => state.raw?.logs ?? [])
+  const rawLogs = useWorldStore((state) => state.raw?.logs ?? EMPTY_RAW_LOGS)
   const observabilityFocus = useWorldStore((state) => state.observabilityFocus ?? 'auto')
   const [activeIndex, setActiveIndex] = useState(0)
   const items = useMemo(() => [...rawLogs].slice(-5).reverse(), [rawLogs])
