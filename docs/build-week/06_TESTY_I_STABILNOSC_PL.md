@@ -473,3 +473,4 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Dostęp do chronionych danych bez sesji: `/api/profiles` daje **PASS 401**, a nie demo fallback.
 - Trwały serwer: zadanie `Hermes Citadel Production V1` utworzone jako ukryte, z jedną instancją i produkcyjną ścieżką; publiczny endpoint działa po naprawie. Chrome/headless: **PASS — 0 procesów** uruchomionych przez testy.
 - Pełny authenticated domains smoke i realna wiadomość chat: **MANUAL ACTION REQUIRED** — po restarcie brak lokalnej dystrybucji WSL przechowującej hasło; nie obchodzono zabezpieczeń i nie odczytywano sekretu.
+- Stabilność 30 s, 8 kolejnych próbek: **PASS 8/8** dla localhost root, publicznego root i publicznego auth. Zakres czasu odpowiedzi: localhost 4,2–25,2 ms, publiczny root 45,8–85,5 ms, publiczny auth 44,6–72,0 ms. Chrome/headless po teście: **0**.
