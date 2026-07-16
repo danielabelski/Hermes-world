@@ -19,7 +19,7 @@
     <link rel="icon" type="image/svg+xml" href="/citadel-mark.svg?v=3" />
 
     <!-- Manifest -->
-    <link rel="manifest" href="/manifest.json?v=4" />
+    <link rel="manifest" href="/manifest.json?v=5" />
 
     <!-- Start the frozen map request before the JavaScript renderer boots. -->
     <link rel="preload" as="image" href="/src/assets/hermes-citadel-mobile-v2.webp" type="image/webp" media="(max-width: 700px)" fetchpriority="high" />
@@ -41,7 +41,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js?v=4', { updateViaCache: 'none' })
+          navigator.serviceWorker.register('/sw.js?v=5', { updateViaCache: 'none' })
             .then((registration) => registration.update())
             .catch(() => {});
         });

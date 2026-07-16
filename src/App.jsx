@@ -20,6 +20,7 @@ import { useWorldBridge } from './hooks/useWorldBridge.js'
 import { useWorldStore } from './world/store/worldStore.js'
 import { useAmbientMode } from './hooks/useAmbientMode.js'
 import { resolveDemoRuntimeMode } from './world/demoRuntimeMode.js'
+import { resolveAuthenticationState } from './authRuntime.js'
 
 const AUTH_STATUS_URL = '/api/auth/status'
 const DEMO_RUNTIME = resolveDemoRuntimeMode(window.location.search, import.meta.env.VITE_DEMO_WORLD === 'true')
@@ -35,12 +36,12 @@ const ENABLE_PIXI_ENHANCEMENT = import.meta.env.VITE_ENABLE_PIXI_WORLD === 'true
 const WorldCanvas = lazy(() => import('./world/WorldCanvas.jsx'))
 
 export default function App() {
-  const bridge = useWorldBridge({ demoMode: FORCE_DEMO_WORLD, demoScenario: DEMO_SCENARIO, demoFocus: DEMO_FOCUS })
+  const [authState, setAuthState] = useState(BYPASS_AUTH ? 'authenticated' : 'checking')
+  const bridgeEnabled = BYPASS_AUTH || authState === 'authenticated'
+  const bridge = useWorldBridge({ enabled: bridgeEnabled, demoMode: FORCE_DEMO_WORLD, demoScenario: DEMO_SCENARIO, demoFocus: DEMO_FOCUS })
   const applySnapshot = useWorldStore((state) => state.applySnapshot)
   const selection = useWorldStore((state) => state.selection)
   const ambientMode = useAmbientMode({ disabled: Boolean(selection) })
-  const [authState, setAuthState] = useState(BYPASS_AUTH ? 'authenticated' : 'checking')
-
   useEffect(() => {
     if (BYPASS_AUTH) return undefined
     let cancelled = false
@@ -48,7 +49,8 @@ export default function App() {
     async function checkAuthentication() {
       try {
         const response = await fetch(AUTH_STATUS_URL, { credentials: 'include' })
-        if (!cancelled) setAuthState(response.ok ? 'authenticated' : 'unauthenticated')
+        const status = response.ok ? await response.json().catch(() => null) : null
+        if (!cancelled) setAuthState(resolveAuthenticationState(response.ok, status))
       } catch {
         if (!cancelled) setAuthState('unavailable')
       }

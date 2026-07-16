@@ -128,7 +128,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   }, [clearRetry, demoMode, enabled, refresh, retryIntervalMs]);
 
   useEffect(() => {
-    if (!enabled || typeof EventSource === 'undefined') return undefined;
+    if (!enabled || demoMode || typeof EventSource === 'undefined') return undefined;
     const source = new EventSource('/api/world/events/stream');
     const applyEvents = (events) => {
       if (!events.length) return;
@@ -169,7 +169,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     source.addEventListener('snapshot', handleSnapshot);
     source.addEventListener('world_event', handleEvent);
     return () => source.close();
-  }, [enabled]);
+  }, [demoMode, enabled]);
 
   /**
    * Give the offline preview an honest heartbeat: it is a deterministic
