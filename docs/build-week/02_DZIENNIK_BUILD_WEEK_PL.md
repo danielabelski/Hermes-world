@@ -668,3 +668,17 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie zmieniono waypointów, prędkości świata, FSM, operational state, choreografii, mapy ani API. Produkcja `c9a3205` pozostała nietknięta.
 - Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; ESLint PASS; `validate:world-life` PASS; build PASS przez istniejący lokalny Vite z `--configLoader runner`, 874 moduły, 3,80 s. Pierwsza standardowa próba builda została zablokowana przez chwilowy Windows `EPERM` w `.vite-temp`; nie zmieniano kodu ani konfiguracji, a alternatywny oficjalny loader Vite zakończył ten sam build poprawnie.
 - Decyzja autora: przed jakąkolwiek zmianą produkcji ma powstać selektywny patch, manifest, hash oraz dry-run względem czystego produkcyjnego HEAD. Patch nie może zawierać dokumentacji, dowodów, `server.js`, API ani artefaktów demo.
+
+## BW-2026-07-16-053 — Kontrolowana promocja zatwierdzonego demo na produkcję
+
+- Czas Europe/Warsaw: 2026-07-16 18:55–19:24; czas UTC: 16:55–17:24.
+- Autor nadał jednoznaczne **GL** kompletnemu, wcześniej ocenionemu zakresowi demo i zezwolił wyłącznie na promocję przygotowanego patcha 1:1. Zabronił samowolnych poprawek produkcji.
+- Przed wdrożeniem zweryfikowano czysty produkcyjny `main`, HEAD `c9a32051a3367990ceae266adeed16366cbd4738`, integralność patcha SHA-256 `8CFEF0DC878D646E2FCCEA4721B1DB84B3D8923A97A3317957EF7040CE5B729D` oraz poprawny `git apply --check`.
+- Patch objął dokładnie 37 zatwierdzonych plików (`src/**` i `package.json`), 864 dodane oraz 210 usuniętych linii. Nie zawierał `server.js`, API backendu, konfiguracji Tailscale, portów, PWA/service workera, dokumentacji, screenshotów ani odrzuconych assetów wody.
+- Wdrożony zakres: wspólny SSE i odporny lifecycle prawdziwej wiadomości, kolejność/retry bez fake Success, uzgadnianie utraconego SSE z prawdziwym inventory sesji, evidence-backed reakcje miasta, realna telemetria pięciu wnętrz, oddzielny surowy ticker i semantyczny feed, zatwierdzona biomechanika chodu oraz subtelne refleksy wody bez dawnych linii technicznych.
+- Commit produkcyjny: `83937de` (`feat(build-week): promote approved living world pass`). Produkcyjny working tree po commicie jest czysty.
+- Walidacja przed uruchomieniem: **PASS 152/152**, ESLint **PASS**, `validate:world-life` **PASS**, build **PASS** przez oficjalny `--configLoader runner` po środowiskowym Windows/Vite `EPERM`. Build: 874 moduły, 5,42 s; main JS 429,41 kB / 132,10 kB gzip; CSS 76,98 kB / 16,63 kB gzip; lazy interior JS 13,87 kB / 5,41 kB gzip.
+- Produkcyjny runtime pozostał na istniejącym porcie 4175 i istniejącym Funnelu `:10000`. Publiczny root zwrócił HTTP 200 i dokładny nowy fingerprint `index-BwVrGPEq.js` / `index-BE6fnGPj.css`.
+- Audyt procesów wykrył, że pierwotny watchdog 24/7 nadal działał. Jedna dodatkowa pętla uruchomiona podczas diagnostyki została natychmiast zatrzymana; finalnie działa jeden listener 4175, PID 6764, pod pierwotnym watchdogiem.
+- SSE: **PASS** — stream zwrócił `retry: 3000` i event `snapshot`; snapshot oraz prawdziwa telemetria CPU/RAM/temperatury zwracają HTTP 200. Publiczny Funnel jest aktywny i wskazuje dokładnie `http://127.0.0.1:4175`.
+- Chronione endpointy bez cookie zwracają oczekiwane HTTP 401. Ich kontrakty i mapowanie są objęte testami, lecz pełne wartości zalogowanej sesji oraz percepcyjny test wnętrz/agentów pozostają **MANUAL ACTION REQUIRED**; nie zapisano fałszywego PASS bez autoryzowanej sesji przeglądarki.

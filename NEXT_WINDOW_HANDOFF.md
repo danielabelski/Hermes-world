@@ -974,3 +974,17 @@ Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at 
 - Served demo artifact: `index-dUUrp4or.js`; manual phone GL/RL remains the only gate.
 
 ---
+
+## APPROVED PRODUCTION PROMOTION — 2026-07-16
+
+- User GL was explicit: promote only the reviewed demo patch, with zero unsolicited production improvements.
+- Production baseline `c9a32051a3367990ceae266adeed16366cbd4738` was clean. Patch SHA-256 was `8CFEF0DC878D646E2FCCEA4721B1DB84B3D8923A97A3317957EF7040CE5B729D` and `git apply --check` passed.
+- Production commit is `83937de` (`feat(build-week): promote approved living world pass`), 37 files, +864/-210. No `server.js`, backend API, Tailscale, ports, PWA/service worker or deployment files changed.
+- Verification: full tests 152/152 PASS, ESLint PASS, world-life validator PASS, build PASS (874 modules, 5.42 s; runner loader used after Windows `.vite-temp` EPERM).
+- Public production `https://hermes-os-panel.tail03d525.ts.net:10000/` serves `index-BwVrGPEq.js` and `index-BE6fnGPj.css`; Funnel points to the existing 4175 runtime.
+- Final process state: one 4175 listener, PID 6764, owned by the original watchdog. A diagnostic duplicate watchdog was detected and stopped.
+- SSE snapshot, public/local root, auth status, world snapshot and system metrics pass. Protected payloads correctly return 401 without browser cookie.
+- Before any further production change, require a new explicit GL. Do not optimize, refactor or fix production automatically.
+- Remaining gate: authenticated manual verification of 12 agents, five interiors, raw ticker vs semantic feed, real-chat lifecycle and mobile perception. This is a verification task only, not authorization to change production.
+
+---

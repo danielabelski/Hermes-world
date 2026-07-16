@@ -668,3 +668,22 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Artefakty: main JS 423,69 kB / 130,30 kB gzip; CSS 76,99 kB / 16,62 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
 - Kontrakt 116 ms translacji przy zegarze 120 ms: **PASS**.
 - Wdrożenie produkcyjne: **NOT APPLICABLE** — przygotowywany jest wyłącznie patch do wcześniejszego wglądu autora.
+
+## TEST-BW-045 — Approved production promotion and runtime gate
+
+- Czas Europe/Warsaw: 2026-07-16 18:55–19:24; UTC: 16:55–17:24.
+- Baseline produkcji: `main` / `c9a32051a3367990ceae266adeed16366cbd4738`; finalny commit: `83937de`.
+- Integralność patcha: **PASS** — SHA-256 `8CFEF0DC878D646E2FCCEA4721B1DB84B3D8923A97A3317957EF7040CE5B729D`; `git apply --check` PASS; 37 dozwolonych plików, brak `server.js`, backend API, deploymentu i PWA.
+- Pełne testy: **PASS 152/152**, 0 fail.
+- ESLint: **PASS**.
+- World-life validator: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 5,42 s z `--configLoader runner`; standardowy loader napotkał wyłącznie środowiskowy Windows `EPERM` w `.vite-temp`.
+- Artefakty: main JS 429,41 kB / 132,10 kB gzip; CSS 76,98 kB / 16,63 kB gzip; lazy interior JS 13,87 kB / 5,41 kB gzip; całe `dist` 10,79 MB / 328 plików.
+- Runtime lokalny: **PASS** — root HTTP 200 z nowym fingerprintem; `/api/auth/status`, `/api/world/events/snapshot`, `/api/system/metrics` HTTP 200; SSE zwraca snapshot.
+- Benchmark lokalny, pięć sekwencyjnych prób: root min/mediana/max 84/168/768 ms; auth 87/105/1214 ms; snapshot 59/93/246 ms; metrics 56/77/95 ms. Pomiar wykonano pod obciążeniem Codexa; nie jest to FPS telefonu.
+- Publiczny Funnel: **PASS** — Tailscale BackendState Running, `:10000` proxy do 4175, root HTTP 200 i nowy bundle. Publiczny cold/warm root: 1471 ms cold, następne 34–117 ms; auth 23–155 ms; snapshot 6–16 ms; metrics 7–17 ms.
+- Cache: **PASS** — hashowane assety mają `public, max-age=31536000, immutable`; JS/CSS są kompresowane Brotli; główna mapa mobile WebP 531 412 B; wnętrza pozostają osobnym lazy chunkem.
+- Procesy: **PASS po cleanup** — jeden listener 4175 PID 6764. Diagnostyczny duplikat watchdoga PID 5548 został zatrzymany bez dotykania właściwego procesu.
+- Produkcyjny Git: **PASS** — `git diff --check` bez błędów, working tree czysty, brak niezatwierdzonych zmian.
+- Zalogowany audyt wartości `/api/profiles`, sessions, logs, crons, skills, models i memory: **MANUAL ACTION REQUIRED** — bez cookie poprawnie zwracają 401; test nie omijał uwierzytelnienia i nie odczytywał sekretów.
+- Percepcyjny test 393×852: **MANUAL ACTION REQUIRED** — agent roster 12, wejścia do pięciu wnętrz, brak dawnych linii, semantyczny feed i pełny real-chat lifecycle muszą zostać potwierdzone w już zalogowanej sesji autora.
