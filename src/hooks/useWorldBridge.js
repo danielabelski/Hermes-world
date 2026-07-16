@@ -172,7 +172,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   }, [clearRetry, demoMode, enabled, refresh, retryIntervalMs]);
 
   useEffect(() => {
-    if (!enabled || demoMode) return undefined;
+    if (!enabled) return undefined;
     const applyEvents = (events) => {
       if (!events.length) return;
       const known = new Set(eventHistoryRef.current.map((event) => event.eventId));
@@ -201,7 +201,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       }));
     };
     return subscribeWorldEventStream({ onSnapshot: applyEvents, onEvent: handleEvent });
-  }, [demoMode, enabled]);
+  }, [enabled]);
 
   useEffect(() => {
     if (!enabled || demoMode) return undefined;

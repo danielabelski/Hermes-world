@@ -700,3 +700,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Runtime lokalny: **PASS**, HTTP 200, nowy bundle, jeden listener 4175 PID 6764.
 - Runtime publiczny: **PASS**, HTTP 200 w 324 ms, nowy bundle obecny, poprzedni nieobecny.
 - Manualny zalogowany retest autora: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-047 — Real Hermes state.db gateway to demo SSE gate
+
+- Czas Europe/Warsaw: 2026-07-16 20:45–21:04; UTC: 18:45–19:04.
+- Zakres: **PASS — wyłącznie demo**; produkcyjny kod, runtime 4175, Funnel i API nie zostały zmienione.
+- Python: **PASS** — składnia i `--help`; watcher otwiera SQLite przez read-only URI, nie kopiuje treści wiadomości i utrzymuje trwały cursor.
+- Rzeczywisty E2E: **PASS** — najnowsza prawdziwa para user/assistant z `state.db` utworzyła trzy uporządkowane eventy `assigned` → `thinking` → `success`, source `hermes-gateway-state-db`, następnie adapter dostarczył je do `/api/world/events`.
+- SSE: **PASS** — `/api/world/events/stream` zwrócił HTTP 200, `text/event-stream`, `no-cache`, `X-Accel-Buffering: no`.
+- Test polityki runtime: **PASS** — demo może słuchać tego samego uwierzytelnionego SSE bez ciężkiego client pollingu.
+- Pełny zestaw testów: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
+- Build: **PASS**, 874 moduły, 37,52 s; `index-DQoq9Imv.js` 423,72 kB / 130,28 kB gzip.
+- Czysty start po teście: **PASS** — jeden listener 4176 PID 10924; hub `events: []`; dokładnie jeden dodatkowy proces Node forwardera; watcher WSL aktywny.
+- Lokalny benchmark HTTP (3 próby pod aktywnym Codexem): root 74–624 ms; snapshot 58–358 ms. Pierwsza próba obejmuje cold/warm koszt hosta i nie jest pomiarem FPS telefonu.
+- Pełny lint: **INCOMPLETE** — próba przekroczyła limit czasu pod wysokim obciążeniem hosta; nie zgłosiła błędu przed timeoutem. Zmiana JS jest objęta testem kontraktowym i udanym buildem; skrypt Python nie jest częścią ESLint.
+- Manualny test nowej wiadomości WSL/iMessage na realnym telefonie: **MANUAL ACTION REQUIRED**. Bez niego zakres nie może zostać promowany na produkcję.

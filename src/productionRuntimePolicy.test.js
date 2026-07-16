@@ -8,12 +8,12 @@ test('production root strips a historical demo launch URL', () => {
   assert.match(server, /res\.redirect\(302, '\/'\)/)
 })
 
-test('live bridge waits for authentication and demo does not open SSE', () => {
+test('authenticated world SSE is available to live and demo verification', () => {
   const app = readFileSync(new URL('./App.jsx', import.meta.url), 'utf8')
   const bridge = readFileSync(new URL('./hooks/useWorldBridge.js', import.meta.url), 'utf8')
   const stream = readFileSync(new URL('./world/events/worldEventStream.js', import.meta.url), 'utf8')
   assert.match(app, /bridgeEnabled = BYPASS_AUTH \|\| authState === 'authenticated'/)
-  assert.match(bridge, /if \(!enabled \|\| demoMode\) return undefined/)
+  assert.match(bridge, /if \(!enabled\) return undefined/)
   assert.match(bridge, /subscribeWorldEventStream/)
   assert.doesNotMatch(bridge, /new EventSource/)
   assert.match(stream, /new EventSourceImpl\('\/api\/world\/events\/stream'\)/)

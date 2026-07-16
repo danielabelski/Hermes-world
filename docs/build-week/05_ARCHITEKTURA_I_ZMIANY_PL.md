@@ -115,3 +115,17 @@ Przepływ prawdy i renderowania:
 - **Aktualny live contract:** potwierdzony stream sesji Hermesa tworzy evidence-backed task dla właściwego profilu. `profile.is_active` pozostaje wyłącznie atrybutem wyboru profilu; nie uruchamia Working. Role nieobecne w odpowiedzi `/api/profiles` pozostają widoczne jako `offline`, dzięki czemu częściowy payload nie usuwa topologii miasta.
 - **Wydajność:** ukryty presentation clock i Ambient Director są pauzowane, prawdziwy transport SSE pozostaje aktywny, a lokalny zegar wnętrza działa tylko dla kwalifikującego się agenta.
 - **Do ręcznego odbioru:** finalne GL/RL skali, rytmu pracy i integracji z tłem na realnym 393×852; automatyczne kontrakty i build przeszły.
+
+## Most prawdziwych zdarzeń WSL/iMessage — demo 2026-07-16
+
+Rzeczywisty kanał zewnętrzny nie przechodzi przez publisher komponentu `ChatTab`. Dlatego test bezpośrednim POST-em do hubu nie stanowił dowodu integracji WSL/iMessage.
+
+Aktualny, lekki przepływ demo:
+
+`Hermes state.db (read-only)` → `hermes-gateway-world-adapter.py` → `JSONL bez treści` → `hermes-world-event-adapter.mjs` → `/api/world/events` → `/api/world/events/stream` → `useWorldBridge` → istniejąca choreografia świata.
+
+- Watcher czyta wyłącznie nowe rekordy po cursorze i nie obciąża telefonu pełnym inventory sesji.
+- `operationalState` nadal wynika z prawdziwych rekordów runtime; most nie emituje ambientowego Working ani Success.
+- Eventy `cron` i `webui` są ignorowane, aby nie dublować obecnych kanałów.
+- Treść wiadomości nie trafia do spoolu, huba ani dokumentacji; używane są identyfikatory, role, timestampy, typ toola i długość.
+- Stan: **działa w demo, automatyczny E2E PASS, manualny telefon pending**. Produkcja nie zawiera jeszcze tego mostu.

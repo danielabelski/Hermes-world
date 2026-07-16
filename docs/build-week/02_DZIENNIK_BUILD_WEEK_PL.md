@@ -693,3 +693,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: test fokusowy 5/5 PASS; pełne testy 153/153 PASS; ESLint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 3,78 s.
 - Commit demo: `3e39fd8`; commit produkcyjny: `958b9da` (`fix(build-week): stabilize live raw log selector`).
 - Lokalny i publiczny root zwracają HTTP 200 oraz wyłącznie nowy bundle `index-tYcI17tU.js`; poprzedni `index-BwVrGPEq.js` nie jest już wskazywany. Listener produkcyjny pozostał jeden, PID 6764.
+
+## BW-2026-07-16-055 — Audyt brakującego źródła zdarzeń WSL/iMessage i bezpieczny most demo
+
+- Czas Europe/Warsaw: 2026-07-16 19:43–21:04; czas UTC: 17:43–19:04.
+- Autor wykazał, że dotychczasowa walidacja produkcyjna była niepełna: testowała hub przez bezpośredni POST i odziedziczony publisher czatu panelu, ale nie dowodziła reakcji świata na rzeczywistą wiadomość wysłaną przez WSL/iMessage. Produkcja nie została w tym bloku zmieniona.
+- Odrzucono pierwszą próbę pobierania pełnego inventory sesji przez klienta mobilnego, ponieważ powodowała około 10 sekund opóźnienia wejścia i chwilowe znikanie agentów. Zmiana została całkowicie wycofana przed dalszą pracą.
+- W demo dodano lekki, jednokierunkowy most: read-only watcher SQLite `/home/filip/.hermes/state.db` → pozbawiony treści spool JSONL → istniejący adapter Node → lokalny hub zdarzeń świata → istniejące SSE. Telefon nie odpytuje ciężkich endpointów sesji.
+- Watcher ignoruje `cron` i `webui`, nie kopiuje tekstu wiadomości i emituje wyłącznie metadane lifecycle: prawdziwy wpis użytkownika tworzy `assigned`/`thinking`, rzeczywisty tool call może utworzyć `working`, a finalna odpowiedź asystenta tworzy `success`.
+- Pełny dowód E2E na prawdziwej parze wpisów z bazy: trzy eventy `gateway-…:0/1/2`, źródło `hermes-gateway-state-db`, kolejno `assigned` → `thinking` → `success`. Po teście hub został wyczyszczony przez restart dokładnie jednego serwera demo.
+- Runtime końcowy: jeden serwer demo 4176 PID 10924, jeden watcher WSL PID 29626 i jeden forwarder Node PID 6408. Hub jest pusty i gotowy na nową wiadomość autora; bundle `index-DQoq9Imv.js`.
+- Build: **PASS**, 874 moduły, 37,52 s, main JS 423,72 kB / 130,28 kB gzip. Test kontraktu SSE: **PASS**. Pełny percepcyjny test nowej wiadomości z WSL/iMessage na telefonie pozostaje **MANUAL ACTION REQUIRED** przed promocją.
