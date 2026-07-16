@@ -37,6 +37,31 @@ Ta sekcja zastępuje wcześniejszy aktywny opis wody. Produkcja pozostaje zamro�
 
 ---
 
+## WATER REFLECTION VFX REVIEW GATE — 2026-07-16 15:53 Europe/Warsaw
+
+Scope: demo branch `build-week/hermes-world` only. Production remains untouched.
+
+### Current implementation
+
+- The failed full-water animated WebPs were removed from the runtime and repository.
+- Water now uses seven mobile and three desktop code-native reflections. They are small irregular light patches, never full paths, and move only 7–11 px using transform/opacity.
+- The three unrelated center-map “comets” from semantic conduits are disabled. Real message/delegation transit remains evidence-backed in `WorldOperationsLayer`.
+- Automated verification: tests 136/136 PASS, lint PASS, world-life validation PASS, build PASS (874 modules, 3.99 s).
+- Manual real-phone evaluation is still required. Do not label this GL automatically.
+
+### Decision gate
+
+1. Start exactly one demo preview on port 4176 after tests.
+2. User checks `?demo=1` on the real phone.
+3. GL: keep the reflections and close water polish.
+4. RL: remove `PersistentWaterReflections` and its CSS completely; do not attempt another water technique.
+
+### Next product task after the water decision
+
+Design, before implementation, an honest “living observability demo” strategy. Any staged demo activity must be explicitly demo-only, must never enter real `operationalState`, active-agent counters, evidence IDs or Hermes events, and must be visually distinguishable from live telemetry. Preserve the real pipeline as the source of truth.
+
+---
+
 ## ACTIVE HANDOFF — PIXEL-ALIGNED WATER + NEXT REAL-EVENT LIFE PASS (2026-07-16 13:10 CEST)
 
 Ta sekcja jest aktualnym źródłem prawdy. Niższe sekcje pozostają historią projektu.

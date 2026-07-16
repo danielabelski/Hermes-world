@@ -37,10 +37,11 @@
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, #6bdcff 52%, #efffff 100%);
   box-shadow: 0 0 6px #52d6ff;
+  display: none;
 }
 .hermes-conduit.is-flowing,
 .hermes-conduit.is-problem {
-  opacity: 1;
+  opacity: 0;
 }
 .hermes-conduit.is-waiting,
 .hermes-conduit.is-dormant {

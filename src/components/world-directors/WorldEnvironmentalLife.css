@@ -13,10 +13,10 @@
 .world-environmental-life[data-weather-tier="storm"] .telemetry-cloud{filter:saturate(.55) brightness(.68)}
 
 .persistent-world-life{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;contain:layout paint;opacity:var(--infrastructure-intensity,1);transition:opacity .45s ease}
-.persistent-water-flow{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:1;contain:strict;isolation:isolate}
-.persistent-water-pixel{position:absolute;display:block;overflow:hidden;contain:strict;transform:translateZ(0)}
-.persistent-water-pixel img{display:block;width:100%;height:100%;max-width:none;object-fit:fill;filter:var(--map-readability-filter);transform:translateZ(0)}
-.persistent-water-flow.is-operation-active .persistent-water-pixel{filter:brightness(1.035) saturate(1.035)}
+.persistent-water-flow{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:.82;contain:strict;isolation:isolate}
+.persistent-water-reflection{position:absolute;left:var(--water-x);top:var(--water-y);width:var(--water-size);height:calc(var(--water-size)*.46);border-radius:52% 44% 58% 38%;background:radial-gradient(ellipse at 28% 52%,#d9fbffbd 0 7%,#83e8ff70 19%,transparent 48%),radial-gradient(ellipse at 72% 44%,#baf7ff8a 0 6%,#57caee55 18%,transparent 43%);mix-blend-mode:screen;filter:blur(.32px) drop-shadow(0 0 1.5px #69dfff75);opacity:0;transform:translate3d(-50%,-50%,0) rotate(var(--water-angle));animation:water-reflection-drift 7.6s ease-in-out infinite;animation-delay:var(--water-delay)}
+.persistent-water-reflection::after{content:"";position:absolute;left:18%;top:38%;width:42%;height:22%;border-radius:50%;background:radial-gradient(ellipse,#eaffff8f,transparent 68%);transform:rotate(-12deg);opacity:.62}
+.persistent-water-flow.is-operation-active{opacity:1}.persistent-water-flow.is-operation-active .persistent-water-reflection{animation-duration:5.8s}
 .persistent-life{position:absolute;left:var(--life-x);top:var(--life-y);transform:translate(calc(-50% + var(--life-offset-x,0px)),calc(-50% + var(--life-offset-y,0px)));pointer-events:none;transform-origin:50% 70%;transition:opacity .36s ease}
 .persistent-life__sprite{position:absolute;display:block;overflow:hidden;pointer-events:none;filter:drop-shadow(0 1px 2px #020708a8);transition:opacity .32s ease,filter .32s ease}
 .persistent-life__sprite img{position:absolute;left:0;top:0;display:block;width:800%;height:100%;max-width:none;object-fit:fill;animation:persistent-life-frames var(--life-duration,5.8s) steps(7,end) infinite;animation-delay:var(--life-delay,0s)}
@@ -74,6 +74,7 @@
 .world-environmental-life[data-visual-effect="citadel-core"] .persistent-life--citadel,.world-environmental-life[data-visual-effect="forge-cycle"] .persistent-life--forge,.world-environmental-life[data-visual-effect="watcher-lens"] .persistent-life--watcher,.world-environmental-life[data-visual-effect="archive-windows"] .persistent-life--archive,.world-environmental-life[data-visual-effect="sanctum-orbit"] .persistent-life--sanctum,.world-environmental-life[data-visual-effect="gate-lock"] .persistent-life--gate,.world-environmental-life[data-visual-effect="water-reflection"] .persistent-water-flow,.world-environmental-life[data-visual-effect="fog"] .atmosphere-fog{opacity:1!important}
 
 @keyframes persistent-life-frames{to{transform:translateX(-87.5%)}}
+@keyframes water-reflection-drift{0%,100%{opacity:0;transform:translate3d(-50%,-50%,0) rotate(var(--water-angle)) scale(.82)}18%{opacity:.18}42%{opacity:.68}68%{opacity:.24;transform:translate3d(calc(-50% + var(--water-dx)),calc(-50% + var(--water-dy)),0) rotate(var(--water-angle)) scale(1.08)}82%{opacity:0;transform:translate3d(calc(-50% + var(--water-dx)),calc(-50% + var(--water-dy)),0) rotate(var(--water-angle)) scale(.96)}}
 @keyframes forge-chimney-drift{0%,100%{transform:translate(0,4px) scale(.94)}50%{transform:translate(5px,-6px) scale(1.06)}}
 @keyframes fog-drift{0%,100%{opacity:.14;transform:translateX(-14%)}50%{opacity:.28;transform:translateX(16%)}}
 @keyframes telemetry-cloud-drift{0%{transform:translate3d(-10%,0,0) scale(.94)}100%{transform:translate3d(18%,4%,0) scale(1.06)}}

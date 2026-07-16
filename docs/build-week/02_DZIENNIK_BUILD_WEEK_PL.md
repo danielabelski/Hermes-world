@@ -600,3 +600,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Koszt trzech assetów spadł z 384 352 B do 71 666 B. Nie zmieniono CSS, renderera operacyjnego, agentów, mapy, geometrii, API ani produkcji.
 - Commit: `c10f531` (`fix(build-week): keep water banks and architecture stationary`).
 - Manualna ocena telefonu po korekcie pozostaje **MANUAL ACTION REQUIRED**.
+
+## BW-2026-07-16-047 — Ostatnia korekta wody: subtelne refleksy VFX
+
+- Czas Europe/Warsaw: 2026-07-16 15:35–15:53; czas UTC: 13:35–13:53.
+- Autor nadał poprzedniej wersji **RL**: mimo nieruchomych brzegów woda nie była czytelna, a trzy krótkie sygnały infrastruktury wyglądały jak przypadkowe komety przechodzące przez środek mapy.
+- Zamknięto kierunek animowania wycinków mapy. Usunięto z bundla trzy rasteryzowane animacje WebP wody o łącznym koszcie 71 666 B.
+- Ostatnia próba nie udaje pełnego przepływu rzeki. Dodaje wyłącznie małe, nieregularne refleksy VFX zakotwiczone ręcznie na istniejących bocznych korytach mobile i porcie desktop. Każdy refleks ma odmienny kształt, fazę i krótki dryf 7–11 px; nie istnieje pełna linia, sprite, maska całej rzeki ani displacement mapy.
+- Warstwa używa wyłącznie `transform` i `opacity`, nie dodaje timera JavaScript, canvasa, biblioteki animacji ani pliku graficznego. `prefers-reduced-motion` nadal wyłącza efekt.
+- Trzy techniczne pakiety przewodów `HermesInfrastructureLayer` zostały ukryte. Evidence-backed przepływy prawdziwej wiadomości/delegacji pozostają w odrębnej warstwie `WorldOperationsLayer` i zachowują `evidenceEventId`.
+- Produkcja pozostała nietknięta. Wynik na realnym telefonie pozostaje **MANUAL ACTION REQUIRED**; GL nie jest wnioskowane z testów automatycznych.
+- Następny osobny etap po decyzji RL/GL: przygotować strategię „żywego demo observability”. Demo ma natychmiast komunikować użyteczność produktu przy większej liczbie agentów, lecz aktywność demonstracyjna musi być jawnie oznaczona i oddzielona od prawdziwego `operationalState`, liczników oraz eventów Hermesa.

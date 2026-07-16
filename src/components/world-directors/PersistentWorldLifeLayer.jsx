@@ -8,9 +8,23 @@ import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.runtim
 import gateEnergyLockStrip from '../../assets/world-effects/gate-energy-lock-strip.runtime.png'
 import sanctumEnergyOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
 import watcherLensPulseStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
-import waterDesktopHarbor from '../../assets/world-effects/hermes-water-desktop-harbor.runtime.webp'
-import waterMobileLeft from '../../assets/world-effects/hermes-water-mobile-left.runtime.webp'
-import waterMobileRight from '../../assets/world-effects/hermes-water-mobile-right.runtime.webp'
+
+const WATER_REFLECTIONS = Object.freeze({
+  mobile: Object.freeze([
+    { id: 'left-upper', x: 2.4, y: 10.2, size: 12, dx: -1, dy: 7, angle: -18, delay: -0.7 },
+    { id: 'left-fall', x: 2.8, y: 23.8, size: 10, dx: 2, dy: 8, angle: 22, delay: -3.4 },
+    { id: 'left-mid', x: 2.1, y: 38.6, size: 14, dx: -2, dy: 7, angle: -24, delay: -5.8 },
+    { id: 'left-lower', x: 2.7, y: 54.2, size: 11, dx: 1, dy: 8, angle: 16, delay: -2.1 },
+    { id: 'right-upper', x: 97.2, y: 11.5, size: 12, dx: 1, dy: 7, angle: 18, delay: -4.5 },
+    { id: 'right-mid', x: 97.6, y: 28.7, size: 10, dx: -1, dy: 8, angle: -20, delay: -1.6 },
+    { id: 'right-lower', x: 97.1, y: 47.4, size: 13, dx: 2, dy: 7, angle: 24, delay: -6.3 },
+  ]),
+  desktop: Object.freeze([
+    { id: 'harbor-left', x: 30.5, y: 88.2, size: 18, dx: 10, dy: 1, angle: -8, delay: -1.2 },
+    { id: 'harbor-center', x: 47.5, y: 91.4, size: 16, dx: 11, dy: -1, angle: 6, delay: -4.1 },
+    { id: 'harbor-right', x: 65.5, y: 87.1, size: 20, dx: 9, dy: 1, angle: -5, delay: -6.7 },
+  ]),
+})
 
 const styleAt = (point) => ({ '--life-x': `${point.x}%`, '--life-y': `${point.y}%`, '--life-offset-x': `${point.offsetX ?? 0}px`, '--life-offset-y': `${point.offsetY ?? 0}px` })
 
@@ -29,28 +43,25 @@ function AmbientWindowLight({ anchor }) {
   </span>
 }
 
-function PersistentWaterFlow({ layout, active = false }) {
-  const isMobile = layout === 'mobile'
-  const overlays = isMobile
-    ? [
-        { id: 'mobile-left', src: waterMobileLeft, x: 0, y: 0, width: 23.8298, height: 100 },
-        { id: 'mobile-right', src: waterMobileRight, x: 76.1702, y: 0, width: 23.8298, height: 100 },
-      ]
-    : [{ id: 'desktop-harbor', src: waterDesktopHarbor, x: 23.4681, y: 76.5625, width: 45.3716, height: 23.4375 }]
+function PersistentWaterReflections({ layout, active = false }) {
+  const normalizedLayout = layout === 'mobile' ? 'mobile' : 'desktop'
+  const reflections = WATER_REFLECTIONS[normalizedLayout]
   return <div
-    className={`persistent-water-flow persistent-water-flow--${isMobile ? 'mobile' : 'desktop'}${active ? ' is-operation-active' : ''}`}
-    data-water-renderer="map-pixel-animation"
-    data-water-layout={isMobile ? 'mobile' : 'desktop'}
+    className={`persistent-water-flow persistent-water-flow--${normalizedLayout}${active ? ' is-operation-active' : ''}`}
+    data-water-renderer="water-reflection-vfx"
+    data-water-layout={normalizedLayout}
     aria-hidden="true"
   >
-    {overlays.map((overlay) => <span
-      className="persistent-water-pixel"
-      data-water-region={overlay.id}
-      key={overlay.id}
-      style={{ left: `${overlay.x}%`, top: `${overlay.y}%`, width: `${overlay.width}%`, height: `${overlay.height}%` }}
-    >
-      <img src={overlay.src} alt="" decoding="async" fetchPriority="low" />
-    </span>)}
+    {reflections.map((reflection) => <i
+      className="persistent-water-reflection"
+      data-water-region={reflection.id}
+      key={reflection.id}
+      style={{
+        '--water-x': `${reflection.x}%`, '--water-y': `${reflection.y}%`, '--water-size': `${reflection.size}px`,
+        '--water-dx': `${reflection.dx}px`, '--water-dy': `${reflection.dy}px`, '--water-angle': `${reflection.angle}deg`,
+        '--water-delay': `${reflection.delay}s`,
+      }}
+    />)}
   </div>
 }
 
@@ -82,7 +93,7 @@ function PersistentWorldLifeLayer({ presentation }) {
     <div className={`persistent-life persistent-life--gate${responseClass(ENVIRONMENT_BUILDINGS.gate.buildingId, presentation)}${activeClass('gate-cycle')}`} style={styleAt(points.gate)}>
       <LifeSprite src={gateEnergyLockStrip} className="persistent-life__gate-lock" delay="-4.4s" />
     </div>
-    <PersistentWaterFlow layout={layout} active={activeOperations.has('water-machinery')} />
+    <PersistentWaterReflections layout={layout} active={activeOperations.has('water-machinery')} />
     <div className="persistent-window-lights">
       {windowAnchors.map((anchor) => <AmbientWindowLight anchor={anchor} key={anchor.id} />)}
     </div>

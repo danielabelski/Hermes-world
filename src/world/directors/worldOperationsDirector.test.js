@@ -245,8 +245,8 @@ test('persistent world life keeps fire and water mounted while transit remains e
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const director = readFileSync(new URL('./worldOperationsDirector.js', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-life__forge-fire/)
-  assert.match(persistent, /PersistentWaterFlow/)
-  assert.match(persistent, /data-water-renderer="map-pixel-animation"/)
+  assert.match(persistent, /PersistentWaterReflections/)
+  assert.match(persistent, /data-water-renderer="water-reflection-vfx"/)
   assert.match(persistent, /data-persistent-world-life="active"/)
   assert.equal((persistent.match(/fetchPriority="high"/g) ?? []).length, 2)
   const ambientSource = director.slice(director.indexOf('function ambientOperations'), director.indexOf('function choreographyOperations'))
@@ -254,21 +254,20 @@ test('persistent world life keeps fire and water mounted while transit remains e
   assert.match(director.slice(director.indexOf('function choreographyOperations')), /evidenceEventId: evidence/)
 })
 
-test('world life animates exact map pixels without generic ribbons or debug paths', () => {
+test('world life uses small anchored water reflections without sprites, ribbons or debug paths', () => {
   const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
   const atmosphere = readFileSync(new URL('../../components/world-directors/AtmosphereLayer.jsx', import.meta.url), 'utf8')
   const css = readFileSync(new URL('../../components/world-directors/WorldEnvironmentalLife.css', import.meta.url), 'utf8')
   assert.match(persistent, /persistent-water-flow/)
-  assert.match(persistent, /hermes-water-mobile-left\.runtime\.webp/)
-  assert.match(persistent, /hermes-water-mobile-right\.runtime\.webp/)
-  assert.match(persistent, /hermes-water-desktop-harbor\.runtime\.webp/)
-  assert.match(persistent, /data-water-renderer="map-pixel-animation"/)
+  assert.match(persistent, /WATER_REFLECTIONS/)
+  assert.match(persistent, /data-water-renderer="water-reflection-vfx"/)
   assert.match(persistent, /data-water-region=/)
-  assert.match(persistent, /persistent-water-pixel/)
-  assert.doesNotMatch(persistent, /WATER_SURFACES/)
+  assert.match(persistent, /persistent-water-reflection/)
+  assert.doesNotMatch(persistent, /hermes-water-.*\.runtime\.webp/)
   assert.doesNotMatch(persistent, /clipPath/)
   assert.doesNotMatch(persistent, /<svg className=\{`persistent-water-flow/)
-  assert.match(css, /persistent-water-pixel img\{[^}]*filter:var\(--map-readability-filter\)/)
+  assert.match(css, /@keyframes water-reflection-drift/)
+  assert.match(css, /mix-blend-mode:screen/)
   assert.doesNotMatch(persistent, /hermes-water-current-ribbon/)
   assert.doesNotMatch(persistent, /hermes-water-mask-/)
   assert.doesNotMatch(css, /water-current-(?:mobile|desktop)/)
@@ -288,20 +287,12 @@ test('world life animates exact map pixels without generic ribbons or debug path
   assert.doesNotMatch(css, /cloud-wisp-cross/)
 })
 
-test('map-pixel water animations are bounded animated WebP assets', () => {
-  const runtimeAssets = [
-    ['hermes-water-mobile-left.runtime.webp', 40_000],
-    ['hermes-water-mobile-right.runtime.webp', 30_000],
-    ['hermes-water-desktop-harbor.runtime.webp', 30_000],
-  ]
-  for (const [name, byteBudget] of runtimeAssets) {
-    const runtimeUrl = new URL(`../../assets/world-effects/${name}`, import.meta.url)
-    const runtimeWebp = readFileSync(runtimeUrl)
-    assert.equal(runtimeWebp.subarray(0, 4).toString('ascii'), 'RIFF', `${name} must be RIFF`)
-    assert.equal(runtimeWebp.subarray(8, 12).toString('ascii'), 'WEBP', `${name} must be WebP`)
-    assert.ok(runtimeWebp.includes(Buffer.from('ANIM')), `${name} must be animated`)
-    assert.ok(statSync(runtimeUrl).size < byteBudget, `${name} must stay below ${byteBudget} B`)
-  }
+test('water reflections add no raster payload and infrastructure conduits cannot create idle comets', () => {
+  const persistent = readFileSync(new URL('../../components/world-directors/PersistentWorldLifeLayer.jsx', import.meta.url), 'utf8')
+  const infrastructureCss = readFileSync(new URL('../hermesInfrastructureLayer.css', import.meta.url), 'utf8')
+  assert.doesNotMatch(persistent, /hermes-water-.*\.runtime\.webp/)
+  assert.match(infrastructureCss, /\.hermes-conduit::after\s*\{[^}]*display:\s*none/s)
+  assert.match(infrastructureCss, /\.hermes-conduit\.is-flowing,[\s\S]*\.hermes-conduit\.is-problem\s*\{\s*opacity:\s*0/)
 })
 
 test('ambient motion quality adapts to measured frame rate without suppressing real operations', () => {

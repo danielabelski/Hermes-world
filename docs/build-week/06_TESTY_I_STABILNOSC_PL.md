@@ -586,3 +586,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Fokus: **PASS 24/24**. Pełne testy: **PASS 136/136**. Lint: **PASS**. `validate:world-life`: **PASS**.
 - Build: pierwsza próba **FAIL — środowiskowy EPERM** na pliku `node_modules/.vite-temp`; identyczny build z `--configLoader native` **PASS**, 877 modułów, 3,41 s. Nie zmieniono kodu ani konfiguracji testów, aby ukryć błąd środowiska.
 - Manualny retest 393×852: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-039 — Lightweight water-reflection VFX gate
+
+- Czas: 2026-07-16 15:53 Europe/Warsaw / 13:53 UTC.
+- Zakres: **PASS — wyłącznie demo**; produkcyjny branch, proces, Tailscale, API oraz deployment nie zostały zmienione.
+- Pełne testy: **PASS 136/136**.
+- ESLint: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 3,99 s.
+- Główny JS: 418,23 kB / 128,34 kB gzip; CSS: 76,41 kB / 16,48 kB gzip.
+- Payload wody: **PASS — 0 B rasterów**; trzy animowane WebP zostały usunięte, a refleksy są kodowym VFX opartym na `transform` i `opacity`.
+- Idle comets: **PASS statyczny** — pseudo-element przewodów jest wyłączony. Prawdziwy event transit pozostaje osobnym komponentem z `evidenceEventId`.
+- Percepcyjny test 393×852: **MANUAL ACTION REQUIRED** — autor nadaje RL/GL po zobaczeniu normalnego widoku na realnym telefonie.
