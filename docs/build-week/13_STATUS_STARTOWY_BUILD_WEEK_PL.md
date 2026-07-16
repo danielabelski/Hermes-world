@@ -121,3 +121,20 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Automatycznie przechodzą 125/125 testów, lint, world-life validator i build. Autor potwierdził manualny cold/warm mobile **PASS / GL**: kompletny świat pojawia się natychmiast, bez zauważalnej fazy ładowania.
 - Poprawkę cold-startu zapisano jako `6a8d13e59e95124b7a33b624ac18f6a438b97370`; wcześniejszy evidence-backed real chat edge to `ee58011dd0a03fa136d343126ca66728a7ec2361`.
 - Produkcyjny `main` nadal jest na `be61d2d`. Następny krok: snapshot i commit dowodów → fast-forward produkcji → real chat smoke i pełna kontrola produkcyjna.
+
+## Aktualizacja handoffu — 2026-07-15 17:55 Europe/Warsaw
+
+- Produkcyjny `main` zawiera real chat SSE edge, atomowy cold-start oraz canonical launch i wskazuje `19f925e84e8d5d4810b6e38b91dde90db324c0b1`. Rollback przed tą serią zmian: tag `production-before-real-chat-cold-start-2026-07-15` na `be61d2d`.
+- Automatyczne testy kodu, build, endpointy, SSE transport, cache headers i pojedynczy listener przechodzą. Publiczny HTTPS odpowiada 200.
+- Manualny test starej ikony ujawnił nieobjęty wcześniejszym audytem historyczny shell/launch `?demo=1`, pustą mapę i `0/0` agentów. Nie zaliczać produkcji jako final PASS.
+- Naprawa 4175 wymusza `/?demo=1 → /`; użytkownik musi jednorazowo otworzyć `/reset-client.html`, aby usunąć stary Service Worker/cache. Następny gate: brak etykiety demo i 12 agentów na telefonie, a dopiero potem prawdziwa wiadomość chat i dowód sekwencji world SSE.
+- Po zamknięciu produkcji kolejnym zakresem na demo ma być map polish: dedykowane assety i naprawdę widoczny, płynny przepływ wody, następnie selektywne detale WOW bez regresji FPS, czasu startu lub czytelności observability.
+
+## Aktualizacja handoffu — 2026-07-16 07:45 Europe/Warsaw
+
+- Zweryfikowany Build Week live-runtime: `5ff6a68e19bb9d83e2060feb7e26f708dca49fd1`. Produkcyjny odpowiednik 1:1: `b9aedf217f4746ea5328bc66bc55f854b8959e02` na `main`; zakres aplikacyjny ma zero różnic.
+- Naprawiono właściwą przyczynę pustego świata: frontend nie uznaje już samego HTTP 200 za logowanie, nie uruchamia live bridge przed `logged_in: true`, a produkcja nie może pozostać pod historycznym `?demo=1`. Demo nadal pozostaje oddzielnym, jawnym fixture.
+- Publiczny adres produkcji: `https://hermes-os-panel.tail03d525.ts.net:10000/`. Jedno ukryte zadanie serwera wskazuje port 4175 i katalog produkcyjny; nie uruchamiano Chrome ani wielu runnerów.
+- Automatyczna walidacja: 130/130 testów, lint i build PASS; publiczny root/auth/SSE PASS; 302 `?demo=1 → /` PASS; niezalogowane profiles 401 PASS; invalid event source 403 PASS.
+- Następny obowiązkowy gate: autor loguje się na telefonie, potwierdza realny roster i domeny, a następnie wysyła jedną prawdziwą wiadomość do Hermesa. Oczekiwany łańcuch: potwierdzony Hermes `stream_id` → panel publisher → world event SSE → ruch Cytadeli/Kasztelana → terminalny Success albo Critical bez fake eventów.
+- Dopiero po tym manualnym authenticated smoke można oznaczyć produkcję jako finalny E2E PASS. Kolejny rozwój wizualny nadal wyłącznie na demo/Build Week.

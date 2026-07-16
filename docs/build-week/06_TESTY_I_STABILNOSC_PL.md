@@ -444,3 +444,32 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Realny telefon, cold i warm: **PASS / GL AUTORA** — kompletny świat pojawia się natychmiast, bez widocznej fazy ładowania, osieroconych cieni i pełnych niebieskich linii.
 - Zweryfikowany commit funkcjonalny: `6a8d13e59e95124b7a33b624ac18f6a438b97370`.
 - Produkcja: **PASS — nietknięta podczas naprawy**, promocja dopiero po commicie i snapshotcie.
+
+## TEST-BW-030 — Produkcyjny launch PWA po promocji chat SSE/cold-start
+
+- Czas: 2026-07-15 17:14–17:55 Europe/Warsaw / 15:14–15:55 UTC.
+- Fast-forward produkcji do `cf876af`: **PASS**; zakres odpowiada zatwierdzonym commitom Build Week.
+- `npm.cmd test`: **PASS 125/125**; lint: **PASS**; world-life validator: **PASS**; build: **PASS**, 871 modułów, 7,30 s.
+- Endpointy lokalne `/`, `/api/auth/status`, `/api/system/metrics`, `/api/world/events/snapshot`: **PASS HTTP 200**. SSE: **PASS** dla statusu 200, `text/event-stream`, `no-cache, no-transform`, początkowego retry i pustego snapshotu.
+- Publiczny HTTPS przez Tailscale: **PASS HTTP 200** sprawdzony klientem Node. Windows PowerShell/curl Schannel zwrócił błąd lokalnego magazynu credentials, więc jego wynik nie został błędnie przypisany serwerowi.
+- Manualne uruchomienie starej ikony PWA: **FAIL** — historyczny launch/cache uruchomił tryb demo i `0/0` agentów. To unieważnia pełny odbiór wizualny mimo poprawnych endpointów.
+- Canonical production launch: **PASS automatyczny** — commit `19f925e`; `/?demo=1` na 4175 zwraca `302 Location: /`, zwykły `/` zwraca 200, reset klienta zwraca 200; demo 4176 nie zostało semantycznie wyłączone.
+- Listener production: **PASS — dokładnie 1**. Health po pięciu kolejnych kontrolach: **PASS 5/5 root 200**.
+- Manualny czysty launch 12 agentów: **MANUAL ACTION REQUIRED** po jednorazowym `/reset-client.html`.
+- Realny zalogowany chat SSE: **MANUAL ACTION REQUIRED** dopiero po zaliczeniu czystego launchu; snapshot przed testem ma 0 eventów.
+
+## TEST-BW-031 — Produkcyjny authenticated live runtime po restarcie
+
+- Czas: 2026-07-16 07:06–07:45 Europe/Warsaw / 05:06–05:45 UTC.
+- Branch/commity: Build Week `5ff6a68e19bb9d83e2060feb7e26f708dca49fd1`; produkcyjny `main` `b9aedf217f4746ea5328bc66bc55f854b8959e02`.
+- Zakres aplikacyjny `src`, `public`, `server.js`, `index.html`, manifesty npm i konfiguracja Vite: **PASS — zero różnic** między zatwierdzonym Build Week a produkcyjnym commitem.
+- `npm.cmd test`: **PASS 130/130**; obejmuje auth gate, zakaz live SSE w demo, canonical production URL, Service Worker bez wymuszonej nawigacji, real chat SSE publisher, evidence chain i brak publikacji bez potwierdzonego `stream_id`.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 872 moduły, 2,84 s; main JS 415 602 B / 127,30 kB gzip, CSS 78,07 kB / 16,80 kB gzip.
+- Lokalny transport, 5 prób: root **PASS 200**, warm total 5,5–7,2 ms; bundle **PASS 200**, 415 602 B, total 8,7–9,5 ms; auth **PASS 200**, 8,2–14,6 ms.
+- Publiczny Tailscale HTTPS: root **PASS 200**, 68 ms; auth **PASS 200**, 61 ms; `/?demo=1` **PASS 302 → /**, 60 ms.
+- SSE publiczne: **PASS**, `retry: 3000` oraz event `snapshot`; snapshot pusty przed prawdziwą wiadomością, zgodnie z zasadą bez fake eventów.
+- Ochrona ingestion: fałszywe cookie + niepoprawne `x-hermes-world-source` daje **PASS 403**; nic nie opublikowano.
+- Dostęp do chronionych danych bez sesji: `/api/profiles` daje **PASS 401**, a nie demo fallback.
+- Trwały serwer: zadanie `Hermes Citadel Production V1` utworzone jako ukryte, z jedną instancją i produkcyjną ścieżką; publiczny endpoint działa po naprawie. Chrome/headless: **PASS — 0 procesów** uruchomionych przez testy.
+- Pełny authenticated domains smoke i realna wiadomość chat: **MANUAL ACTION REQUIRED** — po restarcie brak lokalnej dystrybucji WSL przechowującej hasło; nie obchodzono zabezpieczeń i nie odczytywano sekretu.
