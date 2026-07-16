@@ -148,3 +148,9 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Walidacja: 136/136 testów, lint, world-life validator i build PASS. Serwowany bundle `index-C1P_53PB.js`; dokładnie jeden listener 4175; publiczny auth Tailscale 200.
 - **Jedyny otwarty gate tego zakresu:** zalogowany autor wysyła prawdziwą wiadomość i potwierdza na telefonie: właściwy agent rusza, wchodzi do przypisanego wnętrza, status kończy się Success albo Critical, a chronione liczniki/logi/crony/sesje pokazują realne wartości. Bez tego nie oznaczać pełnego authenticated E2E jako PASS.
 - Dalszy rozwój wizualny i eksperymenty pozostają wyłącznie na `build-week/hermes-world`; produkcję zmieniać tylko po GL i pełnym preflight.
+
+## Aktualizacja handoffu — 2026-07-16 10:50 Europe/Warsaw
+
+- Produkcyjny HEAD: `b600192`. Ostatnia poprawka zmniejsza maksymalną obserwacyjną latencję sesji z 60 s do około 1 s bez zwiększania częstotliwości pozostałych endpointów i bez wielokrotnych renderów danych z cache.
+- Finalny artifact: `index-ClaSbR_q.js`; 136/136 testów, lint, validator i build PASS; jeden listener 4175.
+- Do pełnego zamknięcia pozostaje wyłącznie rzetelny test autora na zalogowanym telefonie: prawdziwa wiadomość → właściwy agent → wnętrze → Success/Critical oraz realne dane domen. Nie oznaczać go jako PASS przed obserwacją.

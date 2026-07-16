@@ -492,3 +492,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Publiczny Tailscale auth status: **PASS HTTP 200** po finalnym buildzie.
 - Endpointy chronione bez cookie: **PASS security contract** — profile/sessions/logs/crons/skills/models zwracają 401; nie użyto demo fallbacku.
 - Zalogowane wartości endpointów i realna wiadomość na telefonie: **MANUAL ACTION REQUIRED** — wymaga sesji autora; automaty nie odczytywały sekretów ani cookie.
+
+## TEST-BW-033 — Cadence realnych sesji i bounded rendering
+
+- Czas: 2026-07-16 10:50 Europe/Warsaw / 08:50 UTC.
+- Session cadence: **PASS** — sesje są due co 1 s; metryki pozostają 5 s, profile/tasks/logs/crons 15 s, skills/models 60 s.
+- Bounded publish: **PASS** — domena użyta z cache nie emituje progresywnego snapshotu; realny odczyt lub błąd emituje aktualizację. Nie dodano timera per agent ani per efekt.
+- Cadence test: **PASS** — cztery kolejne synchronizacje odświeżyły sesje 4 razy, metryki zgodnie z 5 s, profile zgodnie z 15 s.
+- `node --test src/world/mapAgentPresentation.test.js`: **PASS 26/26**.
+- Pełny `npm.cmd test`: **PASS 136/136**.
+- Targeted ESLint oraz wcześniejszy pełny lint: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS** po usunięciu historycznego założenia `agents[0] === coder`.
+- Build: **PASS**, 872 moduły, 8,20 s; main JS 421,21 kB / 129,12 kB gzip; serwowany `index-ClaSbR_q.js`.
+- Listener 4175: **PASS — dokładnie 1**. Dodatkowego serwera ani przeglądarki nie uruchomiono.
+- Percepcyjna reakcja na prawdziwą wiadomość z zalogowanego telefonu: **MANUAL ACTION REQUIRED**.

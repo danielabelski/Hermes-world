@@ -531,3 +531,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Macierz bez cookie: auth, metryki i world snapshot odpowiadają 200; chronione profile, sesje, logi, crony, skills i models odpowiadają 401. Jest to poprawny dowód ochrony tras, nie dowód treści zalogowanego payloadu.
 - Ograniczenie dowodowe: pełne sprawdzenie wartości chronionych endpointów i wizualnej reakcji na prawdziwą wiadomość wymaga istniejącej zalogowanej sesji autora na telefonie. Nie obchodzono uwierzytelnienia, nie odczytywano cookie ani hasła i nie oznaczono tego etapu fałszywie jako PASS.
 - Produkcyjne commity bloku: `0bf2464`, `812398e`, `90fee4e`, `01e5b09`. Produkcyjny HEAD po bloku: `01e5b09`.
+
+## BW-2026-07-16-041 — Domknięcie latency prawdziwej sesji bez wzrostu renderów
+
+- Czas Europe/Warsaw: 2026-07-16 10:17–10:50; czas UTC: 08:17–08:50.
+- Końcowy audyt wykrył, że `/api/sessions/search` był poprawny semantycznie, ale miał interwał 60 s. Krótki realny stream mógł zostać zauważony zbyt późno albo pominięty, mimo poprawnych testów statycznych.
+- Naprawa `b600192`: scheduler ma lekki tick 1 s, ale każdy endpoint zachowuje własny budżet; sesje są odświeżane co 1 s, metryki co 5 s, zwykłe domeny co 15 s, wolne domeny co 60 s. Snapshot jest publikowany progresywnie tylko po rzeczywistym odczycie lub błędzie, nie dziewięć razy dla cache na każdy tick.
+- Nie zmieniono serwera, API, portów, Tailscale ani procesu 24/7. Koszt sieciowy poprawki to jeden mały, uwierzytelniony odczyt sesji na sekundę w aktywnej karcie; ukryta karta nadal podlega istniejącym ograniczeniom przeglądarki.
+- Walidator został uniezależniony od kolejności rosteru i wyszukuje Kowala po `profile`, dzięki czemu pełne 12 ról z Offline nie psuje dowodów FSM.
+- Walidacja po poprawce: test fokusowy 26/26 PASS, pełny zestaw 136/136 PASS, lint/targeted lint PASS, `validate:world-life` PASS, build PASS (872 moduły, 8,20 s). Finalny main JS 421,21 kB / 129,12 kB gzip.
+- Serwowany artifact po buildzie: `index-ClaSbR_q.js`; `all_profiles=1` i `hermes-session` obecne; dokładnie jeden listener 4175.
