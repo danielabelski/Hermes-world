@@ -75,7 +75,7 @@ Audyt wykonano read-only na aktualnych plikach Hermes OS CAT. Hermes World korzy
 |---|---|---|---|---|
 | koszt API | `/api/sessions/search`, pole `estimated_cost` | suma w Dashboard | już normalizowany jako `system.totalEstimatedCost` i `tokenRiver.totalEstimatedCost` | koszt sesji zwróconych przez endpoint; przy limicie 50 nie nazywać go bezwarunkowo kosztem lifetime |
 | health score | profile agentów + świeże logi + metryki + crony | heurystyka UI | własna, jawna heurystyka `deriveHealth()` już działa | realne wejścia, ale score wyliczony przez produkt, nie natywny score backendu |
-| last error | `/api/logs?lines=500` | filtrowany ostatni error/warning | logi są w `activity` i `alerts`, brak osobnego pola summary | można wyprowadzić bez nowego endpointu, zachowując timestamp, źródło i wiadomość |
+| last error | `/api/logs?tail=500` | filtrowany ostatni error/warning | logi są w `activity` i `alerts`, brak osobnego pola summary | można wyprowadzić bez nowego endpointu, zachowując timestamp, źródło i wiadomość |
 | cron engine | `/api/crons` + `/api/crons/recent` | lista, enablement, historia, success/fail | crony i ostatni status są już normalizowane | gotowe do Watchera; procent sukcesu jest agregatem prezentacyjnym |
 | benchmark modeli | historia sesji | usage, koszt, tokeny, cache hit, heurystyczna skuteczność | sesje i modele są już odczytywane; `modelSources` zawiera provider/model i liczbę sesji | usage/koszt/tokeny są realne; `output_tokens > 5` z CAT nie jest miarą jakości odpowiedzi i wymaga lepszej nazwy lub definicji |
 | provider usage | sesje + modele + logi + routing history | requests, latency estimate, błędy, 429, fallbacki | provider/model są dostępne, lecz pełny agregat provider health nie jest jeszcze w snapshot | można policzyć lokalnie bez API; latency i health pozostają heurystykami |
@@ -110,8 +110,8 @@ Przepływ prawdy i renderowania:
 `task/event + lifecycle + route` → `resolveMapAgentPresentation` → `presentation.isInside` → dokładnie jeden właściciel sprite’u (`MapAgentLayer` albo `InteriorAgentPresence`) → lokalna trasa cinematic interior → istniejący drill-down profilu.
 
 - **Działa podczas Submission Period:** jeden wspólny renderer używa dokładnie tych samych sprite’ów, anchoru przy stopach, cienia kontaktowego, statusów i danych co mapa.
-- **Działa podczas Submission Period:** Kowal/Kuźnia i Uczony/Archiwum mają zweryfikowane trasy `inside`; wejście, praca, wyjście i powrót wynikają z istniejącego FSM oraz tasku.
+- **Działa podczas Submission Period:** wszystkie 12 zaakceptowanych ról ma centralne przypisanie do jednego z pięciu istniejących wnętrz. Wejście, praca, wyjście i powrót wynikają z istniejącego FSM oraz tego samego tasku/evidence; brak dowodu pozostawia agenta na mapie.
 - **Działa podczas Submission Period:** ukryta mapa nie renderuje duplikatu agenta. Pierwszy snapshot aktywnego taska nie tworzy fikcyjnego observed edge, a stare zakończenie bez wiarygodnego czasu nie udaje świeżego Success.
-- **Świadomie zablokowane:** Citadel i Sanctum nie mają jeszcze zweryfikowanej trasy wewnętrznej; Watcher ma semantyczny punkt pracy na zewnątrz. Brak sprite’u w tych wnętrzach jest prawidłową ochroną observability, nie brakiem renderera.
+- **Aktualny live contract:** potwierdzony stream sesji Hermesa tworzy evidence-backed task dla właściwego profilu. `profile.is_active` pozostaje wyłącznie atrybutem wyboru profilu; nie uruchamia Working. Role nieobecne w odpowiedzi `/api/profiles` pozostają widoczne jako `offline`, dzięki czemu częściowy payload nie usuwa topologii miasta.
 - **Wydajność:** ukryty presentation clock i Ambient Director są pauzowane, prawdziwy transport SSE pozostaje aktywny, a lokalny zegar wnętrza działa tylko dla kwalifikującego się agenta.
 - **Do ręcznego odbioru:** finalne GL/RL skali, rytmu pracy i integracji z tłem na realnym 393×852; automatyczne kontrakty i build przeszły.

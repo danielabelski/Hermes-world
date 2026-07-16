@@ -474,3 +474,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Trwały serwer: zadanie `Hermes Citadel Production V1` utworzone jako ukryte, z jedną instancją i produkcyjną ścieżką; publiczny endpoint działa po naprawie. Chrome/headless: **PASS — 0 procesów** uruchomionych przez testy.
 - Pełny authenticated domains smoke i realna wiadomość chat: **MANUAL ACTION REQUIRED** — po restarcie brak lokalnej dystrybucji WSL przechowującej hasło; nie obchodzono zabezpieczeń i nie odczytywano sekretu.
 - Stabilność 30 s, 8 kolejnych próbek: **PASS 8/8** dla localhost root, publicznego root i publicznego auth. Zakres czasu odpowiedzi: localhost 4,2–25,2 ms, publiczny root 45,8–85,5 ms, publiczny auth 44,6–72,0 ms. Chrome/headless po teście: **0**.
+
+## TEST-BW-032 — Live endpoint contracts, roster i evidence-backed interiors
+
+- Czas: 2026-07-16 10:17 Europe/Warsaw / 08:17 UTC.
+- Produkcyjny branch/HEAD: `main` / `01e5b09`.
+- Kontrakty klienta: **PASS** — same-origin credentials dla odczytów live, `/api/logs?tail=500`, `/api/sessions/search?limit=50&all_profiles=1`.
+- Semantyka sesji: **PASS** — profil wybrany bez taska pozostaje idle; pending daje waiting bez zwiększenia aktywnych; prawdziwy stream daje working/motion z evidence; edge zakończenia daje done/success/return; niedawny `updated_at` bez aktywnego streamu nie udaje pracy.
+- Roster: **PASS** — 12 stabilnych ról; częściowy live payload nie usuwa miasta, a brakująca rola ma jawny `offline` i `isActive=false`.
+- Wnętrza: **PASS** — 12/12 zaakceptowanych ról ma jedno evidence-gated przypisanie w pięciu wnętrzach; test blokuje podwójny ownership mapy i pokoju oraz wejście bez tego samego task/evidence.
+- Testy fokusowe: **PASS 38/38**. Pełny `npm.cmd test`: **PASS 136/136**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 błędów.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build -- --configLoader native`: **PASS**, Vite 8.0.16, 872 moduły, 3,55 s; main JS 421,17 kB / 129,10 kB gzip; CSS 78,07 kB / 16,80 kB gzip.
+- Serwowany artifact: **PASS** — `/assets/index-C1P_53PB.js`, HTTP 200, zawiera nowe kontrakty `all_profiles=1` i `hermes-session`.
+- Proces: **PASS** — dokładnie jeden listener 4175; nie uruchomiono dodatkowego serwera ani przeglądarki.
+- Publiczny Tailscale auth status: **PASS HTTP 200** po finalnym buildzie.
+- Endpointy chronione bez cookie: **PASS security contract** — profile/sessions/logs/crons/skills/models zwracają 401; nie użyto demo fallbacku.
+- Zalogowane wartości endpointów i realna wiadomość na telefonie: **MANUAL ACTION REQUIRED** — wymaga sesji autora; automaty nie odczytywały sekretów ani cookie.

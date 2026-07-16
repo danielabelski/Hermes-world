@@ -138,3 +138,13 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Automatyczna walidacja: 130/130 testów, lint i build PASS; publiczny root/auth/SSE PASS; 302 `?demo=1 → /` PASS; niezalogowane profiles 401 PASS; invalid event source 403 PASS.
 - Następny obowiązkowy gate: autor loguje się na telefonie, potwierdza realny roster i domeny, a następnie wysyła jedną prawdziwą wiadomość do Hermesa. Oczekiwany łańcuch: potwierdzony Hermes `stream_id` → panel publisher → world event SSE → ruch Cytadeli/Kasztelana → terminalny Success albo Critical bez fake eventów.
 - Dopiero po tym manualnym authenticated smoke można oznaczyć produkcję jako finalny E2E PASS. Kolejny rozwój wizualny nadal wyłącznie na demo/Build Week.
+
+## Aktualizacja handoffu — 2026-07-16 10:17 Europe/Warsaw
+
+- Produkcyjny `main` wskazuje `01e5b09`. Commity bloku: `0bf2464` (ochrona rosteru przy luce danych), `812398e` (kontrakty Hermes WebUI), `90fee4e` (realne sesje → agenci i wnętrza), `01e5b09` (brakujące role jako uczciwy Offline).
+- Prawdziwe źródło danych to Hermes WebUI 8787 przez same-origin proxy Cytadeli. Hermes OS CAT nie jest backendem; posłużył wyłącznie jako wcześniejsza referencja interfejsu.
+- `profile.is_active` nie oznacza pracy. Waiting/Working/Success wynikają z rzeczywistych pól sesji i edge’ów streamu. Brakujący profil nie znika i nie pracuje — pozostaje `offline`.
+- Wszystkie 12 ról korzysta z jednego renderera oraz evidence-gated wejść do pięciu wnętrz. Nie ma podwójnego ownership sprite’a ani wejścia bez zgodnego task/evidence.
+- Walidacja: 136/136 testów, lint, world-life validator i build PASS. Serwowany bundle `index-C1P_53PB.js`; dokładnie jeden listener 4175; publiczny auth Tailscale 200.
+- **Jedyny otwarty gate tego zakresu:** zalogowany autor wysyła prawdziwą wiadomość i potwierdza na telefonie: właściwy agent rusza, wchodzi do przypisanego wnętrza, status kończy się Success albo Critical, a chronione liczniki/logi/crony/sesje pokazują realne wartości. Bez tego nie oznaczać pełnego authenticated E2E jako PASS.
+- Dalszy rozwój wizualny i eksperymenty pozostają wyłącznie na `build-week/hermes-world`; produkcję zmieniać tylko po GL i pełnym preflight.
