@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { advanceAmbientDirector, createAmbientDirectorState, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
+import { advanceAmbientDirector, createAmbientDirectorState, createAmbientRouteHandoff, deriveAmbientHandoffPresentation, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
 import { createChoreographyState, deriveChoreographyPresentation, pruneChoreographyState, reduceChoreographyEvent } from './choreographyDirector.js'
 import { subscribeWorldEventStream } from '../events/worldEventStream.js'
 
@@ -9,15 +9,21 @@ const SNAPSHOT_EVENT_FRESHNESS_MS = 15_000
 export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', enabled = true, ambientEnabled = enabled } = {}) {
   const agentsRef = useRef(agents)
   const layoutRef = useRef(layout)
+  const ambientStateRef = useRef(null)
   const seenEventIdsRef = useRef(new Set())
   const [choreographyState, setChoreographyState] = useState(createChoreographyState)
   const [ambientState, setAmbientState] = useState(() => createAmbientDirectorState({ now: Date.now() }))
+  const [handoffs, setHandoffs] = useState([])
   const [reactionLatencyMs, setReactionLatencyMs] = useState(null)
   const [pageVisible, setPageVisible] = useState(() => typeof document === 'undefined' || document.visibilityState !== 'hidden')
   useEffect(() => { agentsRef.current = agents }, [agents])
+  useEffect(() => { ambientStateRef.current = ambientState }, [ambientState])
   useEffect(() => {
     layoutRef.current = layout
-    const reset = window.setTimeout(() => setAmbientState((state) => ({ ...state, actions: Object.freeze([]), nextSelectionAt: Date.now() + 2_400 })), 0)
+    const reset = window.setTimeout(() => {
+      setAmbientState((state) => ({ ...state, actions: Object.freeze([]), nextSelectionAt: Date.now() + 2_400 }))
+      setHandoffs([])
+    }, 0)
     return () => window.clearTimeout(reset)
   }, [layout])
 
@@ -52,6 +58,14 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
       const receivedAtPerformance = window.performance.now()
       const publishedAt = Date.parse(event.publishedAt ?? event.occurredAt ?? '')
       const transportLatencyMs = Number.isFinite(publishedAt) ? Math.max(0, receivedAt - publishedAt) : 0
+      const interruptedAction = ambientStateRef.current?.actions?.find((action) => action.profileId === event.agentId)
+      const handoff = createAmbientRouteHandoff(interruptedAction, {
+        now: receivedAt,
+        layout: layoutRef.current,
+        runId: event.runId,
+        evidenceEventId: event.eventId,
+      })
+      if (handoff) setHandoffs((current) => [...current.filter((candidate) => candidate.profileId !== handoff.profileId && candidate.endsAt >= receivedAt), handoff])
       setAmbientState((state) => interruptAmbientAgent(interruptAmbientAgent(state, event.agentId, receivedAt), 'orchestrator', receivedAt))
       setChoreographyState((state) => reduceChoreographyEvent(state, event, receivedAt))
       window.requestAnimationFrame(() => setReactionLatencyMs(Math.round(transportLatencyMs + window.performance.now() - receivedAtPerformance)))
@@ -69,5 +83,6 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
   return useMemo(() => ({
     choreography: { ...deriveChoreographyPresentation(choreographyState, { now, layout }), responseLatencyMs: reactionLatencyMs },
     ambient: deriveAmbientPresentation(ambientState, { now }),
-  }), [ambientState, choreographyState, layout, now, reactionLatencyMs])
+    handoff: deriveAmbientHandoffPresentation(handoffs, { now }),
+  }), [ambientState, choreographyState, handoffs, layout, now, reactionLatencyMs])
 }

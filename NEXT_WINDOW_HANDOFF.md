@@ -934,3 +934,32 @@ Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at 
 4. Return GL or exact RL. Do not touch production before GL.
 
 ---
+
+## DEMO MOVEMENT POLISH CHECKPOINT — 2026-07-16
+
+Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at `c9a32051a3367990ceae266adeed16366cbd4738` and was not touched.
+
+### Completed
+
+- The accepted real-event cycle is frozen; no fake reaction, cron or operational state was added.
+- Walking agents now use a four-phase footstep pose with body sway, lean and synchronized contact-shadow compression instead of a floating-only bob.
+- A real event interrupting ambient movement preserves the exact visible foot position and continues from the nearest segment of the agent's existing semantic route.
+- The handoff is evidence/run scoped, applies only while travelling to work and cannot override Working or terminal state.
+
+### Verification
+
+- Focused tests: 44/44 PASS.
+- Full tests: 146/146 PASS.
+- ESLint and world-life validator: PASS.
+- Build: PASS, 874 modules, 4.80 s; main JS 423.05 kB / 129.98 kB gzip.
+- Pure handoff benchmark: 26.769 µs per iteration over 50,000 iterations.
+- Demo runtime 4176 serves `index-Cm90ARzU.js` containing the new gait and handoff contracts.
+
+### Exact next gate
+
+1. Review walking on `http://100.69.167.105:4176/?demo=1`.
+2. Observe at least one ambient walker and one real-event takeover.
+3. Confirm visible stepping, no skating, no snap to home and no teleport at return.
+4. Return GL or name the exact agent/phase that still looks wrong. Production stays untouched until a separate explicit GL.
+
+---

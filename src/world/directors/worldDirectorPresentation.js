@@ -27,10 +27,22 @@ function applyMotion(model, motion, source) {
   }
 }
 
-export function applyWorldDirectorPresentation(presentations, { choreography, ambient } = {}) {
+export function applyWorldDirectorPresentation(presentations, { choreography, ambient, handoff } = {}) {
   const motionByAgent = choreography?.motionByAgent ?? {}
   const ambientByAgent = ambient?.actionByAgent ?? {}
+  const handoffByAgent = handoff?.actionByAgent ?? {}
   return Object.freeze(sortMapAgentPresentations(presentations.map((model) => {
+    const routeHandoff = handoffByAgent[model.profileId]
+    const sameRun = !routeHandoff?.runId || !model.taskId || routeHandoff.runId === model.taskId
+    if (routeHandoff && sameRun && ['walking-to-work', 'arriving'].includes(model.phase)) {
+      const sampled = sampleMapAgentRoute(routeHandoff.route, routeHandoff.progress)
+      return Object.freeze(applyMotion(model, {
+        ...sampled,
+        visualState: 'walk',
+        isMoving: true,
+        evidenceEventId: routeHandoff.evidenceEventId,
+      }, 'operational-handoff'))
+    }
     const choreographyMotion = motionByAgent[model.profileId]
     if (choreographyMotion && !operationalPresentationWins(model)) return Object.freeze(applyMotion(model, choreographyMotion, 'choreography'))
     const ambientAction = ambientByAgent[model.profileId]

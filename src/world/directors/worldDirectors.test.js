@@ -3,9 +3,10 @@ import test from 'node:test'
 import { AGENT_DEFINITIONS } from '../data/agentDefinitions.js'
 import { getDemoScenario } from '../data/demoScenarios.js'
 import { getWorldLifeJourney } from '../data/roadGraph.js'
+import { sampleMapAgentRoute } from '../mapAgentPresentation.js'
 import { createWorldSnapshot } from '../WorldBridge.js'
 import { applyWorldDirectorPresentation } from './worldDirectorPresentation.js'
-import { advanceAmbientDirector, AMBIENT_SELECTION_MAX_MS, AMBIENT_SELECTION_MIN_MS, createAmbientDirectorState, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
+import { advanceAmbientDirector, AMBIENT_SELECTION_MAX_MS, AMBIENT_SELECTION_MIN_MS, createAmbientDirectorState, createAmbientRouteHandoff, deriveAmbientHandoffPresentation, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
 import { CHOREOGRAPHY_TIMING, createChoreographyState, deriveChoreographyPresentation, reduceChoreographyEvent } from './choreographyDirector.js'
 
 const START = Date.parse('2026-07-12T20:00:00.000Z')
@@ -148,6 +149,39 @@ test('real event interrupts ambient immediately and ambient cannot override oper
   const [resolved] = applyWorldDirectorPresentation([operational], { choreography, ambient: deriveAmbientPresentation(state, { now: START + 2_500 }) })
   assert.equal(resolved.visualState, 'work')
   assert.notEqual(resolved.presentationSource, 'choreography')
+})
+
+test('a real event takes over an ambient walker at the exact visible foot position without teleporting', () => {
+  const agents = idleAgents()
+  const ambientState = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'handoff' }), { agents, now: START + 2_400, layout: 'mobile' })
+  const action = ambientState.actions[0]
+  const takeoverAt = START + 7_200
+  const ambientBefore = deriveAmbientPresentation(ambientState, { now: takeoverAt }).actionByAgent[action.profileId]
+  const before = sampleMapAgentRoute(ambientBefore.route, ambientBefore.progress)
+  const handoff = createAmbientRouteHandoff(action, { now: takeoverAt, layout: 'mobile', runId: 'real-run', evidenceEventId: 'real-run:0' })
+  assert.ok(handoff)
+  assert.ok(Math.abs(handoff.route[0].x - before.worldX) < 0.001)
+  assert.ok(Math.abs(handoff.route[0].y - before.worldY) < 0.001)
+
+  const operational = {
+    ...idleModel(action.profileId),
+    phase: 'walking-to-work',
+    visualState: 'walk',
+    isMoving: true,
+    taskId: 'real-run',
+  }
+  const [atTakeover] = applyWorldDirectorPresentation([operational], {
+    handoff: deriveAmbientHandoffPresentation([handoff], { now: takeoverAt }),
+  })
+  assert.equal(atTakeover.presentationSource, 'operational-handoff')
+  assert.ok(Math.abs(atTakeover.worldX - before.worldX) < 0.001)
+  assert.ok(Math.abs(atTakeover.worldY - before.worldY) < 0.001)
+  assert.equal(atTakeover.evidenceEventId, 'real-run:0')
+
+  const [working] = applyWorldDirectorPresentation([{ ...operational, phase: 'working', visualState: 'work' }], {
+    handoff: deriveAmbientHandoffPresentation([handoff], { now: takeoverAt + 100 }),
+  })
+  assert.notEqual(working.presentationSource, 'operational-handoff')
 })
 
 test('ambient behavior does not repeat for the same profile on its next selection', () => {

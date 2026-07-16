@@ -1,4 +1,5 @@
 import { getWorldLifeJourney } from '../data/roadGraph.js'
+import { sampleMapAgentRoute } from '../mapAgentPresentation.js'
 
 const freeze = Object.freeze
 export const AMBIENT_BEHAVIORS = freeze(['patrol', 'inspect', 'train', 'rest', 'converse'])
@@ -7,6 +8,7 @@ export const AMBIENT_SELECTION_MIN_MS = 20_000
 export const AMBIENT_SELECTION_MAX_MS = 40_000
 const FIRST_SELECTION_MS = 2_400
 const OPENING_PROFILES = freeze(['coder', 'researcher', 'prospecting'])
+const point = (source) => ({ x: Number(source?.x) || 0, y: Number(source?.y) || 0 })
 
 const BEHAVIORS_BY_PROFILE = freeze({
   default: freeze(['converse', 'patrol', 'rest']),
@@ -78,6 +80,64 @@ export function interruptAmbientAgent(state, profileId, now = Date.now()) {
   const actions = state.actions.filter((action) => action.profileId !== profileId && action.partnerId !== profileId)
   if (actions.length === state.actions.length) return state
   return freeze({ ...state, actions: freeze(actions), interruptedAt: now })
+}
+
+function projectToSegment(origin, from, to) {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const lengthSquared = dx * dx + dy * dy
+  const t = lengthSquared > 0
+    ? Math.max(0, Math.min(1, ((origin.x - from.x) * dx + (origin.y - from.y) * dy) / lengthSquared))
+    : 0
+  const projected = { x: from.x + dx * t, y: from.y + dy * t }
+  return { projected, t, distance: Math.hypot(origin.x - projected.x, origin.y - projected.y) }
+}
+
+function buildRouteContinuation(origin, route) {
+  if (route.length < 2) return [origin]
+  let best = null
+  route.slice(1).forEach((target, index) => {
+    const candidate = { ...projectToSegment(origin, route[index], target), index }
+    if (!best || candidate.distance < best.distance) best = candidate
+  })
+  const continuation = [origin]
+  if (best.distance > 0.08) continuation.push(best.projected)
+  if (best.t < 0.999) continuation.push(route[best.index + 1])
+  continuation.push(...route.slice(best.index + 2))
+  return continuation.filter((candidate, index, points) => index === 0 || Math.hypot(candidate.x - points[index - 1].x, candidate.y - points[index - 1].y) > 0.01)
+}
+
+/** Preserve the visible foot position when a real event interrupts ambient movement. */
+export function createAmbientRouteHandoff(action, { now = Date.now(), layout = 'desktop', runId = null, evidenceEventId = null } = {}) {
+  if (!action?.profileId || action.route?.length < 2) return null
+  const journey = getWorldLifeJourney(action.profileId, layout)
+  if (!journey) return null
+  const ambientProgress = Math.max(0, Math.min(1, (now - action.startedAt) / Math.max(1, action.durationMs)))
+  const sampled = sampleMapAgentRoute(action.route, ambientProgress)
+  const origin = point({ x: sampled.worldX, y: sampled.worldY })
+  const outbound = journey.outboundWaypoints.map((candidate, index, points) => point({
+    x: (candidate.x + (index === 0 || index === points.length - 1 ? 0 : journey.laneOffset)) * 10,
+    y: (candidate.y - (index === 0 || index === points.length - 1 ? 0 : journey.laneOffset * 0.45)) * 10,
+  }))
+  const route = buildRouteContinuation(origin, outbound)
+  const durationMs = Math.max(1_200, journey.walkDurationMs)
+  return freeze({
+    profileId: action.profileId,
+    route: freeze(route.map((candidate) => freeze(candidate))),
+    startedAt: now,
+    endsAt: now + durationMs,
+    durationMs,
+    runId,
+    evidenceEventId,
+  })
+}
+
+export function deriveAmbientHandoffPresentation(handoffs = [], { now = Date.now() } = {}) {
+  const active = handoffs.filter((handoff) => handoff.endsAt >= now).map((handoff) => freeze({
+    ...handoff,
+    progress: Math.max(0, Math.min(1, (now - handoff.startedAt) / Math.max(1, handoff.durationMs))),
+  }))
+  return freeze({ actions: freeze(active), actionByAgent: freeze(Object.fromEntries(active.map((handoff) => [handoff.profileId, handoff]))) })
 }
 
 export function advanceAmbientDirector(state, { agents = [], now = Date.now(), layout = 'desktop', interruptedAgentIds = [] } = {}) {

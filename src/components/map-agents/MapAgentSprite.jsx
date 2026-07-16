@@ -13,11 +13,21 @@ function getMapAgentFacingScale(direction) {
   return ['west', 'left', 'sw', 'nw'].includes(String(direction).toLowerCase()) ? -1 : 1
 }
 
-function getAgentBob(visualState, frameIndex, animationPhase) {
-  if (visualState === 'walk') return [0, -0.7, 0, -0.5][Math.abs(Number(frameIndex) || 0) % 4]
-  if (visualState === 'idle') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.16
-  if (visualState === 'work') return Math.sin(clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2) * 0.2
-  return 0
+function getAgentMotionPose(visualState, frameIndex, animationPhase, isMoving) {
+  if (visualState === 'walk' && isMoving) {
+    const index = Math.abs(Number(frameIndex) || 0) % 4
+    return {
+      bob: [0, -1.15, 0, -0.92][index],
+      sway: [-0.42, -0.08, 0.42, 0.08][index],
+      lean: [-0.72, -0.18, 0.72, 0.18][index],
+      shadowCompression: [1.04, 0.9, 1.04, 0.92][index],
+      shadowShift: [-0.34, -0.08, 0.34, 0.08][index],
+    }
+  }
+  const phase = clamp(Number(animationPhase) || 0, 0, 1) * Math.PI * 2
+  if (visualState === 'idle') return { bob: Math.sin(phase) * 0.16, sway: 0, lean: 0, shadowCompression: 1, shadowShift: 0 }
+  if (visualState === 'work') return { bob: Math.sin(phase) * 0.2, sway: 0, lean: 0, shadowCompression: 1, shadowShift: 0 }
+  return { bob: 0, sway: 0, lean: 0, shadowCompression: 1, shadowShift: 0 }
 }
 
 function MapAgentSprite({
@@ -30,6 +40,7 @@ function MapAgentSprite({
   selected = false,
   severity = 'none',
   signalState = 'none',
+  isMoving = visualState === 'walk',
   onSelect,
   frameIndex = 0,
   animationPhase = 0,
@@ -53,7 +64,7 @@ function MapAgentSprite({
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
   const facingScale = getMapAgentFacingScale(direction)
-  const bob = getAgentBob(normalizedState, frameIndex, animationPhase)
+  const motionPose = getAgentMotionPose(normalizedState, frameIndex, animationPhase, isMoving)
   const statusMarker = resolveMapAgentStatusMarker({ visualState: normalizedState, severity, signalState })
   const mapTone = renderSurface === 'map' ? profile.mapTone : null
   const markerContentTop = renderSize * (profile.markerContentTopByState[normalizedState] ?? (12 / 128))
@@ -62,6 +73,7 @@ function MapAgentSprite({
     `is-${normalizedState}`,
     `severity-${severity}`,
     `signal-${signalState}`,
+    isMoving ? 'is-moving' : '',
     `lod-${lod}`,
     selected ? 'is-selected' : '',
     hidden ? 'is-inside' : '',
@@ -79,7 +91,11 @@ function MapAgentSprite({
       '--map-agent-canvas': `${renderSize}px`,
       '--map-agent-tail': `${transparentTail}px`,
       '--map-agent-facing': facingScale,
-      '--map-agent-bob': `${bob}px`,
+      '--map-agent-bob': `${motionPose.bob}px`,
+      '--map-agent-step-x': `${motionPose.sway}px`,
+      '--map-agent-step-lean': `${motionPose.lean}deg`,
+      '--map-agent-shadow-step': motionPose.shadowCompression,
+      '--map-agent-shadow-shift': `${motionPose.shadowShift}px`,
       '--map-agent-accent': profile.accent,
       '--map-agent-anchor-y-offset': `${profile.anchorCorrection.yPx}px`,
       '--map-agent-shadow-scale': profile.shadowScale,

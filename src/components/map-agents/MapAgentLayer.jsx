@@ -46,6 +46,7 @@ function MapAgentLayer({
         selected={selectedId === model.profileId}
         severity={model.severity}
         signalState={model.signalState}
+        isMoving={model.isMoving}
         frameIndex={frameIndex}
         animationPhase={animationPhase}
         carryPackage={model.carryPackage}

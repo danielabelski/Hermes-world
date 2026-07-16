@@ -627,3 +627,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `git diff --check`: **PASS**; wyłącznie ostrzeżenia Windows LF/CRLF, bez błędów whitespace.
 - Benchmark derivacji lifecycle: **PASS budżetowy**, 20 000 przebiegów / 1412,7 ms / około 70,635 µs na przebieg. Ograniczenie: nie jest to browser FPS ani cold paint.
 - Manualny prawdziwy chat przez LTE/telefon: **MANUAL ACTION REQUIRED** przed GL; test automatyczny nie może uczciwie zastąpić zalogowanej sesji autora i percepcyjnej oceny ruchu.
+
+## TEST-BW-042 — Movement gait and no-teleport handoff gate
+
+- Data/czas Europe/Warsaw: 2026-07-16 17:56–18:00.
+- Branch/HEAD wejściowy: `build-week/hermes-world` / `335ecda` z niezatwierdzonym zakresem movement polish.
+- Testy fokusowe: **PASS 44/44**.
+- `npm.cmd test`: **PASS 146/146**, 7 suites, 0 fail.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 874 moduły, 4,80 s.
+- Build: main JS 423,05 kB / 129,98 kB gzip; CSS 76,69 kB / 16,56 kB gzip.
+- Runtime 4176: **PASS** — root podaje `assets/index-Cm90ARzU.js`; bundle zawiera nowy gait i `operational-handoff`.
+- Ciągłość: **PASS** — początek handoffu jest identyczny z ostatnią pozycją ambientu; handoff tego samego runu nie działa w fazie `working`; pełny powrót Kowala pozostaje bez teleportu.
+- Mikrobenchmark handoffu: 50 000 iteracji / 1 338,470 ms / 26,769 µs na iterację. To nie jest pomiar FPS ani energii telefonu.
+- Manualna ocena naturalności kroku 393×852: **MANUAL ACTION REQUIRED**.

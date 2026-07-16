@@ -637,3 +637,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Ograniczenia zapisane jawnie: aktualny worker delegacji pochodzi z wybranego profilu czatu, nie z dowodu wewnętrznego delegowania upstream; animacja zapisu Archiwum przedstawia prawdziwy terminalny event, ale sama nie dowodzi zapisu do pamięci/RAG.
 - Walidacja: testy celowane 75/75 PASS; pełne testy 144/144 PASS; ESLint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 3,65 s. Main JS 420,47 kB / 129,21 kB gzip; CSS 76,41 kB / 16,48 kB gzip.
 - Następny gate: manualny real-phone test jednego prawdziwego lifecycle’u na istniejącym demo 4176. Produkcja nadal wymaga osobnego GL i osobnej promocji.
+
+## BW-2026-07-16-050 — Naturalny krok i ciągłe przejęcie ruchu przez realny event
+
+- Czas Europe/Warsaw: 2026-07-16 17:27–18:00; czas UTC: 15:27–16:00.
+- Zakres: wyłącznie demo na branchu `build-week/hermes-world`. Produkcja `main`, serwer 4175, API, Tailscale, Hermes WebUI i event pipeline pozostały nietknięte.
+- Autor zaakceptował istniejący cykl reakcji i zamroził jego zakres, aby nie dodawać fake reakcji. Aktywnym problemem był ruch agentów: postacie przesuwały się jak po lodzie, a przejęcie przez prawdziwy event mogło przestawić agenta z bieżącego punktu na początek trasy operacyjnej.
+- Renderer otrzymał wspólną czterofazową pozę kroku: naprzemienny nacisk stóp, subtelne przesunięcie boczne i pochylenie sylwetki oraz zsynchronizowaną kompresję cienia kontaktowego. Jest to wyłącznie prezentacja istniejącego `isMoving`; nie zmienia FSM ani operational state.
+- Dodano evidence-backed handoff ambient → operational. W chwili prawdziwego eventu zapisywana jest dokładna pozycja stóp, punkt jest rzutowany na istniejącą trasę agenta, a dalszy ruch biegnie do prawdziwego celu po semantycznych waypointach. Handoff obowiązuje wyłącznie dla tego samego runu i tylko podczas dojścia; nigdy nie nadpisuje `Working`, alertu ani terminalnego stanu.
+- Nie rozszerzono choreografii, nie dodano crona/watchdoga, nie wygenerowano ruchu bez eventu i nie zmieniono tras ani mapy.
+- Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 4,80 s. Main JS 423,05 kB / 129,98 kB gzip; CSS 76,69 kB / 16,56 kB gzip.
+- Mikrobenchmark czystego utworzenia i próbkowania handoffu: 50 000 iteracji, 1 338,470 ms, średnio 26,769 µs/iterację. To pomiar logiki bez DOM, nie pomiar FPS telefonu.
+- Serwer demo 4176 podaje `index-Cm90ARzU.js`; bundle zawiera kontrakty gait oraz `operational-handoff`. Manualna ocena rytmu kroku na realnym telefonie pozostaje **MANUAL ACTION REQUIRED**.
