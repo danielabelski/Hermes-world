@@ -32,7 +32,7 @@ function hasUsableHermesData(snapshot) {
 /**
  * Keeps the visual world immediately useful without pretending demo data is
  * live data. It retries the real Hermes API in the background and swaps to the
- * live snapshot atomically as soon as it is available.
+ * live snapshot as genuine Hermes domains arrive.
  *
  * The hook intentionally does not import Zustand: callers may pass the result
  * to any store/action, keeping the bridge testable and renderer-neutral.
@@ -45,6 +45,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   }
   const demoSnapshot = demoSnapshotRef.current;
   const bridgeRef = useRef(null);
+  const bridgeUnsubscribeRef = useRef(null);
   const retryTimerRef = useRef(null);
   const sceneScriptRef = useRef(null);
   const eventDrivenRef = useRef(false);
@@ -65,29 +66,34 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     }
   }, []);
 
+  const applyLiveSnapshot = useCallback((liveSnapshot) => {
+    if (!mountedRef.current) return;
+    if (hasUsableHermesData(liveSnapshot)) {
+      const resolvedSnapshot = eventHistoryRef.current.length ? applyWorldEventsToSnapshot(liveSnapshot, eventHistoryRef.current) : liveSnapshot;
+      const source = eventDrivenRef.current ? 'live' : liveSnapshot.lifecycle?.source ?? 'live';
+      setState({
+        snapshot: resolvedSnapshot,
+        source,
+        connection: eventDrivenRef.current ? 'online' : liveSnapshot.lifecycle?.connection ?? 'online',
+        error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
+      });
+      return;
+    }
+    const error = new Error('Hermes API is unavailable or returned no trustworthy world data.');
+    setState({ snapshot: liveSnapshot, source: liveSnapshot.lifecycle?.source ?? 'unknown', connection: liveSnapshot.lifecycle?.connection ?? 'offline', error });
+  }, []);
+
   const refresh = useCallback(async () => {
     if (demoMode) return demoSnapshotRef.current;
     if (!enabled) return null;
-    if (!bridgeRef.current) bridgeRef.current = createWorldBridge({ apiClient: api });
+    if (!bridgeRef.current) {
+      bridgeRef.current = createWorldBridge({ apiClient: api });
+      bridgeUnsubscribeRef.current = bridgeRef.current.subscribe(applyLiveSnapshot);
+    }
 
     try {
       const liveSnapshot = await bridgeRef.current.sync();
-      if (!mountedRef.current) return liveSnapshot;
-
-      if (hasUsableHermesData(liveSnapshot)) {
-        const resolvedSnapshot = eventHistoryRef.current.length ? applyWorldEventsToSnapshot(liveSnapshot, eventHistoryRef.current) : liveSnapshot;
-        const source = eventDrivenRef.current ? 'live' : liveSnapshot.lifecycle?.source ?? 'live';
-        setState({
-          snapshot: resolvedSnapshot,
-          source,
-          connection: eventDrivenRef.current ? 'online' : liveSnapshot.lifecycle?.connection ?? 'online',
-          error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
-        });
-        return liveSnapshot;
-      }
-
-      const error = new Error('Hermes API is unavailable or returned no trustworthy world data.');
-      setState({ snapshot: liveSnapshot, source: liveSnapshot.lifecycle?.source ?? 'unknown', connection: liveSnapshot.lifecycle?.connection ?? 'offline', error });
+      applyLiveSnapshot(liveSnapshot);
       return liveSnapshot;
     } catch (error) {
       if (mountedRef.current) {
@@ -95,7 +101,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       }
       return null;
     }
-  }, [demoMode, enabled]);
+  }, [applyLiveSnapshot, demoMode, enabled]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -122,6 +128,8 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       cancelled = true;
       mountedRef.current = false;
       clearRetry();
+      bridgeUnsubscribeRef.current?.();
+      bridgeUnsubscribeRef.current = null;
       bridgeRef.current?.stop?.();
       bridgeRef.current = null;
     };
@@ -169,7 +177,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     source.addEventListener('snapshot', handleSnapshot);
     source.addEventListener('world_event', handleEvent);
     return () => source.close();
-  }, [demoMode, enabled]);
+  }, [applyLiveSnapshot, demoMode, enabled]);
 
   /**
    * Give the offline preview an honest heartbeat: it is a deterministic

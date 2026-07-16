@@ -520,6 +520,36 @@ test('production bridge keeps domain cadence and exposes stale recovery honestly
   assert.equal(recovered.lifecycle.domains.metrics.state, 'live')
 })
 
+test('production bridge publishes real metrics before an unrelated slow domain finishes', async () => {
+  let releaseProfiles
+  const profiles = new Promise((resolve) => { releaseProfiles = resolve })
+  const apiClient = {
+    getProfiles: async () => profiles,
+    async getSystemMetrics() { return { ok: true, cpuPercent: 37, memoryPercent: 51, temperatureC: 56 } },
+    async getKanbanTasks() { return { tasks: [] } },
+    async getLogs() { return { lines: [] } },
+    async getCrons() { return { jobs: [] } },
+    async getCronHistory() { return { completions: [] } },
+    async getSessions() { return { sessions: [] } },
+    async getSkills() { return { skills: [] } },
+    async getModels() { return { groups: [] } },
+  }
+  const bridge = createWorldBridge({ apiClient })
+  const emissions = []
+  bridge.subscribe((snapshot) => emissions.push(snapshot))
+
+  const pending = bridge.sync()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+
+  assert.equal(emissions.some((snapshot) => snapshot.system.cpuPercent === 37), true)
+  assert.equal(emissions.some((snapshot) => snapshot.agents.length > 0), false)
+
+  releaseProfiles({ profiles: [{ name: 'coder', is_active: false }] })
+  const finalSnapshot = await pending
+  assert.equal(finalSnapshot.agents.some((agent) => agent.profile === 'coder'), true)
+  assert.equal(finalSnapshot.lifecycle.source, 'live')
+})
+
 test('status marker grammar keeps thinking, waiting, stuck and error visually distinct', () => {
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'thinking' }), { symbol: '⌬', tone: 'thinking' })
   assert.deepEqual(resolveMapAgentStatusMarker({ visualState: 'waiting' }), { symbol: '◷', tone: 'waiting' })

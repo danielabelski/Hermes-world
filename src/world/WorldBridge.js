@@ -329,7 +329,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     models: POLL_INTERVALS.slow,
   });
 
-  async function fetchPayloads() {
+  async function fetchPayloads({ onProgress } = {}) {
     const observedAt = now();
     if (demoMode) {
       return {
@@ -339,21 +339,28 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     }
 
     const entries = Object.entries(domainReaders);
-    const settled = await Promise.allSettled(entries.map(async ([id, read]) => {
-      const cached = lastPayloadByDomain.get(id);
-      const lastAttempt = lastAttemptByDomain.get(id) ?? 0;
-      const due = !cached || observedAt - lastAttempt >= domainIntervals[id];
-      if (!due) return { reused: true, value: cached.value, updatedAt: cached.updatedAt };
-      lastAttemptByDomain.set(id, observedAt);
-      return { reused: false, value: await read(), updatedAt: observedAt };
-    }));
     const payloads = {};
     const domains = {};
     let liveCount = 0;
     let cachedCount = 0;
 
-    settled.forEach((result, index) => {
-      const id = entries[index][0];
+    const buildResult = () => {
+      if (liveCount > 0) lastSuccessfulAt = observedAt;
+      const source = liveCount === entries.length ? 'live' : liveCount > 0 || cachedCount > 0 ? 'stale' : 'unknown';
+      const oldestAge = Math.max(0, ...Object.values(domains).map((domain) => Number(domain.ageMs) || 0));
+      return {
+        payloads: { ...payloads },
+        provenance: {
+          source,
+          connection: source === 'live' ? 'online' : source === 'stale' ? 'degraded' : 'offline',
+          lastSuccessfulAt: lastSuccessfulAt ? new Date(lastSuccessfulAt).toISOString() : null,
+          snapshotAgeMs: oldestAge,
+          domains: Object.fromEntries(Object.entries(domains).map(([id, domain]) => [id, { ...domain }])),
+        },
+      };
+    };
+
+    const applyResult = (id, result) => {
       if (result.status === 'fulfilled') {
         const resolved = result.value;
         payloads[id] = resolved.value;
@@ -378,27 +385,42 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
       } else {
         domains[id] = { state: 'unknown', updatedAt: null, ageMs: null, error: result.reason?.message ?? 'Domain unavailable' };
       }
-    });
-
-    if (liveCount > 0) lastSuccessfulAt = observedAt;
-    const source = liveCount === entries.length ? 'live' : liveCount > 0 || cachedCount > 0 ? 'stale' : 'unknown';
-    const oldestAge = Math.max(0, ...Object.values(domains).map((domain) => Number(domain.ageMs) || 0));
-    return {
-      payloads,
-      provenance: {
-        source,
-        connection: source === 'live' ? 'online' : source === 'stale' ? 'degraded' : 'offline',
-        lastSuccessfulAt: lastSuccessfulAt ? new Date(lastSuccessfulAt).toISOString() : null,
-        snapshotAgeMs: oldestAge,
-        domains,
-      },
     };
+
+    await Promise.allSettled(entries.map(async ([id, read]) => {
+      const cached = lastPayloadByDomain.get(id);
+      const lastAttempt = lastAttemptByDomain.get(id) ?? 0;
+      const due = !cached || observedAt - lastAttempt >= domainIntervals[id];
+      try {
+        const resolved = due
+          ? (() => {
+            lastAttemptByDomain.set(id, observedAt);
+            return read().then((value) => ({ reused: false, value, updatedAt: observedAt }));
+          })()
+          : Promise.resolve({ reused: true, value: cached.value, updatedAt: cached.updatedAt });
+        const value = await resolved;
+        applyResult(id, { status: 'fulfilled', value });
+        onProgress?.(buildResult());
+        return value;
+      } catch (reason) {
+        applyResult(id, { status: 'rejected', reason });
+        onProgress?.(buildResult());
+        throw reason;
+      }
+    }));
+
+    return buildResult();
   }
 
   async function sync() {
-    const { payloads, provenance } = await fetchPayloads();
-    snapshot = createWorldSnapshot(payloads, snapshot, now, provenance);
-    emit(snapshot);
+    let emitted = false;
+    const publish = ({ payloads, provenance }) => {
+      snapshot = createWorldSnapshot(payloads, snapshot, now, provenance);
+      emit(snapshot);
+      emitted = true;
+    };
+    const result = await fetchPayloads({ onProgress: publish });
+    if (!emitted) publish(result);
     return snapshot;
   }
 
