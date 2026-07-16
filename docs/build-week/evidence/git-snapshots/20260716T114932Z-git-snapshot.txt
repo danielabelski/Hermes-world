@@ -1,0 +1,158 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-16T11:49:32Z
+Europe/Warsaw: 2026-07-16T13:49:32+02:00
+Session ID: nie podano
+Cel: RL
+Branch: build-week/hermes-world
+HEAD: 97fb9ffece3761b2914a0dc5ebb5f991ddbbf255
+Baseline ref: b80b89d771457e6d6c515cda51e4d480f85245e1
+
+== git status --short ==
+ M NEXT_WINDOW_HANDOFF.md
+ M docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+ M docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+
+== Zmienione pliki (bez treści) ==
+ M NEXT_WINDOW_HANDOFF.md
+ M docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+ M docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+M	NEXT_WINDOW_HANDOFF.md
+M	docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+M	docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+
+
+== Diff stat: working tree ==
+ NEXT_WINDOW_HANDOFF.md                       | 35 ++++++++++++++++++++++++++++
+ docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md | 12 ++++++++++
+ docs/build-week/06_TESTY_I_STABILNOSC_PL.md  | 18 ++++++++++++++
+ 3 files changed, 65 insertions(+)
+
+== Diff stat: staged ==
+
+
+== Ostatnie commity ==
+97fb9ffece3761b2914a0dc5ebb5f991ddbbf255	2026-07-16T13:47:27+02:00	2026-07-16T13:47:27+02:00	fix(build-week): animate water from exact map pixels
+c0c178de1b8cb3b2f3dd7a5f142ceb066fed8d1c	2026-07-16T13:13:21+02:00	2026-07-16T13:13:21+02:00	chore(build-week): checkpoint pixel-aligned water
+c2f96a75c178e0885faea1181e72caefba0abd14	2026-07-16T13:12:44+02:00	2026-07-16T13:12:44+02:00	docs(build-week): record pixel-aligned water rebuild
+539144663bf789e1e5ad71d25cb4f40458222e25	2026-07-16T13:09:13+02:00	2026-07-16T13:09:13+02:00	fix(build-week): align flowing water to map geometry
+11afae9697ddb4397b3f39ff5d5c60ebee041268	2026-07-16T12:08:41+02:00	2026-07-16T12:08:41+02:00	chore(build-week): record narrative water checkpoint
+8676ed1f2031181aa97f995d3d8d36cbac8cc42e	2026-07-16T12:08:13+02:00	2026-07-16T12:08:13+02:00	docs(build-week): record narrative water and lifecycle pass
+6d0e073bb75a939dedf8660e1ce3538a5945a117	2026-07-16T12:02:53+02:00	2026-07-16T12:02:53+02:00	perf(build-week): harden mobile lifecycle and shared SSE
+5aa7e2232004ce46b70f0b919e3843e98dfc6a18	2026-07-16T11:50:49+02:00	2026-07-16T11:50:49+02:00	feat(build-week): add continuous masked water currents
+67b03c806d05e07e54222b82f9eaac67846705f2	2026-07-16T11:34:25+02:00	2026-07-16T11:34:25+02:00	feat(build-week): separate raw logs from world narrative
+ca8e4e98ba54a0cedb00ac436be4c0d3eb52415d	2026-07-16T11:24:36+02:00	2026-07-16T11:24:36+02:00	chore(build-week): checkpoint demo narrative and water pass
+155416dedfad4411b3a4feba1d6931ec27f6bdfe	2026-07-16T11:21:38+02:00	2026-07-16T11:21:38+02:00	docs(build-week): record coherent live world recovery
+fedd7127a2859f042381f52e456ba0818ca2789b	2026-07-16T10:53:35+02:00	2026-07-16T10:53:35+02:00	chore(build-week): checkpoint prompt live session runtime
+51b3047f9e792b0db317b030a05d0a01440930af	2026-07-16T10:52:12+02:00	2026-07-16T10:52:12+02:00	docs(build-week): record live session latency closure
+7c9d0e1d19f5bf93a8d3152451523fa51daa4610	2026-07-16T10:35:11+02:00	2026-07-16T10:35:11+02:00	chore(build-week): record live integration checkpoint
+85c7034375b1ca6ed757c9bc8a0d1cba8c10cfaf	2026-07-16T10:34:23+02:00	2026-07-16T10:34:23+02:00	fix(build-week): publish live world domains incrementally
+21e3ab836636103981f582b1dd647f842295ceab	2026-07-16T10:24:47+02:00	2026-07-16T10:24:47+02:00	docs(build-week): record live production recovery
+092663d4f2dd69e2b1b8ab72263d12c06ae5cf38	2026-07-16T08:00:03+02:00	2026-07-16T08:00:03+02:00	chore(build-week): checkpoint stable production runtime
+2861c985060181c6c884ebac66a106fbcba49aa0	2026-07-16T07:59:38+02:00	2026-07-16T07:59:38+02:00	test(build-week): record production stability window
+e65dc2638b6251e8264862cf7d4efddfa2ad469b	2026-07-16T07:53:55+02:00	2026-07-16T07:53:55+02:00	chore(build-week): checkpoint production recovery evidence
+e27b8f7057e5e50ed923d2f7f3eabd0177ddfbfe	2026-07-16T07:53:26+02:00	2026-07-16T07:53:26+02:00	docs(build-week): record authenticated production recovery
+
+== Commity od baseline ==
+97fb9ffece3761b2914a0dc5ebb5f991ddbbf255	2026-07-16T13:47:27+02:00	2026-07-16T13:47:27+02:00	fix(build-week): animate water from exact map pixels
+c0c178de1b8cb3b2f3dd7a5f142ceb066fed8d1c	2026-07-16T13:13:21+02:00	2026-07-16T13:13:21+02:00	chore(build-week): checkpoint pixel-aligned water
+c2f96a75c178e0885faea1181e72caefba0abd14	2026-07-16T13:12:44+02:00	2026-07-16T13:12:44+02:00	docs(build-week): record pixel-aligned water rebuild
+539144663bf789e1e5ad71d25cb4f40458222e25	2026-07-16T13:09:13+02:00	2026-07-16T13:09:13+02:00	fix(build-week): align flowing water to map geometry
+11afae9697ddb4397b3f39ff5d5c60ebee041268	2026-07-16T12:08:41+02:00	2026-07-16T12:08:41+02:00	chore(build-week): record narrative water checkpoint
+8676ed1f2031181aa97f995d3d8d36cbac8cc42e	2026-07-16T12:08:13+02:00	2026-07-16T12:08:13+02:00	docs(build-week): record narrative water and lifecycle pass
+6d0e073bb75a939dedf8660e1ce3538a5945a117	2026-07-16T12:02:53+02:00	2026-07-16T12:02:53+02:00	perf(build-week): harden mobile lifecycle and shared SSE
+5aa7e2232004ce46b70f0b919e3843e98dfc6a18	2026-07-16T11:50:49+02:00	2026-07-16T11:50:49+02:00	feat(build-week): add continuous masked water currents
+67b03c806d05e07e54222b82f9eaac67846705f2	2026-07-16T11:34:25+02:00	2026-07-16T11:34:25+02:00	feat(build-week): separate raw logs from world narrative
+ca8e4e98ba54a0cedb00ac436be4c0d3eb52415d	2026-07-16T11:24:36+02:00	2026-07-16T11:24:36+02:00	chore(build-week): checkpoint demo narrative and water pass
+155416dedfad4411b3a4feba1d6931ec27f6bdfe	2026-07-16T11:21:38+02:00	2026-07-16T11:21:38+02:00	docs(build-week): record coherent live world recovery
+fedd7127a2859f042381f52e456ba0818ca2789b	2026-07-16T10:53:35+02:00	2026-07-16T10:53:35+02:00	chore(build-week): checkpoint prompt live session runtime
+51b3047f9e792b0db317b030a05d0a01440930af	2026-07-16T10:52:12+02:00	2026-07-16T10:52:12+02:00	docs(build-week): record live session latency closure
+7c9d0e1d19f5bf93a8d3152451523fa51daa4610	2026-07-16T10:35:11+02:00	2026-07-16T10:35:11+02:00	chore(build-week): record live integration checkpoint
+85c7034375b1ca6ed757c9bc8a0d1cba8c10cfaf	2026-07-16T10:34:23+02:00	2026-07-16T10:34:23+02:00	fix(build-week): publish live world domains incrementally
+21e3ab836636103981f582b1dd647f842295ceab	2026-07-16T10:24:47+02:00	2026-07-16T10:24:47+02:00	docs(build-week): record live production recovery
+092663d4f2dd69e2b1b8ab72263d12c06ae5cf38	2026-07-16T08:00:03+02:00	2026-07-16T08:00:03+02:00	chore(build-week): checkpoint stable production runtime
+2861c985060181c6c884ebac66a106fbcba49aa0	2026-07-16T07:59:38+02:00	2026-07-16T07:59:38+02:00	test(build-week): record production stability window
+e65dc2638b6251e8264862cf7d4efddfa2ad469b	2026-07-16T07:53:55+02:00	2026-07-16T07:53:55+02:00	chore(build-week): checkpoint production recovery evidence
+e27b8f7057e5e50ed923d2f7f3eabd0177ddfbfe	2026-07-16T07:53:26+02:00	2026-07-16T07:53:26+02:00	docs(build-week): record authenticated production recovery
+5ff6a68e19bb9d83e2060feb7e26f708dca49fd1	2026-07-16T07:21:21+02:00	2026-07-16T07:21:21+02:00	fix(build-week): enforce authenticated live production runtime
+ff2cf5b87aa12fef8a55fa72470bf910f19f18da	2026-07-15T18:01:55+02:00	2026-07-15T18:01:55+02:00	fix(build-week): force production PWA shell refresh
+19f925e84e8d5d4810b6e38b91dde90db324c0b1	2026-07-15T17:50:30+02:00	2026-07-15T17:50:30+02:00	fix(build-week): canonicalize production home launch
+cf876af06b3c70393148e4c2efed89771af8417a	2026-07-15T17:34:28+02:00	2026-07-15T17:34:28+02:00	docs(build-week): record cold start regression recovery
+6a8d13e59e95124b7a33b624ac18f6a438b97370	2026-07-15T17:29:34+02:00	2026-07-15T17:29:34+02:00	perf(build-week): make world cold start atomic
+ee58011dd0a03fa136d343126ca66728a7ec2361	2026-07-15T15:58:26+02:00	2026-07-15T15:58:26+02:00	feat(build-week): connect real chat to world choreography
+be61d2d014f9640b7450179c48fb791a8eb48cf6	2026-07-15T14:13:48+02:00	2026-07-15T14:13:48+02:00	chore(build-week): checkpoint verified recovery
+694e041cad67f2978c7b1461da37f6a0d3c3906a	2026-07-15T14:12:52+02:00	2026-07-15T14:12:52+02:00	docs(build-week): record verified recovery package
+88f8ddc2ba9a087b49adf10090cc8bac249ce1f1	2026-07-15T13:58:06+02:00	2026-07-15T13:58:06+02:00	chore(build-week): checkpoint final roster GL
+ebad936f8556af3af33d5b43fb2c8aa56bb80aa6	2026-07-15T13:54:35+02:00	2026-07-15T13:54:35+02:00	docs(build-week): record final roster GL
+e85c6c1c8f27118cda47f8e3649025694ddc0426	2026-07-15T13:41:25+02:00	2026-07-15T13:41:25+02:00	chore(build-week): checkpoint final roster centering
+8493281af1b20a5edaf1e7780bac67bd46e5c29d	2026-07-15T13:40:40+02:00	2026-07-15T13:40:40+02:00	docs(build-week): record final roster centering
+27060dda597977818494bfa061c77fdaaaf55987	2026-07-15T13:40:39+02:00	2026-07-15T13:40:39+02:00	fix(build-week): center interior review roles
+28869837d87d277299869ca8355e2365d6a99ad9	2026-07-15T13:19:51+02:00	2026-07-15T13:19:51+02:00	chore(build-week): checkpoint work motion pass
+ca5496c7d818268b5d2323881f5c6287e0146f12	2026-07-15T13:19:10+02:00	2026-07-15T13:19:10+02:00	docs(build-week): record work motion and citadel RL
+c22ebf267f9f7c890b4ff0b5113f9af5dac4333e	2026-07-15T13:18:45+02:00	2026-07-15T13:18:45+02:00	fix(build-week): animate work roles and rebalance citadel
+d952234bbaa246717e8ec1ac925c743194af8b9c	2026-07-15T13:04:51+02:00	2026-07-15T13:04:51+02:00	docs(build-week): record interior scale RL
+e3bf0358a77476c193da1f4e11336ea4866f6518	2026-07-15T13:03:02+02:00	2026-07-15T13:03:02+02:00	fix(build-week): rebalance interior roster scale
+7410d96c3135796f7b3ba1c7753ee4fb9fedc303	2026-07-15T12:52:18+02:00	2026-07-15T12:52:18+02:00	chore(build-week): checkpoint interior roster review
+3ec74e08b2667cf3a6d18cc54b6686944adf8830	2026-07-15T12:50:49+02:00	2026-07-15T12:50:49+02:00	docs(build-week): record interior roster review
+32d93f00cd8c15fd9d494ecfd9e309500293d374	2026-07-15T12:41:45+02:00	2026-07-15T12:41:45+02:00	feat(build-week): add interior roster review
+0370be5fd70cf72247a040ebd78e14fd9e90b6d9	2026-07-15T12:05:07+02:00	2026-07-15T12:05:07+02:00	chore(build-week): checkpoint perceptual Kowal review
+6b3b5bda31a3a6bb02e8a235303f56ba4643e58b	2026-07-15T12:04:28+02:00	2026-07-15T12:04:28+02:00	docs(build-week): record perceptual Kowal review
+40282eda1e218ac08d0b5111ddcdd1ee986ad1ae	2026-07-15T12:01:14+02:00	2026-07-15T12:01:14+02:00	fix(build-week): seat Kowal clearly inside the Forge
+1973302d2d07b51bfcbe1945cba73dce42ffa902	2026-07-15T11:52:36+02:00	2026-07-15T11:52:36+02:00	chore(build-week): checkpoint agent perfection pass
+3ec103f3e9d29ef9a2f1153e24d01545eb883daf	2026-07-15T11:48:40+02:00	2026-07-15T11:48:40+02:00	docs(build-week): record agent perfection pass
+ba85507e3dbd0adc387e4824ab43e02bb90114e6	2026-07-15T11:42:32+02:00	2026-07-15T11:42:32+02:00	fix(build-week): preserve role visibility while agents work
+5e406ce0381592b9e71e2e6166ea7b04cacecd83	2026-07-15T11:35:52+02:00	2026-07-15T11:35:52+02:00	test(build-week): lock agent visibility matrix
+b28a3e260a5524c8da379575c8174daf2419c360	2026-07-15T11:30:47+02:00	2026-07-15T11:30:47+02:00	fix(build-week): perfect agent visibility and interior ownership
+8b5454a0b6db5aacf81f190d257728d57334841d	2026-07-15T05:07:04+02:00	2026-07-15T05:07:04+02:00	chore(build-week): checkpoint interior agent presence
+98f37904f0896ab9cb58270adbcb9d5b2e7a2365	2026-07-15T05:05:14+02:00	2026-07-15T05:05:14+02:00	docs(build-week): record evidence-backed interior agents
+a754475c1f2bc0181592ee703ba687624914fc40	2026-07-15T04:52:20+02:00	2026-07-15T04:52:20+02:00	test(build-week): verify interior agent handoff
+60ed8037715f89f2cdb45aa35da292d50835223f	2026-07-15T04:49:53+02:00	2026-07-15T04:49:53+02:00	fix(build-week): harden interior agent evidence
+09c119bb65c69c2aa5e7696dd66aa226eda5e396	2026-07-15T04:42:10+02:00	2026-07-15T04:42:10+02:00	feat(build-week): add evidence-backed interior agents
+8a9de6ab9701231e9eebf65b47bd317649a46dae	2026-07-15T03:58:13+02:00	2026-07-15T03:58:13+02:00	perf(build-week): preload interior vfx and pause hidden world
+ef3ea434dfa5c202d2af756f715e73d80b8062ff	2026-07-15T03:34:43+02:00	2026-07-15T03:34:43+02:00	chore(build-week): checkpoint cinematic interior vfx suite
+96dabec38dce020ce8f93d19524e0978e54676e5	2026-07-15T03:33:10+02:00	2026-07-15T03:33:10+02:00	docs(build-week): record cinematic interior vfx suite
+d0a781b301bfce82441246c3fb36add101f426e8	2026-07-15T03:31:41+02:00	2026-07-15T03:31:41+02:00	feat(build-week): integrate cinematic interior vfx suite
+36c1ed15e62697958f4a3f1b820d61048566b999	2026-07-15T01:35:14+02:00	2026-07-15T01:35:14+02:00	chore(build-week): checkpoint cinematic forge fire
+af61ce84ea31418858f5791be6a057d0bbc60660	2026-07-15T01:34:56+02:00	2026-07-15T01:34:56+02:00	docs(build-week): record cinematic forge fire pipeline
+7ed6f77bf9263a5b04e7f45a651693565b28f77e	2026-07-15T01:33:48+02:00	2026-07-15T01:33:48+02:00	feat(build-week): add cinematic forge interior fire
+70109907d0b98e49376ca79e0973f0290acd963c	2026-07-15T00:46:45+02:00	2026-07-15T00:46:45+02:00	chore(build-week): checkpoint interior performance pass
+453530b8ab09e4ddd86988d090994a9077137f52	2026-07-15T00:46:21+02:00	2026-07-15T00:46:21+02:00	docs(build-week): record interior performance audit
+8f433781fc1277739727b2196dba59469e18a8ae	2026-07-15T00:45:27+02:00	2026-07-15T00:45:27+02:00	perf(build-week): smooth first interior entry
+62ad776313f437ee794b3bd3f591110f2b0f0868	2026-07-15T00:23:36+02:00	2026-07-15T00:23:36+02:00	chore(build-week): record cinematic interiors checkpoint
+b11f61437cd7b7301c59e0e5258c46ba36c25c22	2026-07-15T00:22:50+02:00	2026-07-15T00:22:50+02:00	docs(build-week): record cinematic interior integration
+d16969e555968c2595e28a1ad711cbc2e4b1dc37	2026-07-15T00:14:14+02:00	2026-07-15T00:14:14+02:00	feat(build-week): integrate cinematic subsystem interiors
+2513ddbfdab9404a6287fd48530e4470cb97e58b	2026-07-14T21:26:09+02:00	2026-07-14T21:26:09+02:00	chore(build-week): record CAT and interior integration snapshot
+9b3d1cfe1fb2daa21bfcfde1ebc316bdcdf06b87	2026-07-14T21:23:59+02:00	2026-07-14T21:23:59+02:00	docs(build-week): record CAT telemetry and interior integration pass
+2e8b63cc9a3e7e8c5657c888c7f9d0cd80db74b7	2026-07-14T21:21:02+02:00	2026-07-14T21:21:02+02:00	test(build-week): lock premium interior spatial contract
+1027a080c184d9f66b78c7a25234fd3175087f53	2026-07-14T21:19:25+02:00	2026-07-14T21:19:25+02:00	feat(build-week): deepen subsystem interiors with physical architecture
+f099dcca492ccbdef178b72f7de7790ba3467919	2026-07-14T21:19:13+02:00	2026-07-14T21:19:13+02:00	fix(build-week): make building thresholds hide agents atomically
+5fcbea00cdd879086b9eb5dc401b91f031a507ae	2026-07-14T14:35:15+02:00	2026-07-14T14:35:15+02:00	chore(build-week): record interior depth checkpoint
+1d1f1438b0a028871bcd987fd6024115bfa0341c	2026-07-14T14:33:13+02:00	2026-07-14T14:33:13+02:00	feat(build-week): add depth and material lighting to interiors
+c95006b31674c006728e7121ace802dcb47f745f	2026-07-14T13:52:06+02:00	2026-07-14T13:52:06+02:00	chore(build-week): record interior identity checkpoint
+0669e272c4d4e8da7801d4c60e45f27ddc92cd4f	2026-07-14T13:50:53+02:00	2026-07-14T13:50:53+02:00	feat(build-week): give subsystem interiors architectural identity
+ac5b3f87e53a755cad87e238e77fd4b882054e71	2026-07-14T13:09:17+02:00	2026-07-14T13:09:17+02:00	chore(build-week): record interior and weather checkpoint
+da07641f7e672b055cd882c7c57e449a146c3afb	2026-07-14T13:06:05+02:00	2026-07-14T13:06:05+02:00	feat(build-week): extend telemetry weather across the world
+d25722324c27c67a206e36079b96b020abc9cafe	2026-07-14T12:56:50+02:00	2026-07-14T12:56:50+02:00	feat(build-week): add subsystem interior framework
+3da2925c52825a9ef28cdd78b128ec85c8f60250	2026-07-14T12:20:33+02:00	2026-07-14T12:20:33+02:00	feat(build-week): integrate Forge interior with Citadel style
+6fec34084f28a6eedb582fcbb2cded202fe5b38a	2026-07-14T03:11:23+02:00	2026-07-14T03:11:23+02:00	chore(build-week): record Forge interior checkpoint
+cf493470611aa7917103918208166ab0371d871a	2026-07-14T03:09:00+02:00	2026-07-14T03:09:00+02:00	feat(build-week): add Forge interior vertical slice
+77042200bc9b0d2573548ffd862e9f2378946de9	2026-07-14T02:50:38+02:00	2026-07-14T02:50:38+02:00	feat(build-week): drive weather from real telemetry
+d8f7e3d6f2e1f59ad5918984674378f7f28207db	2026-07-14T01:29:51+02:00	2026-07-14T01:29:51+02:00	chore(build-week): record masked water checkpoint
+78ba8447a4428213f2c93bbeb0097b3330b620de	2026-07-14T01:28:11+02:00	2026-07-14T01:28:11+02:00	feat(build-week): add masked continuous water flow
+0f75829117e870d819b526f89d3806d1a90e4a54	2026-07-14T00:20:44+02:00	2026-07-14T00:20:44+02:00	chore(build-week): record perceptual motion checkpoint
+c4796565b33eef85de4d66edae7b4eaa561b694c	2026-07-14T00:19:43+02:00	2026-07-14T00:19:43+02:00	fix(build-week): rebalance visible water and clouds
+3eeca294ba69c69dda5ed75f41aed55594da80e1	2026-07-14T00:06:47+02:00	2026-07-14T00:06:47+02:00	chore(build-week): record mobile performance checkpoint
+0b4854f43c3403ee61990970edd511800e227216	2026-07-14T00:06:29+02:00	2026-07-14T00:06:29+02:00	fix(build-week): protect mobile world motion
+d91f2fa5bc1a3513a672884022991c41ac995d2f	2026-07-13T23:21:20+02:00	2026-07-13T23:21:20+02:00	chore(build-week): record meaningful extension checkpoint
+5a0bc361bd71da39d64676ef0745494696497751	2026-07-13T23:20:37+02:00	2026-07-13T23:20:37+02:00	docs(build-week): record first meaningful extension
+fdb75f4cd1826c83804e4fbd3bf178b1af37c1dd	2026-07-13T23:15:39+02:00	2026-07-13T23:15:39+02:00	fix(build-week): balance mobile cloud visibility
+3f030730fef72b5a52f5c122b0f0159d16cc11b7	2026-07-13T23:00:57+02:00	2026-07-13T23:00:57+02:00	feat(build-week): visualize the real event nervous system
+4d5870e059c2a9690c90851cfc01aab5ca2f9283	2026-07-13T22:56:06+02:00	2026-07-13T22:56:06+02:00	feat(build-week): drive infrastructure from real telemetry
+08ad9aa72ad406eda31ee3f409daf6dde0485379	2026-07-13T22:49:09+02:00	2026-07-13T22:49:09+02:00	feat(build-week): make water and atmosphere visibly alive
+e1958d8c6262c42c5af8fb8012d1937be14e15fd	2026-07-13T22:43:39+02:00	2026-07-13T22:43:39+02:00	chore(build-week): capture meaningful extension start
+0a625df7dd0da128a9de63b3f117977aa916d843	2026-07-13T22:14:05+02:00	2026-07-13T22:14:05+02:00	docs(build-week): close documentation handoff
+2b1e3e71665ff2214b62b14170f1cec49d04fb4f	2026-07-13T22:09:47+02:00	2026-07-13T22:09:47+02:00	chore(build-week): record initial evidence snapshot
+2b7a40fd6e3f69d42608b2302f2ec1fcd82d94fe	2026-07-13T22:07:21+02:00	2026-07-13T22:07:21+02:00	docs(build-week): establish provenance and evidence system
+
+== Tagi Build Week ==
+pre-build-week-baseline-2026-07-13	36c0f2ab0d4fc9274031afd5c4bede9cc5fa59e9	2026-07-13T22:02:28+02:00	Hermes World verified pre-Submission baseline.
+production-correct-v1-before-build-week-promotion-2026-07-15	b455c01064fbe683a6d4120476b53ba75f6d932d	2026-07-15T14:24:19+02:00	Hermes Citadel production Correct v1 immediately before approved Build Week promotion on 2026-07-15.

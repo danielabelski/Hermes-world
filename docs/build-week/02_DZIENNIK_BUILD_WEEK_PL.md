@@ -578,3 +578,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: fokus 24/24 PASS; pełne testy 136/136 PASS; lint PASS; world-life validator PASS; build PASS, 878 modułów, 6,31 s. Main JS zmalał do 417,70 kB / 128,09 kB gzip; CSS 77,47 kB / 16,58 kB gzip.
 - Produkcja pozostała nietknięta. Nowa woda czeka na percepcyjny RL/GL autora na realnym telefonie.
 - Dodatkowy feedback z produkcyjnej obserwacji został zapisany jako przyszły zakres, nie jako wykonana funkcja: prawdziwy event uruchamia Kowala i powrót, lecz całemu lifecycle brakuje czytelnego łańcucha wejście → Cytadela → worker/budynek → Archiwum, a idle wymaga uczciwego ambientu niezmieniającego operational state.
+
+## BW-2026-07-16-045 — RL teksturowanej maski i animacja z pikseli mapy
+
+- Czas Europe/Warsaw: 2026-07-16 13:10–13:45; czas UTC: 11:10–11:45.
+- Autor ocenił wariant maska + powtarzana tekstura na telefonie jako **RL**: nadal przypominał drobne kreski deszczu, a nie wodę fizycznie należącą do mapy. Produkcja pozostała nietknięta.
+- Z aktywnego renderera usunięto importy ribbonu, osobnej pionowej tekstury, CSS `mask-image`, dwa przesuwane poziomy i cztery dawne keyframes. Nie zwiększano opacity błędnego efektu.
+- Nowy renderer korzysta z trzech animowanych nakładek wygenerowanych deterministycznie z pikseli zamrożonych map: dwóch zewnętrznych koryt mobile oraz zatoki desktopowej. Stała alfa blokuje ruch granic; ośmioklatkowe cykliczne przemieszczenie dotyczy tylko wnętrza wyciętej wody.
+- Nakładki są zwykłymi obrazami WebP z alfa renderowanymi w natywnej warstwie przeglądarki. Brak nowego canvasu, timera JS, particles, SVG turbulence, pełnej linii lub generycznej tekstury. Używają filtra tonalnego mapy, a reduced motion pozostawia czystą mapę bazową.
+- Budżet nowych assetów: lewy mobile 166 652 B, prawy mobile 184 130 B, port desktop 33 570 B; łącznie 384 352 B. Build nadal ładuje wnętrza osobnym lazy chunkem.
+- Prawdziwy lifecycle Kowala zaobserwowany przez autora pozostaje bez zmian. Kolejny plan po GL wody to evidence-backed łańcuch realnego eventu oraz uczciwy ambient oddzielony od `operationalState`; nie został wdrożony w tym bloku.
+- Commit funkcjonalny: `97fb9ff` (`fix(build-week): animate water from exact map pixels`). Snapshot i commit dokumentacyjny domykają blok osobno.
+- Manualna ocena percepcyjna 393×852 pozostaje **MANUAL ACTION REQUIRED**; wynik automatyczny nie jest przedstawiany jako GL.

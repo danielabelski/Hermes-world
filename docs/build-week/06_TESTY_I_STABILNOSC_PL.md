@@ -557,3 +557,21 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run validate:world-life`: **PASS**.
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 878 modułów, 6,31 s. Main JS 417,70 kB / 128,09 kB gzip; CSS 77,47 kB / 16,58 kB gzip.
 - Percepcyjny test nowej animacji na telefonie 393×852: **MANUAL ACTION REQUIRED**; nie oznaczać GL automatycznie.
+
+## TEST-BW-037 — Map-pixel water renderer gate
+
+- Czas: 2026-07-16 13:45 Europe/Warsaw / 11:45 UTC.
+- Zakres: **PASS — wyłącznie demo**; produkcyjny katalog i proces nie zostały zmienione.
+- Poprzedni wariant teksturowanej maski: **FAIL / RL manualny** — autor widział drobne kreski podobne do deszczu.
+- Renderer: **PASS statyczny** — aktywny komponent importuje wyłącznie trzy animacje wyprowadzone z pikseli mapy; nie importuje generic ribbonu ani masek poprzedniego wariantu i nie zawiera pełnej trasy/GPS.
+- Geometria: **PASS statyczny** — alfa jest niezmienna pomiędzy klatkami i ograniczona do dwóch bocznych koryt mobile oraz portu desktop. Ostateczne dopasowanie percepcyjne pozostaje manualne.
+- Format: **PASS** — wszystkie trzy pliki mają nagłówki RIFF/WEBP i chunk `ANIM`; Pillow odczytuje 8 klatek każdego pliku.
+- Budżet: **PASS** — 166 652 B + 184 130 B + 33 570 B = 384 352 B; bez wzrostu main JS o logikę animacji.
+- Reduced motion: **PASS** — cała warstwa wody jest ukrywana, bez dekodowania zastępczej animacji JS.
+- Test fokusowy: **PASS 24/24**.
+- Pełne `npm.cmd test`: **PASS 136/136**.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 877 modułów, 5,19 s; main JS 417,84 kB / 128,19 kB gzip; CSS 75,44 kB / 16,24 kB gzip.
+- Runtime: **PASS** — istniejący serwer 4176 zwraca root HTTP 200 i nowy WebP HTTP 200 z `Content-Type: image/webp`; nie uruchomiono drugiego serwera ani przeglądarki.
+- Telefon 393×852: **MANUAL ACTION REQUIRED** — autor nadaje RL/GL po obejrzeniu normalnego widoku bez debug overlay.
