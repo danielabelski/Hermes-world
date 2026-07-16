@@ -6,8 +6,6 @@ function AtmosphereLayer({ presentation }) {
       <i className="telemetry-weather-grade" />
       <i className="telemetry-cloud telemetry-cloud--primary" />
       <i className="telemetry-cloud telemetry-cloud--secondary" />
-      <i className="telemetry-rain telemetry-rain--west" />
-      <i className="telemetry-rain telemetry-rain--east" />
     </div>
     <i className="atmosphere-fog" />
     <i className="atmosphere-fog atmosphere-fog--lower" />
