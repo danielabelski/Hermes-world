@@ -33,8 +33,8 @@ function PersistentWaterFlow({ layout, active = false }) {
   const isMobile = layout === 'mobile'
   const overlays = isMobile
     ? [
-        { id: 'mobile-left', src: waterMobileLeft, x: 0, y: 0, width: 32.9787, height: 100 },
-        { id: 'mobile-right', src: waterMobileRight, x: 67.0213, y: 0, width: 32.9787, height: 100 },
+        { id: 'mobile-left', src: waterMobileLeft, x: 0, y: 0, width: 23.8298, height: 100 },
+        { id: 'mobile-right', src: waterMobileRight, x: 76.1702, y: 0, width: 23.8298, height: 100 },
       ]
     : [{ id: 'desktop-harbor', src: waterDesktopHarbor, x: 23.4681, y: 76.5625, width: 45.3716, height: 23.4375 }]
   return <div

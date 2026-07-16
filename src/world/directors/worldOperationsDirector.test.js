@@ -290,9 +290,9 @@ test('world life animates exact map pixels without generic ribbons or debug path
 
 test('map-pixel water animations are bounded animated WebP assets', () => {
   const runtimeAssets = [
-    ['hermes-water-mobile-left.runtime.webp', 180_000],
-    ['hermes-water-mobile-right.runtime.webp', 200_000],
-    ['hermes-water-desktop-harbor.runtime.webp', 50_000],
+    ['hermes-water-mobile-left.runtime.webp', 40_000],
+    ['hermes-water-mobile-right.runtime.webp', 30_000],
+    ['hermes-water-desktop-harbor.runtime.webp', 30_000],
   ]
   for (const [name, byteBudget] of runtimeAssets) {
     const runtimeUrl = new URL(`../../assets/world-effects/${name}`, import.meta.url)
