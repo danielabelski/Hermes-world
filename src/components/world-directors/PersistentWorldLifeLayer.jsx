@@ -8,10 +8,9 @@ import forgeSmokeStrip from '../../assets/world-effects/forge-smoke-strip.runtim
 import gateEnergyLockStrip from '../../assets/world-effects/gate-energy-lock-strip.runtime.png'
 import sanctumEnergyOrbitStrip from '../../assets/world-effects/sanctum-energy-orbit-strip.runtime.png'
 import watcherLensPulseStrip from '../../assets/world-effects/watcher-lens-pulse-strip.runtime.png'
-import waterCurrentRibbon from '../../assets/world-effects/hermes-water-current-ribbon.user-v2.png'
-import waterCurrentRibbonVertical from '../../assets/world-effects/hermes-water-current-ribbon-vertical.runtime.png'
-import waterMaskDesktop from '../../assets/world-effects/hermes-water-mask-desktop.runtime.png'
-import waterMaskMobile from '../../assets/world-effects/hermes-water-mask-mobile.runtime.png'
+import waterDesktopHarbor from '../../assets/world-effects/hermes-water-desktop-harbor.runtime.webp'
+import waterMobileLeft from '../../assets/world-effects/hermes-water-mobile-left.runtime.webp'
+import waterMobileRight from '../../assets/world-effects/hermes-water-mobile-right.runtime.webp'
 
 const styleAt = (point) => ({ '--life-x': `${point.x}%`, '--life-y': `${point.y}%`, '--life-offset-x': `${point.offsetX ?? 0}px`, '--life-offset-y': `${point.offsetY ?? 0}px` })
 
@@ -32,17 +31,26 @@ function AmbientWindowLight({ anchor }) {
 
 function PersistentWaterFlow({ layout, active = false }) {
   const isMobile = layout === 'mobile'
-  const maskUrl = isMobile ? waterMaskMobile : waterMaskDesktop
-  const textureUrl = isMobile ? waterCurrentRibbonVertical : waterCurrentRibbon
+  const overlays = isMobile
+    ? [
+        { id: 'mobile-left', src: waterMobileLeft, x: 0, y: 0, width: 32.9787, height: 100 },
+        { id: 'mobile-right', src: waterMobileRight, x: 67.0213, y: 0, width: 32.9787, height: 100 },
+      ]
+    : [{ id: 'desktop-harbor', src: waterDesktopHarbor, x: 23.4681, y: 76.5625, width: 45.3716, height: 23.4375 }]
   return <div
     className={`persistent-water-flow persistent-water-flow--${isMobile ? 'mobile' : 'desktop'}${active ? ' is-operation-active' : ''}`}
-    style={{ '--water-mask-image': `url(${maskUrl})`, '--water-current-image': `url(${textureUrl})` }}
-    data-water-mask="pixel-derived"
+    data-water-renderer="map-pixel-animation"
     data-water-layout={isMobile ? 'mobile' : 'desktop'}
     aria-hidden="true"
   >
-    <i className="persistent-water-current persistent-water-current--depth" />
-    <i className="persistent-water-current persistent-water-current--highlight" />
+    {overlays.map((overlay) => <span
+      className="persistent-water-pixel"
+      data-water-region={overlay.id}
+      key={overlay.id}
+      style={{ left: `${overlay.x}%`, top: `${overlay.y}%`, width: `${overlay.width}%`, height: `${overlay.height}%` }}
+    >
+      <img src={overlay.src} alt="" decoding="async" fetchPriority="low" />
+    </span>)}
   </div>
 }
 
