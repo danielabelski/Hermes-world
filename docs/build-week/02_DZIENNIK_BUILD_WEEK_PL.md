@@ -682,3 +682,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Audyt procesów wykrył, że pierwotny watchdog 24/7 nadal działał. Jedna dodatkowa pętla uruchomiona podczas diagnostyki została natychmiast zatrzymana; finalnie działa jeden listener 4175, PID 6764, pod pierwotnym watchdogiem.
 - SSE: **PASS** — stream zwrócił `retry: 3000` i event `snapshot`; snapshot oraz prawdziwa telemetria CPU/RAM/temperatury zwracają HTTP 200. Publiczny Funnel jest aktywny i wskazuje dokładnie `http://127.0.0.1:4175`.
 - Chronione endpointy bez cookie zwracają oczekiwane HTTP 401. Ich kontrakty i mapowanie są objęte testami, lecz pełne wartości zalogowanej sesji oraz percepcyjny test wnętrz/agentów pozostają **MANUAL ACTION REQUIRED**; nie zapisano fałszywego PASS bez autoryzowanej sesji przeglądarki.
+
+## BW-2026-07-16-054 — Krytyczna regresja React #185 po promocji i naprawa produkcyjna
+
+- Czas Europe/Warsaw: 2026-07-16 19:32–19:43; czas UTC: 17:32–17:43.
+- Autor zgłosił w produkcji komunikat `Minified React error #185`. Kod błędu zweryfikowano lokalnie w `react-dom` jako `Maximum update depth exceeded`.
+- Przyczyną był wyłącznie nowy selector surowego tickera: `state.raw?.logs ?? []`. W live production przed pierwszym snapshotem `raw` chwilowo nie istnieje, więc selector tworzył nową tablicę przy każdym odczycie Zustand/React. Demo nie ujawniało błędu, ponieważ posiada `raw.logs` od pierwszej klatki.
+- Naprawa jest atomowa: modułowa, zamrożona stała `EMPTY_RAW_LOGS` zastępuje niestabilny literal. Nie zmieniono SSE, API, agentów, mapy, telemetrii, renderera ani zachowania tickera po otrzymaniu danych.
+- Dodano test regresyjny, który wymaga stabilnego fallbacku i zabrania powrotu `?? []`.
+- Walidacja: test fokusowy 5/5 PASS; pełne testy 153/153 PASS; ESLint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 3,78 s.
+- Commit demo: `3e39fd8`; commit produkcyjny: `958b9da` (`fix(build-week): stabilize live raw log selector`).
+- Lokalny i publiczny root zwracają HTTP 200 oraz wyłącznie nowy bundle `index-tYcI17tU.js`; poprzedni `index-BwVrGPEq.js` nie jest już wskazywany. Listener produkcyjny pozostał jeden, PID 6764.

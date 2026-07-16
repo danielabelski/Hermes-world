@@ -987,4 +987,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at 
 - Before any further production change, require a new explicit GL. Do not optimize, refactor or fix production automatically.
 - Remaining gate: authenticated manual verification of 12 agents, five interiors, raw ticker vs semantic feed, real-chat lifecycle and mobile perception. This is a verification task only, not authorization to change production.
 
+### Critical post-promotion fix
+
+- Production exposed React #185 before the first live snapshot because `WorldEventTicker` returned a new empty selector array while `state.raw` was absent. Demo did not reproduce because fixture raw logs exist immediately.
+- Fixed only with stable `EMPTY_RAW_LOGS`; regression test added. No other behavior changed.
+- Demo commit `3e39fd8`; production commit `958b9da`.
+- Verification: 153/153 tests, lint, validator and build PASS. Public production serves `index-tYcI17tU.js` with HTTP 200.
+- Manual authenticated refresh remains the final gate.
+
 ---

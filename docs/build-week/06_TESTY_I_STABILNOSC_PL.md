@@ -687,3 +687,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Produkcyjny Git: **PASS** — `git diff --check` bez błędów, working tree czysty, brak niezatwierdzonych zmian.
 - Zalogowany audyt wartości `/api/profiles`, sessions, logs, crons, skills, models i memory: **MANUAL ACTION REQUIRED** — bez cookie poprawnie zwracają 401; test nie omijał uwierzytelnienia i nie odczytywał sekretów.
 - Percepcyjny test 393×852: **MANUAL ACTION REQUIRED** — agent roster 12, wejścia do pięciu wnętrz, brak dawnych linii, semantyczny feed i pełny real-chat lifecycle muszą zostać potwierdzone w już zalogowanej sesji autora.
+
+## TEST-BW-046 — React #185 stable-selector regression gate
+
+- Czas Europe/Warsaw: 2026-07-16 19:32–19:43.
+- Diagnoza kodu React: **PASS** — #185 odpowiada `Maximum update depth exceeded`.
+- Reprodukowalna przyczyna statyczna: **PASS** — live-only pusty stan `raw` trafiał na niestabilne `?? []`; demo miało `raw.logs` od startu.
+- Test regresyjny: **PASS 5/5** — wymaga `EMPTY_RAW_LOGS`, zabrania literalnego pustego fallbacku.
+- Pełne testy: **PASS 153/153**, 0 fail.
+- ESLint: **PASS**. World-life validator: **PASS**.
+- Build: **PASS**, 874 moduły, 3,78 s; main JS `index-tYcI17tU.js` 429,43 kB / 132,16 kB gzip.
+- Runtime lokalny: **PASS**, HTTP 200, nowy bundle, jeden listener 4175 PID 6764.
+- Runtime publiczny: **PASS**, HTTP 200 w 324 ms, nowy bundle obecny, poprzedni nieobecny.
+- Manualny zalogowany retest autora: **MANUAL ACTION REQUIRED**.
