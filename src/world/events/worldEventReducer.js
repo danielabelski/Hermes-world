@@ -1,4 +1,5 @@
 import { getAgentDefinition } from '../data/agentDefinitions.js'
+import { describeOperationalEvent } from '../worldNarrative.js'
 
 const TASK_STATUS = Object.freeze({
   assigned: 'running', thinking: 'thinking', working: 'running', waiting: 'waiting', stuck: 'blocked',
@@ -99,8 +100,13 @@ export function applyWorldEventToSnapshot(snapshot, event) {
         id: event.eventId,
         timestamp: event.occurredAt,
         profile: event.agentId,
+        type: 'agent',
+        entityType: 'agent',
+        entityId: event.agentId,
+        operationalState,
         level: event.severity === 'none' ? 'info' : event.severity,
-        message: event.message ?? `${definition.displayName}: ${operationalState ?? event.presence}`,
+        message: describeOperationalEvent(event, definition),
+        technicalMessage: event.message ?? `${definition.displayName}: ${operationalState ?? event.presence}`,
         source: event.source,
       }, ...((Array.isArray(snapshot.activity) ? snapshot.activity : snapshot.activity?.items) ?? []).filter((item) => item.id !== event.eventId)].slice(0, 40),
     },

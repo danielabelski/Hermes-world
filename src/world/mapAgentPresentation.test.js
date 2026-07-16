@@ -588,6 +588,20 @@ test('activity stream keeps alerts visible even when ordinary activity exists', 
   assert.deepEqual(items.map((item) => item.id), ['critical', 'success'])
 })
 
+test('raw Hermes logs stay technical while the world narrative remains human-readable', () => {
+  const now = Date.UTC(2026, 6, 16, 10, 0, 0)
+  const rawLine = JSON.stringify({ timestamp: new Date(now - 1_000).toISOString(), level: 'warning', message: 'MCP keepalive failed', profile: 'coder' })
+  const snapshot = createWorldSnapshot({
+    ...getDemoScenario('healthy'),
+    logs: { lines: [rawLine] },
+  }, null, () => now)
+
+  assert.equal(snapshot.raw.logs[0].rawMessage, rawLine)
+  assert.equal(snapshot.activity.some((item) => item.type === 'log'), false)
+  assert.equal(snapshot.alerts[0].message, 'Kowal zgłasza ostrzeżenie w Kuźni.')
+  assert.equal(snapshot.alerts[0].technicalMessage, 'MCP keepalive failed')
+})
+
 test('explicit observability focus enables deterministic demo runtime', () => {
   assert.deepEqual(resolveDemoRuntimeMode('?focus=critical', false), { focus: 'critical', scenario: 'healthy', demoMode: true })
   assert.deepEqual(resolveDemoRuntimeMode('?focus=auto', false), { focus: 'auto', scenario: 'healthy', demoMode: false })

@@ -5,6 +5,7 @@ import { DEMO_WORLD_PAYLOADS } from './data/demoWorldData.js';
 import { getPackageVisual } from './data/packageDefinitions.js';
 import { getAlertVisual, getProviderCrystal } from './data/worldSignalDefinitions.js';
 import { getWorldLifeJourney } from './data/roadGraph.js';
+import { describeCronResult, describeLogAlert, describeTaskTransition } from './worldNarrative.js';
 
 const POLL_INTERVALS = Object.freeze({ metrics: 5_000, live: 15_000, slow: 60_000 });
 const MAX_ACTIVITY_ITEMS = 40;
@@ -20,12 +21,12 @@ const severityFor = (level) => {
 };
 
 function parseLog(line, index) {
-  if (line && typeof line === 'object') return { id: `log-${index}-${line.timestamp ?? ''}`, ...line };
+  if (line && typeof line === 'object') return { id: `log-${index}-${line.timestamp ?? ''}`, rawMessage: JSON.stringify(line), ...line };
   try {
     const parsed = JSON.parse(line);
-    return { id: `log-${index}-${parsed.timestamp ?? ''}`, ...parsed };
+    return { id: `log-${index}-${parsed.timestamp ?? ''}`, rawMessage: String(line), ...parsed };
   } catch {
-    return { id: `log-${index}`, level: 'info', message: String(line ?? '') };
+    return { id: `log-${index}`, level: 'info', message: String(line ?? ''), rawMessage: String(line ?? '') };
   }
 }
 
@@ -157,20 +158,16 @@ function normaliseAgent(profile, tasks, skills, logs) {
   };
 }
 
-function buildActivity({ logs, tasks, crons, previousSnapshot, now }) {
+function buildActivity({ tasks, crons, previousSnapshot, now }) {
   const previousTasks = new Map((previousSnapshot?.tasks ?? []).map((task) => [task.id, task]));
   const taskEvents = tasks.flatMap((task) => {
     const previous = previousTasks.get(task.id);
     if (!previous || previous.status === task.status) return [];
     const severity = task.status === 'blocked' ? 'warning' : task.status === 'done' ? 'info' : 'info';
-    return [{ id: `task-${task.id}-${task.status}`, type: 'task', severity, entityType: 'task', entityId: task.id, message: `${task.title}: ${task.status}`, createdAt: task.completedAt ?? task.startedAt ?? now }];
+    return [{ id: `task-${task.id}-${task.status}`, type: 'task', severity, entityType: 'task', entityId: task.id, message: describeTaskTransition(task), technicalMessage: `${task.title}: ${task.status}`, createdAt: task.completedAt ?? task.startedAt ?? now }];
   });
-  const logEvents = logs.slice(-12).map((entry) => {
-    const profile = profileForLog(entry);
-    return { id: entry.id, type: 'log', severity: severityFor(entry.level), entityType: profile ? 'agent' : 'system', entityId: profile ?? 'system', message: entry.message || 'System event', createdAt: entry.timestamp ?? now };
-  });
-  const cronEvents = crons.filter((cron) => cron.lastCompletionStatus).slice(-5).map((cron) => ({ id: `cron-${cron.id}-${cron.lastRunAt ?? ''}`, type: 'cron', severity: cron.lastCompletionStatus === 'error' ? 'error' : 'info', entityType: 'cron', entityId: cron.id, message: `${cron.name}: ${cron.lastCompletionStatus}`, createdAt: cron.lastRunAt ?? now }));
-  return [...taskEvents, ...logEvents, ...cronEvents]
+  const cronEvents = crons.filter((cron) => cron.lastCompletionStatus).slice(-5).map((cron) => ({ id: `cron-${cron.id}-${cron.lastRunAt ?? ''}`, type: 'cron', severity: cron.lastCompletionStatus === 'error' ? 'error' : 'info', entityType: 'cron', entityId: cron.id, message: describeCronResult(cron), technicalMessage: `${cron.name}: ${cron.lastCompletionStatus}`, createdAt: cron.lastRunAt ?? now }));
+  return [...taskEvents, ...cronEvents]
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
     .slice(0, MAX_ACTIVITY_ITEMS);
 }
@@ -179,22 +176,22 @@ function buildAlerts({ logs, tasks, crons, health, now }) {
   const taskAlerts = tasks.filter((task) => task.status === 'blocked').map((task) => ({
     id: `task-blocked-${task.id}`, source: 'task', entityType: task.ownerAgentId ? 'agent' : 'task', entityId: task.ownerAgentId ?? task.id,
     agentId: task.ownerAgentId, taskId: task.id, buildingId: task.sourceBuildingId,
-    message: `${task.title} is blocked`, createdAt: task.startedAt ?? now, ...getAlertVisual('warning'),
+    message: describeTaskTransition(task), technicalMessage: `${task.title} is blocked`, createdAt: task.startedAt ?? now, ...getAlertVisual('warning'),
   }));
   const logAlerts = logs.filter((entry) => ['warning', 'error', 'critical', 'fatal'].includes(String(entry.level ?? '').toLowerCase())).slice(-10).map((entry) => {
     const profile = profileForLog(entry);
     return {
       id: `log-alert-${entry.id}`, source: 'log', entityType: profile ? 'agent' : 'system', entityId: profile ?? 'system', agentId: profile,
-      message: entry.message || 'System alert', createdAt: entry.timestamp ?? now, ...getAlertVisual(severityFor(entry.level)),
+      message: describeLogAlert(entry, profile), technicalMessage: entry.message || entry.rawMessage || 'System alert', createdAt: entry.timestamp ?? now, ...getAlertVisual(severityFor(entry.level)),
     };
   });
   const cronAlerts = crons.filter((cron) => cron.lastCompletionStatus === 'error').map((cron) => ({
     id: `cron-alert-${cron.id}-${cron.lastRunAt ?? ''}`, source: 'cron', entityType: 'building', entityId: 'clock-tower', buildingId: 'clock-tower', cronId: cron.id,
-    message: `${cron.name} failed`, createdAt: cron.lastRunAt ?? now, ...getAlertVisual('error'),
+    message: describeCronResult(cron), technicalMessage: `${cron.name} failed`, createdAt: cron.lastRunAt ?? now, ...getAlertVisual('error'),
   }));
   const healthAlerts = health.severity === 'critical' ? [{
     id: `system-health-${health.score}`, source: 'health', entityType: 'system', entityId: 'system',
-    message: 'Citadel health is critical', createdAt: now, ...getAlertVisual('critical'),
+    message: 'Stan Cytadeli wymaga natychmiastowej reakcji.', technicalMessage: 'Citadel health is critical', createdAt: now, ...getAlertVisual('critical'),
   }] : [];
   return [...taskAlerts, ...logAlerts, ...cronAlerts, ...healthAlerts]
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
@@ -286,7 +283,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
     tokenRiver,
     skillSummary: { total: rawSkills.length, enabled: rawSkills.filter((skill) => !skill.disabled).length, disabled: rawSkills.filter((skill) => skill.disabled).map((skill) => skill.name ?? 'Unnamed skill') },
     alerts: buildAlerts({ logs: freshIncidentLogs, tasks, crons, health, now: createdAt }),
-    activity: buildActivity({ logs: rawLogs, tasks, crons, previousSnapshot, now: createdAt }),
+    activity: buildActivity({ tasks, crons, previousSnapshot, now: createdAt }),
     raw: { profiles: rawProfiles, metrics, tasks: rawTasks, logs: rawLogs, crons, sessions, skills: rawSkills, models: modelGroups, provenance },
   };
 }

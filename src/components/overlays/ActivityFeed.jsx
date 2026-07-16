@@ -1,4 +1,5 @@
 import { useWorldStore } from '../../world/store/worldStore.js'
+import { mergeWorldActivityItems } from '../../world/worldActivityItems.js'
 
 const DEMO_FIXTURE = Object.freeze([
   {
@@ -54,12 +55,6 @@ function formatTime(value) {
   return Number.isNaN(date.getTime()) ? 'teraz' : new Intl.DateTimeFormat('pl-PL', { hour: '2-digit', minute: '2-digit' }).format(date)
 }
 
-function eventsFrom(activity, alerts) {
-  if (Array.isArray(activity) && activity.length) return activity
-  if (Array.isArray(alerts) && alerts.length) return alerts
-  return []
-}
-
 /** Textual complement to visual signals; never the primary interface. */
 export function ActivityFeed({ limit = 8, showDemoFixture = true }) {
   const activity = useWorldStore((state) => state.activity?.items ?? [])
@@ -67,14 +62,15 @@ export function ActivityFeed({ limit = 8, showDemoFixture = true }) {
   const system = useWorldStore((state) => state.system ?? {})
   const scenario = useWorldStore((state) => state.scenario)
   const isDemo = system.temperatureSource === 'demo' || scenario === 'demo'
-  const liveItems = eventsFrom(activity, alerts)
+  const semanticActivity = activity.filter((item) => item?.type !== 'log')
+  const liveItems = mergeWorldActivityItems(semanticActivity, alerts, limit)
   const usingFixture = !liveItems.length && showDemoFixture && isDemo
   const items = usingFixture ? DEMO_FIXTURE : liveItems
 
   if (!items.length) return <p className="activity-feed__empty">Cytadela działa spokojnie.</p>
 
   return (
-    <ol className="activity-feed" data-source={usingFixture ? 'demo-fixture' : 'world'} aria-label="Ostatnia aktywność systemu">
+    <ol className="activity-feed" data-source={usingFixture ? 'demo-fixture' : 'world'} data-channel="world-narrative" aria-label="Czytelna aktywność świata">
       {items.slice(0, limit).map((item, index) => {
         const severity = item.severity ?? item.level ?? 'healthy'
         const type = item.type ?? (severity === 'warning' || severity === 'error' || severity === 'critical' ? 'alert' : 'system')

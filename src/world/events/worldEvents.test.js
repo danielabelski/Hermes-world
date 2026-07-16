@@ -44,6 +44,9 @@ test('reduces a real Watcher run into route, observation, success and return', (
   const success = normalizeHermesWorldEvent(raw(12, 'done'))
 
   const outbound = applyWorldEventToSnapshot(base, assigned)
+  assert.equal(outbound.activity.items[0].message, 'Zwiadowca otrzymał zadanie i zmierza do punktu obserwacyjnego.')
+  assert.equal(outbound.activity.items[0].technicalMessage, 'Sprawdź północny szlak')
+  assert.equal(outbound.activity.items[0].type, 'agent')
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).evidenceEventId, assigned.eventId)
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).buildingId, 'scout-lodge')
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).motionEvidence, 'observed-edge')
