@@ -659,3 +659,12 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Transformacje obracają się i skalują względem rzeczywistego `footAnchorY` konkretnego sprite’a, a nie umownego środka. Nie zmieniono logicznej pozycji stóp, waypointów, prędkości, FSM ani event pipeline.
 - Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 5,00 s. Main JS 423,69 kB / 130,30 kB gzip; CSS 76,91 kB / 16,61 kB gzip.
 - Runtime demo 4176 podaje `index-dUUrp4or.js` i `index-DqtBZKb-.css`; kontrakty kadencji oraz anchoru stóp są obecne. Produkcja pozostała nietknięta.
+
+## BW-2026-07-16-052 — Finalna mikroregulacja rytmu ruchu przed przygotowaniem patcha
+
+- Czas Europe/Warsaw: 2026-07-16 18:24–18:36; czas UTC: 16:24–16:36.
+- Autor nadał GL kierunkowi biomechaniki i zezwolił wyłącznie na lekkie dopracowanie ruchu przed przygotowaniem patcha produkcyjnego.
+- Interpolacja translacji poruszającego się agenta kończy się teraz po 116 ms przy wspólnym zegarze prezentacji 120 ms. Pozostawia to krótki, czytelny moment kontaktu stopy z podłożem zamiast utrzymywać sylwetkę w nieprzerwanej interpolacji.
+- Nie zmieniono waypointów, prędkości świata, FSM, operational state, choreografii, mapy ani API. Produkcja `c9a3205` pozostała nietknięta.
+- Walidacja: testy fokusowe 44/44 PASS; pełny zestaw 146/146 PASS; ESLint PASS; `validate:world-life` PASS; build PASS przez istniejący lokalny Vite z `--configLoader runner`, 874 moduły, 3,80 s. Pierwsza standardowa próba builda została zablokowana przez chwilowy Windows `EPERM` w `.vite-temp`; nie zmieniano kodu ani konfiguracji, a alternatywny oficjalny loader Vite zakończył ten sam build poprawnie.
+- Decyzja autora: przed jakąkolwiek zmianą produkcji ma powstać selektywny patch, manifest, hash oraz dry-run względem czystego produkcyjnego HEAD. Patch nie może zawierać dokumentacji, dowodów, `server.js`, API ani artefaktów demo.

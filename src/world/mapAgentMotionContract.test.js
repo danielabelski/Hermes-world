@@ -19,5 +19,6 @@ test('map walkers expose an explicit footstep pose instead of a floating-only bo
   assert.match(styles, /var\(--map-agent-stride-x/)
   assert.match(styles, /var\(--map-agent-step-scale-y/)
   assert.match(styles, /transform-origin: 50% var\(--map-agent-foot-origin/)
+  assert.match(styles, /map-agent-sprite\.is-moving[\s\S]*transform 116ms linear/)
   assert.match(styles, /scaleX\(calc\(var\(--map-agent-shadow-scale/)
 })

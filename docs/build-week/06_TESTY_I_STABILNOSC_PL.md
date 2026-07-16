@@ -655,3 +655,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Runtime 4176: **PASS** — `index-dUUrp4or.js`; wykryto kontrakty nierównej kadencji kontaktu i `--map-agent-foot-origin`.
 - Produkcja `c9a3205`: **UNCHANGED**.
 - Percepcyjna ocena chodu na realnym telefonie: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-044 — Final walking cadence and promotion-preparation gate
+
+- Czas Europe/Warsaw: 2026-07-16 18:24–18:36.
+- Zakres: wyłącznie demo `build-week/hermes-world`; produkcja `c9a3205` niezmieniona.
+- Testy fokusowe ruchu, prezentacji i dyrektorów: **PASS 44/44**.
+- Pełne `npm.cmd test`: **PASS 146/146**, 0 fail.
+- ESLint: **PASS**.
+- World-life validator: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 3,80 s, użyty `--configLoader runner` po chwilowym Windows `EPERM` standardowego loadera w katalogu `.vite-temp`.
+- Artefakty: main JS 423,69 kB / 130,30 kB gzip; CSS 76,99 kB / 16,62 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
+- Kontrakt 116 ms translacji przy zegarze 120 ms: **PASS**.
+- Wdrożenie produkcyjne: **NOT APPLICABLE** — przygotowywany jest wyłącznie patch do wcześniejszego wglądu autora.

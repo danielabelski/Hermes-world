@@ -83,6 +83,13 @@
   opacity: 1;
 }
 
+/* The shared presentation clock samples every 120 ms. Finishing the world
+   translation just before the next sample gives each planted foot a readable
+   contact beat instead of keeping the whole sprite in perpetual interpolation. */
+.map-agent-sprite.is-moving {
+  transition: transform 116ms linear, opacity 120ms ease;
+}
+
 .map-agent-sprite__shadow {
   position: absolute;
   left: 50%;
