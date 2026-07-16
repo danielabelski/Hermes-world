@@ -154,3 +154,11 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Produkcyjny HEAD: `b600192`. Ostatnia poprawka zmniejsza maksymalną obserwacyjną latencję sesji z 60 s do około 1 s bez zwiększania częstotliwości pozostałych endpointów i bez wielokrotnych renderów danych z cache.
 - Finalny artifact: `index-ClaSbR_q.js`; 136/136 testów, lint, validator i build PASS; jeden listener 4175.
 - Do pełnego zamknięcia pozostaje wyłącznie rzetelny test autora na zalogowanym telefonie: prawdziwa wiadomość → właściwy agent → wnętrze → Success/Critical oraz realne dane domen. Nie oznaczać go jako PASS przed obserwacją.
+
+## Aktualizacja handoffu — 2026-07-16 11:18 Europe/Warsaw
+
+- Produkcyjny HEAD: `c9a3205`; commity naprawcze: `27bf29a` (spójne live snapshoty i lokalne awarie domen) oraz `c9a3205` (usunięcie ukośnych pasów `telemetry-rain`).
+- Różnica względem Hermes OS CAT została domknięta w modelu odporności: Cytadela zachowuje ostatni poprawny stan domen osobno, nie usuwa rosteru podczas równoległego odświeżania i nie rozłącza całego świata z powodu awarii opcjonalnych logów/cronów/inwentarzy. Globalny health nadal uczciwie reaguje na utratę rdzeniowych profili lub metryk.
+- Nie zmieniono Hermes OS CAT, Hermes WebUI, serwera, API, portów, Tailscale ani procesu 24/7. Jeden listener 4175 serwuje publicznie `index-DTndlvuC.js`; root i auth odpowiadają HTTP 200.
+- Walidacja automatyczna: 139/139 testów, lint, world-life validator i build PASS; fingerprint publiczny zgodny z lokalnym buildem; HTML `no-store`.
+- Otwarty gate: autor odświeża zwykły zapisany adres produkcyjny i potwierdza przez kilka cykli odświeżania, że 12 ról nie znika, status nie przechodzi fałszywie Offline, nie ma ukośnych pasów i UI pozostaje płynne. Następnie jedna prawdziwa wiadomość ma potwierdzić agent → wnętrze → terminalny stan. Nie oznaczać E2E jako PASS przed tą obserwacją.

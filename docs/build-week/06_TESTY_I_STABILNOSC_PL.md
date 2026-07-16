@@ -506,3 +506,19 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build: **PASS**, 872 moduły, 8,20 s; main JS 421,21 kB / 129,12 kB gzip; serwowany `index-ClaSbR_q.js`.
 - Listener 4175: **PASS — dokładnie 1**. Dodatkowego serwera ani przeglądarki nie uruchomiono.
 - Percepcyjna reakcja na prawdziwą wiadomość z zalogowanego telefonu: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-034 — Spójność domen live, odporność rosteru i usunięcie pasów pogodowych
+
+- Czas: 2026-07-16 11:18 Europe/Warsaw / 09:18 UTC.
+- Manualny test wejściowy telefonu: **FAIL** — agent roster znikał po chwilowym pokazaniu, globalny status przechodził do Offline/Degraded, a ukośne pasy `telemetry-rain` były widoczne po obu stronach mapy. Ten wynik jest dowodem regresji i bramką dla naprawy.
+- Test wolnego odświeżenia profili: **PASS** — każdy progresywny snapshot zachowuje ostatni spójny roster i stan online istniejącego profilu; brak przejściowego `0/12`.
+- Test chwilowej awarii snapshotu w hooku: **PASS** — poprzedni wiarygodny świat pozostaje widoczny jako stale/degraded zamiast zostać zastąpiony pustym snapshotem.
+- Test opcjonalnej domeny: **PASS** — awaria logów ustawia `domains.logs.state=stale`, ale przy live profiles+metrics globalny lifecycle pozostaje `source=live`, `connection=online`, a agent nie znika.
+- Test domeny rdzeniowej: **PASS** — awaria metryk nadal daje globalne `degraded`, zachowuje ostatnią wartość i po odzyskaniu wraca do `online`; realna utrata telemetrii nie jest maskowana.
+- Test warstwy atmosferycznej: **PASS** — renderer i CSS nie zawierają `telemetry-rain`; ukośne pasy nie mogą wrócić bez złamania testu.
+- Testy fokusowe: **PASS 55/55**. Pełny `npm.cmd test`: **PASS 139/139**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**, 0 błędów. `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: pierwsza próba w sandboxie **FAIL — ENVIRONMENTAL EPERM** na `node_modules/.vite-temp`; identyczna komenda poza sandboxem **PASS**, Vite 8.0.16, 872 moduły, 4,52 s. Nie zmieniano konfiguracji ani kodu, aby ukryć ograniczenie.
+- Finalny artifact: **PASS** — `index-DTndlvuC.js`, 421 496 B / 129,24 kB gzip; CSS 77,25 kB / 16,61 kB gzip. Publiczny root podaje dokładnie ten fingerprint i ma `no-store`; publiczny root, asset oraz auth: HTTP 200.
+- Procesy: **PASS** — jeden listener Cytadeli 4175 (PID 6764), istniejący Hermes WebUI 8787 i Tailscale 10000; brak 4176 i brak nowego procesu serwera/przeglądarki.
+- Ręczny retest zalogowanego telefonu po fixie: **MANUAL ACTION REQUIRED**. Do chwili obserwacji nie oznaczać pełnego mobile/live E2E jako PASS.
