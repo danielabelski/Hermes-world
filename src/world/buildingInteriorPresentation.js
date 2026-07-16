@@ -17,33 +17,37 @@ function matchesInterior(item = {}, config) {
     || item.entityId === config.buildingId
 }
 
-const metric = (label, value, suffix = '') => Object.freeze({ label, value, suffix })
+const metric = (label, value, suffix = '', precision = 0) => Object.freeze({ label, value, suffix, precision })
 const displayCount = (value) => Number.isFinite(Number(value)) ? Number(value) : 0
 
 function metricsFor(buildingId, context, relevantTasks, relevantAlerts) {
-  const { system = {}, tokenRiver = {}, activityItems = [], crons = [], modelSources = [] } = context
+  const { system = {}, tokenRiver = {}, activityItems = [], crons = [], memorySummary = {} } = context
   if (buildingId === 'forge') return [
     metric('CPU', finite(system.cpuPercent), '%'),
     metric('TEMP.', finite(system.temperatureC), '°'),
     metric('AKTYWNE BUILDY', countState(relevantTasks, ACTIVE_TASK_STATES)),
   ]
   if (buildingId === 'archive') return [
+    metric('SEKCJE PAMIĘCI', memorySummary.available ? displayCount(memorySummary.sectionCount) : null),
     metric('ZDARZENIA', activityItems.length),
-    metric('MODELE', modelSources.length),
     metric('W TOKU', countState(relevantTasks, ACTIVE_TASK_STATES)),
   ]
   if (buildingId === 'citadel') return [
     metric('AKTYWNI', displayCount(system.activeAgentCount)),
-    metric('AGENTÓW', displayCount(system.totalAgentCount)),
     metric('SESJE', displayCount(tokenRiver.activeSessionCount ?? system.activeSessionCount)),
+    metric('KOSZT API', finite(tokenRiver.totalEstimatedCost ?? system.totalEstimatedCost), '$', 2),
   ]
-  if (buildingId === 'watcher') return [
-    metric('CRONY', crons.length),
-    metric('AKTYWNE', crons.filter((cron) => cron.enabled !== false).length),
-    metric('ALERTY', relevantAlerts.length),
-  ]
+  if (buildingId === 'watcher') {
+    const completed = crons.filter((cron) => cron.lastCompletionStatus)
+    const successful = completed.filter((cron) => ['ok', 'success', 'completed'].includes(stateOf(cron.lastCompletionStatus))).length
+    return [
+      metric('CRONY', crons.length),
+      metric('SUKCES', completed.length ? (successful / completed.length) * 100 : null, '%'),
+      metric('ALERTY', relevantAlerts.length),
+    ]
+  }
   return [
-    metric('PAMIĘĆ', finite(system.memoryPercent), '%'),
+    metric('RAM', finite(system.memoryPercent), '%'),
     metric('HEALTH', finite(system.health?.score), '%'),
     metric('INCYDENTY', relevantAlerts.length),
   ]

@@ -154,12 +154,8 @@ export const api = {
   },
 
   // MEMORY
-  async getMemory() {
-    try {
-      const res = await fetch(`${getApiUrl()}/memory`);
-      if (res.status === 401) window.dispatchEvent(new Event('hermes_unauthorized'));
-      return res.ok ? await parseJsonSafely(res, null) : null;
-    } catch { return null; }
+  async getMemory({ strict = false } = {}) {
+    return readJson('/memory', { fallback: null, strict });
   },
 
   async getCronHistory({ strict = false } = {}) {

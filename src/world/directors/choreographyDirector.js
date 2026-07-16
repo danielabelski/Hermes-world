@@ -11,6 +11,16 @@ const COMPLETE_MS = RETURN_DELAY_MS + RETURN_MS
 const COMMAND_SIGNAL_MS = 4_800
 const DELEGATION_SIGNAL_MS = 5_600
 const MAX_SEQUENCES = 12
+const AWARENESS_START_MS = 260
+const AWARENESS_STAGGER_MS = 620
+const AWARENESS_DURATION_MS = 1_520
+const AWARENESS_TRAVEL = 0.14
+const AWARENESS_WAVES = Object.freeze([
+  Object.freeze(['default', 'researcher', 'reviewer']),
+  Object.freeze(['prospecting', 'verifier', 'synthesizer']),
+  Object.freeze(['developer', 'devops', 'komandos']),
+  Object.freeze(['outreach', 'coder']),
+])
 
 const asMs = (value, fallback = Date.now()) => {
   const parsed = Date.parse(value ?? '')
@@ -135,6 +145,32 @@ function actorMotion(sequence, now, layout) {
   })
 }
 
+function awarenessMotion(sequence, profileId, waveIndex, now, layout) {
+  if (profileId === sequence.targetAgentId) return null
+  const journey = getWorldLifeJourney(profileId, layout)
+  if (!journey) return null
+  const waveStartedAt = sequence.receivedAt + AWARENESS_START_MS + waveIndex * AWARENESS_STAGGER_MS
+  const elapsed = now - waveStartedAt
+  if (elapsed < 0 || elapsed >= AWARENESS_DURATION_MS) return null
+  const outbound = percentPoints(journey.outboundWaypoints)
+  if (outbound.length < 2) return null
+  const local = clamp(elapsed / AWARENESS_DURATION_MS)
+  const routeProgress = Math.sin(local * Math.PI) * AWARENESS_TRAVEL
+  const sampled = sampleMapAgentRoute(outbound, routeProgress)
+  return freeze({
+    profileId,
+    worldX: sampled.worldX,
+    worldY: sampled.worldY,
+    sortY: sampled.worldY,
+    direction: sampled.direction,
+    visualState: local > 0.1 && local < 0.9 ? 'walk' : 'idle',
+    phase: 'acknowledge',
+    isMoving: local > 0.1 && local < 0.9,
+    runId: sequence.runId,
+    evidenceEventId: sequence.evidenceEventIds[0],
+  })
+}
+
 export function deriveChoreographyPresentation(state, { now = Date.now(), layout = 'desktop' } = {}) {
   const active = state.sequences.filter((sequence) => !sequenceExpired(sequence, now))
   const sequence = active.at(-1) ?? null
@@ -153,8 +189,13 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
     signals.push(freeze({ kind: 'archive-record', runId: sequence.runId, targetAgentId: 'researcher', buildingId: 'archive', sourceAgentId: sequence.targetAgentId, sourceBuildingId: sequence.buildingId, evidenceEventId: lifecycleEvidenceId, triggerEventId }))
   }
   const motion = actorMotion(sequence, now, layout)
+  const motionByAgent = motion ? { orchestrator: motion } : {}
+  AWARENESS_WAVES.forEach((profiles, waveIndex) => profiles.forEach((profileId) => {
+    const awareness = awarenessMotion(sequence, profileId, waveIndex, now, layout)
+    if (awareness) motionByAgent[profileId] = awareness
+  }))
   return freeze({
-    motionByAgent: freeze(motion ? { orchestrator: motion } : {}),
+    motionByAgent: freeze(motionByAgent),
     signals: freeze(signals),
     activeRunId: sequence.runId,
     kind: sequence.kind,
@@ -167,4 +208,4 @@ export function deriveChoreographyPresentation(state, { now = Date.now(), layout
   })
 }
 
-export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS, COMMAND_SIGNAL_MS, DELEGATION_SIGNAL_MS })
+export const CHOREOGRAPHY_TIMING = freeze({ OUTBOUND_MS, SUCCESS_HOLD_MS, ARCHIVE_DELAY_MS, RETURN_DELAY_MS, RETURN_MS, COMPLETE_MS, COMMAND_SIGNAL_MS, DELEGATION_SIGNAL_MS, AWARENESS_START_MS, AWARENESS_STAGGER_MS, AWARENESS_DURATION_MS })

@@ -491,6 +491,7 @@ test('production bridge keeps domain cadence and exposes stale recovery honestly
     async getSessions() { return { sessions: [] } },
     async getSkills() { return { skills: [] } },
     async getModels() { return { groups: [] } },
+    async getMemory() { return { memory: '' } },
   }
   const bridge = createWorldBridge({ apiClient, now: () => now })
   const initial = await bridge.sync()
@@ -533,6 +534,7 @@ test('production bridge publishes real metrics before an unrelated slow domain f
     async getSessions() { return { sessions: [] } },
     async getSkills() { return { skills: [] } },
     async getModels() { return { groups: [] } },
+    async getMemory() { return { memory: '' } },
   }
   const bridge = createWorldBridge({ apiClient })
   const emissions = []
@@ -564,6 +566,7 @@ test('concurrent resume and polling reuse one in-flight domain synchronization',
     async getSessions() { return { sessions: [] } },
     async getSkills() { return { skills: [] } },
     async getModels() { return { groups: [] } },
+    async getMemory() { return { memory: '' } },
   }
   const bridge = createWorldBridge({ apiClient })
   const polling = bridge.sync()

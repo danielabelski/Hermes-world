@@ -20,6 +20,20 @@ const severityFor = (level) => {
   return value === 'fatal' ? 'critical' : ['critical', 'error', 'warning', 'info'].includes(value) ? value : 'info';
 };
 
+export function buildMemorySummary(payload) {
+  const rawText = typeof payload?.memory === 'string' ? payload.memory.trim() : '';
+  const soul = payload?.soul && typeof payload.soul === 'object' && !Array.isArray(payload.soul) ? payload.soul : null;
+  const sectionCount = rawText
+    ? Math.max(1, rawText.split(/\r?\n/).filter((line) => /^(#{1,6}\s+|[A-ZĄĆĘŁŃÓŚŹŻ][A-ZĄĆĘŁŃÓŚŹŻ _-]{2,}:)/u.test(line.trim())).length)
+    : soul ? Object.keys(soul).length : 0;
+  return Object.freeze({
+    available: Boolean(rawText || soul),
+    sectionCount,
+    characterCount: rawText.length || (soul ? JSON.stringify(soul).length : 0),
+    kind: rawText ? 'memory-text' : soul ? 'structured-soul' : 'unavailable',
+  });
+}
+
 function parseLog(line, index) {
   if (line && typeof line === 'object') return { id: `log-${index}-${line.timestamp ?? ''}`, rawMessage: JSON.stringify(line), ...line };
   try {
@@ -258,6 +272,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
   const modelGroups = list(payloads.models, 'groups');
   const modelSources = buildCrystalSources(modelGroups, sessions, rawProfiles);
   const tokenRiver = buildTokenRiver(sessions, observedAt);
+  const memorySummary = buildMemorySummary(payloads.memory);
   const buildingStates = Object.values(BUILDING_DEFINITIONS).map((definition) => {
     const agent = agents.find((item) => item.buildingId === definition.id);
     const assigned = tasks.filter((task) => task.sourceBuildingId === definition.id);
@@ -281,6 +296,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
     crons,
     modelSources,
     tokenRiver,
+    memorySummary,
     skillSummary: { total: rawSkills.length, enabled: rawSkills.filter((skill) => !skill.disabled).length, disabled: rawSkills.filter((skill) => skill.disabled).map((skill) => skill.name ?? 'Unnamed skill') },
     alerts: buildAlerts({ logs: freshIncidentLogs, tasks, crons, health, now: createdAt }),
     activity: buildActivity({ tasks, crons, previousSnapshot, now: createdAt }),
@@ -314,6 +330,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     sessions: () => apiClient.getSessions({ strict: true }),
     skills: () => apiClient.getSkills({ strict: true }),
     models: () => apiClient.getModels({ strict: true }),
+    memory: () => apiClient.getMemory({ strict: true }),
   });
   const domainIntervals = Object.freeze({
     metrics: POLL_INTERVALS.metrics,
@@ -325,6 +342,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     sessions: POLL_INTERVALS.slow,
     skills: POLL_INTERVALS.slow,
     models: POLL_INTERVALS.slow,
+    memory: POLL_INTERVALS.slow,
   });
 
   async function fetchPayloads({ onProgress } = {}) {

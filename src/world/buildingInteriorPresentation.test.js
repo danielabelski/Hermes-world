@@ -40,18 +40,19 @@ describe('shared building interior presentation', () => {
       tasks: [{ assignee: 'researcher', status: 'running', title: 'Analiza logów' }],
       activityItems: [{ title: 'Nowy wpis' }, { title: 'Heartbeat' }],
       modelSources: [{ modelId: 'gpt-5.6' }],
+      memorySummary: { available: true, sectionCount: 4 },
     })
     assert.equal(result.phase, 'working')
-    assert.deepEqual(result.metrics.map((item) => item.value), [2, 1, 1])
+    assert.deepEqual(result.metrics.map((item) => item.value), [4, 2, 1])
     assert.equal(result.taskTitle, 'Analiza logów')
   })
 
   it('exposes real Citadel, Watcher and Sanctum metrics without synthetic events', () => {
-    const citadel = deriveBuildingInteriorPresentation('citadel', { lifecycle: { connection: 'online' }, system: { activeAgentCount: 3, totalAgentCount: 12 }, tokenRiver: { activeSessionCount: 2 } })
-    const watcher = deriveBuildingInteriorPresentation('watcher', { lifecycle: { connection: 'online' }, crons: [{ enabled: true }, { enabled: false }] })
+    const citadel = deriveBuildingInteriorPresentation('citadel', { lifecycle: { connection: 'online' }, system: { activeAgentCount: 3, totalAgentCount: 12 }, tokenRiver: { activeSessionCount: 2, totalEstimatedCost: 1.25 } })
+    const watcher = deriveBuildingInteriorPresentation('watcher', { lifecycle: { connection: 'online' }, crons: [{ enabled: true, lastCompletionStatus: 'ok' }, { enabled: false, lastCompletionStatus: 'error' }] })
     const sanctum = deriveBuildingInteriorPresentation('sanctum', { lifecycle: { connection: 'online' }, system: { memoryPercent: 61, health: { score: 94 } } })
-    assert.deepEqual(citadel.metrics.map((item) => item.value), [3, 12, 2])
-    assert.deepEqual(watcher.metrics.map((item) => item.value), [2, 1, 0])
+    assert.deepEqual(citadel.metrics.map((item) => item.value), [3, 2, 1.25])
+    assert.deepEqual(watcher.metrics.map((item) => item.value), [2, 50, 0])
     assert.deepEqual(sanctum.metrics.map((item) => item.value), [61, 94, 0])
     assert.equal(Object.hasOwn(citadel, 'operationalState'), false)
     assert.equal(Object.hasOwn(watcher, 'success'), false)

@@ -22,6 +22,7 @@ const base = {
   skills: { skills: [{ name: 'code', disabled: false }, { name: 'research', disabled: false }, { name: 'review', disabled: false }] },
   models: { groups: [{ provider: 'openai', models: [{ id: 'gpt-5' }, { id: 'gpt-5-codex' }, { id: 'gpt-5-mini' }] }] },
   crons: { jobs: [{ id: 'world-heartbeat', name: 'World heartbeat', enabled: true, last_run_at: at(0) }] },
+  memory: { memory: '## USER PROFILE\nHermes World demo fixture\n## TECHNICAL DIRECTIVES\nObservability first' },
 };
 
 const freezePayload = (payload) => Object.freeze(payload);

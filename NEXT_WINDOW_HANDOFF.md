@@ -858,3 +858,42 @@ Scope: demo repository only, branch `pre-build-week/environmental-world-life`. P
 Do not modify production, the base map, waypoint geometry, routes, FSM, event pipeline, `server.js` or API contracts without a new explicit instruction.
 
 ---
+
+## DEMO SSE AWARENESS + ROOM TELEMETRY CHECKPOINT — 2026-07-16
+
+Scope: demo repository only, branch `build-week/hermes-world`. Production `main` remains at `c9a32051a3367990ceae266adeed16366cbd4738` and was not modified during this pass.
+
+### Implemented on demo
+
+- A confirmed SSE event now produces a staggered, evidence-backed awareness wave across the city. Non-target agents only acknowledge the event with brief road motion; they never receive fake `Working` or `Success`.
+- The true target worker keeps the real operational lifecycle, and real state always overrides presentation choreography.
+- Archive now consumes `/api/memory` through a safe summary. Raw memory content never enters the world store or room UI.
+- Room metrics are now semantically explicit: Archive = memory sections/activity/tasks; Citadel = active agents/sessions/API cost; Watcher = crons/completion/alerts; Sanctum = host RAM/derived health/incidents; Forge = CPU/temperature/tasks.
+
+### Production truth audit
+
+- Forge: real and correctly sourced.
+- Citadel: real and correctly sourced; API cost derives from real sessions.
+- Watcher: cron data and alerts are real; completion ratio is present only in the current demo pass.
+- Sanctum: inputs are real, but `healthScore` is a transparent local derivation from telemetry/incidents, not a dedicated CAT endpoint. Host RAM must not be described as RAG memory.
+- Archive on current production: partially real activity/log data, but not actual memory/RAG health. Production does have an existing `/api/memory` route, yet current production UI does not consume it.
+- A true RAG-health claim still requires explicit retrieval/index evidence such as document count, last index time, retrieval success and latency. `/api/memory` alone does not prove those properties; do not fabricate them.
+- Protected production payload values were not re-audited by bypassing authentication. HTTP 401 confirms guards only, not data correctness.
+
+### Verification
+
+- Focused tests: 46/46 PASS.
+- Full tests: 137/137 PASS.
+- ESLint: PASS.
+- World-life validator: PASS.
+- Build: PASS, 874 modules, 5.28 s; main JS 419.83 kB / 128.96 kB gzip.
+
+### Exact next gate
+
+1. Review the existing demo URL `http://100.69.167.105:4176/?demo=1` on the phone.
+2. Send one real Hermes message and inspect the complete visible sequence: ingress → Citadel/Kasztelan → awareness waves → true worker/building → Archive on real Success.
+3. Open all five rooms and verify metric labels/values; especially Archive memory and Sanctum RAM.
+4. Return GL or exact RL defects.
+5. Only after GL prepare a strict file/commit promotion manifest. Production changes remain a separate audited operation.
+
+---

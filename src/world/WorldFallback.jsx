@@ -124,6 +124,7 @@ export default function WorldFallback() {
   const activityItems = useWorldStore((state) => state.activity?.items ?? [])
   const tokenRiver = useWorldStore((state) => state.tokenRiver ?? {})
   const modelSources = useWorldStore((state) => state.modelSources ?? [])
+  const memorySummary = useWorldStore((state) => state.memorySummary ?? {})
   const crons = useWorldStore((state) => state.crons ?? [])
   const buildings = useWorldStore((state) => state.buildings ?? [])
   const zoomPreference = useWorldStore((state) => state.camera?.zoomPreference ?? 'standard')
@@ -231,6 +232,7 @@ export default function WorldFallback() {
         tokenRiver={tokenRiver}
         crons={crons}
         modelSources={modelSources}
+        memorySummary={memorySummary}
         layout={mapLayout}
         onAgentSelect={(profileId) => selectEntity('agent', profileId)}
         onExitComplete={closeInterior}

@@ -599,3 +599,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Payload wody: **PASS — 0 B rasterów**; trzy animowane WebP zostały usunięte, a refleksy są kodowym VFX opartym na `transform` i `opacity`.
 - Idle comets: **PASS statyczny** — pseudo-element przewodów jest wyłączony. Prawdziwy event transit pozostaje osobnym komponentem z `evidenceEventId`.
 - Percepcyjny test 393×852: **MANUAL ACTION REQUIRED** — autor nadaje RL/GL po zobaczeniu normalnego widoku na realnym telefonie.
+
+## TEST-BW-040 — SSE awareness i realna telemetria pomieszczeń
+
+- Czas: 2026-07-16 16:53 Europe/Warsaw / 14:53 UTC.
+- Zakres: **PASS — wyłącznie demo**; produkcyjny katalog, branch, proces 4175, Tailscale i deployment nie zostały zmienione.
+- Choreografia SSE: **PASS** — test dowodzi czterech fal `acknowledge` opartych na jednym prawdziwym `evidenceEventId`, wykluczenia rzeczywistego workera, braku fake `work`/`success`, wygaśnięcia ruchu oraz pierwszeństwa operational state.
+- Telemetria wnętrz: **PASS kontraktowy** — Kuźnia CPU/temperatura/task; Cytadela agenci/sesje/koszt API; Watcher crony/success/alerty; Sanctum RAM/health/incydenty; Archiwum bezpieczne podsumowanie `/api/memory`/zdarzenia/taski.
+- Prywatność pamięci: **PASS projektowy** — do snapshotu trafia tylko `available`, `kind`, `sectionCount` i `characterCount`; surowa treść nie jest prezentowana ani zapisywana w world store.
+- Testy fokusowe: **PASS 46/46**.
+- Pełne `npm.cmd test`: **PASS 137/137**, 0 fail, 0 skipped.
+- `npm.cmd run lint`: **PASS**.
+- `npm.cmd run validate:world-life`: **PASS**.
+- `npm.cmd run build`: **PASS**, Vite 8.0.16, 874 moduły, 5,28 s. Main JS 419,83 kB / 128,96 kB gzip; CSS 76,41 kB / 16,48 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
+- Event hub/bundle: **PASS techniczny** — istniejący serwer demo przyjął pojedynczy unikalny event, snapshot zawierał event, a root wskazał aktualny fingerprint bundla. Nie uruchomiono dodatkowego listenera.
+- Manualny test telefonu: **MANUAL ACTION REQUIRED** — ocenić, czy po realnej wiadomości reakcja Kasztelana, czterech fal agentów, Cytadeli, właściwego budynku i Archiwum jest czytelna bez wyglądu fake work.

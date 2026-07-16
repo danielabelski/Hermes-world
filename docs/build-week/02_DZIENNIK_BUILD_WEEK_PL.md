@@ -611,3 +611,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Trzy techniczne pakiety przewodów `HermesInfrastructureLayer` zostały ukryte. Evidence-backed przepływy prawdziwej wiadomości/delegacji pozostają w odrębnej warstwie `WorldOperationsLayer` i zachowują `evidenceEventId`.
 - Produkcja pozostała nietknięta. Wynik na realnym telefonie pozostaje **MANUAL ACTION REQUIRED**; GL nie jest wnioskowane z testów automatycznych.
 - Następny osobny etap po decyzji RL/GL: przygotować strategię „żywego demo observability”. Demo ma natychmiast komunikować użyteczność produktu przy większej liczbie agentów, lecz aktywność demonstracyjna musi być jawnie oznaczona i oddzielona od prawdziwego `operationalState`, liczników oraz eventów Hermesa.
+
+## BW-2026-07-16-048 — Evidence-backed fala reakcji świata i audyt telemetrii pomieszczeń
+
+- Czas Europe/Warsaw: 2026-07-16 15:53–16:53; czas UTC: 13:53–14:53.
+- Zakres: wyłącznie demo na branchu `build-week/hermes-world`. Produkcyjny `main`, proces 4175, Tailscale, Hermes WebUI i deployment pozostały nietknięte.
+- Prawdziwy event SSE uruchamia teraz cztery krótkie, rozłożone w czasie fale reakcji agentów. Kasztelan zachowuje istniejącą choreografię, rzeczywisty worker wykonuje prawdziwy lifecycle, a pozostali agenci wyłącznie przerywają idle i wykonują krótki ruch `acknowledge` po swoich istniejących drogach. Każdy ruch niesie prawdziwy `evidenceEventId`, nie ustawia `Working`, nie emituje `Success` i ustępuje realnemu stanowi operacyjnemu.
+- Audyt źródeł wykazał: Kuźnia używa prawdziwego CPU, temperatury i tasków; Cytadela prawdziwych agentów, sesji oraz kosztu API; Watcher prawdziwych cronów, wyników ostatnich wykonań i alertów; Sanctum host RAM oraz jawnie lokalnie wyliczony health score. Archiwum wcześniej nie czytało realnej pamięci/RAG — pokazywało aktywność/logi.
+- Demo podłączono do istniejącego `/api/memory`. Do store i UI trafia wyłącznie bezpieczne podsumowanie obecności/rodzaju/liczby sekcji, nigdy surowa treść pamięci. Archiwum pokazuje sekcje pamięci, zdarzenia i aktywne zadania. Brak dedykowanych statystyk indeksu/retrieval oznacza, że interfejs nie nazywa tego fałszywie pełnym „RAG health”.
+- Etykietę Sanctum skorygowano z niejednoznacznego `PAMIĘĆ` na `RAM`. Watcher otrzymał rzeczywisty procent sukcesu cronów, a Cytadela rzeczywisty zagregowany koszt API.
+- Kontrolowany fixture demo zawiera jedynie syntetyczny, jawny tekst pamięci; produkcyjny runtime korzysta wyłącznie z endpointu. Nie zmieniono API serwera ani event pipeline.
+- Walidacja: testy fokusowe 46/46 PASS; pełny zestaw 137/137 PASS; lint PASS; `validate:world-life` PASS; build PASS, 874 moduły, 5,28 s. Main JS 419,83 kB / 128,96 kB gzip; CSS 76,41 kB / 16,48 kB gzip. Istniejący serwer demo przyjął unikalny testowy event i podał nowy fingerprint bundla; nie uruchomiono drugiego serwera.
+- Rzeczywista jakość percepcyjna fali reakcji i czytelność metryk w pięciu wnętrzach na telefonie pozostają **MANUAL ACTION REQUIRED** przed GL i jakąkolwiek promocją.

@@ -14,13 +14,13 @@ const INTERIOR_META = Object.freeze({
   sanctum: Object.freeze({ eyebrow: 'SUBSYSTEM · HEALTH / RECOVERY', idle: 'Sanctum utrzymuje stabilny obieg energii systemu.', working: 'Sanctum wspiera aktywny proces regeneracji.', taskLabel: 'BIEŻĄCY PROCES' }),
 })
 
-const formatMetric = ({ value, suffix = '' }) => value === null || value === undefined ? '—' : `${Math.round(value)}${suffix}`
+const formatMetric = ({ value, suffix = '', precision = 0 }) => value === null || value === undefined ? '—' : `${Number(value).toFixed(precision)}${suffix}`
 
-export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, layout, onExitComplete, onAgentSelect, returnFocusRef, rosterReview = null, onReviewStep, onReviewStateChange }) {
+export default function BuildingInteriorScene({ buildingId, system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, memorySummary, layout, onExitComplete, onAgentSelect, returnFocusRef, rosterReview = null, onReviewStep, onReviewStateChange }) {
   const [closing, setClosing] = useState(false)
   const sceneRef = useRef(null)
   const backButtonRef = useRef(null)
-  const presentation = useMemo(() => deriveBuildingInteriorPresentation(buildingId, { system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources }), [activityItems, agent, alerts, building, buildingId, crons, lifecycle, modelSources, system, tasks, tokenRiver])
+  const presentation = useMemo(() => deriveBuildingInteriorPresentation(buildingId, { system, lifecycle, agent, building, tasks, alerts, activityItems, tokenRiver, crons, modelSources, memorySummary }), [activityItems, agent, alerts, building, buildingId, crons, lifecycle, memorySummary, modelSources, system, tasks, tokenRiver])
   const config = BUILDING_INTERIOR_CONFIG[buildingId]
   const meta = INTERIOR_META[buildingId]
   const phaseLabel = PHASE_LABEL[presentation?.phase] ?? PHASE_LABEL.standby

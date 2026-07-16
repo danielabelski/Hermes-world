@@ -71,7 +71,21 @@ test('delegation wakes only the true target and keeps worker motion operational'
   assert.equal(presentation.kind, 'delegation')
   assert.equal(presentation.targetAgentId, 'coder')
   assert.ok(presentation.signals.some((signal) => signal.kind === 'delegation' && signal.targetAgentId === 'coder'))
-  assert.deepEqual(Object.keys(presentation.motionByAgent), ['orchestrator'])
+  assert.equal(presentation.motionByAgent.coder, undefined)
+  assert.equal(presentation.motionByAgent.orchestrator.profileId, 'orchestrator')
+})
+
+test('real SSE evidence creates a staggered awareness wave without fake work', () => {
+  const state = reduceChoreographyEvent(createChoreographyState(), event(0, 'assigned', 'coder'), START)
+  const firstWave = deriveChoreographyPresentation(state, { now: START + CHOREOGRAPHY_TIMING.AWARENESS_START_MS + 400, layout: 'mobile' })
+  const awareness = Object.values(firstWave.motionByAgent).filter((motion) => motion.phase === 'acknowledge')
+  assert.ok(awareness.length >= 2 && awareness.length <= 6)
+  assert.equal(awareness.some((motion) => motion.profileId === 'coder'), false)
+  assert.equal(awareness.some((motion) => ['work', 'success'].includes(motion.visualState)), false)
+  assert.ok(awareness.every((motion) => motion.evidenceEventId === 'run-1:0'))
+
+  const afterWave = deriveChoreographyPresentation(state, { now: START + 6_000, layout: 'mobile' })
+  assert.equal(Object.values(afterWave.motionByAgent).some((motion) => motion.phase === 'acknowledge'), false)
 })
 
 test('ingress choreography expires after the visible handoff and cannot block a long real task', () => {

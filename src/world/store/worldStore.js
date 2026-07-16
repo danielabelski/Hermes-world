@@ -112,6 +112,7 @@ export const useWorldStore = create((set) => ({
   crons: [],
   tokenRiver: { totalEstimatedCost: 0, activeSessionCount: 0, flowSpeed: 0, width: 0, glowIntensity: 0, state: 'unknown' },
   modelSources: [],
+  memorySummary: { available: false, sectionCount: 0, characterCount: 0, kind: 'unavailable' },
   skillSummary: { total: 0, enabled: 0, disabled: [] },
   camera: { zoomPreference: 'standard', requestedFocus: null },
   selection: null,
@@ -154,6 +155,7 @@ export const useWorldStore = create((set) => ({
       crons: snapshot.crons ?? state.crons,
       tokenRiver: snapshot.tokenRiver ?? state.tokenRiver,
       modelSources: snapshot.modelSources ?? state.modelSources,
+      memorySummary: snapshot.memorySummary ?? state.memorySummary,
       skillSummary: snapshot.skillSummary ?? state.skillSummary,
       raw: snapshot.raw ?? state.raw,
     };
