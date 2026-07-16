@@ -8,11 +8,13 @@ Ta sekcja zastępuje wcześniejszy aktywny opis wody. Produkcja pozostaje zamro�
 
 - Repo/branch: `hermes-os-living-world-demo` / `build-week/hermes-world`.
 - Commit funkcjonalny: `97fb9ff` (`fix(build-week): animate water from exact map pixels`).
+- Manualny retest `97fb9ff`: **RL** — koryta były trafione, ale sinusoidalny displacement unosił cały wycinek i poruszał fragmentami murów.
+- Korekta: `c10f531` (`fix(build-week): keep water banks and architecture stationary`). Usunięto całe przestrzenne przesuwanie źródła. Brzegi i piksele architektury są nieruchome; porusza się jedynie jednokierunkowa modulacja światła w konserwatywnie zawężonych kanałach.
 - Autor nadał poprzedniemu wariantowi maska + generyczna tekstura **RL**: mimo lepszej geometrii nadal wyglądał jak drobny deszcz i był dopasowany percepcyjnie na około 1%.
 - Aktywny renderer nie używa już żadnego ribbonu, pełnej trasy, przesuwanej kreski, SVG ani powtarzalnego wzoru.
 - Nowa metoda animuje bezpośrednio piksele dwóch zamrożonych map. Granica wody jest stała; pomiędzy ośmioma klatkami zmienia się wyłącznie próbkowanie wnętrza nurtu.
 - Mobile ma dwa osobne wycinki zewnętrznych koryt: lewy i prawy. Desktop ma osobny wycinek zatoki. Nakładki używają tego samego filtra tonalnego co mapa.
-- Wszystkie pliki to lekkie animowane WebP z alfa, bez JS timerów i bez dodatkowego canvasu: 166 652 B, 184 130 B i 33 570 B; razem 384 352 B.
+- Wszystkie pliki to lekkie animowane WebP z alfa, bez JS timerów i bez dodatkowego canvasu: 29 210 B, 19 322 B i 23 134 B; razem 71 666 B.
 - `prefers-reduced-motion` całkowicie ukrywa warstwę animowaną i pozostawia niezmienioną mapę bazową.
 
 ### Walidacja automatyczna
@@ -21,7 +23,7 @@ Ta sekcja zastępuje wcześniejszy aktywny opis wody. Produkcja pozostaje zamro�
 - Pełny zestaw: 136/136 PASS.
 - Lint: PASS.
 - `validate:world-life`: PASS.
-- Build: PASS, 877 modułów, 5,19 s.
+- Build: PASS, 877 modułów, 3,41 s przez `--configLoader native` po znanym środowiskowym locku Vite.
 - Main JS: 417,84 kB / 128,19 kB gzip; CSS: 75,44 kB / 16,24 kB gzip.
 - Jeden istniejący serwer demo 4176 podaje nowy build i animowany asset HTTP 200. Nie uruchomiono drugiego serwera ani przeglądarki.
 - Manualna ocena telefonu: **PENDING**. Nie promować do produkcji przed GL autora.

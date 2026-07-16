@@ -575,3 +575,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm.cmd run build`: **PASS**, Vite 8.0.16, 877 modułów, 5,19 s; main JS 417,84 kB / 128,19 kB gzip; CSS 75,44 kB / 16,24 kB gzip.
 - Runtime: **PASS** — istniejący serwer 4176 zwraca root HTTP 200 i nowy WebP HTTP 200 z `Content-Type: image/webp`; nie uruchomiono drugiego serwera ani przeglądarki.
 - Telefon 393×852: **MANUAL ACTION REQUIRED** — autor nadaje RL/GL po obejrzeniu normalnego widoku bez debug overlay.
+
+## TEST-BW-038 — Stationary banks / directional luminance gate
+
+- Czas: 2026-07-16 14:06 Europe/Warsaw / 12:06 UTC.
+- Wejściowy test telefonu: **FAIL / RL** — poprzednia animacja unosiła pełny wycinek i poruszała fragmentami murów.
+- Kontrakt klatek: **PASS** — źródłowe współrzędne RGB są stałe; generator nie wykonuje `sample_x/sample_y`, translacji ani displacementu. Zmienna jest tylko luminancja fali o jednym kierunku.
+- Zakres: **PASS statyczny** — wycinki mobile zwężono z 155 do 112 px, a aktywna alfa obejmuje jedynie konserwatywne kanały. Architektura nie może zmienić pozycji.
+- Budżet: **PASS** — 29 210 B + 19 322 B + 23 134 B = 71 666 B.
+- Fokus: **PASS 24/24**. Pełne testy: **PASS 136/136**. Lint: **PASS**. `validate:world-life`: **PASS**.
+- Build: pierwsza próba **FAIL — środowiskowy EPERM** na pliku `node_modules/.vite-temp`; identyczny build z `--configLoader native` **PASS**, 877 modułów, 3,41 s. Nie zmieniono kodu ani konfiguracji testów, aby ukryć błąd środowiska.
+- Manualny retest 393×852: **MANUAL ACTION REQUIRED**.

@@ -590,3 +590,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Prawdziwy lifecycle Kowala zaobserwowany przez autora pozostaje bez zmian. Kolejny plan po GL wody to evidence-backed łańcuch realnego eventu oraz uczciwy ambient oddzielony od `operationalState`; nie został wdrożony w tym bloku.
 - Commit funkcjonalny: `97fb9ff` (`fix(build-week): animate water from exact map pixels`). Snapshot i commit dokumentacyjny domykają blok osobno.
 - Manualna ocena percepcyjna 393×852 pozostaje **MANUAL ACTION REQUIRED**; wynik automatyczny nie jest przedstawiany jako GL.
+
+## BW-2026-07-16-046 — RL unoszącej się wody i stabilizacja architektury
+
+- Czas Europe/Warsaw: 2026-07-16 13:45–14:06; czas UTC: 11:45–12:06.
+- Autor potwierdził poprawę geometrii, ale nadał `97fb9ff` **RL**: cała warstwa kołysała się zamiast płynąć, a razem z nią przesuwały się fragmenty murów objęte zbyt szeroką maską.
+- Usunięto globalny sinusoidalny displacement obrazu. Każda klatka zachowuje identyczne współrzędne źródłowych pikseli; ruch tworzy wyłącznie jednokierunkowa fala luminancji przesuwająca się w dół kanałów mobile lub w poprzek portu desktop.
+- Maskę mobile ograniczono do wąskich, pewnych kanałów i odrzucono niejednoznaczne fragmenty przy architekturze. Mniejszy zakres jest świadomą decyzją: nieruchome mury mają wyższy priorytet niż animowanie całego obrysu.
+- Koszt trzech assetów spadł z 384 352 B do 71 666 B. Nie zmieniono CSS, renderera operacyjnego, agentów, mapy, geometrii, API ani produkcji.
+- Commit: `c10f531` (`fix(build-week): keep water banks and architecture stationary`).
+- Manualna ocena telefonu po korekcie pozostaje **MANUAL ACTION REQUIRED**.
