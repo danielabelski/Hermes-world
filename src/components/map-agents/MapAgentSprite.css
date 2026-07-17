@@ -55,8 +55,6 @@
 }
 
 .map-agent-sprite__image {
-  position: absolute;
-  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -75,30 +73,14 @@
   pointer-events: none;
 }
 
-/* Keep the already decoded idle frame under every state transition. The next
-   frame is revealed only after its own load event, so Safari never paints an
-   empty agent while swapping image sources. */
-.map-agent-sprite__image--target {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.map-agent-sprite__image--target.is-frame-ready {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* The base image owns first paint. Never hide the whole agent while a mobile
-   browser decodes it: that turns a short decode into a visible disappearance.
-   Only the decorative elements wait for the sprite. */
+/* Never expose orphan shadows, rings or markers while the first sprite is loading. */
 .map-agent-sprite.is-asset-pending {
+  opacity: 0;
   pointer-events: none;
 }
 
-.map-agent-sprite.is-asset-pending .map-agent-sprite__shadow,
-.map-agent-sprite.is-asset-pending .map-agent-sprite__state-ring,
-.map-agent-sprite.is-asset-pending .map-agent-sprite__marker {
-  visibility: hidden;
+.map-agent-sprite.is-asset-ready {
+  opacity: 1;
 }
 
 /* The shared presentation clock samples every 120 ms. Finishing the world

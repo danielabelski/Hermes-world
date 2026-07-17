@@ -22,7 +22,6 @@ import { resolveWorldLifePreset } from './directors/worldLifePreset.js'
 import { BUILDING_INTERIOR_CONFIG, BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
 import { preloadInteriorPlate } from '../components/building-interiors/interiorPlateManifest.js'
 import { getInteriorReviewEntry, getInteriorReviewProfiles, INTERIOR_ROSTER_REVIEW, resolveInteriorReviewProfile, stepInteriorReviewProfile } from './interiorRosterReview.js'
-import { shouldRenderAgentAboveForeground } from './agentForegroundLayer.js'
 
 const MOBILE_MAP_QUERY = '(max-width: 700px)'
 const getMapLayout = () => typeof window !== 'undefined' && window.matchMedia?.(MOBILE_MAP_QUERY).matches ? 'mobile' : 'desktop'
@@ -123,8 +122,8 @@ export default function WorldFallback() {
     telemetry: { system, activityItems, tokenRiver, tasks, crons }, visualDebug: worldDebug === 'visual',
   })
   const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
-  const groundPresentations = presentations.filter((model) => !shouldRenderAgentAboveForeground(model, mapLayout))
-  const facadePresentations = presentations.filter((model) => shouldRenderAgentAboveForeground(model, mapLayout))
+  const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
+  const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
   const routeDebug = resolveRouteDebugConfig(typeof window === 'undefined' ? '' : window.location.search, {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),

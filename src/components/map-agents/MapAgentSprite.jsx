@@ -74,14 +74,10 @@ function MapAgentSprite({
   renderSurface = 'map',
 }) {
   const [assetReady, setAssetReady] = useState(false)
-  const [loadedTargetSrc, setLoadedTargetSrc] = useState(null)
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
   const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
-  const idleSrc = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, 'idle', 0), `MapAgentSprite.${profileId}.idle`)
-  const hasTargetFrame = src !== idleSrc
-  const targetReady = hasTargetFrame && loadedTargetSrc === src
   const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
@@ -147,8 +143,7 @@ function MapAgentSprite({
     data-world-y={Number(worldY).toFixed(3)}
     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
     data-lod={lod}
-    data-map-agent-src={targetReady ? src : idleSrc}
-    data-map-agent-target-src={hasTargetFrame ? src : ''}
+    data-map-agent-src={src}
     data-visual-mode="production"
     data-render-surface={renderSurface}
     data-asset-ready={assetReady ? 'true' : 'false'}
@@ -164,17 +159,7 @@ function MapAgentSprite({
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
-      <img className="map-agent-sprite__image map-agent-sprite__image--base" src={idleSrc} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
-      {hasTargetFrame ? <img
-        className={`map-agent-sprite__image map-agent-sprite__image--target${targetReady ? ' is-frame-ready' : ''}`}
-        src={src}
-        alt=""
-        draggable={false}
-        loading="eager"
-        decoding="async"
-        fetchPriority={fetchPriority}
-        onLoad={() => setLoadedTargetSrc(src)}
-      /> : null}
+      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}
