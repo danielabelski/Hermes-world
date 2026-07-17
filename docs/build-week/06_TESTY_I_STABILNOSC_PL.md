@@ -715,3 +715,11 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Lokalny benchmark HTTP (3 próby pod aktywnym Codexem): root 74–624 ms; snapshot 58–358 ms. Pierwsza próba obejmuje cold/warm koszt hosta i nie jest pomiarem FPS telefonu.
 - Pełny lint: **INCOMPLETE** — próba przekroczyła limit czasu pod wysokim obciążeniem hosta; nie zgłosiła błędu przed timeoutem. Zmiana JS jest objęta testem kontraktowym i udanym buildem; skrypt Python nie jest częścią ESLint.
 - Manualny test nowej wiadomości WSL/iMessage na realnym telefonie: **MANUAL ACTION REQUIRED**. Bez niego zakres nie może zostać promowany na produkcję.
+
+## TEST-BW-048 — Cold start roster visibility regression
+
+- Poprzednia sesja: zakończenie 2026-07-16 21:14 Europe/Warsaw. Dzisiejsza sesja: start 2026-07-17 10:13 Europe/Warsaw.
+- Test regresyjny manifestu: **PASS** — warstwa nie używa już globalnego `Promise.all` ani timeoutu 3 s do ujawnienia agentów; każdy sprite ma własny `onLoad` i pending state.
+- Pełny zestaw: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
+- Build: **PASS**, 874 moduły, 43,34 s; `index-CF81z-Ws.js` 423,25 kB / 130,14 kB gzip.
+- Zakres: **demo only**. Manualny cold start na 393×852 i test nowej wiadomości WSL/iMessage pozostają **MANUAL ACTION REQUIRED**.

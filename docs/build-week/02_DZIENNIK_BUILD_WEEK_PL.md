@@ -704,3 +704,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Pełny dowód E2E na prawdziwej parze wpisów z bazy: trzy eventy `gateway-…:0/1/2`, źródło `hermes-gateway-state-db`, kolejno `assigned` → `thinking` → `success`. Po teście hub został wyczyszczony przez restart dokładnie jednego serwera demo.
 - Runtime końcowy: jeden serwer demo 4176 PID 10924, jeden watcher WSL PID 29626 i jeden forwarder Node PID 6408. Hub jest pusty i gotowy na nową wiadomość autora; bundle `index-DQoq9Imv.js`.
 - Build: **PASS**, 874 moduły, 37,52 s, main JS 423,72 kB / 130,28 kB gzip. Test kontraktu SSE: **PASS**. Pełny percepcyjny test nowej wiadomości z WSL/iMessage na telefonie pozostaje **MANUAL ACTION REQUIRED** przed promocją.
+
+## BW-2026-07-17-001 — Diagnoza lagów cold startu i niezależne ładowanie agentów
+
+- Poprzedni blok pracy zakończył się 2026-07-16 o 21:14 Europe/Warsaw.
+- Dzisiejszy blok rozpoczął się 2026-07-17 o 10:13 Europe/Warsaw; wpis dokumentacyjny i diagnoza zostały rozpoczęte o tej godzinie.
+- Autor zgłosił na demo 5–10 sekund opóźnienia wejścia oraz chwilowe znikanie całego rosteru agentów.
+- Przyczyna: `WorldFallback` ukrywał całą warstwę agentów przez globalny `agentAnimationReady` do czasu załadowania wszystkich sprite’ów albo safety timeoutu 3 s. Jeden wolny/dekodowany asset blokował cały roster.
+- Naprawa demo: warstwa agentów staje się widoczna razem z mapą; każdy sprite pozostaje ukryty wyłącznie do własnego `onLoad`. Usunięto globalne `Promise.all` i timeout 3 s. Nie zmieniono tras, FSM, event pipeline’u, API ani produkcji.
+- Dodano regresję manifestu wymagającą niezależnego settlingu sprite’ów.
+- Walidacja: pełny zestaw **147/147 PASS**, build **PASS**, 874 moduły, 43,34 s; JS `index-CF81z-Ws.js` 423,25 kB / 130,14 kB gzip. Pierwszy build sandboxowy miał EPERM na pliku tymczasowym Vite; rerun poza ograniczeniem przeszedł.
+- Produkcja pozostaje nietknięta. Patch do promocji wymaga osobnego manualnego testu telefonu po świeżym cold start.

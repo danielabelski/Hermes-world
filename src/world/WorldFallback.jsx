@@ -44,7 +44,6 @@ export default function WorldFallback() {
   const [mapLayout, setMapLayout] = useState(getMapLayout)
   const buildingEntries = BUILDING_INTERIOR_IDS.map((buildingId) => resolveBuildingEntry(buildingId, mapLayout)).filter(Boolean)
   const [mapLoaded, setMapLoaded] = useState(false)
-  const [agentAnimationReady, setAgentAnimationReady] = useState(false)
   const [activeInterior, setActiveInterior] = useState(() => {
     const params = new URLSearchParams(window.location.search)
     if (rosterReviewEnabled) return getInteriorReviewEntry(resolveInteriorReviewProfile(params.get('agent'))).buildingId
@@ -82,30 +81,6 @@ export default function WorldFallback() {
     query.addEventListener?.('change', syncLayout)
     return () => query.removeEventListener?.('change', syncLayout)
   }, [])
-  useEffect(() => {
-    if (!mapLoaded) return undefined
-    let cancelled = false
-    const images = Array.from(document.querySelectorAll('.fallback-map-stage .map-agent-sprite__image'))
-    const waits = images.map((image) => {
-      if (image.complete && image.naturalWidth > 0) return Promise.resolve()
-      return new Promise((resolve) => {
-        image.addEventListener('load', resolve, { once: true })
-        image.addEventListener('error', resolve, { once: true })
-      })
-    })
-    const safetyTimer = window.setTimeout(() => {
-      if (!cancelled) setAgentAnimationReady(true)
-    }, 3_000)
-    Promise.all(waits).then(() => {
-      if (cancelled) return
-      window.clearTimeout(safetyTimer)
-      setAgentAnimationReady(true)
-    })
-    return () => {
-      cancelled = true
-      window.clearTimeout(safetyTimer)
-    }
-  }, [mapLoaded])
   useEffect(() => {
     if (!mapLoaded) return undefined
     const warmInteriorCode = () => { loadBuildingInteriorScene().catch(() => undefined) }
@@ -154,7 +129,7 @@ export default function WorldFallback() {
     availableProfiles: presentations.map((model) => model.profileId),
   })
   return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}${activeInterior ? ' has-open-interior' : ''}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-world-life-preset={worldLifePreset.id} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" aria-hidden={activeInterior ? 'true' : undefined} inert={activeInterior ? true : undefined} {...cameraHandlers}>
-    <div ref={stageRef} className={`fallback-map-stage${mapLoaded ? ' is-map-ready' : ' is-map-pending'}${agentAnimationReady ? ' is-agents-ready' : ' is-agents-pending'}`} style={stageStyle} data-map-ready={mapLoaded ? 'true' : 'false'} data-agents-ready={agentAnimationReady ? 'true' : 'false'}>
+    <div ref={stageRef} className={`fallback-map-stage${mapLoaded ? ' is-map-ready is-agents-ready' : ' is-map-pending is-agents-pending'}`} style={stageStyle} data-map-ready={mapLoaded ? 'true' : 'false'} data-agents-ready={mapLoaded ? 'true' : 'false'}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
       {mapLoaded ? <WorldEnvironmentalLife presentation={environment} debug={worldDebug} preset={worldLifePreset} /> : null}
       {mapLoaded ? <HermesInfrastructureLayer layout={mapLayout} /> : null}
@@ -202,7 +177,7 @@ export default function WorldFallback() {
         presentations={groundPresentations}
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
-        animationEnabled={agentAnimationReady}
+        animationEnabled={mapLoaded}
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
@@ -212,7 +187,7 @@ export default function WorldFallback() {
         layer="facade"
         selectedId={selection?.type === 'agent' ? selection.id : null}
         animationNow={presentationNow}
-        animationEnabled={agentAnimationReady}
+        animationEnabled={mapLoaded}
         shouldSuppressSelection={shouldSuppressSelection}
         onSelect={(profileId) => selectEntity('agent', profileId)}
       />
