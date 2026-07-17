@@ -5,11 +5,11 @@
 Patch przygotowany, ale **niezastosowany**. Produkcyjny `main` pozostaje nietknięty.
 
 - Produkcyjna baza: `958b9da08bee9613900e902b3da558aadef826e8`
-- Demo kandydat: `b3e1958` (`fix(build-week): hold agent frame during event transition`)
+- Demo kandydat: `d20fcf4` (`fix(build-week): cache agent frame preloads`)
 - Branch: `build-week/hermes-world`
 - Patch binarny: `20260717_PRODUCTION_CANDIDATE.patch`
-- Rozmiar patcha: `241860` bajtów
-- SHA-256 patcha: `EA9A8605396BE2FC4DC84561A2FB702B3DB55E1ACB148885ED7939EC615CC134`
+- Rozmiar patcha: `243104` bajtów
+- SHA-256 patcha: `59E82715D01B8542F4C7CA7B2CDD96E27FF8EB60AAA71D017A4148037966742F`
 - Produkcyjny listener 4175: bez zmian
 
 ## Zawartość kandydata
@@ -47,6 +47,6 @@ Dokumentacja Build Week nie jest częścią patcha aplikacyjnego. Skrypt `hermes
 
 Do czasu tych kroków patch pozostaje artefaktem audytowym; nie ma zgody na samoczynne wdrożenie.
 
-## Aktualizacja 2026-07-17 14:13 Europe/Warsaw
+## Aktualizacja 2026-07-17 14:55 Europe/Warsaw
 
-Patch wygenerowano ponownie po commitcie `b3e195824303f82e2003cc6c9a07d00fc1bf6d30` (plik został zapisany bezpośrednio przez Git, aby zachować poprawny format binarny). Zawiera mikro-pass eliminujący migawkę sprite’a przy przejściu cyklu. Reverse apply check na branchu demo: **PASS**. Produkcyjny `main` pozostaje nietknięty i czysty; zastosowanie wymaga osobnego GL po manualnym cold start i authenticated worker smoke teście.
+Patch wygenerowano ponownie po commitcie `d20fcf4f3ca2e789128afd568d3c6bc78d8dca8f` (plik został zapisany bezpośrednio przez Git, aby zachować poprawny format binarny). Zawiera mikro-pass eliminujący migawkę sprite’a oraz deduplikowany cache preloadu. Reverse apply check na branchu demo: **PASS**. Produkcyjny `main` pozostaje nietknięty i czysty; zastosowanie wymaga osobnego GL po manualnym cold start i authenticated worker smoke teście.

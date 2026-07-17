@@ -727,3 +727,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Rzeczywisty test LTE autora: **PASS** dla szybkiego wejścia i cyklu; końcowy percepcyjny retest mignięcia po nowym buildzie pozostaje **MANUAL ACTION REQUIRED**.
 - Do następnego authenticated smoke testu dopisano kontrolę: wywołanie konkretnego workera z Hermesa ma pojawić tego samego agenta na mapie i poprowadzić go do zadania, bez fake Working.
 - Produkcja pozostaje nietknięta. Patch do promocji zostanie wygenerowany ponownie po tej zmianie, ale nie zostanie zastosowany bez osobnego GL.
+
+## BW-2026-07-17-003 — Ograniczenie regresji dekodowania klatek agentów
+
+- Czas Europe/Warsaw: 2026-07-17 14:13–14:55; czas UTC: 12:13–12:55.
+- Po pierwszym wdrożeniu hold-frame autor zgłosił lagi i okresowe znikanie agentów jeszcze przed rozpoczęciem cyklu.
+- Diagnoza: preloader tworzył osobny obiekt `Image` przy każdej zmianie klatki; przy 12 agentach i cyklu prezentacji powodowało to powtarzane dekodowanie i presję na mobile.
+- Naprawa demo: współdzielony cache `loadedAgentAssets`/`pendingAgentAssets`; każdy URL klatki jest preładowywany maksymalnie raz, poprzednia klatka pozostaje widoczna do czasu zakończenia preloadu, a cache przeżywa remount pojedynczego sprite’a.
+- Nie zmieniono event pipeline’u, FSM, SSE, API, tras, mapy, telemetrii ani produkcji.
+- Walidacja: pełny zestaw **147/147 PASS**, build **PASS**, 874 moduły, 7,26 s; main JS `index-BiCTeMjE.js` 423,80 kB / 130,37 kB gzip. Root demo HTTP 200.
+- Nowy test LTE/cold start i obserwacja bez cyklu pozostają **MANUAL ACTION REQUIRED**; jeżeli znikanie nadal wystąpi, następny krok to izolacja snapshotu prezentacji, bez dalszego zwiększania preloadu.

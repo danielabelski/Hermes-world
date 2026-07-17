@@ -732,3 +732,13 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Pełny zestaw testów: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
 - Build produkcyjny demo: **PASS**, 874 moduły; `index-j7NL4ctJ.js` 423,46 kB / 130,23 kB gzip; CSS 76,99 kB / 16,62 kB gzip.
 - Manualny cold start LTE i nowy cykl po tej wersji: **MANUAL ACTION REQUIRED** — sprawdzić brak migawki oraz osobno wywołanie konkretnego workera przez Hermesa.
+
+## TEST-BW-050 — Cache preloadu klatek po regresji mobile
+
+- Czas Europe/Warsaw: 2026-07-17 14:13–14:55; UTC: 12:13–12:55.
+- Reprodukcja statyczna przyczyny: **PASS** — wcześniejszy kod tworzył `new Image()` w efekcie zależnym od każdej klatki `src`.
+- Kontrola implementacji cache: **PASS** — pending/loaded maps deduplikują URL-e, a poprzedni `renderedSrc` nie jest czyszczony przed zakończeniem preloadu.
+- Pełny zestaw testów: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
+- Build demo: **PASS**, 874 moduły; `index-BiCTeMjE.js` 423,80 kB / 130,37 kB gzip.
+- Root demo: **PASS HTTP 200**.
+- Manualny cold start LTE bez cyklu i start cyklu: **MANUAL ACTION REQUIRED**.
