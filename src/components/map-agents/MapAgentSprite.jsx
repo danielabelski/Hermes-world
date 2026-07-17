@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
 import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
 import { resolveMapAgentStatusMarker } from '../../world/mapAgentStatusGrammar.js'
@@ -78,6 +78,23 @@ function MapAgentSprite({
   const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
   const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
+  const renderedSrcRef = useRef(src)
+  const [renderedSrc, setRenderedSrc] = useState(src)
+  useEffect(() => {
+    if (src === renderedSrcRef.current) return undefined
+    let active = true
+    const preload = new Image()
+    preload.decoding = 'async'
+    preload.onload = () => {
+      if (!active) return
+      renderedSrcRef.current = src
+      setRenderedSrc(src)
+    }
+    preload.src = src
+    return () => {
+      active = false
+    }
+  }, [src])
   const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
@@ -143,7 +160,7 @@ function MapAgentSprite({
     data-world-y={Number(worldY).toFixed(3)}
     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
     data-lod={lod}
-    data-map-agent-src={src}
+    data-map-agent-src={renderedSrc}
     data-visual-mode="production"
     data-render-surface={renderSurface}
     data-asset-ready={assetReady ? 'true' : 'false'}
@@ -159,7 +176,7 @@ function MapAgentSprite({
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
-      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
+      <img className="map-agent-sprite__image" src={renderedSrc} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}
