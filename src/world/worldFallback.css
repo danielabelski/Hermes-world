@@ -59,12 +59,10 @@
   visibility: hidden;
 }
 
-.fallback-map-stage.is-agents-pending .map-agent-layer {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.fallback-map-stage.is-agents-ready .map-agent-layer {
+/* Agents are independent of the large map plate.  Keep the layer interactive
+   while the plate is loading; each sprite already gates itself on its own
+   asset, so LTE/mobile never blanks the whole population at once. */
+.map-agent-layer {
   opacity: 1;
   transition: opacity 140ms ease-out;
 }
