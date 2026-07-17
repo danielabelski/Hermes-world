@@ -88,14 +88,17 @@
   visibility: visible;
 }
 
-/* Never expose orphan shadows, rings or markers while the first sprite is loading. */
+/* The base image owns first paint. Never hide the whole agent while a mobile
+   browser decodes it: that turns a short decode into a visible disappearance.
+   Only the decorative elements wait for the sprite. */
 .map-agent-sprite.is-asset-pending {
-  opacity: 0;
   pointer-events: none;
 }
 
-.map-agent-sprite.is-asset-ready {
-  opacity: 1;
+.map-agent-sprite.is-asset-pending .map-agent-sprite__shadow,
+.map-agent-sprite.is-asset-pending .map-agent-sprite__state-ring,
+.map-agent-sprite.is-asset-pending .map-agent-sprite__marker {
+  visibility: hidden;
 }
 
 /* The shared presentation clock samples every 120 ms. Finishing the world
