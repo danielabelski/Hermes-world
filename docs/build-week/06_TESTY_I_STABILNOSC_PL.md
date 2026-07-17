@@ -777,3 +777,15 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `npm run validate:world-life` — PASS.
 - `git diff --check` — PASS.
 - `npm run lint` — TIMEOUT po 127 s, bez zgłoszonego błędu; nie oznaczono jako PASS.
+
+## TEST-BW-054 — Rzeczywisty postęp marszu i cykl wiadomości Hermesa
+
+- Czas: 2026-07-18 00:13–00:45 Europe/Warsaw; branch `build-week/hermes-world`; zakres **demo only**.
+- Test przed poprawką: **EXPECTED FAIL** — stan `walking` posiadał `agent.routeProgress`, lecz finalny resolver zwracał `presentation.routeProgress=1` z powodu starego timestampu fixture.
+- Test po poprawce: **PASS 28/28** dla prezentacji i biomechaniki ruchu; finalny resolver wymaga pośredniego postępu po istniejącej trasie.
+- Pełny zestaw: **PASS 151/151**, 7 suites, 0 fail, 0 skipped.
+- `npm run validate:world-life`: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS** przez oficjalny Vite runner po środowiskowym `EPERM` standardowego loadera; 874 moduły, 2,83 s; main JS 424,96 kB / 130,73 kB gzip.
+- Browser DOM: **PASS** — marsz zmienia współrzędne przez co najmniej pięć kolejnych punktów; roster stabilny 12/12 (`10 map + 2 interior`, 0 invalid), `mapReady=true`, `agentsReady=true`.
+- Real message lifecycle: **PASS** — `assigned → thinking → success`, jedna evidence-backed sekwencja, bez fake Working innych agentów.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

@@ -11,6 +11,7 @@ import { getAlertVisual } from './data/worldSignalDefinitions.js';
 
 const MAX_ACTIVITY = 40;
 const CYCLE_PADDING_MS = 5_000;
+const DEFAULT_WALKING_BEAT_MS = 6_000;
 
 const asTime = (value, fallback = Date.now()) => {
   if (Number.isFinite(value)) return Number(value);
@@ -85,16 +86,37 @@ function addAlert(snapshot, { id, severity = 'warning', profile = null, building
   }, ...(snapshot.alerts ?? [])];
 }
 
-function applyTimelineEvent(snapshot, event, at) {
+function walkingBeatDuration(event) {
+  const nextOffset = DEMO_WORLD_TIMELINE.reduce((nearest, candidate) => {
+    if (candidate.profile !== event.profile || candidate.offsetMs <= event.offsetMs) return nearest;
+    return Math.min(nearest, candidate.offsetMs);
+  }, Number.POSITIVE_INFINITY);
+  return Number.isFinite(nextOffset)
+    ? Math.max(1, nextOffset - event.offsetMs)
+    : DEFAULT_WALKING_BEAT_MS;
+}
+
+function applyTimelineEvent(snapshot, event, at, elapsed) {
   const entities = entityIndex(snapshot);
   const agent = event.profile ? entities.agents.get(event.profile) : null;
   const task = event.taskId ? entities.tasks.get(String(event.taskId)) : null;
+  const journeyTask = task ?? (snapshot.tasks ?? []).find((candidate) => (
+    candidate.assignee === event.profile
+    && !['done', 'error', 'cancelled'].includes(String(candidate.status ?? '').toLowerCase())
+  ));
   const building = event.buildingId ? entities.buildings.get(event.buildingId) : null;
 
   if (agent) {
     agent.state = event.state ?? agent.state;
     agent.active = !['idle', 'sleeping'].includes(event.state);
     agent.isActive = agent.active;
+    if (event.state === 'walking') {
+      const duration = walkingBeatDuration(event);
+      agent.routeProgress = Math.max(0, Math.min(0.995, (elapsed - event.offsetMs) / duration));
+      if (journeyTask) journeyTask.transitionStartedAt = new Date(at).toISOString();
+    } else if (event.profile) {
+      delete agent.routeProgress;
+    }
     if (building && ['walking', 'working', 'thinking', 'success'].includes(event.state)) agent.targetPosition = targetForBuilding(building);
   }
   if (building && event.type === 'alert') {
@@ -204,7 +226,7 @@ export function applyWorldSceneScript(baseSnapshot, {
       // Keep completedAt stable after a beat. Otherwise every tick would make
       // a finished task look like a brand-new success forever.
       const eventAt = effectiveNow - (elapsed - event.offsetMs) / multiplier;
-      applyTimelineEvent(snapshot, event, eventAt);
+      applyTimelineEvent(snapshot, event, eventAt, elapsed);
     }
   }
 

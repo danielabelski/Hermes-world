@@ -1039,3 +1039,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Warstwa `mapAgentCrowdLanes` z commita `52527cb` została wycofana, ponieważ przesuwała postacie na dach/fasadę w widoku mobilnym.
 - Przywrócono dokładny wcześniejszy renderer rozmieszczenia; roster, ruch, SSE, FSM i produkcja pozostały nietknięte.
 - Walidacja: 150/150 testów PASS, build PASS, World Life validator PASS.
+
+## Demo scripted walking fix — 2026-07-18 00:45
+
+- Demo-only `WorldSceneScript` no longer lets stale fixture task timestamps pin a scripted walker at the route endpoint.
+- The walking beat now owns a stable start timestamp and continuously advances over the already-approved semantic route. No map coordinates, routes, waypoint definitions, placement profiles, FSM, SSE, API or production files changed.
+- Browser proof: Zwiadowca advanced from `52.539/35.237` to `60.993/31.332` while occupancy stayed 12/12 (`10 map + 2 interior`).
+- A real Hermes message was observed as one evidence-backed `assigned → thinking → success` lifecycle; no unrelated fake Working was emitted.
+- Validation: 151/151 tests PASS; world-life validator PASS; build PASS (874 modules, 424.96 kB / 130.73 kB gzip main JS); `git diff --check` PASS.
+- Production remains frozen. Do not promote without a new explicit GL.

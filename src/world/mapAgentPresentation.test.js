@@ -18,6 +18,7 @@ import { getNumberedRouteNodes, shortRouteNodeLabel } from './routeDebugPresenta
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
 import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
 import { mergeWorldActivityItems } from './worldActivityItems.js'
+import { applyWorldSceneScript } from './WorldSceneScript.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -711,4 +712,28 @@ test('demo observability matrix produces deterministic mobile states without cha
   assert.equal(presentationFor('stuck', 'reviewer').visualState, 'stuck')
   assert.equal(presentationFor('success', 'coder').signalState, 'success')
   assert.equal(presentationFor('offline', 'coder').visualState, 'offline')
+})
+
+test('demo patrol advances the scout along the existing route instead of walking in place', () => {
+  const observedAt = Date.UTC(2026, 6, 18, 12, 0, 0)
+  const base = createWorldSnapshot(getDemoScenario('healthy'), null, () => observedAt, { source: 'demo', connection: 'online' })
+  const snapshot = applyWorldSceneScript(base, {
+    startAt: observedAt,
+    now: observedAt + 3_600,
+    loop: false,
+  })
+  const scout = snapshot.agents.find((agent) => agent.profile === 'prospecting')
+
+  assert.equal(scout.state, 'walking')
+  assert.ok(scout.routeProgress > 0 && scout.routeProgress < 1, `routeProgress=${scout.routeProgress}`)
+  const presentation = resolveMapAgentPresentation({
+    agent: scout,
+    tasks: snapshot.tasks,
+    alerts: snapshot.alerts,
+    lifecycle: snapshot.lifecycle,
+    now: observedAt + 3_600,
+    layout: 'mobile',
+  })
+  assert.equal(presentation.isMoving, true)
+  assert.ok(presentation.routeProgress > 0 && presentation.routeProgress < 1, `presentation.routeProgress=${presentation.routeProgress}`)
 })

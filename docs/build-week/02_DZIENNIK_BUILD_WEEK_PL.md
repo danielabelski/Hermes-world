@@ -768,3 +768,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Wycofano tylko tę ostatnią warstwę i przywrócono dokładny kod renderowania rozmieszczenia sprzed commita `52527cb`; porównanie Git zwróciło `EXACT_PREVIOUS_CODE_RESTORED`.
 - Nie zmieniono mapy, waypointów, routingu, FSM, SSE, API ani kodu produkcyjnego.
 - Walidacja: testy `150/150 PASS`, build `PASS`, World Life validator `PASS`, `git diff --check` `PASS`; pełny lint: `TIMEOUT` bez zgłoszonego błędu.
+
+## BW-2026-07-18-002 — Naprawa marszu w deterministycznym cyklu demo
+
+- Czas Europe/Warsaw: 2026-07-18 00:13–00:45; czas UTC: 2026-07-17 22:13–22:45.
+- Zakres: wyłącznie demo na branchu `build-week/hermes-world`; produkcja `main` pozostała nietknięta.
+- Audyt runtime potwierdził pełny roster: 12 prezentacji, w tym 10 agentów na mapie, 2 we wnętrzach i 0 nieprawidłowych occupancy. Nagłówek `7/12` nadal oznacza liczbę aktywnych agentów.
+- Wykryto konkretną regresję ruchu skryptowego: Zwiadowca miał `walk` i aktywną animację kroków, lecz stałe współrzędne. Przyczyną był stary timestamp zadania z fixture, który miał wyższy priorytet niż postęp bieżącego beatu demo.
+- Naprawa dotyczy wyłącznie `WorldSceneScript`: skrypt wylicza postęp trwającego beatu marszu i nadaje sklonowanemu zadaniu stabilny `transitionStartedAt` równy początkowi tego beatu. Nie zmieniono waypointów, tras, pozycji bazowych, mapy, FSM, SSE, API ani produkcji.
+- Test napisany przed poprawką odtworzył błąd jako `presentation.routeProgress=1`; po poprawce wymaga wartości pośredniej `0 < progress < 1`.
+- Pomiar prawdziwego DOM po świeżym buildzie: Zwiadowca przeszedł kolejno `52.539/35.237 → 54.588/34.236 → 56.666/33.221 → 58.795/32.181 → 60.993/31.332`; roster przez cały pomiar pozostał `10 map + 2 interior`.
+- Prawdziwy cykl wiadomości autora został uchwycony jako `otrzymał zadanie → analizuje → zakończył i przekazuje rezultat`, ze wspólnym rzeczywistym evidence ID. Inni agenci nie otrzymali fake Working.
+- Walidacja: test regresyjny i kontrakt ruchu **28/28 PASS**; pełny zestaw **151/151 PASS**; World Life validator **PASS**; build **PASS**, 874 moduły, 2,83 s, main JS 424,96 kB / 130,73 kB gzip; `git diff --check` **PASS**.
