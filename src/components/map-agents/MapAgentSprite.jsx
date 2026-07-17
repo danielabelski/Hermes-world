@@ -54,7 +54,6 @@ function MapAgentSprite({
   direction = 'se',
   worldX = 50,
   worldY = 50,
-  crowdLaneOffset = { x: 0, y: 0 },
   baseScale = 1,
   selected = false,
   severity = 'none',
@@ -86,6 +85,10 @@ function MapAgentSprite({
   const motionPose = getAgentMotionPose(normalizedState, frameIndex, animationPhase, isMoving, direction)
   const statusMarker = resolveMapAgentStatusMarker({ visualState: normalizedState, severity, signalState })
   const mapTone = renderSurface === 'map' ? profile.mapTone : null
+  const isInLowerCourtyard = Number(worldX) >= 60 && Number(worldY) >= 68
+  const crowdOffset = renderSurface === 'map' && (!isMoving || isInLowerCourtyard)
+    ? profile.stationaryCrowdOffset
+    : { x: 0, y: 0 }
   const markerContentTop = renderSize * (profile.markerContentTopByState[normalizedState] ?? (12 / 128))
   const className = [
     'map-agent-sprite',
@@ -132,8 +135,8 @@ function MapAgentSprite({
       '--agent-edge-color': mapTone?.edgeColor,
       '--map-agent-world-x': `${clamp(Number(worldX) || 0, -10, 110)}cqw`,
       '--map-agent-world-y': `${clamp(Number(worldY) || 0, -10, 110)}cqh`,
-      '--map-agent-lane-x': `${Number(crowdLaneOffset.x) || 0}px`,
-      '--map-agent-lane-y': `${Number(crowdLaneOffset.y) || 0}px`,
+      '--map-agent-crowd-x': `${crowdOffset.x}cqw`,
+      '--map-agent-crowd-y': `${crowdOffset.y}cqh`,
     }}
     data-profile-id={profileId}
     data-behavior-type={profile.behaviorType}
@@ -144,7 +147,7 @@ function MapAgentSprite({
     data-signal-state={signalState}
     data-world-x={Number(worldX).toFixed(3)}
     data-world-y={Number(worldY).toFixed(3)}
-    data-crowd-lane={`${Number(crowdLaneOffset.x) || 0},${Number(crowdLaneOffset.y) || 0}`}
+    data-crowd-offset={`${crowdOffset.x},${crowdOffset.y}`}
     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
     data-lod={lod}
     data-map-agent-src={src}

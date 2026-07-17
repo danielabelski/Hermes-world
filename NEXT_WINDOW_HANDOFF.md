@@ -1033,3 +1033,9 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Final validation: focused 25/25, full 150/150, ESLint, world-life validator, build and 393×700 visual check PASS. Production remains untouched.
 
 ---
+## Korekta 2026-07-18 00:13 — rozmieszczenie agentów
+
+- Nie zmieniać bazowych pozycji, waypointów ani semantic nodes bez wyraźnego polecenia autora.
+- Warstwa `mapAgentCrowdLanes` z commita `52527cb` została wycofana, ponieważ przesuwała postacie na dach/fasadę w widoku mobilnym.
+- Przywrócono dokładny wcześniejszy renderer rozmieszczenia; roster, ruch, SSE, FSM i produkcja pozostały nietknięte.
+- Walidacja: 150/150 testów PASS, build PASS, World Life validator PASS.

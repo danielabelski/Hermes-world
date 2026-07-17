@@ -766,3 +766,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - ESLint: **PASS**. World-life validator: **PASS**. `git diff --check`: **PASS**.
 - Build demo: **PASS**, 875 modułów, 12,50 s; main JS 424,87 kB / 130,69 kB gzip; CSS 77,05 kB / 16,64 kB gzip.
 - Produkcja i jej procesy: **UNCHANGED / NOT TOUCHED**.
+## TEST-BW-053 — Przywrócenie wcześniejszego rozmieszczenia agentów
+
+- Czas: 2026-07-18 00:03–00:13 Europe/Warsaw.
+- Branch: `build-week/hermes-world`.
+- Zakres: wyłącznie demo; produkcja nietknięta.
+- Porównanie z kodem sprzed `52527cb`: `EXACT_PREVIOUS_CODE_RESTORED` — PASS.
+- Testy kontraktowe: `150/150` — PASS.
+- Build Vite: `874 modules`, `13.50 s`, główny bundle `424.46 kB` (`130.58 kB gzip`) — PASS.
+- `npm run validate:world-life` — PASS.
+- `git diff --check` — PASS.
+- `npm run lint` — TIMEOUT po 127 s, bez zgłoszonego błędu; nie oznaczono jako PASS.

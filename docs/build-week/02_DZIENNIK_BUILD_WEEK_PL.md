@@ -760,3 +760,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Po poprawce największe nakładanie pary Zwiadowca–DevOps spadło z 914 px² do 96 px² (2 px styku pionowego); wszystkie trzy sprite’y są osobno widoczne i mają `assetReady=true`.
 - Walidacja: krótszy mobile viewport 393×700 **PASS**, build **PASS** (875 modułów, 12,50 s, main 424,87 kB / 130,69 kB gzip), pełne testy **150/150 PASS**, ESLint **PASS**, world-life validator **PASS**, `git diff --check` **PASS**.
 - Zakres pozostał demo-only. Produkcja, SSE, FSM, API, `server.js`, mapowanie telemetrii i procesy 24/7 nie zostały dotknięte.
+## BW-2026-07-18-001 — Wycofanie niezatwierdzonej korekty ekranowego rozmieszczenia
+
+- Czas Europe/Warsaw: 2026-07-18 00:03–00:13; czas UTC: 2026-07-17 22:03–22:13.
+- Autor wskazał na screenie mobilnym, że po korekcie separacji tłumu dwie postacie zostały przesunięte na dach/fasadę.
+- Ustalono, że źródłem regresji była wyłącznie nowa prezentacyjna warstwa `mapAgentCrowdLanes`, a nie waypointy, trasy ani semantic nodes.
+- Wycofano tylko tę ostatnią warstwę i przywrócono dokładny kod renderowania rozmieszczenia sprzed commita `52527cb`; porównanie Git zwróciło `EXACT_PREVIOUS_CODE_RESTORED`.
+- Nie zmieniono mapy, waypointów, routingu, FSM, SSE, API ani kodu produkcyjnego.
+- Walidacja: testy `150/150 PASS`, build `PASS`, World Life validator `PASS`, `git diff --check` `PASS`; pełny lint: `TIMEOUT` bez zgłoszonego błędu.
