@@ -1,32 +1,8 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useState } from 'react'
 import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
 import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
 import { resolveMapAgentStatusMarker } from '../../world/mapAgentStatusGrammar.js'
 import './MapAgentSprite.css'
-
-const loadedAgentAssets = new Set()
-const pendingAgentAssets = new Map()
-
-function preloadMapAgentAsset(src) {
-  if (loadedAgentAssets.has(src)) return Promise.resolve()
-  if (pendingAgentAssets.has(src)) return pendingAgentAssets.get(src)
-  const promise = new Promise((resolve, reject) => {
-    const preload = new Image()
-    preload.decoding = 'async'
-    preload.onload = () => {
-      loadedAgentAssets.add(src)
-      pendingAgentAssets.delete(src)
-      resolve()
-    }
-    preload.onerror = (error) => {
-      pendingAgentAssets.delete(src)
-      reject(error)
-    }
-    preload.src = src
-  })
-  pendingAgentAssets.set(src, promise)
-  return promise
-}
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
 function getMapAgentZIndex(worldY) {
@@ -97,25 +73,11 @@ function MapAgentSprite({
   fetchPriority = 'auto',
   renderSurface = 'map',
 }) {
+  const [assetReady, setAssetReady] = useState(false)
   const profile = getMapAgentProfile(profileId)
   const set = getMapAgentSpriteSet(profile.spriteProfile)
   const normalizedState = set.frames[visualState] ? visualState : 'idle'
   const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
-  const [assetReady, setAssetReady] = useState(() => loadedAgentAssets.has(src))
-  const renderedSrcRef = useRef(src)
-  const [renderedSrc, setRenderedSrc] = useState(src)
-  useEffect(() => {
-    if (src === renderedSrcRef.current) return undefined
-    let active = true
-    preloadMapAgentAsset(src).then(() => {
-      if (!active) return
-      renderedSrcRef.current = src
-      setRenderedSrc(src)
-    }).catch(() => undefined)
-    return () => {
-      active = false
-    }
-  }, [src])
   const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
   const anchoredHeight = renderSize * set.canvas.footAnchorY
   const transparentTail = renderSize - anchoredHeight
@@ -181,7 +143,7 @@ function MapAgentSprite({
     data-world-y={Number(worldY).toFixed(3)}
     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
     data-lod={lod}
-    data-map-agent-src={renderedSrc}
+    data-map-agent-src={src}
     data-visual-mode="production"
     data-render-surface={renderSurface}
     data-asset-ready={assetReady ? 'true' : 'false'}
@@ -197,7 +159,7 @@ function MapAgentSprite({
     <span className="map-agent-sprite__shadow" aria-hidden="true" />
     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
     <span className="map-agent-sprite__motion" aria-hidden="true">
-      <img className="map-agent-sprite__image" src={renderedSrc} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => { loadedAgentAssets.add(renderedSrc); setAssetReady(true) }} />
+      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
     </span>
     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}
