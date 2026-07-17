@@ -1024,4 +1024,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 3. Treat `7/12` as active count; use the verified 10 map + 2 interior occupancy when checking missing agents.
 4. Any future production promotion must be a reviewed selective patch with a fresh GL; do not add opportunistic production fixes.
 
+### Mobile Safari correction after the checkpoint
+
+- A real phone screenshot exposed a three-agent collision not reproduced by the full-height 393×852 viewport. The short Safari viewport 393×700 is now an explicit regression target.
+- The fixed `stationaryCrowdOffset` approach was rejected and removed. It moved agents even when no collision existed and could place Herold on a facade.
+- `mapAgentCrowdLanes.js` now applies small pixel-only lane offsets only while Zwiadowca, DevOps and Herold form a lower-courtyard cluster. Logical routes and coordinates remain frozen.
+- Measured Zwiadowca/DevOps overlap fell from 914 px² to 96 px²; the remaining contact is 2 px high and all three silhouettes are independently readable.
+- Final validation: focused 25/25, full 150/150, ESLint, world-life validator, build and 393×700 visual check PASS. Production remains untouched.
+
 ---

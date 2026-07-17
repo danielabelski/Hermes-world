@@ -23,7 +23,7 @@
   appearance: none;
   background: none;
   color: inherit;
-  transform: translate3d(var(--map-agent-world-x), var(--map-agent-world-y), 0) translate(var(--map-agent-crowd-x, 0cqw), var(--map-agent-crowd-y, 0cqh)) translate(-50%, -100%) translateY(var(--map-agent-anchor-y-offset, 0px));
+  transform: translate3d(var(--map-agent-world-x), var(--map-agent-world-y), 0) translate(var(--map-agent-lane-x, 0px), var(--map-agent-lane-y, 0px)) translate(-50%, -100%) translateY(var(--map-agent-anchor-y-offset, 0px));
   transform-origin: 50% 100%;
   cursor: pointer;
   pointer-events: auto;

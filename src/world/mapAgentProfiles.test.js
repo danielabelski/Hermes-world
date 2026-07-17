@@ -4,6 +4,7 @@ import { AGENT_DEFINITIONS } from './data/agentDefinitions.js'
 import { getMapAgentSpriteSet } from './data/mapAgentManifest.js'
 import { MAP_AGENT_FALLBACK_IDS, MAP_AGENT_PROFILE_IDS, MAP_AGENT_PROFILES, getMapAgentProfile } from './data/mapAgentProfiles.js'
 import { resolveMapAgentPresentations, summarizeMapAgentOccupancy } from './mapAgentPresentation.js'
+import { resolveMapAgentCrowdLaneOffset } from './mapAgentCrowdLanes.js'
 
 test('map agent config explicitly covers the canonical twelve profiles', () => {
   assert.equal(MAP_AGENT_PROFILE_IDS.length, 12)
@@ -21,8 +22,6 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(profile.mapTone.contrast >= 0.95 && profile.mapTone.contrast <= 1.1)
     assert.ok(profile.mapTone.brightness >= 0.95 && profile.mapTone.brightness <= 1.1)
     assert.ok(profile.shadowScale >= 0.7 && profile.shadowScale <= 1)
-    assert.ok(Math.abs(profile.stationaryCrowdOffset.x) <= 4.5)
-    assert.ok(Math.abs(profile.stationaryCrowdOffset.y) <= 2.5)
     assert.ok(profile.movementSpeed > 0.7 && profile.movementSpeed <= 1.1)
     assert.ok(profile.homeNode.desktop && profile.homeNode.mobile)
     assert.ok(profile.workNode.desktop && profile.workNode.mobile)
@@ -42,18 +41,26 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
   }
 })
 
-test('stationary crowd spacing separates the lower courtyard without changing logical routes', () => {
-  assert.deepEqual(getMapAgentProfile('outreach').stationaryCrowdOffset, { x: 4.2, y: -2.4 })
-  assert.deepEqual(getMapAgentProfile('devops').stationaryCrowdOffset, { x: -2.8, y: 2.4 })
-  assert.deepEqual(getMapAgentProfile('prospecting').stationaryCrowdOffset, { x: 0, y: 0 })
-})
-
 test('map visibility correction lifts the Kowal without changing shared sprite normalization', () => {
   const coder = getMapAgentProfile('coder')
   const researcher = getMapAgentProfile('researcher')
   assert.equal(coder.renderScale, 0.84)
   assert.equal(coder.mapVisibilityScale, 1.1)
   assert.equal(researcher.mapVisibilityScale, 1.03)
+})
+
+test('lower courtyard lanes separate a real cluster without changing isolated route positions', () => {
+  const cluster = [
+    { profileId: 'prospecting', worldX: 65.5, worldY: 71.2 },
+    { profileId: 'outreach', worldX: 72, worldY: 73 },
+    { profileId: 'devops', worldX: 65, worldY: 74 },
+  ]
+  assert.deepEqual(resolveMapAgentCrowdLaneOffset(cluster[0], cluster), { x: -10, y: -8 })
+  assert.deepEqual(resolveMapAgentCrowdLaneOffset(cluster[1], cluster), { x: 4, y: -8 })
+  assert.deepEqual(resolveMapAgentCrowdLaneOffset(cluster[2], cluster), { x: -8, y: 12 })
+  assert.deepEqual(resolveMapAgentCrowdLaneOffset(cluster[0], [cluster[0]]), { x: 0, y: 0 })
+  assert.equal(cluster[0].worldX, 65.5)
+  assert.equal(cluster[0].worldY, 71.2)
 })
 
 test('all twelve agents stay at valid interaction points while interior workers hide only beyond the threshold', () => {

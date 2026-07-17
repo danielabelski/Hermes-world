@@ -750,3 +750,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja mobilna 393×852: **12/12**, 10 na mapie, 2 we wnętrzach, 0 invalid, 10/10 asset-ready, 0 istotnych kolizji prostokątów. Próbka ruchu 12 s: 19 próbek ruchu, 3,926 jednostki świata, największy krok 0,411 — brak teleportu. Desktop 1366×768: ten sam bilans 12/12. Konsola: 0 błędów i 0 ostrzeżeń.
 - Testy końcowe: **150/150 PASS**; ESLint **PASS**; world-life validator **PASS**; build **PASS**, 874 moduły, 22,95 s, main JS 424,46 kB / 130,58 kB gzip. `git diff --check`: **PASS**.
 - Nie wykonywano zmian produkcyjnych, backendowych, API, `server.js`, Tailscale, portów ani mapowania telemetrii. Nagłówek `7/12` pozostaje semantycznie licznikiem aktywnych, a nie liczbą renderowanych postaci.
+
+## BW-2026-07-17-005 — Korekta błędnej separacji agentów po realnym screenie Safari
+
+- Czas Europe/Warsaw: 2026-07-17 19:19–19:44; UTC: 17:19–17:44. Autor dostarczył screen z telefonu pokazujący rozbite/nakładające się prezentacje przy prawym dolnym budynku.
+- Korekta dowodowa do wpisu BW-2026-07-17-004: wcześniejsza walidacja pełnego viewportu 393×852 nie odtworzyła krótszej powierzchni roboczej Safari z widocznym paskiem adresu. Na 393×700 zmierzono klaster Zwiadowca–DevOps–Herold; największe nakładanie Zwiadowca–DevOps wynosiło 914 px².
+- Pierwszy stały mechanizm `stationaryCrowdOffset` został uznany za wadliwy i usunięty: przesuwał Herolda na fasadę oraz działał także poza faktyczną kolizją.
+- Zastąpiono go deterministycznym, ekranowym torem mijania aktywowanym wyłącznie, gdy właściwe role rzeczywiście tworzą klaster w dolnym dziedzińcu. Offset istnieje tylko w rendererze, ma jednostki px i znika po rozdzieleniu agentów. Współrzędne świata, foot anchory, waypointy i trasy pozostają niezmienione.
+- Po poprawce największe nakładanie pary Zwiadowca–DevOps spadło z 914 px² do 96 px² (2 px styku pionowego); wszystkie trzy sprite’y są osobno widoczne i mają `assetReady=true`.
+- Walidacja: krótszy mobile viewport 393×700 **PASS**, build **PASS** (875 modułów, 12,50 s, main 424,87 kB / 130,69 kB gzip), pełne testy **150/150 PASS**, ESLint **PASS**, world-life validator **PASS**, `git diff --check` **PASS**.
+- Zakres pozostał demo-only. Produkcja, SSE, FSM, API, `server.js`, mapowanie telemetrii i procesy 24/7 nie zostały dotknięte.

@@ -755,3 +755,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Konsola przeglądarki: **PASS**, 0 errors, 0 warnings. Kasztelan: **PASS**, widoczny przed fasadą przy zachowaniu logicznego foot anchoru. Dolny dziedziniec: **PASS**, brak stałego nakładania ról.
 - Produkcja: **PASS / UNCHANGED** — `main` nadal wskazuje `958b9da08bee9613900e902b3da558aadef826e8`, working tree bez zmian. Nie uruchamiano promocji ani modyfikacji procesu produkcyjnego.
 - Ograniczenie: test przeglądarkowy potwierdza prezentację i ciągłość ruchu na istniejącym demo; pełny authenticated Hermes message E2E z telefonu pozostaje osobnym manualnym gate'em przed przyszłą promocją.
+
+## TEST-BW-052 — Krótki viewport Safari i kolizje dolnego dziedzińca
+
+- Czas Europe/Warsaw: 2026-07-17 19:19–19:44; branch `build-week/hermes-world`; zakres **demo only**.
+- Reprodukcja 393×700: **PASS** — przed poprawką Zwiadowca/DevOps 914 px² overlap, Herold/DevOps 572 px², Zwiadowca/Herold 569 px².
+- Po warunkowych torach mijania: **PASS** — odpowiednio 96 px², 66 px² i 134 px²; największe pozostałe przecięcie pary krytycznej ma tylko 2 px wysokości. Wszystkie sprite’y `assetReady=true`.
+- Kontrakt izolacji: **PASS** — samotny agent otrzymuje offset 0/0; model wejściowy zachowuje dokładne `worldX/worldY`; tory dotyczą wyłącznie prezentacji klastra.
+- Focused tests: **PASS 25/25**. Pełne testy: **PASS 150/150**, 7 suites, 0 fail, 0 skipped.
+- ESLint: **PASS**. World-life validator: **PASS**. `git diff --check`: **PASS**.
+- Build demo: **PASS**, 875 modułów, 12,50 s; main JS 424,87 kB / 130,69 kB gzip; CSS 77,05 kB / 16,64 kB gzip.
+- Produkcja i jej procesy: **UNCHANGED / NOT TOUCHED**.

@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { assertMapAgentManifestSeparation } from '../../world/data/mapAgentManifest.js'
 import MapAgentSprite from './MapAgentSprite.jsx'
 import { getMapAgentLod, selectMapAgentRenderSet } from '../../world/mapAgentRenderPolicy.js'
+import { resolveMapAgentCrowdLaneOffset } from '../../world/mapAgentCrowdLanes.js'
 
 assertMapAgentManifestSeparation()
 
@@ -35,6 +36,7 @@ function MapAgentLayer({
     aria-label="Agenci na mapie"
   >
     {sorted.map((model, index) => {
+      const crowdLaneOffset = resolveMapAgentCrowdLaneOffset(model, sorted)
       const cycleMs = model.walkCycleMs ?? (model.profileId === 'coder' ? 720 : model.profileId === 'prospecting' ? 520 : 620)
       const stagger = index * 43
       const frameIndex = animationEnabled
@@ -52,6 +54,7 @@ function MapAgentLayer({
         direction={model.direction}
         worldX={model.worldX}
         worldY={model.worldY}
+        crowdLaneOffset={crowdLaneOffset}
         baseScale={model.baseScale}
         selected={selectedId === model.profileId}
         severity={model.severity}
