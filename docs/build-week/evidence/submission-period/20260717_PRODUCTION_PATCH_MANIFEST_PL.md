@@ -5,9 +5,11 @@
 Patch przygotowany, ale **niezastosowany**. Produkcyjny `main` pozostaje nietknięty.
 
 - Produkcyjna baza: `958b9da08bee9613900e902b3da558aadef826e8`
-- Demo kandydat: `10439dd` (`fix(build-week): reveal agents without cold-start gate`)
+- Demo kandydat: `b3e1958` (`fix(build-week): hold agent frame during event transition`)
 - Branch: `build-week/hermes-world`
 - Patch binarny: `20260717_PRODUCTION_CANDIDATE.patch`
+- Rozmiar patcha: `245714` bajtów
+- SHA-256 patcha: `4F4ED57A3DC0BA9E16234E7D84F3A0A472E081953615F79BAF554FD7B812C9F0`
 - Produkcyjny listener 4175: bez zmian
 
 ## Zawartość kandydata
@@ -18,8 +20,9 @@ Kandydat został wygenerowany jako różnica `main..HEAD` dla kodu aplikacji, as
 2. aktualny kontrakt `useWorldBridge` dla demo i live SSE;
 3. korektę cold startu: agenci nie są globalnie ukrywani do czasu załadowania wszystkich sprite’ów;
 4. test regresyjny niezależnego ładowania sprite’ów;
-5. zatwierdzone poprawki wnętrz, agentów, telemetrycznego świata i warstw środowiskowych obecne na branchu demo;
-6. testy i skrypty pomocnicze związane z Build Week.
+5. mikro-pass stabilnej klatki: poprzedni sprite pozostaje widoczny do czasu preładowania i dekodowania nowej klatki;
+6. zatwierdzone poprawki wnętrz, agentów, telemetrycznego świata i warstw środowiskowych obecne na branchu demo;
+7. testy i skrypty pomocnicze związane z Build Week.
 
 Dokumentacja Build Week nie jest częścią patcha aplikacyjnego. Skrypt `hermes-gateway-world-adapter.py` wymaga osobnego, kontrolowanego uruchomienia na hoście produkcyjnym dopiero po manualnym GL.
 
@@ -30,6 +33,7 @@ Dokumentacja Build Week nie jest częścią patcha aplikacyjnego. Skrypt `hermes
 - Realny E2E state.db → hub → SSE: PASS na demo.
 - Cold start regression: PASS automatycznie.
 - Manualny test 393×852 po świeżym wejściu i nowej wiadomości WSL/iMessage: **REQUIRED**.
+- Manualny test konkretnego workera wywołanego przez Hermesa: **REQUIRED** — potwierdzić, że właściwy agent pojawia się na mapie i idzie do zadania bez fake Working.
 - Produkcja po zastosowaniu patcha: niezweryfikowana i dlatego patch nie może być jeszcze wdrożony.
 
 ## Procedura zastosowania po GL
@@ -42,3 +46,7 @@ Dokumentacja Build Week nie jest częścią patcha aplikacyjnego. Skrypt `hermes
 6. Wykonać manualny test LTE, cold start, SSE, agentów i wejść do budynków.
 
 Do czasu tych kroków patch pozostaje artefaktem audytowym; nie ma zgody na samoczynne wdrożenie.
+
+## Aktualizacja 2026-07-17 14:13 Europe/Warsaw
+
+Patch wygenerowano ponownie po commitcie `b3e195824303f82e2003cc6c9a07d00fc1bf6d30`. Zawiera mikro-pass eliminujący migawkę sprite’a przy przejściu cyklu. Produkcyjny `main` pozostaje nietknięty i czysty; zastosowanie wymaga osobnego GL po manualnym cold start i authenticated worker smoke teście.

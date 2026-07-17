@@ -715,3 +715,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Dodano regresję manifestu wymagającą niezależnego settlingu sprite’ów.
 - Walidacja: pełny zestaw **147/147 PASS**, build **PASS**, 874 moduły, 43,34 s; JS `index-CF81z-Ws.js` 423,25 kB / 130,14 kB gzip. Pierwszy build sandboxowy miał EPERM na pliku tymczasowym Vite; rerun poza ograniczeniem przeszedł.
 - Produkcja pozostaje nietknięta. Patch do promocji wymaga osobnego manualnego testu telefonu po świeżym cold start.
+
+## BW-2026-07-17-002 — Eliminacja migawki klatek przy starcie cyklu
+
+- Czas Europe/Warsaw: 2026-07-17 14:07–14:13; czas UTC: 12:07–12:13.
+- Autor potwierdził, że demo po LTE ładuje się natychmiast i cykl działa; zgłosił jednak około półsekundowe mignięcie agentów przy zmianie stanu na początku cyklu.
+- Przyczyna: przy zmianie `src` klatki `<img>` przeglądarka mogła chwilowo wymienić poprzedni obraz przed zakończeniem dekodowania nowego.
+- Naprawa demo: `MapAgentSprite` preładuje nową klatkę przez `Image` i utrzymuje poprzedni `renderedSrc` do czasu `onload`; nie zmieniono FSM, SSE, API, tras, skali, mapy ani produkcji.
+- Dodano regresję kontraktową wymagającą preloadera i renderowania stabilnej klatki.
+- Walidacja: pełny zestaw **147/147 PASS**, build **PASS**, 874 moduły, 19,85 s; main JS `index-j7NL4ctJ.js` 423,46 kB / 130,23 kB gzip.
+- Rzeczywisty test LTE autora: **PASS** dla szybkiego wejścia i cyklu; końcowy percepcyjny retest mignięcia po nowym buildzie pozostaje **MANUAL ACTION REQUIRED**.
+- Do następnego authenticated smoke testu dopisano kontrolę: wywołanie konkretnego workera z Hermesa ma pojawić tego samego agenta na mapie i poprowadzić go do zadania, bez fake Working.
+- Produkcja pozostaje nietknięta. Patch do promocji zostanie wygenerowany ponownie po tej zmianie, ale nie zostanie zastosowany bez osobnego GL.

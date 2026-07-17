@@ -723,3 +723,12 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Pełny zestaw: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
 - Build: **PASS**, 874 moduły, 43,34 s; `index-CF81z-Ws.js` 423,25 kB / 130,14 kB gzip.
 - Zakres: **demo only**. Manualny cold start na 393×852 i test nowej wiadomości WSL/iMessage pozostają **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-049 — Stabilna klatka agenta podczas startu cyklu
+
+- Czas Europe/Warsaw: 2026-07-17 14:07–14:13; UTC: 12:07–12:13.
+- Zakres: **PASS — demo only**; produkcja niezmieniona.
+- Test kontraktowy preloadera: **PASS** — nowa klatka jest przygotowywana poza renderem, a poprzednia pozostaje widoczna do czasu zakończenia dekodowania.
+- Pełny zestaw testów: **PASS 147/147**, 7 suites, 0 fail, 0 skipped.
+- Build produkcyjny demo: **PASS**, 874 moduły; `index-j7NL4ctJ.js` 423,46 kB / 130,23 kB gzip; CSS 76,99 kB / 16,62 kB gzip.
+- Manualny cold start LTE i nowy cykl po tej wersji: **MANUAL ACTION REQUIRED** — sprawdzić brak migawki oraz osobno wywołanie konkretnego workera przez Hermesa.

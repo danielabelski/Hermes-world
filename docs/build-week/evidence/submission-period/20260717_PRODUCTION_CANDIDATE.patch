@@ -1,4 +1,4 @@
-diff --git a/package.json b/package.json
+﻿diff --git a/package.json b/package.json
 index a46fcb4..2ed9597 100644
 --- a/package.json
 +++ b/package.json
@@ -2750,6 +2750,58 @@ index 0994c41..9c60ce9 100644
  }
  
  .map-agent-sprite.is-inside {
+diff --git a/src/components/map-agents/MapAgentSprite.jsx b/src/components/map-agents/MapAgentSprite.jsx
+index 44e80cb..abc373d 100644
+--- a/src/components/map-agents/MapAgentSprite.jsx
++++ b/src/components/map-agents/MapAgentSprite.jsx
+@@ -1,4 +1,4 @@
+-import { memo, useState } from 'react'
++import { memo, useEffect, useRef, useState } from 'react'
+ import { assertMapAgentAssetUrl, getMapAgentFrame, getMapAgentSpriteSet } from '../../world/data/mapAgentManifest.js'
+ import { getMapAgentProfile } from '../../world/data/mapAgentProfiles.js'
+ import { resolveMapAgentStatusMarker } from '../../world/mapAgentStatusGrammar.js'
+@@ -78,6 +78,23 @@ function MapAgentSprite({
+   const set = getMapAgentSpriteSet(profile.spriteProfile)
+   const normalizedState = set.frames[visualState] ? visualState : 'idle'
+   const src = assertMapAgentAssetUrl(getMapAgentFrame(profile.spriteProfile, normalizedState, frameIndex), `MapAgentSprite.${profileId}`)
++  const renderedSrcRef = useRef(src)
++  const [renderedSrc, setRenderedSrc] = useState(src)
++  useEffect(() => {
++    if (src === renderedSrcRef.current) return undefined
++    let active = true
++    const preload = new Image()
++    preload.decoding = 'async'
++    preload.onload = () => {
++      if (!active) return
++      renderedSrcRef.current = src
++      setRenderedSrc(src)
++    }
++    preload.src = src
++    return () => {
++      active = false
++    }
++  }, [src])
+   const renderSize = set.renderHeight * set.scale * profile.renderScale * clamp(Number(baseScale) || 1, 0.65, 1.45)
+   const anchoredHeight = renderSize * set.canvas.footAnchorY
+   const transparentTail = renderSize - anchoredHeight
+@@ -143,7 +160,7 @@ function MapAgentSprite({
+     data-world-y={Number(worldY).toFixed(3)}
+     data-foot-anchor={`${set.canvas.footAnchorX},${set.canvas.footAnchorY}`}
+     data-lod={lod}
+-    data-map-agent-src={src}
++    data-map-agent-src={renderedSrc}
+     data-visual-mode="production"
+     data-render-surface={renderSurface}
+     data-asset-ready={assetReady ? 'true' : 'false'}
+@@ -159,7 +176,7 @@ function MapAgentSprite({
+     <span className="map-agent-sprite__shadow" aria-hidden="true" />
+     <span className="map-agent-sprite__state-ring" aria-hidden="true" />
+     <span className="map-agent-sprite__motion" aria-hidden="true">
+-      <img className="map-agent-sprite__image" src={src} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
++      <img className="map-agent-sprite__image" src={renderedSrc} alt="" draggable={false} loading="eager" decoding="async" fetchPriority={fetchPriority} onLoad={() => setAssetReady(true)} />
+       {carryPackage ? <span className="map-agent-sprite__package" /> : null}
+     </span>
+     {statusMarker ? <span className={`map-agent-sprite__marker marker-${statusMarker.tone}`} aria-hidden="true">{statusMarker.symbol}</span> : null}
 diff --git a/src/components/world-directors/PersistentWorldLifeLayer.jsx b/src/components/world-directors/PersistentWorldLifeLayer.jsx
 index d6a244e..cf24d6e 100644
 --- a/src/components/world-directors/PersistentWorldLifeLayer.jsx
@@ -3471,10 +3523,10 @@ index ff9d733..f473db5 100644
    })
  
 diff --git a/src/world/mapAgentManifest.test.js b/src/world/mapAgentManifest.test.js
-index 27c7674..55e42fb 100644
+index 27c7674..bb72197 100644
 --- a/src/world/mapAgentManifest.test.js
 +++ b/src/world/mapAgentManifest.test.js
-@@ -59,7 +59,7 @@ test('role visibility survives working state while offline remains an explicit o
+@@ -59,14 +59,20 @@ test('role visibility survives working state while offline remains an explicit o
    assert.match(css, /\.map-agent-sprite\.is-offline\s+\.map-agent-sprite__image\s*\{[^}]*filter:/s)
  })
  
@@ -3483,7 +3535,13 @@ index 27c7674..55e42fb 100644
    const sprite = readFileSync(path.join(PROJECT_ROOT, 'src/components/map-agents/MapAgentSprite.jsx'), 'utf8')
    const spriteCss = readFileSync(path.join(PROJECT_ROOT, 'src/components/map-agents/MapAgentSprite.css'), 'utf8')
    const fallback = readFileSync(path.join(PROJECT_ROOT, 'src/world/WorldFallback.jsx'), 'utf8')
-@@ -69,4 +69,6 @@ test('cold start hides orphan agent chrome until the map and initial sprites are
+   assert.match(sprite, /is-asset-pending/)
+   assert.match(sprite, /onLoad=\{\(\) => setAssetReady\(true\)\}/)
++  assert.match(sprite, /renderedSrcRef = useRef\(src\)/)
++  assert.match(sprite, /const preload = new Image\(\)/)
++  assert.match(sprite, /preload\.onload = \(\) =>/)
++  assert.match(sprite, /src=\{renderedSrc\}/)
+   assert.match(spriteCss, /\.map-agent-sprite\.is-asset-pending\s*\{[^}]*opacity:\s*0/s)
    assert.match(fallback, /data-map-ready=/)
    assert.match(fallback, /data-agents-ready=/)
    assert.match(fallback, /mapLoaded \? <WorldEnvironmentalLife/)
