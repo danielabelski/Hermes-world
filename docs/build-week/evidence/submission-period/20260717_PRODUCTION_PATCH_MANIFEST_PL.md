@@ -8,8 +8,8 @@ Patch przygotowany, ale **niezastosowany**. Produkcyjny `main` pozostaje nietkni
 - Demo kandydat: `b3e1958` (`fix(build-week): hold agent frame during event transition`)
 - Branch: `build-week/hermes-world`
 - Patch binarny: `20260717_PRODUCTION_CANDIDATE.patch`
-- Rozmiar patcha: `245714` bajtów
-- SHA-256 patcha: `4F4ED57A3DC0BA9E16234E7D84F3A0A472E081953615F79BAF554FD7B812C9F0`
+- Rozmiar patcha: `241860` bajtów
+- SHA-256 patcha: `EA9A8605396BE2FC4DC84561A2FB702B3DB55E1ACB148885ED7939EC615CC134`
 - Produkcyjny listener 4175: bez zmian
 
 ## Zawartość kandydata
@@ -49,4 +49,4 @@ Do czasu tych kroków patch pozostaje artefaktem audytowym; nie ma zgody na samo
 
 ## Aktualizacja 2026-07-17 14:13 Europe/Warsaw
 
-Patch wygenerowano ponownie po commitcie `b3e195824303f82e2003cc6c9a07d00fc1bf6d30`. Zawiera mikro-pass eliminujący migawkę sprite’a przy przejściu cyklu. Produkcyjny `main` pozostaje nietknięty i czysty; zastosowanie wymaga osobnego GL po manualnym cold start i authenticated worker smoke teście.
+Patch wygenerowano ponownie po commitcie `b3e195824303f82e2003cc6c9a07d00fc1bf6d30` (plik został zapisany bezpośrednio przez Git, aby zachować poprawny format binarny). Zawiera mikro-pass eliminujący migawkę sprite’a przy przejściu cyklu. Reverse apply check na branchu demo: **PASS**. Produkcyjny `main` pozostaje nietknięty i czysty; zastosowanie wymaga osobnego GL po manualnym cold start i authenticated worker smoke teście.
