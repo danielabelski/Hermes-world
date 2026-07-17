@@ -55,6 +55,8 @@
 }
 
 .map-agent-sprite__image {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -71,6 +73,19 @@
     drop-shadow(0 1px 1px rgb(3 8 8 / .38))
     drop-shadow(0 0 var(--agent-edge-radius, 0) var(--agent-edge-color, transparent));
   pointer-events: none;
+}
+
+/* Keep the already decoded idle frame under every state transition. The next
+   frame is revealed only after its own load event, so Safari never paints an
+   empty agent while swapping image sources. */
+.map-agent-sprite__image--target {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.map-agent-sprite__image--target.is-frame-ready {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Never expose orphan shadows, rings or markers while the first sprite is loading. */
