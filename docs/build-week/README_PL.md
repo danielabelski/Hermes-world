@@ -2,6 +2,8 @@
 
 Ten katalog dokumentuje stan historyczny, pracę konkursową, decyzje, testy, sesje Codexa i dowody. Nie jest finalnym README, pitch deckiem ani materiałem jurorskim. Granica czasu: **13 lipca 2026, 18:00 Europe/Warsaw**.
 
+Aktualny techniczny checkpoint i dokładne instrukcje wznowienia znajdują się w [NEXT_WINDOW_HANDOFF.md](../../NEXT_WINDOW_HANDOFF.md). Dziennik, rejestr sesji i wyniki testów pozostają źródłem chronologicznym; handoff jest ich bieżącym skrótem operacyjnym.
+
 ## Nawigacja
 
 | Dokument | Funkcja |

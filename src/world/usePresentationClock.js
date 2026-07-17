@@ -11,6 +11,11 @@ function emit() {
   subscribers.forEach((subscriber) => subscriber())
 }
 
+/** Align an evidence-backed event with the next painted presentation frame. */
+export function requestPresentationClockTick() {
+  emit()
+}
+
 function stopClock() {
   if (timer !== null) window.clearInterval(timer)
   timer = null

@@ -9,7 +9,7 @@ import RouteDebugOverlay from '../components/map-agents/RouteDebugOverlay.jsx'
 import MapForegroundOcclusion from '../components/map-agents/MapForegroundOcclusion.jsx'
 import { useDomWorldCamera } from './useDomWorldCamera.js'
 import { usePresentationClock } from './usePresentationClock.js'
-import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
+import { resolveMapAgentPresentations, summarizeMapAgentOccupancy } from './mapAgentPresentation.js'
 import { getMapVariant } from './mapReadabilityMode.js'
 import { resolveRouteDebugConfig } from './routeDebugConfig.js'
 import { useWorldDirectors } from './directors/useWorldDirectors.js'
@@ -122,13 +122,14 @@ export default function WorldFallback() {
     telemetry: { system, activityItems, tokenRiver, tasks, crons }, visualDebug: worldDebug === 'visual',
   })
   const presentations = applyWorldDirectorPresentation(operationalPresentations, directors)
+  const agentOccupancy = summarizeMapAgentOccupancy(presentations)
   const groundPresentations = presentations.filter((model) => model.occupancyMode !== 'facade-front')
   const facadePresentations = presentations.filter((model) => model.occupancyMode === 'facade-front')
   const routeDebug = resolveRouteDebugConfig(typeof window === 'undefined' ? '' : window.location.search, {
     forceEnabled: import.meta.env.VITE_ROUTE_DEBUG === 'true',
     availableProfiles: presentations.map((model) => model.profileId),
   })
-  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}${activeInterior ? ' has-open-interior' : ''}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-world-life-preset={worldLifePreset.id} data-connection={lifecycle.connection ?? 'unknown'} aria-label="Żywy świat agentów Hermes OS" aria-hidden={activeInterior ? 'true' : undefined} inert={activeInterior ? true : undefined} {...cameraHandlers}>
+  return <div ref={viewportRef} className={`fallback-world readability-${mapVariant.id}${activeInterior ? ' has-open-interior' : ''}`} data-map-variant={mapVariant.id} data-map-variant-role={mapVariant.role} data-world-life-preset={worldLifePreset.id} data-connection={lifecycle.connection ?? 'unknown'} data-agent-total={agentOccupancy.total} data-agent-on-map={agentOccupancy.onMap} data-agent-inside={agentOccupancy.inside} data-agent-invalid={agentOccupancy.invalid} aria-label="Żywy świat agentów Hermes OS" aria-hidden={activeInterior ? 'true' : undefined} inert={activeInterior ? true : undefined} {...cameraHandlers}>
     <div ref={stageRef} className={`fallback-map-stage${mapLoaded ? ' is-map-ready is-agents-ready' : ' is-map-pending is-agents-pending'}`} style={stageStyle} data-map-ready={mapLoaded ? 'true' : 'false'} data-agents-ready={mapLoaded ? 'true' : 'false'}>
       <picture className="fallback-world__art"><source media="(max-width: 700px)" srcSet={citadelMobileArtUrl} type="image/webp" /><img src={citadelArtUrl} alt="" fetchPriority="high" decoding="async" onLoad={() => setMapLoaded(true)} /></picture>
       {mapLoaded ? <WorldEnvironmentalLife presentation={environment} debug={worldDebug} preset={worldLifePreset} /> : null}

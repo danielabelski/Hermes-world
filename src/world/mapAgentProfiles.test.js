@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { AGENT_DEFINITIONS } from './data/agentDefinitions.js'
 import { getMapAgentSpriteSet } from './data/mapAgentManifest.js'
 import { MAP_AGENT_FALLBACK_IDS, MAP_AGENT_PROFILE_IDS, MAP_AGENT_PROFILES, getMapAgentProfile } from './data/mapAgentProfiles.js'
-import { resolveMapAgentPresentations } from './mapAgentPresentation.js'
+import { resolveMapAgentPresentations, summarizeMapAgentOccupancy } from './mapAgentPresentation.js'
 
 test('map agent config explicitly covers the canonical twelve profiles', () => {
   assert.equal(MAP_AGENT_PROFILE_IDS.length, 12)
@@ -21,6 +21,8 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.ok(profile.mapTone.contrast >= 0.95 && profile.mapTone.contrast <= 1.1)
     assert.ok(profile.mapTone.brightness >= 0.95 && profile.mapTone.brightness <= 1.1)
     assert.ok(profile.shadowScale >= 0.7 && profile.shadowScale <= 1)
+    assert.ok(Math.abs(profile.stationaryCrowdOffset.x) <= 4.5)
+    assert.ok(Math.abs(profile.stationaryCrowdOffset.y) <= 2.5)
     assert.ok(profile.movementSpeed > 0.7 && profile.movementSpeed <= 1.1)
     assert.ok(profile.homeNode.desktop && profile.homeNode.mobile)
     assert.ok(profile.workNode.desktop && profile.workNode.mobile)
@@ -38,6 +40,12 @@ test('every map agent profile has renderer, navigation and behavior contracts', 
     assert.deepEqual(profile.anchorCorrection, { x: 0, yPx: 0 })
     assert.equal(profile.statusMapping.error, 'alert')
   }
+})
+
+test('stationary crowd spacing separates the lower courtyard without changing logical routes', () => {
+  assert.deepEqual(getMapAgentProfile('outreach').stationaryCrowdOffset, { x: 4.2, y: -2.4 })
+  assert.deepEqual(getMapAgentProfile('devops').stationaryCrowdOffset, { x: -2.8, y: 2.4 })
+  assert.deepEqual(getMapAgentProfile('prospecting').stationaryCrowdOffset, { x: 0, y: 0 })
 })
 
 test('map visibility correction lifts the Kowal without changing shared sprite normalization', () => {
@@ -70,15 +78,25 @@ test('all twelve agents stay at valid interaction points while interior workers 
   for (const layout of ['desktop', 'mobile']) {
     const presentations = resolveMapAgentPresentations({ agents, tasks, now, layout })
     assert.equal(presentations.length, 12)
+    assert.deepEqual(summarizeMapAgentOccupancy(presentations), {
+      total: 12,
+      onMap: 10,
+      inside: 2,
+      invalid: 0,
+      facadeFront: layout === 'mobile' ? 1 : 0,
+    })
     const expectedInside = new Set(['coder', 'researcher'])
     for (const model of presentations) {
       assert.ok(model.worldX >= 0 && model.worldX <= 100, `${layout}/${model.profileId}: x=${model.worldX}`)
       assert.ok(model.worldY >= 0 && model.worldY <= 100, `${layout}/${model.profileId}: y=${model.worldY}`)
       assert.equal(model.isInside, expectedInside.has(model.profileId), `${layout}/${model.profileId}: interior visibility contract`)
     }
+    const expectedFacadeProfiles = layout === 'mobile'
+      ? ['coder', 'orchestrator', 'researcher']
+      : ['coder', 'researcher']
     assert.deepEqual(
       presentations.filter((model) => model.occupancyMode === 'facade-front').map((model) => model.profileId).sort(),
-      ['coder', 'researcher'],
+      expectedFacadeProfiles,
     )
   }
 })

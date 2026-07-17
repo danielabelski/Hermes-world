@@ -15,7 +15,11 @@ const MAX_SEQUENCES = 12
 const AWARENESS_START_MS = 260
 const AWARENESS_STAGGER_MS = 620
 const AWARENESS_DURATION_MS = 1_520
-const AWARENESS_TRAVEL = 0.14
+// The old 14% excursion was technically moving but read as a stationary bob
+// at 40-46px mobile sprite sizes. Keep this well below a work journey while
+// making the evidence-backed acknowledgement legible without debug UI.
+const AWARENESS_TRAVEL = 0.22
+const AWARENESS_MIN_DISTANCE = 3
 const AWARENESS_WAVES = Object.freeze([
   Object.freeze(['default', 'researcher', 'reviewer']),
   Object.freeze(['prospecting', 'verifier', 'synthesizer']),
@@ -156,7 +160,14 @@ function awarenessMotion(sequence, profileId, waveIndex, now, layout) {
   const outbound = percentPoints(journey.outboundWaypoints)
   if (outbound.length < 2) return null
   const local = clamp(elapsed / AWARENESS_DURATION_MS)
-  const routeProgress = Math.sin(local * Math.PI) * AWARENESS_TRAVEL
+  const routeLength = outbound.slice(1).reduce((sum, target, index) => (
+    sum + Math.hypot(target.x - outbound[index].x, target.y - outbound[index].y)
+  ), 0)
+  // A fixed fraction is imperceptible on short local routes. Keep the reaction
+  // inside the first third of the real route, but guarantee a visible step on
+  // a 393 px phone instead of substituting an arbitrary animation.
+  const visibleTravel = Math.min(0.34, Math.max(AWARENESS_TRAVEL, AWARENESS_MIN_DISTANCE / Math.max(1, routeLength)))
+  const routeProgress = Math.sin(local * Math.PI) * visibleTravel
   const sampled = sampleMapAgentRoute(outbound, routeProgress)
   return freeze({
     profileId,

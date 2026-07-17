@@ -737,3 +737,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie zmieniono event pipeline’u, FSM, SSE, API, tras, mapy, telemetrii ani produkcji.
 - Walidacja: pełny zestaw **147/147 PASS**, build **PASS**, 874 moduły, 7,26 s; main JS `index-BiCTeMjE.js` 423,80 kB / 130,37 kB gzip. Root demo HTTP 200.
 - Nowy test LTE/cold start i obserwacja bez cyklu pozostają **MANUAL ACTION REQUIRED**; jeżeli znikanie nadal wystąpi, następny krok to izolacja snapshotu prezentacji, bez dalszego zwiększania preloadu.
+
+## BW-2026-07-17-004 — Pełny roster, czytelna choreografia i separacja agentów na demo
+
+- Czas Europe/Warsaw: 2026-07-17 18:31–19:05; UTC: 16:31–17:05. Zakres: wyłącznie branch demo `build-week/hermes-world`; produkcja pozostała nietknięta na `main` `958b9da08bee9613900e902b3da558aadef826e8`.
+- Punktem wyjścia było zgłoszenie autora, że widzi siedem postaci na mapie, jednego Kowala i jednego agenta we wnętrzu. Audyt rozdzielił trzy różne wartości: nagłówek `7/12` oznacza liczbę aktywnych agentów, pełny roster zawiera 12 prezentacji, a prawidłowy układ sceny w chwili testu obejmował 10 sprite'ów na mapie oraz 2 agentów we wnętrzach.
+- Przyczyny percepcyjnego braku postaci: Kasztelan stał pod mobilną maską fasady Cytadeli, a trzy role w dolnym dziedzińcu miały zbyt bliskie pozycje ekranowe. Nie brakowało profili, assetów ani danych rosteru.
+- Naprawa prezentacyjna: Kasztelan w bezruchu i podczas command/thinking/success otrzymał właściwą warstwę fasady; role dolnego dziedzińca dostały centralnie skonfigurowane mikro-offsety renderowania. Nie zmieniono logicznych waypointów, tras, pozycji stóp, mapy ani FSM.
+- Choreografia prawdziwego runu może teraz sterować widocznym przejściem wyłącznie wtedy, gdy jej `runId` jest równy prawdziwemu `taskId`. Niepowiązany stan operacyjny nadal ma bezwzględny priorytet. Krótka fala awareness pokonuje zauważalny odcinek istniejącej trasy, lecz nie emituje fake Working ani Success.
+- Pierwszy repaint po odebraniu realnego eventu jest jawnie wyzwalany przez wspólny presentation clock, co skraca opóźnienie reakcji bez dodawania kolejnego timera, połączenia SSE ani pollingu.
+- Dodano diagnostyczne atrybuty sceny: całkowity roster, liczba agentów na mapie, we wnętrzach i z nieprawidłową occupancy. Są to metadane weryfikacyjne, niewidoczne w UI.
+- Walidacja mobilna 393×852: **12/12**, 10 na mapie, 2 we wnętrzach, 0 invalid, 10/10 asset-ready, 0 istotnych kolizji prostokątów. Próbka ruchu 12 s: 19 próbek ruchu, 3,926 jednostki świata, największy krok 0,411 — brak teleportu. Desktop 1366×768: ten sam bilans 12/12. Konsola: 0 błędów i 0 ostrzeżeń.
+- Testy końcowe: **150/150 PASS**; ESLint **PASS**; world-life validator **PASS**; build **PASS**, 874 moduły, 22,95 s, main JS 424,46 kB / 130,58 kB gzip. `git diff --check`: **PASS**.
+- Nie wykonywano zmian produkcyjnych, backendowych, API, `server.js`, Tailscale, portów ani mapowania telemetrii. Nagłówek `7/12` pozostaje semantycznie licznikiem aktywnych, a nie liczbą renderowanych postaci.

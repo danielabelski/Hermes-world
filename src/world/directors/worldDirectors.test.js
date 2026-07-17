@@ -151,6 +151,48 @@ test('real event interrupts ambient immediately and ambient cannot override oper
   assert.notEqual(resolved.presentationSource, 'choreography')
 })
 
+test('evidence-backed choreography owns its matching operational run but never an unrelated run', () => {
+  const choreography = deriveChoreographyPresentation(
+    reduceChoreographyEvent(createChoreographyState(), event(0, 'assigned'), START),
+    { now: START + 500, layout: 'mobile' },
+  )
+  const matching = {
+    ...idleModel('orchestrator'),
+    phase: 'walking-to-work',
+    visualState: 'walk',
+    isMoving: true,
+    active: true,
+    isActive: true,
+    taskId: 'run-1',
+  }
+  const unrelated = { ...matching, taskId: 'another-real-run' }
+
+  const [matchingResult] = applyWorldDirectorPresentation([matching], { choreography })
+  const [unrelatedResult] = applyWorldDirectorPresentation([unrelated], { choreography })
+
+  assert.equal(matchingResult.presentationSource, 'choreography')
+  assert.equal(matchingResult.evidenceEventId, 'run-1:0')
+  assert.equal(matchingResult.isMoving, true)
+  assert.notEqual(unrelatedResult.presentationSource, 'choreography')
+  assert.equal(unrelatedResult.taskId, 'another-real-run')
+})
+
+test('awareness movement covers a visible mobile distance without becoming fake work', () => {
+  const state = reduceChoreographyEvent(createChoreographyState(), event(0, 'assigned', 'coder'), START)
+  const presentation = deriveChoreographyPresentation(state, {
+    now: START + CHOREOGRAPHY_TIMING.AWARENESS_START_MS + CHOREOGRAPHY_TIMING.AWARENESS_DURATION_MS / 2,
+    layout: 'mobile',
+  })
+  const acknowledgement = Object.values(presentation.motionByAgent).find((motion) => motion.phase === 'acknowledge')
+  const journey = getWorldLifeJourney(acknowledgement.profileId, 'mobile')
+  const homeX = journey.homePoint.x * 10
+  const homeY = journey.homePoint.y * 10
+  const distance = Math.hypot(acknowledgement.worldX - homeX, acknowledgement.worldY - homeY)
+
+  assert.ok(distance >= 1.5, `acknowledgement displacement must be visible on mobile, got ${distance}`)
+  assert.equal(acknowledgement.visualState, 'walk')
+})
+
 test('a real event takes over an ambient walker at the exact visible foot position without teleporting', () => {
   const agents = idleAgents()
   const ambientState = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'handoff' }), { agents, now: START + 2_400, layout: 'mobile' })

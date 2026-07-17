@@ -101,6 +101,15 @@ function mapPerspectiveScale(profileId, worldY) {
   return perspective * getMapAgentProfile(profileId).mapVisibilityScale
 }
 
+function resolveArchitecturalOccupancy(profileId, journey, journeyStage, fallback) {
+  if (profileId !== 'orchestrator') return fallback
+  if (!['work', 'observe'].includes(journeyStage)) return fallback
+  // The frozen mobile command point sits inside the Citadel foreground mask.
+  // Raising only this stationary presentation preserves the route geometry and
+  // keeps the complete figure visible at the intended interaction point.
+  return journey.layout === 'mobile' ? 'facade-front' : fallback
+}
+
 function visualStateForPhase(phase) {
   if (['walking-to-work', 'walking-home', 'arriving'].includes(phase)) return 'walk'
   if (['working', 'carrying'].includes(phase)) return 'work'
@@ -263,7 +272,7 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     routeProgress,
     isMoving,
     isInside,
-    occupancyMode,
+    occupancyMode: resolveArchitecturalOccupancy(agent.profile, journey, journeyStage, occupancyMode),
     baseScale: mapPerspectiveScale(agent.profile, sampled.worldY),
   }
 }
@@ -289,4 +298,15 @@ export function sortMapAgentPresentations(presentations = []) {
 
 export function resolveMapAgentPresentations({ agents = [], tasks = [], alerts = [], lifecycle = {}, now = Date.now(), layout = 'desktop' }) {
   return Object.freeze(sortMapAgentPresentations(agents.map((agent) => resolveMapAgentPresentation({ agent, tasks, alerts, lifecycle, now, layout }))))
+}
+
+export function summarizeMapAgentOccupancy(presentations = []) {
+  const valid = presentations.filter((model) => Number.isFinite(Number(model.worldX)) && Number.isFinite(Number(model.worldY)))
+  return Object.freeze({
+    total: presentations.length,
+    onMap: valid.filter((model) => !model.isInside).length,
+    inside: valid.filter((model) => model.isInside).length,
+    invalid: presentations.length - valid.length,
+    facadeFront: valid.filter((model) => !model.isInside && model.occupancyMode === 'facade-front').length,
+  })
 }

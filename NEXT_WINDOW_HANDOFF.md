@@ -996,3 +996,32 @@ Scope: demo only, branch `build-week/hermes-world`. Production remains fixed at 
 - Manual authenticated refresh remains the final gate.
 
 ---
+
+## DEMO FULL ROSTER + REAL-EVENT MOTION CHECKPOINT — 2026-07-17
+
+Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unchanged at `main` `958b9da08bee9613900ceae266adeed16366cbd4738`.
+
+### What is now verified
+
+- The scene owns all 12 canonical presentations: 10 agents on the map and 2 inside verified interiors. The header value `7/12` is the active-agent counter, not a renderer count.
+- The mobile Citadel facade no longer hides the stationary Kasztelan. Lower-courtyard roles use presentation-only spacing; logical routes, semantic nodes, foot positions and map geometry remain unchanged.
+- Evidence-backed choreography may own movement only for the exact matching real run (`runId === taskId`). Unrelated operational work still wins and no fake Working/Success is emitted.
+- A real event requests an immediate shared presentation-clock tick. No extra SSE connection, polling loop or per-agent timer was added.
+- Root diagnostics expose total/on-map/inside/invalid occupancy for regression checks without adding visible debug UI.
+
+### Final verification
+
+- Full tests 150/150 PASS; ESLint PASS; world-life validator PASS; `git diff --check` PASS.
+- Build PASS: 874 modules, 22.95 s, main 424.46 kB / 130.58 kB gzip.
+- Mobile 393×852 and desktop 1366×768: 12 total, 10 map, 2 inside, 0 invalid; all 10 map assets ready; zero significant sprite overlaps.
+- Runtime movement sample: 3.926 world units over 12 seconds, maximum step 0.411; no teleport. Console: 0 errors, 0 warnings.
+- Production `main` remains untouched. Do not promote without a new explicit GL.
+
+### Exact next gate
+
+1. Keep using `http://127.0.0.1:4176/?demo=1` for local demo review.
+2. Perform one authenticated real-message test on the phone and confirm visible first reaction, continuous worker movement and complete return.
+3. Treat `7/12` as active count; use the verified 10 map + 2 interior occupancy when checking missing agents.
+4. Any future production promotion must be a reviewed selective patch with a fresh GL; do not add opportunistic production fixes.
+
+---

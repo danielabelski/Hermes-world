@@ -742,3 +742,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build demo: **PASS**, 874 moduły; `index-BiCTeMjE.js` 423,80 kB / 130,37 kB gzip.
 - Root demo: **PASS HTTP 200**.
 - Manualny cold start LTE bez cyklu i start cyklu: **MANUAL ACTION REQUIRED**.
+
+## TEST-BW-051 — Bilans 12 agentów, brak kolizji i ciągłość ruchu
+
+- Czas Europe/Warsaw: 2026-07-17 18:31–19:05; branch `build-week/hermes-world`; zakres **demo only**.
+- Pełny zestaw testów: **PASS 150/150**, 7 suites, 0 fail, 0 skipped.
+- ESLint: **PASS**. World-life validator: **PASS**. `git diff --check`: **PASS**.
+- Build demo: **PASS**, Vite 8.0.16, 874 moduły, 22,95 s; main JS 424,46 kB / 130,58 kB gzip; CSS 77,06 kB / 16,65 kB gzip; lazy interior JS 16,46 kB / 6,31 kB gzip.
+- Mobile 393×852: **PASS** — 12 prezentacji, 10 na mapie, 2 we wnętrzach, 0 invalid, 10/10 widocznych sprite'ów z gotowym assetem, 0 istotnych kolizji prostokątów.
+- Desktop 1366×768: **PASS** — 12 prezentacji, 10 na mapie, 2 we wnętrzach, 0 invalid, 10/10 sprite'ów gotowych.
+- Próbka runtime 12 s: **PASS** — agent przeszedł 3,926 jednostki świata w 19 próbkach ruchu; maksymalny krok 0,411, bez teleportacji.
+- Konsola przeglądarki: **PASS**, 0 errors, 0 warnings. Kasztelan: **PASS**, widoczny przed fasadą przy zachowaniu logicznego foot anchoru. Dolny dziedziniec: **PASS**, brak stałego nakładania ról.
+- Produkcja: **PASS / UNCHANGED** — `main` nadal wskazuje `958b9da08bee9613900e902b3da558aadef826e8`, working tree bez zmian. Nie uruchamiano promocji ani modyfikacji procesu produkcyjnego.
+- Ograniczenie: test przeglądarkowy potwierdza prezentację i ciągłość ruchu na istniejącym demo; pełny authenticated Hermes message E2E z telefonu pozostaje osobnym manualnym gate'em przed przyszłą promocją.

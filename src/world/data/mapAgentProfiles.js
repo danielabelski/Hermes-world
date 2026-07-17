@@ -66,6 +66,12 @@ const SHADOW_BY_PROFILE = freeze({
   synthesizer: 0.8,
   verifier: 0.84,
 })
+// Presentation-only spacing for silhouettes that share the same lower
+// courtyard. Logical coordinates, routes and semantic nodes stay frozen.
+const STATIONARY_CROWD_OFFSET_BY_PROFILE = freeze({
+  outreach: freeze({ x: 4.2, y: -2.4 }),
+  devops: freeze({ x: -2.8, y: 2.4 }),
+})
 const BEFORE_NORMALIZATION_SCALE_BY_PROFILE = freeze({
   default: 1,
   coder: 1.25,
@@ -109,6 +115,7 @@ const createProfile = (id) => {
     beforeNormalizationScale: BEFORE_NORMALIZATION_SCALE_BY_PROFILE[id] ?? 1,
     anchorCorrection: freeze({ x: 0, yPx: 0 }),
     shadowScale: SHADOW_BY_PROFILE[id] ?? 0.8,
+    stationaryCrowdOffset: STATIONARY_CROWD_OFFSET_BY_PROFILE[id] ?? freeze({ x: 0, y: 0 }),
     movementSpeed: SPEED_BY_PROFILE[id] ?? 0.94,
     accent: definition.accentColor,
     homeNode: navigation.homeNode,

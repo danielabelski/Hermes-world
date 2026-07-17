@@ -10,6 +10,8 @@ const operationalPresentationWins = (model) => Boolean(
 )
 
 function applyMotion(model, motion, source) {
+  const standsAtCitadelCommandPoint = model.profileId === 'orchestrator'
+    && ['command', 'thinking', 'success'].includes(motion.phase)
   return {
     ...model,
     worldX: motion.worldX,
@@ -19,7 +21,7 @@ function applyMotion(model, motion, source) {
     visualState: motion.visualState ?? model.visualState,
     isMoving: Boolean(motion.isMoving),
     isInside: false,
-    occupancyMode: 'world',
+    occupancyMode: standsAtCitadelCommandPoint ? 'facade-front' : 'world',
     presentationSource: source,
     choreographyState: source === 'choreography' ? motion.phase : null,
     ambientState: source === 'ambient' ? motion.behavior : null,
@@ -44,7 +46,14 @@ export function applyWorldDirectorPresentation(presentations, { choreography, am
       }, 'operational-handoff'))
     }
     const choreographyMotion = motionByAgent[model.profileId]
-    if (choreographyMotion && !operationalPresentationWins(model)) return Object.freeze(applyMotion(model, choreographyMotion, 'choreography'))
+    const choreographyOwnsOperationalRun = Boolean(
+      choreographyMotion?.runId
+      && model.taskId
+      && choreographyMotion.runId === model.taskId,
+    )
+    if (choreographyMotion && (choreographyOwnsOperationalRun || !operationalPresentationWins(model))) {
+      return Object.freeze(applyMotion(model, choreographyMotion, 'choreography'))
+    }
     const ambientAction = ambientByAgent[model.profileId]
     if (!ambientAction || operationalPresentationWins(model)) return model
     const sampled = sampleMapAgentRoute(ambientAction.route, ambientAction.progress)

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { advanceAmbientDirector, createAmbientDirectorState, createAmbientRouteHandoff, deriveAmbientHandoffPresentation, deriveAmbientPresentation, interruptAmbientAgent } from './ambientDirector.js'
 import { createChoreographyState, deriveChoreographyPresentation, pruneChoreographyState, reduceChoreographyEvent } from './choreographyDirector.js'
 import { subscribeWorldEventStream } from '../events/worldEventStream.js'
+import { requestPresentationClockTick } from '../usePresentationClock.js'
 
 const AMBIENT_TICK_MS = 1_000
 const SNAPSHOT_EVENT_FRESHNESS_MS = 15_000
@@ -68,7 +69,10 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
       if (handoff) setHandoffs((current) => [...current.filter((candidate) => candidate.profileId !== handoff.profileId && candidate.endsAt >= receivedAt), handoff])
       setAmbientState((state) => interruptAmbientAgent(interruptAmbientAgent(state, event.agentId, receivedAt), 'orchestrator', receivedAt))
       setChoreographyState((state) => reduceChoreographyEvent(state, event, receivedAt))
-      window.requestAnimationFrame(() => setReactionLatencyMs(Math.round(transportLatencyMs + window.performance.now() - receivedAtPerformance)))
+      window.requestAnimationFrame(() => {
+        requestPresentationClockTick()
+        setReactionLatencyMs(Math.round(transportLatencyMs + window.performance.now() - receivedAtPerformance))
+      })
     }
     const handleSnapshot = (snapshotEvents) => {
       const receivedAt = Date.now()
