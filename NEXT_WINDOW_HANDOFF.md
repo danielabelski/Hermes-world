@@ -1136,3 +1136,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Archive memory remains honestly labelled as Hermes runtime memory; do not claim RAG/Obsidian health without an authoritative endpoint.
 - Validation: 167/167 tests, ESLint, validator, diff check and build PASS. Production remains frozen.
 - Next exact step: trace one safe real cron and worker lifecycle through log → domain event → persistence → API/SSE → UI, then fix only a proven loss point. After that audit every cycle route against building geometry and make every verified threshold handoff atomic for the complete sprite.
+
+### Semantic history and atomic-entry correction
+
+- Real, timestamped Hermes Kanban tasks are restored into the semantic activity feed after cold start/resync. Stable IDs prevent duplicate feed entries; no movement timestamp is fabricated without an observed transition.
+- Failed cron variants are narrated as failures. Raw log lines remain only in the upper technical channel.
+- Forge and Archive sprites switch as a complete figure to `facade-front` at the final mapped approach segment and remain there through the first exit segment. Coordinates, routes and map geometry are unchanged.
+- Focused contracts pass 45/45; full regression 168/168, ESLint, validator, diff check and build also pass. The authenticated phone visual check remains the next gate.
+- Production remains frozen; do not promote without a fresh explicit GL after manual demo acceptance.

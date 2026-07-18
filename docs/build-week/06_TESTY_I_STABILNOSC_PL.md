@@ -902,3 +902,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
 - Build: pierwsza próba **ENVIRONMENTAL RETRY** (`EPERM` sandbox `.vite-temp`); identyczna zatwierdzona próba **PASS**, 874 moduły, 3,52 s, main 432,80 kB / 133,27 kB gzip.
 - Realny bezpieczny cron E2E: **MANUAL ACTION REQUIRED / NEXT BLOCKER**. Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-064 — Historia semantyczna i bezpieczne progi wejścia
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Cold start odtwarza timestampowane taski Kanban bez wymyślania ruchu: **PASS**.
+- Cron `failed` ma narrację błędu: **PASS**.
+- Kuźnia i Archiwum przejmują pełny sprite na ostatnim zmapowanym odcinku dojścia: **PASS**.
+- `isInside` przełącza cały model przy progu, bez stanu częściowej widoczności: **PASS**.
+- Focused: **PASS 45/45**.
+- Pełne testy: **PASS 168/168**, 8 suites, 0 fail.
+- ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, 874 moduły, 3,05 s, main JS 433,05 kB / 133,34 kB gzip.
+- Realny bezpieczny cron E2E i wizualna kontrola na zalogowanym telefonie: **MANUAL ACTION REQUIRED**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

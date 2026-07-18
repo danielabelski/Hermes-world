@@ -85,6 +85,11 @@ test('Kowal crosses the Forge threshold as one complete sprite instead of being 
   assert.equal(road.isMoving, true)
   assert.ok(road.worldX > 46 && road.worldX < 84)
 
+  const finalApproach = modelAt(START + 5_900)
+  assert.equal(finalApproach.journeyStage, 'road')
+  assert.equal(finalApproach.isInside, false)
+  assert.equal(finalApproach.occupancyMode, 'facade-front', 'the whole sprite must clear the Forge facade before entry')
+
   const threshold = modelAt(START + 6_400)
   assert.equal(threshold.journeyStage, 'enter')
   closeTo(threshold.worldX, 84)
@@ -267,6 +272,11 @@ test('Uczony uses the same resolver and enters the Knowledge Archive through its
   const dispatch = resolve(START)
   closeTo(dispatch.worldX, 46)
   closeTo(dispatch.worldY, 36.5)
+
+  const finalApproach = resolve(START + 5_300)
+  assert.equal(finalApproach.journeyStage, 'road')
+  assert.equal(finalApproach.isInside, false)
+  assert.equal(finalApproach.occupancyMode, 'facade-front', 'the full researcher sprite must pass in front of the Archive facade')
 
   const threshold = resolve(START + 5_900)
   assert.equal(threshold.journeyStage, 'enter')

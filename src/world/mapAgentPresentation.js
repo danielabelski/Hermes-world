@@ -189,9 +189,12 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = routeProgress < 0.05 ? 'dispatch' : 'road'
     visualState = 'walk'
     isMoving = true
-    // Lift the complete sprite above the facade immediately before the
-    // threshold. The doorway never clips individual pixels from the agent.
-    if (usesInteriorThreshold && routeProgress >= 0.96) occupancyMode = journey.occupancyMode
+    // Hand the complete sprite to the facade-front layer as soon as it enters
+    // the final, explicitly mapped approach segment. Using a global progress
+    // percentage allowed long routes to intersect the architectural mask
+    // before the layer handoff and made the figure disappear pixel by pixel.
+    const finalApproachSegment = Math.max(0, outbound.length - 2)
+    if (usesInteriorThreshold && sampled.segmentIndex >= finalApproachSegment) occupancyMode = journey.occupancyMode
   } else if (living.phase === 'arriving') {
     const startedAt = asTime(task?.transitionStartedAt ?? task?.startedAt ?? task?.started_at, 0) + journey.walkDurationMs
     routeProgress = progressFrom(now, startedAt, journey.arriveDurationMs, agent.routeProgress)
@@ -244,7 +247,9 @@ function resolveJourneyModel({ base, agent, living, task, journey, now }) {
     journeyStage = 'return'
     visualState = 'walk'
     isMoving = true
-    if (usesInteriorThreshold && routeProgress < 0.04) occupancyMode = journey.occupancyMode
+    // Keep the whole sprite above the facade until it clears the first mapped
+    // exit segment; then return it to normal world depth sorting.
+    if (usesInteriorThreshold && sampled.segmentIndex === 0) occupancyMode = journey.occupancyMode
   } else if (living.phase === 'waiting') {
     sampled = { worldX: home.x, worldY: home.y, direction: 'se' }
     journeyStage = 'waiting'

@@ -887,3 +887,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie przedstawiono endpointu pamięci Hermesa jako RAG/Obsidian health. To realna pamięć runtime, ale osobna integracja RAG wymaga osobnego źródła prawdy.
 - Walidacja: 167/167 testów PASS, ESLint PASS, World Life validator PASS, `git diff --check` PASS, build PASS (874 moduły, 3,52 s, main 432,80 kB / 133,27 kB gzip). Produkcja pozostała nietknięta.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_REAL_INTERIOR_TELEMETRY_PL.md`.
+
+## BW-2026-07-18-013 — Semantyczna historia realnych tasków i atomowe progi budynków
+
+- Zakres: wyłącznie demo na `build-week/hermes-world`; produkcja pozostała zamrożona.
+- Dolny feed przywraca teraz timestampowane, bieżące taski z autorytatywnego Hermes Kanban także po cold starcie i resync. Wpisy mają stabilne ID i korelację, ale nie generują ruchu bez rzeczywiście zaobserwowanej zmiany statusu.
+- Narracja cronów rozpoznaje `error`, `failed` oraz `fail`; surowe logi nadal pozostają osobnym górnym kanałem, a dolny feed pokazuje wyłącznie semantyczne taski, crony, alerty i trwałe eventy.
+- Potwierdzono przyczynę pikselozy przy wejściu: przejęcie warstwy fasady następowało przy arbitralnym 96% całej trasy. Teraz pełny sprite przechodzi nad fasadę na ostatnim zmapowanym odcinku dojścia i wraca do normalnego depth sortingu dopiero po oczyszczeniu pierwszego odcinka wyjścia.
+- Nie zmieniono waypointów, współrzędnych, geometrii mapy, FSM, statusów ani źródeł danych.
+- Focused contract suite: **45/45 PASS**; pełny zestaw **168/168 PASS**; ESLint, World Life validator i `git diff --check` **PASS**; build **PASS** — 874 moduły, 3,05 s, main JS 433,05 kB / 133,34 kB gzip.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_SEMANTIC_HISTORY_AND_ATOMIC_ENTRY_PL.md`.
