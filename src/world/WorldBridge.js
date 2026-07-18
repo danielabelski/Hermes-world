@@ -313,7 +313,6 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
   let running = false;
   let timer = null;
   let syncPromise = null;
-  let syncForce = false;
   let lastSuccessfulAt = null;
   const lastPayloadByDomain = new Map();
   const lastAttemptByDomain = new Map();
@@ -346,8 +345,9 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     memory: POLL_INTERVALS.slow,
   });
 
-  async function fetchPayloads({ onProgress, force = false } = {}) {
+  async function fetchPayloads({ onProgress, force = false, forceDomains = [] } = {}) {
     const observedAt = now();
+    const forcedDomainIds = new Set(forceDomains);
     if (demoMode) {
       return {
         payloads: DEMO_WORLD_PAYLOADS,
@@ -416,7 +416,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     await Promise.allSettled(entries.map(async ([id, read]) => {
       const cached = lastPayloadByDomain.get(id);
       const lastAttempt = lastAttemptByDomain.get(id) ?? 0;
-      const due = force || !cached || observedAt - lastAttempt >= domainIntervals[id];
+      const due = force || forcedDomainIds.has(id) || !cached || observedAt - lastAttempt >= domainIntervals[id];
       try {
         const resolved = due
           ? (() => {
@@ -438,12 +438,11 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     return buildResult();
   }
 
-  function sync({ force = false, atomic = false } = {}) {
+  function sync({ force = false, forceDomains = [], atomic = false } = {}) {
     if (syncPromise) {
-      if (!force || syncForce) return syncPromise;
-      return syncPromise.catch(() => null).then(() => sync({ force, atomic }));
+      if (!force && forceDomains.length === 0) return syncPromise;
+      return syncPromise.catch(() => null).then(() => sync({ force, forceDomains, atomic }));
     }
-    syncForce = force;
     const operation = (async () => {
       let emitted = false;
       const publish = ({ payloads, provenance }) => {
@@ -451,7 +450,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
         emit(snapshot);
         emitted = true;
       };
-      const result = await fetchPayloads({ onProgress: atomic ? undefined : publish, force });
+      const result = await fetchPayloads({ onProgress: atomic ? undefined : publish, force, forceDomains });
       if (atomic || !emitted) publish(result);
       return snapshot;
     })();
@@ -459,7 +458,6 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     return operation.finally(() => {
       if (syncPromise === operation) {
         syncPromise = null;
-        syncForce = false;
       }
     });
   }

@@ -827,3 +827,12 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Testy: event odebrany w trakcie resync zachowany; forced atomic read wszystkich domen; brak emisji częściowych; force po in-flight poll; roster zachowany w każdej emisji — PASS.
 - Pełny zestaw: 158/158 PASS; ESLint PASS; World Life validator PASS; build PASS po jednym środowiskowym retry `EPERM` — 874 moduły, 2,99 s, main JS 430,66 kB / 132,59 kB gzip.
 - Produkcja pozostaje nietknięta.
+
+## BW-2026-07-18-007 — Świeże dane wnętrz przy każdym wejściu
+
+- Zakres: Faza 2.3 wyłącznie na demo; produkcja pozostaje zamrożona na `958b9da08bee9613900e902b3da558aadef826e8`.
+- Diagnoza: hotspot tylko otwierał wnętrze i nie uruchamiał fetchu, więc dane mogły pochodzić z cache ważnego 15–60 sekund.
+- Dodano centralne mapowanie budynek→domeny i selektywny `sync({ forceDomains, atomic: true })`. Wejście zachowuje poprawny widok, pobiera tylko potrzebne dane i publikuje jeden kompletny wynik.
+- Pięć kolejnych wejść do Archiwum: 5/5 PASS; cztery właściwe domeny odczytane pięć razy, pozostałe bez dodatkowych żądań, dokładnie jedna emisja na wejście.
+- Walidacja: 160/160 testów PASS; ESLint PASS; World Life validator PASS; `git diff --check` PASS; build PASS — 874 moduły, 2,45 s, main 431,20 kB / 132,77 kB gzip.
+- Nie zmieniono wnętrz, agentów, mapy, ruchu, routingu, FSM, event pipeline'u ani produkcji. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_3_BUILDING_REFRESH_PL.md`.

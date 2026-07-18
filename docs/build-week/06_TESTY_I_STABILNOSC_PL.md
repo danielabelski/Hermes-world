@@ -829,3 +829,13 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
 - Pierwsza próba builda: **ENVIRONMENTAL RETRY**, Windows `EPERM` dla jednorazowego `.vite-temp`; bez zmiany kodu lub konfiguracji. Druga identyczna próba: **PASS**, 874 moduły, 2,99 s, main JS 430,66 kB / 132,59 kB gzip.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-058 — Pięć świeżych wejść do budynku
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Pięć kolejnych wejść do Archiwum: **PASS 5/5**.
+- Domeny `memory`, `logs`, `tasks`, `cronHistory`: świeży odczyt przy każdej próbie; domeny niezwiązane: brak dodatkowych odczytów.
+- Atomowość: **PASS**, jedna kompletna emisja na wejście, bez częściowego czyszczenia danych.
+- Testy: **PASS 160/160**. ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, 874 moduły, 2,45 s, main 431,20 kB / 132,77 kB gzip. Oficjalny `--configLoader runner` ominął środowiskowy `EPERM` standardowego loadera bez zmiany kodu.
+- Ręczny test z realnym API: **PENDING / FAZA 3**. Produkcja: **UNCHANGED / NOT TOUCHED**.

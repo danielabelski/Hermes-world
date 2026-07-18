@@ -1081,3 +1081,10 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - `useWorldBridge` exposes transport/resync state, preserves the last trustworthy snapshot, and reapplies events received during the atomic read. Generation guards prevent an obsolete resync from winning after another disconnect.
 - Validation: 158/158 tests, ESLint, World Life validator and build PASS. Production remains untouched.
 - Next exact step: Phase 2.3 — define the minimal domain set per existing building and force those domains fresh on every entry, with a five-entry regression test and no visual/interior redesign.
+
+### Phase 2.3 completed — fresh building data on every entry
+
+- Every interior has a centralized minimal telemetry-domain list. Opening a building triggers one atomic refresh of only those domains and preserves the last confirmed view until the response arrives.
+- Five consecutive Archive re-entries passed: its four domains refreshed five times, unrelated domains made no extra requests, and every entry produced exactly one complete emission.
+- Validation: 160/160 tests, ESLint, World Life validator, `git diff --check` and build PASS. Production remains untouched.
+- Next exact step: Phase 2.4 — separate client transport state from authoritative Hermes and worker presence so a broken EventSource reports reconnecting/stale data without fabricating system-wide offline.

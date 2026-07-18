@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from '../api.js';
 import { createWorldBridge, createWorldSnapshot } from '../world/WorldBridge.js';
+import { getBuildingRefreshDomains } from '../world/buildingEntryConfig.js';
 import { DEMO_WORLD_PAYLOADS } from '../world/data/demoWorldData.js';
 import { getDemoScenario } from '../world/data/demoScenarios.js';
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from '../world/data/demoObservabilityFocus.js';
@@ -155,6 +156,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     try {
       const liveSnapshot = await bridgeRef.current.sync({
         force: options?.force === true,
+        forceDomains: options?.forceDomains ?? [],
         atomic: options?.atomic === true,
       });
       applyLiveSnapshot(liveSnapshot);
@@ -166,6 +168,11 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       return null;
     }
   }, [applyLiveSnapshot, demoMode, enabled]);
+
+  const refreshBuilding = useCallback((buildingId) => refresh({
+    forceDomains: getBuildingRefreshDomains(buildingId),
+    atomic: true,
+  }), [refresh]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -349,6 +356,7 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     isStale: state.source === 'stale',
     isUnknown: state.source === 'unknown',
     refresh,
+    refreshBuilding,
   };
 }
 

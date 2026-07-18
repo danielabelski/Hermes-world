@@ -19,6 +19,7 @@ import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './da
 import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
 import { mergeWorldActivityItems } from './worldActivityItems.js'
 import { applyWorldSceneScript } from './WorldSceneScript.js'
+import { getBuildingRefreshDomains } from './buildingEntryConfig.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 const iso = (time) => new Date(time).toISOString()
@@ -644,6 +645,46 @@ test('forced reconnect resync waits for an in-flight poll and then performs a fr
   const complete = await reconnectResync
   assert.equal(profileCalls, 3)
   assert.equal(complete.agents.find((agent) => agent.profile === 'coder').isActive, true)
+})
+
+test('five Archive re-entries refresh only its live domains and replace stale memory atomically', async () => {
+  let memoryRevision = 0
+  const calls = Object.fromEntries(['profiles', 'metrics', 'tasks', 'logs', 'crons', 'cronHistory', 'sessions', 'skills', 'models', 'memory'].map((id) => [id, 0]))
+  const hit = (id, value) => { calls[id] += 1; return value }
+  const apiClient = {
+    async getProfiles() { return hit('profiles', { profiles: [{ name: 'researcher', is_active: false }] }) },
+    async getSystemMetrics() { return hit('metrics', { ok: true, cpuPercent: 25, memoryPercent: 48, temperatureC: 52 }) },
+    async getKanbanTasks() { return hit('tasks', { tasks: [] }) },
+    async getLogs() { return hit('logs', { lines: [] }) },
+    async getCrons() { return hit('crons', { jobs: [] }) },
+    async getCronHistory() { return hit('cronHistory', { completions: [] }) },
+    async getSessions() { return hit('sessions', { sessions: [] }) },
+    async getSkills() { return hit('skills', { skills: [] }) },
+    async getModels() { return hit('models', { groups: [] }) },
+    async getMemory() { return hit('memory', { memory: `# Revision ${memoryRevision}` }) },
+  }
+  const bridge = createWorldBridge({ apiClient })
+  await bridge.sync()
+  const emissions = []
+  bridge.subscribe((snapshot) => emissions.push(snapshot))
+
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    memoryRevision = attempt
+    const before = emissions.length
+    const snapshot = await bridge.sync({ forceDomains: getBuildingRefreshDomains('archive'), atomic: true })
+    assert.equal(snapshot.memorySummary.available, true)
+    assert.equal(snapshot.raw.provenance.domains.memory.reused, false)
+    assert.equal(emissions.length, before + 1)
+  }
+
+  assert.deepEqual(
+    { memory: calls.memory, logs: calls.logs, tasks: calls.tasks, cronHistory: calls.cronHistory },
+    { memory: 6, logs: 6, tasks: 6, cronHistory: 6 },
+  )
+  assert.deepEqual(
+    { profiles: calls.profiles, metrics: calls.metrics, crons: calls.crons, sessions: calls.sessions, skills: calls.skills, models: calls.models },
+    { profiles: 1, metrics: 1, crons: 1, sessions: 1, skills: 1, models: 1 },
+  )
 })
 
 test('concurrent resume and polling reuse one in-flight domain synchronization', async () => {

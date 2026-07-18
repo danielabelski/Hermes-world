@@ -36,6 +36,21 @@ export const BUILDING_INTERIOR_CONFIG = freeze({
 
 export const BUILDING_INTERIOR_IDS = freeze(Object.keys(BUILDING_INTERIOR_CONFIG))
 
+// Each interior refreshes only the telemetry it actually presents. This keeps
+// entry fast on mobile while ensuring a re-open never waits for the global
+// 15/60 second polling cadence.
+export const BUILDING_DATA_DOMAINS = freeze({
+  forge: freeze(['metrics', 'tasks', 'logs']),
+  archive: freeze(['memory', 'logs', 'tasks', 'cronHistory']),
+  citadel: freeze(['profiles', 'sessions', 'tasks']),
+  watcher: freeze(['crons', 'cronHistory', 'logs']),
+  sanctum: freeze(['metrics', 'logs', 'tasks']),
+})
+
+export function getBuildingRefreshDomains(buildingId) {
+  return BUILDING_DATA_DOMAINS[buildingId] ?? freeze([])
+}
+
 export function resolveBuildingEntry(buildingId, layout = 'desktop') {
   const config = BUILDING_INTERIOR_CONFIG[buildingId]
   if (!config?.enabled) return null

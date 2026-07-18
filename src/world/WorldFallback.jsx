@@ -34,7 +34,7 @@ const BUILDINGS = [
   ['post', 'Poczta'], ['camp', 'Obozowisko'], ['clock', 'Wieża Zegarowa'],
 ]
 
-export default function WorldFallback() {
+export default function WorldFallback({ onRefreshBuilding = null }) {
   const initialParams = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
   const rosterReviewEnabled = initialParams.get('demo') === '1' && initialParams.get('interiorReview') === '1'
   const [reviewProfileId, setReviewProfileId] = useState(() => resolveInteriorReviewProfile(initialParams.get('agent')))
@@ -168,6 +168,7 @@ export default function WorldFallback() {
           entryPointerRef.current = null
           if (!wasDrag) {
             activeEntryRef.current = event.currentTarget
+            void onRefreshBuilding?.(entry.buildingId)
             const reviewProfile = rosterReviewEnabled ? getInteriorReviewProfiles(entry.buildingId)[0]?.profileId : null
             if (reviewProfile) selectReviewProfile(reviewProfile)
             else setActiveInterior(entry.buildingId)

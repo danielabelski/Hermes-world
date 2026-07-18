@@ -90,5 +90,5 @@ export default function App() {
     return <LoginScreen onLoginSuccess={() => setAuthState('authenticated')} error={authState === 'unavailable'} />
   }
 
-  return <main className={`world-shell ${ambientMode ? 'is-ambient' : ''}`}><WorldFallback />{ENABLE_PIXI_ENHANCEMENT ? <WorldRendererBoundary><Suspense fallback={null}><WorldCanvas renderAgents={false} /></Suspense></WorldRendererBoundary> : null}<WorldTapConfirmation /><KeyboardShortcuts /><AccessibilityAnnouncer /><section className="world-overlay"><StatusBar /><WorldControls /><DesktopCommandPanel /><WorldStatusBadge /><WorldInsightPanel /><WorldFocusRing /><DemoLegend /><WorldEventTicker /><WorldMomentToast /><BottomSheet /><HealthRibbon /></section></main>
+  return <main className={`world-shell ${ambientMode ? 'is-ambient' : ''}`}><WorldFallback onRefreshBuilding={bridge.refreshBuilding} />{ENABLE_PIXI_ENHANCEMENT ? <WorldRendererBoundary><Suspense fallback={null}><WorldCanvas renderAgents={false} /></Suspense></WorldRendererBoundary> : null}<WorldTapConfirmation /><KeyboardShortcuts /><AccessibilityAnnouncer /><section className="world-overlay"><StatusBar /><WorldControls /><DesktopCommandPanel /><WorldStatusBadge /><WorldInsightPanel /><WorldFocusRing /><DemoLegend /><WorldEventTicker /><WorldMomentToast /><BottomSheet /><HealthRibbon /></section></main>
 }

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
-import { BUILDING_INTERIOR_IDS, resolveBuildingEntry } from './buildingEntryConfig.js'
+import { BUILDING_INTERIOR_IDS, getBuildingRefreshDomains, resolveBuildingEntry } from './buildingEntryConfig.js'
 
 describe('building entry config', () => {
   it('anchors Forge interaction to the frozen semantic entrance nodes', () => {
@@ -33,6 +33,17 @@ describe('building entry config', () => {
     assert.deepEqual([desktop.xPercent, desktop.yPercent], [39, 76])
     assert.deepEqual([mobile.xPercent, mobile.yPercent], [72, 80])
     assert.equal(resolveBuildingEntry('unknown', 'mobile'), null)
+  })
+
+  it('maps every interior to a focused set of live telemetry domains', () => {
+    const validDomains = new Set(['profiles', 'metrics', 'tasks', 'logs', 'crons', 'cronHistory', 'sessions', 'skills', 'models', 'memory'])
+    for (const buildingId of BUILDING_INTERIOR_IDS) {
+      const domains = getBuildingRefreshDomains(buildingId)
+      assert.ok(domains.length > 0, `${buildingId} must refresh at least one domain`)
+      assert.ok(domains.every((domain) => validDomains.has(domain)), `${buildingId} contains an unknown domain`)
+    }
+    assert.deepEqual(getBuildingRefreshDomains('archive'), ['memory', 'logs', 'tasks', 'cronHistory'])
+    assert.deepEqual(getBuildingRefreshDomains('unknown'), [])
   })
 
   it('renders every main interior through one cinematic plate contract', () => {
@@ -86,6 +97,7 @@ describe('building entry config', () => {
     assert.doesNotMatch(plates, /rings|conduit|lamps-left|lamps-right|beam|shelves-left|shelves-right|floor-path|watcher-base|cron-dial|floor-channels|vats-left|vats-right|canopy|production-line|coolant|machinery/)
     assert.match(world, /requestIdleCallback\(warmInteriorCode/)
     assert.match(world, /preloadInteriorPlate\(entry\.buildingId\)/)
+    assert.match(world, /onRefreshBuilding\?\.\(entry\.buildingId\)/)
     assert.match(world, /usePresentationClock\(!activeInterior\)/)
     assert.match(world, /ambientEnabled: !activeInterior/)
     assert.match(styles, /@media\(max-width:700px\)\{\.cinematic-interior__backdrop\{display:none\}\}/)
