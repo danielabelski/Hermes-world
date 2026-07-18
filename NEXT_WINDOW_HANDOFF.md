@@ -1057,3 +1057,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Hard gate: complete diagnosis and all demo acceptance tests before producing a promotion manifest; require a separate author GL/RL before any production modification.
 - Diagnostic order: shared SSE lifecycle → authoritative resync → building re-entry freshness → connection/Hermes/worker status separation → durable event history → evidence-backed movement → five full demo runs.
 - Do not refactor `server.js`, rebuild architecture, change routes/waypoints/map placement, or add features during this release pass. Every correction must be minimal, regression-tested, documented and committed separately.
+
+### Read-only diagnosis completed
+
+- Baseline tests remain green: 151/151. The existing shared EventSource singleton and last-subscriber cleanup are valid foundations.
+- Confirmed release blockers are narrowly scoped: observable SSE lifecycle/heartbeat/backoff; authoritative resync after reconnect; preservation of complete domains during progressive snapshots; fresh building fetch on every entry; separation of client transport from Hermes/worker presence; durable and complete cron/world-event history.
+- Agent movement is frozen unless the later five-run acceptance test reproduces a concrete defect. No route, waypoint, position, FSM or map change is authorized by this audit.
+- Detailed evidence and rollback notes are in `docs/build-week/evidence/tests/20260718_DEMO_RELEASE_DIAGNOSIS_PL.md`.
+- Next exact step: add deterministic failing tests for five SSE reconnect cycles, heartbeat timeout, lifecycle cleanup and visibility/network recovery, then harden the existing singleton only.

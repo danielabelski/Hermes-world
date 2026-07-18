@@ -793,3 +793,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Wstępny audyt źródeł wskazał: wspólny singleton SSE w `src/world/events/worldEventStream.js`; transport i heartbeat w `server/worldEventHub.js`; polling, cache domen i snapshot w `src/world/WorldBridge.js` oraz `src/hooks/useWorldBridge.js`; stan UI w `src/world/store/worldStore.js`; wnętrza w `src/world/WorldFallback.jsx` i `src/components/building-interiors/BuildingInteriorScene.jsx`.
 - Pierwsze potwierdzone luki: transport klienta nie wystawia stanów `connecting/live/reconnecting/disconnected` ani jawnej obsługi heartbeat/error/open; wejście do budynku nie żąda świeżego snapshotu; progresywne publikowanie częściowego snapshotu może czasowo stworzyć model bez wszystkich domen.
 - Następny krok: zakończyć read-only FAZĘ 1, dopisać testy odtwarzające każdą potwierdzoną regresję, a następnie wdrażać minimalne poprawki wyłącznie na demo, po jednym logicznym zakresie i commicie.
+
+## BW-2026-07-18-004 — Read-only diagnoza stabilności demo przed release
+
+- Zakres: analiza kodu i testów; bez zmian zachowania aplikacji, produkcji lub runtime.
+- Baseline testów: `npm test` — **PASS 151/151**, 7 suites, 0 fail, 0 skipped.
+- Potwierdzono poprawny fundament: jeden współdzielony EventSource, cleanup po ostatnim subskrybencie, deduplikację eventId/run seq, cache ostatnich poprawnych domen i jedno współdzielone `syncPromise`.
+- Potwierdzono blockery release: brak obserwowalnego lifecycle/heartbeat/backoff SSE; brak wymuszonego resync po reconnect; permanentne wymuszanie online po pierwszym evencie; możliwość publikacji częściowego snapshotu bez rosteru; brak fetchu przy wejściu do budynku; fałszywe wiązanie transport-offline z Hermes/worker-offline; historia world-eventów wyłącznie w RAM; brak pełnego mapowania trwałych cron completions.
+- Ruch agentów nie zostanie zmieniony bez nieudanego testu akceptacyjnego. Obecne kontrakty oraz ostatni realny pomiar pozostają zaakceptowanym baseline'em.
+- Pełny raport z liniami kodu, minimalnymi zmianami, ryzykami i rollbackiem: `docs/build-week/evidence/tests/20260718_DEMO_RELEASE_DIAGNOSIS_PL.md`.
+- Produkcja nadal wskazuje `958b9da08bee9613900e902b3da558aadef826e8` i pozostaje nietknięta.

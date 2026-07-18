@@ -789,3 +789,13 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Browser DOM: **PASS** — marsz zmienia współrzędne przez co najmniej pięć kolejnych punktów; roster stabilny 12/12 (`10 map + 2 interior`, 0 invalid), `mapReady=true`, `agentsReady=true`.
 - Real message lifecycle: **PASS** — `assigned → thinking → success`, jedna evidence-backed sekwencja, bez fake Working innych agentów.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-055 — Baseline release audit i pokrycie brakujących lifecycle cases
+
+- Czas rozpoczęcia: 2026-07-18 05:56 Europe/Warsaw; branch `build-week/hermes-world`.
+- `npm test`: **PASS 151/151**, 7 suites, 0 fail, 0 skipped; czas procesu testowego około 4,75 s.
+- Safety tags: **PASS** — demo `01df5476a77988f0ed9f6d03c11f295b32093ba8`, produkcja `958b9da08bee9613900e902b3da558aadef826e8`.
+- Zakres working tree przed diagnozą: **PASS / CLEAN** w obu worktree.
+- Pokrycie jednego wspólnego EventSource i cleanup po unmount: **PASS**.
+- Pięć reconnectów, heartbeat timeout, background/foreground, Wi-Fi/LTE, autorytatywny resync, pięć ponownych wejść do budynku i restart-persistence historii: **NOT TESTED / BLOCKER** — brakujące przypadki zostały udokumentowane i muszą otrzymać testy przed promocją.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.
