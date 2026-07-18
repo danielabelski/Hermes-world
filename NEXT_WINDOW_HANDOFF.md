@@ -1048,3 +1048,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - A real Hermes message was observed as one evidence-backed `assigned → thinking → success` lifecycle; no unrelated fake Working was emitted.
 - Validation: 151/151 tests PASS; world-life validator PASS; build PASS (874 modules, 424.96 kB / 130.73 kB gzip main JS); `git diff --check` PASS.
 - Production remains frozen. Do not promote without a new explicit GL.
+
+## RELEASE AUDIT START — 2026-07-18 05:56 Europe/Warsaw
+
+- Demo baseline: `build-week/hermes-world` at `01df5476a77988f0ed9f6d03c11f295b32093ba8`, tag `demo-release-audit-start-2026-07-18`.
+- Production baseline: `main` at `958b9da08bee9613900e902b3da558aadef826e8`, tag `production-release-audit-start-2026-07-18`.
+- Both worktrees were clean when the release audit began. Production code/runtime/configuration were not changed.
+- Hard gate: complete diagnosis and all demo acceptance tests before producing a promotion manifest; require a separate author GL/RL before any production modification.
+- Diagnostic order: shared SSE lifecycle → authoritative resync → building re-entry freshness → connection/Hermes/worker status separation → durable event history → evidence-backed movement → five full demo runs.
+- Do not refactor `server.js`, rebuild architecture, change routes/waypoints/map placement, or add features during this release pass. Every correction must be minimal, regression-tested, documented and committed separately.

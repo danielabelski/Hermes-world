@@ -780,3 +780,16 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Pomiar prawdziwego DOM po świeżym buildzie: Zwiadowca przeszedł kolejno `52.539/35.237 → 54.588/34.236 → 56.666/33.221 → 58.795/32.181 → 60.993/31.332`; roster przez cały pomiar pozostał `10 map + 2 interior`.
 - Prawdziwy cykl wiadomości autora został uchwycony jako `otrzymał zadanie → analizuje → zakończył i przekazuje rezultat`, ze wspólnym rzeczywistym evidence ID. Inni agenci nie otrzymali fake Working.
 - Walidacja: test regresyjny i kontrakt ruchu **28/28 PASS**; pełny zestaw **151/151 PASS**; World Life validator **PASS**; build **PASS**, 874 moduły, 2,83 s, main JS 424,96 kB / 130,73 kB gzip; `git diff --check` **PASS**.
+
+## BW-2026-07-18-003 — Rozpoczęcie audytu release i zabezpieczenie demo/produkcji
+
+- Czas rozpoczęcia Europe/Warsaw: 2026-07-18 05:56; czas UTC: 2026-07-18 03:56.
+- Cel bloku: bezpiecznie doprowadzić działające demo do stabilnego release candidate, a dopiero po pełnej walidacji i osobnym GL autora przygotować selektywną promocję na produkcję. Zakres nie obejmuje nowych funkcji ani szerokiego refaktoru.
+- Zweryfikowany stan demo: worktree `hermes-os-living-world-demo`, branch `build-week/hermes-world`, HEAD `01df5476a77988f0ed9f6d03c11f295b32093ba8`, working tree czysty.
+- Zweryfikowany stan produkcji: worktree `hermes-os-living-world`, branch `main`, HEAD `958b9da08bee9613900e902b3da558aadef826e8`, working tree czysty.
+- Utworzono dwa niezależne annotated safety tagi: `demo-release-audit-start-2026-07-18` wskazuje dokładnie `01df5476a77988f0ed9f6d03c11f295b32093ba8`; `production-release-audit-start-2026-07-18` wskazuje dokładnie `958b9da08bee9613900e902b3da558aadef826e8`.
+- Produkcja pozostaje zamrożona. Nie zmieniono kodu, konfiguracji, buildu, procesu 24/7, Tailscale, portów, danych ani sekretów produkcyjnych.
+- Zapisane problemy do diagnozy: lifecycle i reconnect SSE, pełny resync po reconnect, świeżość danych wnętrz, rozdzielenie transportu klienta od autorytatywnego statusu Hermesa, kompletność historii eventów/cronów oraz ciągłość evidence-backed ruchu agentów.
+- Wstępny audyt źródeł wskazał: wspólny singleton SSE w `src/world/events/worldEventStream.js`; transport i heartbeat w `server/worldEventHub.js`; polling, cache domen i snapshot w `src/world/WorldBridge.js` oraz `src/hooks/useWorldBridge.js`; stan UI w `src/world/store/worldStore.js`; wnętrza w `src/world/WorldFallback.jsx` i `src/components/building-interiors/BuildingInteriorScene.jsx`.
+- Pierwsze potwierdzone luki: transport klienta nie wystawia stanów `connecting/live/reconnecting/disconnected` ani jawnej obsługi heartbeat/error/open; wejście do budynku nie żąda świeżego snapshotu; progresywne publikowanie częściowego snapshotu może czasowo stworzyć model bez wszystkich domen.
+- Następny krok: zakończyć read-only FAZĘ 1, dopisać testy odtwarzające każdą potwierdzoną regresję, a następnie wdrażać minimalne poprawki wyłącznie na demo, po jednym logicznym zakresie i commicie.
