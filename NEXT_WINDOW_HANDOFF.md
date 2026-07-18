@@ -1065,3 +1065,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Agent movement is frozen unless the later five-run acceptance test reproduces a concrete defect. No route, waypoint, position, FSM or map change is authorized by this audit.
 - Detailed evidence and rollback notes are in `docs/build-week/evidence/tests/20260718_DEMO_RELEASE_DIAGNOSIS_PL.md`.
 - Next exact step: add deterministic failing tests for five SSE reconnect cycles, heartbeat timeout, lifecycle cleanup and visibility/network recovery, then harden the existing singleton only.
+
+### Phase 2.1 completed — shared SSE lifecycle
+
+- The demo now owns exactly one observable EventSource, reconnect timer and heartbeat watchdog. It carries the last cursor through `after`, rejects callbacks from stale sources and cleans all sources/timers/browser listeners after the last unsubscribe.
+- Server heartbeat is a named SSE event, so the browser can detect a silent/stale connection instead of waiting for manual refresh.
+- Deterministic validation passed five consecutive disconnect/reconnect cycles, heartbeat timeout, hidden/foreground and offline/online transitions, with no duplicate delivery or accumulating resources.
+- Validation: 155/155 tests, ESLint, World Life validator and build PASS. Production remains untouched.
+- Next exact step: Phase 2.2 — connect `onStatus` to `useWorldBridge`, perform authoritative forced sync after reconnect, buffer/replay concurrent events, and prevent partial snapshots from clearing a previously confirmed roster.

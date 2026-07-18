@@ -799,3 +799,19 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Pokrycie jednego wspólnego EventSource i cleanup po unmount: **PASS**.
 - Pięć reconnectów, heartbeat timeout, background/foreground, Wi-Fi/LTE, autorytatywny resync, pięć ponownych wejść do budynku i restart-persistence historii: **NOT TESTED / BLOCKER** — brakujące przypadki zostały udokumentowane i muszą otrzymać testy przed promocją.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-056 — Pięć reconnectów i pełny cleanup wspólnego SSE
+
+- Czas: 2026-07-18, Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Test-first: **EXPECTED FAIL 3/3** przed implementacją — brak listenerów lifecycle, brak zamknięcia przy hidden i heartbeat będący wyłącznie komentarzem.
+- Focused SSE/runtime policy: **PASS 14/14**.
+- Pięć kolejnych `error → reconnect → open → heartbeat`: **PASS 5/5**; sześć instancji łącznie, zawsze dokładnie jedna otwarta.
+- Cursor wznowienia `after=evt-0`: **PASS 5/5**. Duplikacja dostarczenia eventu: **0**.
+- Reconnect timer po każdym zerwaniu: dokładnie **1**; heartbeat watchdog: dokładnie **1**; po unmount: **0 timerów / 0 listenerów / źródło zamknięte**.
+- Hidden → foreground, offline → online i brak niepotrzebnego ponownego otwarcia zdrowego źródła: **PASS**.
+- Nazwany heartbeat serwera oraz cleanup interwału: **PASS**.
+- Pełne `npm test`: **PASS 155/155**, 7 suites, 0 fail, 0 skipped.
+- `npm run lint`: **PASS**. `npm run validate:world-life`: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 13,15 s; main JS 428,55 kB / 132,06 kB gzip.
+- Ograniczenie: autorytatywny resync i UI stanu transportu są zakresem kolejnych faz, nie są oznaczone jako wykonane.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

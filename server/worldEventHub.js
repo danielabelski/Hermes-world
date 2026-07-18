@@ -33,7 +33,7 @@ export function createWorldEventHub({ maxEvents = 500 } = {}) {
     const lastIndex = lastEventId ? events.findIndex((event) => event.eventId === lastEventId) : -1
     const replay = lastIndex >= 0 ? events.slice(lastIndex + 1) : events
     send(res, 'snapshot', { events: replay, cursor: events.at(-1)?.eventId ?? null })
-    const heartbeat = setInterval(() => res.write(`: heartbeat ${Date.now()}\n\n`), 15_000)
+    const heartbeat = setInterval(() => send(res, 'heartbeat', { at: new Date().toISOString() }), 15_000)
     heartbeat.unref?.()
     return () => {
       clearInterval(heartbeat)

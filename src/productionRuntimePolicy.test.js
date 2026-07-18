@@ -16,7 +16,8 @@ test('authenticated world SSE is available to live and demo verification', () =>
   assert.match(bridge, /if \(!enabled\) return undefined/)
   assert.match(bridge, /subscribeWorldEventStream/)
   assert.doesNotMatch(bridge, /new EventSource/)
-  assert.match(stream, /new EventSourceImpl\('\/api\/world\/events\/stream'\)/)
+  assert.match(stream, /const STREAM_PATH = '\/api\/world\/events\/stream'/)
+  assert.match(stream, /new runtime\.EventSourceImpl\(buildStreamUrl\(\)\)/)
 })
 
 test('service worker refreshes caches without forcibly navigating clients', () => {
@@ -36,7 +37,9 @@ test('mobile lifecycle pauses hidden work, resumes immediately and cleans up eve
   assert.match(bridge, /addEventListener\('online', resume\)/)
   assert.match(bridge, /removeEventListener\('pageshow', resume\)/)
   assert.match(bridge, /removeEventListener\('online', resume\)/)
-  assert.match(stream, /if \(subscribers\.size === 0\) closeStream\(\)/)
+  assert.match(stream, /if \(subscribers\.size === 0\) cleanupTransport\(\)/)
+  assert.match(stream, /removeEventListener\('visibilitychange'/)
+  assert.match(stream, /removeEventListener\('offline'/)
   assert.match(worldCss, /has-open-interior \.fallback-map-stage\*?[^\n]*animation-play-state:paused!important/)
   assert.match(environment, /cancelAnimationFrame\(animationFrame\)/)
   assert.match(environment, /clearTimeout\(resampleTimer\)/)

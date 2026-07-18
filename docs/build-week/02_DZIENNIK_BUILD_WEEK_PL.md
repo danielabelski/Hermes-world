@@ -803,3 +803,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Ruch agentów nie zostanie zmieniony bez nieudanego testu akceptacyjnego. Obecne kontrakty oraz ostatni realny pomiar pozostają zaakceptowanym baseline'em.
 - Pełny raport z liniami kodu, minimalnymi zmianami, ryzykami i rollbackiem: `docs/build-week/evidence/tests/20260718_DEMO_RELEASE_DIAGNOSIS_PL.md`.
 - Produkcja nadal wskazuje `958b9da08bee9613900e902b3da558aadef826e8` i pozostaje nietknięta.
+
+## BW-2026-07-18-005 — Stabilny lifecycle jednego współdzielonego SSE w demo
+
+- Zakres: wyłącznie FAZA 2.1 na `build-week/hermes-world`; produkcja, trasy, pozycje, FSM, dane i UI nie zostały zmienione.
+- Test-first: trzy nowe przypadki najpierw odtworzyły brak lifecycle, brak obsługi tła/sieci i nieobserwowalny heartbeat jako 3 EXPECTED FAIL.
+- Istniejący singleton `worldEventStream` został zachowany i utwardzony: dokładnie jedno aktywne źródło, jeden reconnect timer, jeden heartbeat watchdog, kontrolowany backoff 1–15 s, cursor `after`, odrzucenie callbacków zamkniętej instancji i pełny cleanup.
+- Dodano jawne przejścia i logi: CONNECTING, LIVE, HEARTBEAT RECEIVED, CONNECTION LOST, RECONNECT SCHEDULED, RECONNECTING, DISCONNECTED i CONNECTION CLEANUP.
+- Serwer wysyła teraz heartbeat jako nazwany event SSE z timestampem ISO zamiast komentarza niewidocznego dla JavaScriptu.
+- Lifecycle przeglądarki: karta ukryta zatrzymuje transport i timery; foreground/pageshow oraz odzyskanie sieci otwierają jedno świeże źródło bez retry storm.
+- Walidacja: 5/5 kontrolowanych reconnectów PASS; 1 aktywne źródło po każdym cyklu; 0 timerów i 0 listenerów po cleanup; heartbeat timeout PASS; hidden/foreground i offline/online PASS.
+- Pełny zestaw: 155/155 PASS; ESLint PASS; World Life validator PASS; build PASS — 874 moduły, 13,15 s, main JS 428,55 kB / 132,06 kB gzip.
+- Produkcja pozostaje zamrożona na `958b9da08bee9613900e902b3da558aadef826e8`.
