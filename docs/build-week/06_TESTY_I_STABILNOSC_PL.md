@@ -891,3 +891,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Soak pojedynczego SSE przez 30 minut: **PASS** — HTTP 200 przez 1800 s, 120 chunków, 50 667 B; jeden listener po teście; private memory +0,10 MB, uchwyty 238→235, wątki 13→13.
 - Zalogowany telefon, background/foreground, Wi‑Fi/LTE i pięć prawdziwych lifecycle'ów iMessage/Hermes: **MANUAL ACTION REQUIRED / BLOCKER**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-063 — Realne timestampy cronów i odświeżanie wnętrz
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Dwa kolejne odczyty `/api/system/metrics`: **PASS / LIVE**, CPU 44,1% → 44,8%, temperatura 69°C → 73°C.
+- Kontrakt Hermes `completed_at` jako Unix seconds: **PASS** po odtworzeniu wcześniejszego odrzucenia rekordu.
+- Watcher z trwałą historią przy pustym scheduler inventory: **PASS**, liczba cronów i procent sukcesu pochodzą z realnych completions.
+- Focused: **PASS 13/13**. Pełne `npm test`: **PASS 167/167**, 8 suites, 0 fail.
+- ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: pierwsza próba **ENVIRONMENTAL RETRY** (`EPERM` sandbox `.vite-temp`); identyczna zatwierdzona próba **PASS**, 874 moduły, 3,52 s, main 432,80 kB / 133,27 kB gzip.
+- Realny bezpieczny cron E2E: **MANUAL ACTION REQUIRED / NEXT BLOCKER**. Produkcja: **UNCHANGED / NOT TOUCHED**.

@@ -45,6 +45,12 @@ function parseLog(line, index) {
 }
 
 const timestampMs = (value) => {
+  const numeric = Number(value);
+  if (Number.isFinite(numeric) && value !== null && value !== '') {
+    // Hermes WebUI returns cron completion timestamps as Unix seconds,
+    // while newer adapters may use Unix milliseconds or ISO strings.
+    return numeric < 1e12 ? numeric * 1000 : numeric;
+  }
   const parsed = Date.parse(value ?? '');
   return Number.isFinite(parsed) ? parsed : null;
 };
@@ -178,8 +184,9 @@ function normaliseCronHistory(completions, jobs) {
   for (const completion of completions) {
     const jobId = String(completion?.job_id ?? completion?.jobId ?? '').trim();
     const completedAt = completion?.completed_at ?? completion?.completedAt ?? null;
+    const completedAtMs = timestampMs(completedAt);
     const status = String(completion?.status ?? '').toLowerCase();
-    if (!jobId || !completedAt || timestampMs(completedAt) === null || !status) continue;
+    if (!jobId || completedAtMs === null || !status) continue;
     const id = String(completion?.id ?? `cron-${jobId}-${completedAt}-${status}`);
     if (unique.has(id)) continue;
     unique.set(id, {
@@ -187,7 +194,7 @@ function normaliseCronHistory(completions, jobs) {
       jobId,
       name: completion?.name || jobNames.get(jobId) || jobId,
       status,
-      completedAt: new Date(Date.parse(completedAt)).toISOString(),
+      completedAt: new Date(completedAtMs).toISOString(),
       source: 'hermes-cron-history',
     });
   }
@@ -334,6 +341,7 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
     tasks,
     buildings: buildingStates,
     crons,
+    cronHistory: cronCompletions,
     modelSources,
     tokenRiver,
     memorySummary,

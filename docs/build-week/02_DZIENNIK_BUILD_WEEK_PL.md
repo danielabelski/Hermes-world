@@ -877,3 +877,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - 30-minutowy soak jednego streamu SSE: PASS — HTTP 200 przez 1800 s, 120 chunków, 50 667 B, regularny heartbeat; po teście jeden listener, 13 wątków, private memory +0,10 MB i uchwyty 238→235. Brak oznaki wycieku.
 - Ręczne testy telefonu, Wi‑Fi/LTE, tła i pięciu prawdziwych lifecycle'ów pozostają BLOCKEREM; produkcja nie może zostać zmieniona przed ich PASS oraz osobnym GL autora.
 - Pełna macierz: `docs/build-week/evidence/tests/20260718_PHASE_3_DEMO_RELEASE_MATRIX_PL.md`.
+
+## BW-2026-07-18-012 — Korekta realnej telemetrii wnętrz po teście telefonu
+
+- Ręczna walidacja autora zaliczyła cold start, cykl, pięć powtórzeń, powrót z tła oraz Wi-Fi/LTE, ale ujawniła `CRONY 0` / `SUKCES 0` w Obserwatorium i pozornie nieruchomą telemetrię Kuźni.
+- Dwa kolejne realne odczyty demo potwierdziły, że metryki backendu są live: CPU 44,1% / 69°C → CPU 44,8% / 73°C. Nie zmieniono źródła CoreTemp ani częstotliwości backendu.
+- Znaleziono pierwszy rzeczywisty punkt utraty cronów: Hermes WebUI zwraca `completed_at` jako Unix seconds, a normalizator oczekiwał ISO i odrzucał wszystkie prawdziwe ukończenia. Fixture ISO wcześniej maskował błąd kontraktu.
+- Dodano obsługę Unix seconds/milliseconds/ISO, przekazanie trwałej historii przez snapshot/store do wnętrza oraz liczenie Watchera z realnych wykonań również wtedy, gdy inventory scheduler jest chwilowo puste.
+- Nie przedstawiono endpointu pamięci Hermesa jako RAG/Obsidian health. To realna pamięć runtime, ale osobna integracja RAG wymaga osobnego źródła prawdy.
+- Walidacja: 167/167 testów PASS, ESLint PASS, World Life validator PASS, `git diff --check` PASS, build PASS (874 moduły, 3,52 s, main 432,80 kB / 133,27 kB gzip). Produkcja pozostała nietknięta.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_REAL_INTERIOR_TELEMETRY_PL.md`.

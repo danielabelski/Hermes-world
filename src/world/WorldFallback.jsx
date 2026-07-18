@@ -101,6 +101,7 @@ export default function WorldFallback({ onRefreshBuilding = null }) {
   const modelSources = useWorldStore((state) => state.modelSources ?? [])
   const memorySummary = useWorldStore((state) => state.memorySummary ?? {})
   const crons = useWorldStore((state) => state.crons ?? [])
+  const cronHistory = useWorldStore((state) => state.cronHistory ?? [])
   const buildings = useWorldStore((state) => state.buildings ?? [])
   const zoomPreference = useWorldStore((state) => state.camera?.zoomPreference ?? 'standard')
   const selection = useWorldStore((state) => state.selection)
@@ -208,6 +209,7 @@ export default function WorldFallback({ onRefreshBuilding = null }) {
         activityItems={activityItems}
         tokenRiver={tokenRiver}
         crons={crons}
+        cronHistory={cronHistory}
         modelSources={modelSources}
         memorySummary={memorySummary}
         layout={mapLayout}

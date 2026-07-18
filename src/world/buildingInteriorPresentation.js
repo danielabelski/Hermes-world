@@ -21,7 +21,7 @@ const metric = (label, value, suffix = '', precision = 0) => Object.freeze({ lab
 const displayCount = (value) => Number.isFinite(Number(value)) ? Number(value) : 0
 
 function metricsFor(buildingId, context, relevantTasks, relevantAlerts) {
-  const { system = {}, tokenRiver = {}, activityItems = [], crons = [], memorySummary = {} } = context
+  const { system = {}, tokenRiver = {}, activityItems = [], crons = [], cronHistory = [], memorySummary = {} } = context
   if (buildingId === 'forge') return [
     metric('CPU', finite(system.cpuPercent), '%'),
     metric('TEMP.', finite(system.temperatureC), '°'),
@@ -38,11 +38,14 @@ function metricsFor(buildingId, context, relevantTasks, relevantAlerts) {
     metric('KOSZT API', finite(tokenRiver.totalEstimatedCost ?? system.totalEstimatedCost), '$', 2),
   ]
   if (buildingId === 'watcher') {
-    const completed = crons.filter((cron) => cron.lastCompletionStatus)
-    const successful = completed.filter((cron) => ['ok', 'success', 'completed'].includes(stateOf(cron.lastCompletionStatus))).length
+    const completed = cronHistory.length
+      ? cronHistory
+      : crons.filter((cron) => cron.lastCompletionStatus).map((cron) => ({ jobId: cron.id, status: cron.lastCompletionStatus }))
+    const cronIds = new Set([...crons.map((cron) => String(cron.id ?? '')).filter(Boolean), ...completed.map((item) => String(item.jobId ?? item.job_id ?? '')).filter(Boolean)])
+    const successful = completed.filter((item) => ['ok', 'success', 'completed'].includes(stateOf(item.status))).length
     return [
-      metric('CRONY', crons.length),
-      metric('SUKCES', completed.length ? (successful / completed.length) * 100 : null, '%'),
+      metric('CRONY', Math.max(crons.length, cronIds.size)),
+      metric('SUKCES', completed.length ? Math.round((successful / completed.length) * 100) : null, '%'),
       metric('ALERTY', relevantAlerts.length),
     ]
   }

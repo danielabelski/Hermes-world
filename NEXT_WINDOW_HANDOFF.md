@@ -1126,3 +1126,13 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - A 30-minute continuous SSE soak passed: HTTP 200 for 1800 seconds, 120 chunks, regular heartbeat, one listener after completion, stable thread count and no resource-growth signal.
 - Remaining release blockers are manual and real-data-only: authenticated phone cold start, background/foreground, Wi‑Fi/LTE reconnect/resync, one real cron correlation and five complete iMessage/Hermes worker journeys.
 - Do not touch production or prepare a promotion commit until these blockers pass and the author issues explicit GL.
+
+### Manual Phase 3 feedback and real telemetry correction
+
+- Author manually passed: cold start, command cycle, cycle movement, five cycles, app exit/return without false offline, and Wi-Fi→LTE.
+- Remaining observed blockers: real building values, complete cron/task history, route collision with Archive, and partial sprite clipping at a building threshold.
+- Real metrics were verified live (44.1%/69°C → 44.8%/73°C). The apparent Watcher failure was caused by `completed_at` epoch seconds being rejected by an ISO-only normalizer.
+- Demo now accepts epoch seconds/milliseconds/ISO and carries durable cron history through snapshot/store/interior presentation. Watcher can calculate real cron count and success rate even when scheduler inventory is temporarily empty.
+- Archive memory remains honestly labelled as Hermes runtime memory; do not claim RAG/Obsidian health without an authoritative endpoint.
+- Validation: 167/167 tests, ESLint, validator, diff check and build PASS. Production remains frozen.
+- Next exact step: trace one safe real cron and worker lifecycle through log → domain event → persistence → API/SSE → UI, then fix only a proven loss point. After that audit every cycle route against building geometry and make every verified threshold handoff atomic for the complete sprite.

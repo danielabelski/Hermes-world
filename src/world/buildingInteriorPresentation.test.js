@@ -62,4 +62,17 @@ describe('shared building interior presentation', () => {
     assert.equal(Object.hasOwn(citadel, 'operationalState'), false)
     assert.equal(Object.hasOwn(watcher, 'success'), false)
   })
+
+  it('uses persisted cron executions when the scheduler inventory is temporarily empty', () => {
+    const watcher = deriveBuildingInteriorPresentation('watcher', {
+      lifecycle: { connection: 'online' },
+      crons: [],
+      cronHistory: [
+        { jobId: 'nightly-health', status: 'success', completedAt: '2026-07-17T21:00:00.000Z' },
+        { jobId: 'nightly-health', status: 'error', completedAt: '2026-07-16T21:00:00.000Z' },
+        { jobId: 'journal-sync', status: 'ok', completedAt: '2026-07-17T22:00:00.000Z' },
+      ],
+    })
+    assert.deepEqual(watcher.metrics.map((item) => item.value), [2, 67, 0])
+  })
 })
