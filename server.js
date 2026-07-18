@@ -22,6 +22,7 @@ const dataDir = path.join(__dirname, 'data');
 const subscriptionsPath = path.join(dataDir, 'push-subscriptions.json');
 const vapidPath = path.join(dataDir, 'push-vapid.json');
 const cronPushStatePath = path.join(dataDir, 'cron-push-state.json');
+const worldEventHistoryPath = process.env.HERMES_WORLD_EVENT_HISTORY || path.join(dataDir, 'world-event-history.json');
 const cronLogPath = process.env.HERMES_CRON_LOG || path.join(os.homedir(), '.hermes', 'logs', 'agent.log');
 const assetBufferCache = new Map();
 
@@ -83,7 +84,10 @@ const latestHashedAsset = (prefix, ext) => {
 
 const app = express();
 const PORT = process.env.PORT || 4175;
-const worldEventHub = createWorldEventHub();
+const worldEventHub = createWorldEventHub({
+  storagePath: worldEventHistoryPath,
+  logger: (event, detail) => console.info(`[World Events] ${event}`, detail),
+});
 
 app.disable('x-powered-by');
 app.use(compression({
@@ -440,6 +444,9 @@ const publishWorldEvent = (req, res) => {
   try {
     const event = normalizeHermesWorldEvent(req.body);
     const result = worldEventHub.publish(event);
+    if (!result.accepted && result.reason === 'persistence_failed') {
+      return res.status(503).json({ ok: false, ...result });
+    }
     return res.status(result.accepted ? 202 : 200).json({ ok: true, ...result });
   } catch (error) {
     if (error instanceof WorldEventValidationError) return res.status(400).json({ ok: false, error: error.code, detail: error.message });

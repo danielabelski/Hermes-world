@@ -851,3 +851,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
 - Build: **PASS**, Vite 8.0.16, 874 moduły, 2,18 s; main JS 431,96 kB / 132,97 kB gzip.
 - Ręczny mobile transport-loss/reconnect: **PENDING / FAZA 3**. Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-060 — Trwała historia world-eventów i kompletność cronów
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; zakres **demo only**.
+- Test-first przed implementacją: **EXPECTED FAIL 2/2** — historia huba znikała po restarcie, a nieuporządkowane ukończenia jednego crona wybierały starszy wynik.
+- Focused world-event/cron tests po poprawce: **PASS 11/11**.
+- Pełny zestaw: **PASS 163/163**, 7 suites, 0 fail, 0 skipped.
+- Rzeczywisty restart izolowanego serwera 4198: **PASS** — event i cursor zachowane; po teście 0 listenerów na porcie i usunięty magazyn testowy.
+- Awaria zapisu: **PASS** — serwer zwraca `503 persistence_failed`, nie emituje nieutrwalonego eventu.
+- ESLint: **PASS**. `node --check server.js`: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build demo: **PASS**, 874 moduły, 10,07 s, main JS 432,61 kB / 133,21 kB gzip.
+- `/api/crons/recent` bez uwierzytelnienia: **PASS / 401 EXPECTED**.
+- Prawdziwy cron i pełna korelacja przez chronione API/SSE/UI: **MANUAL ACTION REQUIRED / FAZA 3**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

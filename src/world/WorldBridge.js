@@ -172,7 +172,29 @@ function normaliseAgent(profile, tasks, skills, logs) {
   };
 }
 
-function buildActivity({ tasks, crons, previousSnapshot, now }) {
+function normaliseCronHistory(completions, jobs) {
+  const jobNames = new Map(jobs.map((job) => [String(job.id), job.name || String(job.id)]));
+  const unique = new Map();
+  for (const completion of completions) {
+    const jobId = String(completion?.job_id ?? completion?.jobId ?? '').trim();
+    const completedAt = completion?.completed_at ?? completion?.completedAt ?? null;
+    const status = String(completion?.status ?? '').toLowerCase();
+    if (!jobId || !completedAt || timestampMs(completedAt) === null || !status) continue;
+    const id = String(completion?.id ?? `cron-${jobId}-${completedAt}-${status}`);
+    if (unique.has(id)) continue;
+    unique.set(id, {
+      id,
+      jobId,
+      name: completion?.name || jobNames.get(jobId) || jobId,
+      status,
+      completedAt: new Date(Date.parse(completedAt)).toISOString(),
+      source: 'hermes-cron-history',
+    });
+  }
+  return [...unique.values()].sort((a, b) => b.completedAt.localeCompare(a.completedAt));
+}
+
+function buildActivity({ tasks, cronCompletions, previousSnapshot, now }) {
   const previousTasks = new Map((previousSnapshot?.tasks ?? []).map((task) => [task.id, task]));
   const taskEvents = tasks.flatMap((task) => {
     const previous = previousTasks.get(task.id);
@@ -180,7 +202,19 @@ function buildActivity({ tasks, crons, previousSnapshot, now }) {
     const severity = task.status === 'blocked' ? 'warning' : task.status === 'done' ? 'info' : 'info';
     return [{ id: `task-${task.id}-${task.status}`, type: 'task', severity, entityType: 'task', entityId: task.id, message: describeTaskTransition(task), technicalMessage: `${task.title}: ${task.status}`, createdAt: task.completedAt ?? task.startedAt ?? now }];
   });
-  const cronEvents = crons.filter((cron) => cron.lastCompletionStatus).slice(-5).map((cron) => ({ id: `cron-${cron.id}-${cron.lastRunAt ?? ''}`, type: 'cron', severity: cron.lastCompletionStatus === 'error' ? 'error' : 'info', entityType: 'cron', entityId: cron.id, message: describeCronResult(cron), technicalMessage: `${cron.name}: ${cron.lastCompletionStatus}`, createdAt: cron.lastRunAt ?? now }));
+  const cronEvents = cronCompletions.map((completion) => ({
+    id: completion.id,
+    evidenceEventId: completion.id,
+    correlationId: completion.id,
+    type: 'cron',
+    severity: ['error', 'failed', 'fail'].includes(completion.status) ? 'error' : 'info',
+    entityType: 'cron',
+    entityId: completion.jobId,
+    message: describeCronResult({ name: completion.name, lastCompletionStatus: completion.status }),
+    technicalMessage: `${completion.name}: ${completion.status}`,
+    createdAt: completion.completedAt,
+    source: completion.source,
+  }));
   return [...taskEvents, ...cronEvents]
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
     .slice(0, MAX_ACTIVITY_ITEMS);
@@ -258,9 +292,15 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
   const freshIncidentLogs = rawLogs.filter((entry) => isFreshLog(entry, observedAt));
   const rawSkills = list(payloads.skills, 'skills');
   const cronHistory = list(payloads.cronHistory, 'completions');
-  const crons = list(payloads.crons, 'jobs').map((job) => {
-    const completion = cronHistory.find((item) => String(item.job_id) === String(job.id));
-    return { id: String(job.id), name: job.name || 'Unnamed cron', enabled: Boolean(job.enabled), lastRunAt: job.last_run_at ?? completion?.completed_at ?? null, lastCompletionStatus: completion?.status ?? null };
+  const rawCronJobs = list(payloads.crons, 'jobs');
+  const cronCompletions = normaliseCronHistory(cronHistory, rawCronJobs);
+  const latestCompletionByJob = new Map();
+  for (const completion of cronCompletions) {
+    if (!latestCompletionByJob.has(completion.jobId)) latestCompletionByJob.set(completion.jobId, completion);
+  }
+  const crons = rawCronJobs.map((job) => {
+    const completion = latestCompletionByJob.get(String(job.id));
+    return { id: String(job.id), name: job.name || 'Unnamed cron', enabled: Boolean(job.enabled), lastRunAt: completion?.completedAt ?? job.last_run_at ?? null, lastCompletionStatus: completion?.status ?? null };
   });
   const previousTasks = new Map((previousSnapshot?.tasks ?? []).map((task) => [String(task.id), task]));
   const tasks = rawTasks.map((task) => normaliseTask(task, previousTasks.get(String(task.id)), observedAt));
@@ -299,8 +339,8 @@ export function createWorldSnapshot(payloads = {}, previousSnapshot = null, now 
     memorySummary,
     skillSummary: { total: rawSkills.length, enabled: rawSkills.filter((skill) => !skill.disabled).length, disabled: rawSkills.filter((skill) => skill.disabled).map((skill) => skill.name ?? 'Unnamed skill') },
     alerts: buildAlerts({ logs: freshIncidentLogs, tasks, crons, health, now: createdAt }),
-    activity: buildActivity({ tasks, crons, previousSnapshot, now: createdAt }),
-    raw: { profiles: rawProfiles, metrics, tasks: rawTasks, logs: rawLogs, crons, sessions, skills: rawSkills, models: modelGroups, provenance },
+    activity: buildActivity({ tasks, cronCompletions, previousSnapshot, now: createdAt }),
+    raw: { profiles: rawProfiles, metrics, tasks: rawTasks, logs: rawLogs, crons, cronHistory: cronCompletions, sessions, skills: rawSkills, models: modelGroups, provenance },
   };
 }
 

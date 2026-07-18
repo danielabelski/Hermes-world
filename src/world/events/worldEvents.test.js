@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { normalizeHermesWorldEvent, WorldEventValidationError } from './worldEventContract.js'
 import { applyWorldEventToSnapshot } from './worldEventReducer.js'
 import { createWorldSnapshot } from '../WorldBridge.js'
@@ -86,6 +89,50 @@ test('event hub deduplicates and rejects old sequence numbers', () => {
   const older = normalizeHermesWorldEvent({ ...raw(0, 'run_started'), event_id: 'watcher-run:older' })
   assert.equal(hub.publish(older).reason, 'out_of_order')
   assert.equal(hub.snapshot().length, 1)
+})
+
+test('event hub restores durable history and sequence guards after process restart', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'hermes-world-events-'))
+  const storagePath = join(directory, 'world-event-history.json')
+  try {
+    const firstHub = createWorldEventHub({ storagePath })
+    const first = normalizeHermesWorldEvent(raw(1, 'reasoning'))
+    const second = normalizeHermesWorldEvent(raw(2, 'tool.started'))
+    assert.equal(firstHub.publish(first).accepted, true)
+    assert.equal(firstHub.publish(second).accepted, true)
+
+    const restoredHub = createWorldEventHub({ storagePath })
+    assert.deepEqual(restoredHub.snapshot().map((event) => event.eventId), [first.eventId, second.eventId])
+    assert.equal(restoredHub.publish(second).reason, 'duplicate')
+    const stale = normalizeHermesWorldEvent({ ...raw(0, 'run_started'), event_id: 'watcher-run:restart-stale' })
+    assert.equal(restoredHub.publish(stale).reason, 'out_of_order')
+  } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('cron history keeps every durable completion and selects the latest result by timestamp', () => {
+  const snapshot = createWorldSnapshot({
+    ...DEMO_WORLD_PAYLOADS,
+    crons: { jobs: [
+      { id: 'nightly', name: 'Nightly archive', enabled: true },
+      { id: 'health', name: 'Health sweep', enabled: true },
+    ] },
+    cronHistory: { completions: [
+      { job_id: 'nightly', name: 'Nightly archive', status: 'error', completed_at: '2026-07-17T19:30:00.000Z' },
+      { job_id: 'health', name: 'Health sweep', status: 'ok', completed_at: '2026-07-17T20:00:00.000Z' },
+      { job_id: 'nightly', name: 'Nightly archive', status: 'ok', completed_at: '2026-07-17T21:30:00.000Z' },
+    ] },
+  }, null, () => Date.parse('2026-07-18T05:00:00.000Z'))
+
+  const nightly = snapshot.crons.find((cron) => cron.id === 'nightly')
+  assert.equal(nightly.lastCompletionStatus, 'ok')
+  assert.equal(nightly.lastRunAt, '2026-07-17T21:30:00.000Z')
+  assert.deepEqual(
+    snapshot.activity.filter((item) => item.type === 'cron').map((item) => item.createdAt),
+    ['2026-07-17T21:30:00.000Z', '2026-07-17T20:00:00.000Z', '2026-07-17T19:30:00.000Z'],
+  )
+  assert.equal(new Set(snapshot.activity.filter((item) => item.type === 'cron').map((item) => item.id)).size, 3)
 })
 
 test('world state and choreography share one SSE connection and close it after the last unmount', () => {

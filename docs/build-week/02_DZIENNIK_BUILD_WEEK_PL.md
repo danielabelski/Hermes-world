@@ -846,3 +846,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie zmieniono mapy, tras, waypointów, ruchu, FSM, event pipeline'u, backendu ani produkcji.
 - Walidacja: **161/161 PASS**, ESLint **PASS**, World Life validator **PASS**, `git diff --check` **PASS**, build **PASS** — 874 moduły, 2,18 s, main JS 431,96 kB / 132,97 kB gzip.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_4_STATUS_SEPARATION_PL.md`.
+
+## BW-2026-07-18-009 — Trwała historia eventów i kompletne ukończenia cronów
+
+- Czas zakończenia etapu Europe/Warsaw: 2026-07-18 10:03; zakres: wyłącznie demo na `build-week/hermes-world`.
+- Test-first potwierdził dwa źródła utraty: world-eventy istniały wyłącznie w RAM i znikały po restarcie, a historia cronów wybierała jeden nieuporządkowany completion na job.
+- Hub zapisuje teraz zaakceptowane eventy atomowo do lokalnego magazynu JSON, odtwarza historię, deduplikację oraz guardy sekwencji po restarcie i nie publikuje eventu, jeżeli trwały zapis się nie udał.
+- Bridge zachowuje wszystkie autorytatywne ukończenia cronów, deduplikuje je po stabilnym ID i sortuje chronologicznie. Nie wykonano fikcyjnego backfillu.
+- Rzeczywisty izolowany restart serwera na porcie 4198 zachował event i cursor; proces oraz plik testowy zostały usunięte po weryfikacji.
+- Walidacja: focused 11/11 PASS; pełny zestaw 163/163 PASS; ESLint, `node --check server.js`, world-life validator i `git diff --check` PASS; build PASS — 874 moduły, 10,07 s, main 432,61 kB / 133,21 kB gzip.
+- Chroniony endpoint cronów bez sesji zwraca 401 zgodnie z kontraktem. Pełny prawdziwy cron E2E pozostaje kontrolowanym testem FAZY 3; nie uruchomiono nieznanego joba bez potwierdzenia jego bezpieczeństwa.
+- Produkcja pozostała nietknięta. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_5_EVENT_HISTORY_PL.md`.

@@ -1096,3 +1096,14 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Reconnecting and disconnected UI copy explicitly says that the app transport is recovering and the displayed Hermes state is the last confirmed one.
 - Validation: 161/161 tests, ESLint, World Life validator, `git diff --check` and build PASS. Production remains untouched.
 - Next exact step: Phase 2.5 — trace cron/task events from source through domain event creation, persistence, history API, SSE merge and UI; fix only the first proven loss point and never fabricate unavailable history.
+
+### Phase 2.5 completed — durable event history and complete cron completions
+
+- Confirmed loss points were narrow: the world-event hub was RAM-only, and cron presentation used one unordered completion per job.
+- Accepted world-events are now written atomically before publication, restored across restart, and used to rebuild event-id dedupe and run sequence guards. Persistence failure is explicit and does not acknowledge an event that would be lost.
+- Every authoritative cron completion is normalized, deduplicated by stable ID and sorted by timestamp. Latest job results are selected chronologically; older valid completions remain visible as separate activity records.
+- No synthetic history or unverified backfill was created.
+- Validation: 163/163 tests, ESLint, server syntax, World Life validator, `git diff --check` and build PASS. An isolated real server restart preserved the event/cursor and left no test process or file behind.
+- Protected cron history correctly returns 401 without a session. The controlled real-cron correlation test remains part of Phase 3 and is not marked PASS prematurely.
+- Production remains untouched.
+- Next exact step: Phase 2.6 — run the accepted movement scenario five times and measure agent identity, route continuity, destination, building entry and terminal state. Change movement code only if this gate reproduces a concrete defect.
