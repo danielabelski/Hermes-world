@@ -1009,3 +1009,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Przygotowano `docs/release/DEMO_VALIDATION_SUMMARY.md` z wynikami 178/178 testów, walidacją builda, manualnym gate'em autora, ograniczeniami nieblokującymi i izolacją produkcji.
 - Trzy kontrolowane próby stagingu nie zapisały indeksu: środowisko wykonawcze odmówiło utworzenia `.git/worktrees/hermes-os-living-world-demo/index.lock` także po przyznaniu precyzyjnego dostępu. `git diff --cached --name-only` pozostał pusty; nie utworzono commitu ani tagu.
 - Faza 1 pozostaje **BLOCKED technicznie** do czasu utworzenia finalnego commitu, wpisania SHA, utworzenia tagu `demo-validated-2026-07-18` i potwierdzenia czystego working tree. Faza 2 i produkcja nie zostały rozpoczęte.
+
+## BW-2026-07-18-025 — Finalny checkpoint i zamrożenie DEMO
+
+- Czas Europe/Warsaw: 2026-07-18 23:12; zakres wyłącznie DEMO.
+- Autor wykonał kontrolowany staging dokładnie 13 zatwierdzonych ścieżek. `git diff --cached --check` zakończył się PASS; ostrzeżenia LF/CRLF były informacyjne.
+- Utworzono zwalidowany commit implementacyjny `1dd40f418d6db6ab8ac5802bfc116483e1ee3ec8` (`fix(build-week): preserve live worker handoff`): 485 insertions, 5 deletions, bez plików spoza sklasyfikowanego zakresu.
+- Finalny checkpoint dokumentacyjny otrzymuje tag `demo-validated-2026-07-18`. Podsumowanie: `docs/release/DEMO_VALIDATION_SUMMARY.md`.
+- Faza 1: **PASS**. Produkcja pozostaje czysta i nietknięta na `958b9da08bee9613900e902b3da558aadef826e8`; następny etap to wyłącznie read-only identyfikacja exact patcha.

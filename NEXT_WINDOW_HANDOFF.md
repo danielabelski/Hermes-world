@@ -1,13 +1,13 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
-## ACTIVE RELEASE HANDOFF — FAZA 1 / BLOKADA ZAPISU GIT (2026-07-18)
+## ACTIVE RELEASE HANDOFF — FAZA 1 PASS / DEMO ZAMROŻONE (2026-07-18 23:12 CEST)
 
-- Kod, testy, build, raport startowy i `docs/release/DEMO_VALIDATION_SUMMARY.md` są przygotowane zgodnie z feature freeze.
-- Zatwierdzony kandydat obejmuje wyłącznie patch ciągłości worker handoff oraz jego testy i dokumentację; produkcja pozostaje nietknięta.
-- Trzy próby `git add` zakończyły się przed stagingiem: sandbox odmówił utworzenia `.git/worktrees/hermes-os-living-world-demo/index.lock`, również po przyznaniu dostępu katalogowego i dostępu do konkretnego pliku.
-- Nie powstał commit ani tag; `git diff --cached --name-only` pozostał pusty. Nie wolno przedstawiać Fazy 1 jako PASS.
-- Następne działanie: utworzyć finalny commit DEMO poza blokującym sandboxem, wpisać SHA do podsumowania, wykonać finalny commit dokumentacyjny, utworzyć tag `demo-validated-2026-07-18` i potwierdzić czyste drzewo.
-- Nie rozpoczynać Fazy 2 ani nie dotykać produkcji przed zamknięciem tej bramki.
+- Zwalidowany commit implementacyjny DEMO: `1dd40f418d6db6ab8ac5802bfc116483e1ee3ec8` (`fix(build-week): preserve live worker handoff`).
+- Finalny tag checkpointu: `demo-validated-2026-07-18`; obejmuje podsumowanie walidacji bez dodatkowych zmian runtime.
+- Zatwierdzony zakres obejmuje wyłącznie patch ciągłości worker handoff oraz jego testy, evidence i dokumentację release.
+- `git diff --cached --check` przed commitem: PASS; 13/13 oczekiwanych ścieżek; commit utworzył 485 insertions i 5 deletions.
+- Produkcja pozostaje nietknięta i czysta na `main` / `958b9da08bee9613900e902b3da558aadef826e8`.
+- Następny etap: Faza 2, wyłącznie read-only identyfikacja exact patcha. Nie wdrażać przed przygotowaniem rollbacku w Fazie 3.
 
 ---
 

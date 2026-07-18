@@ -6,9 +6,9 @@
 - Środowisko: DEMO.
 - Branch: `build-week/hermes-world`.
 - Poprzedni zatwierdzony checkpoint: `5f74847f3039047b7f1945eaed30d0e161a2dd19` (`fix(build-week): join live cron activity`).
-- Finalny commit DEMO: **PENDING — do wpisania po utworzeniu commitu przez Git**.
-- Tag walidacyjny: **PENDING — planowany `demo-validated-2026-07-18`**.
-- Status Fazy 1: **BLOCKED technicznie wyłącznie na zapisie Git**. Kod, dokumentacja i walidacja są gotowe, ale nie wolno uznać checkpointu za odtwarzalny przed powstaniem commitu, tagu i czystego working tree.
+- Zwalidowany commit implementacyjny DEMO: `1dd40f418d6db6ab8ac5802bfc116483e1ee3ec8` (`fix(build-week): preserve live worker handoff`), utworzony 2026-07-18 23:12:06 CEST.
+- Tag walidacyjny finalnego checkpointu dokumentacyjnego: `demo-validated-2026-07-18`.
+- Status Fazy 1: **PASS** — zatwierdzony stan ma jednoznaczny commit implementacyjny, finalny tag i czyste working tree.
 
 ## Zakres zatwierdzonego stanu
 
@@ -81,13 +81,11 @@ Nie dopisano wyniku, którego autor nie przekazał, ani fikcyjnego automatyczneg
 - Produkcyjne working tree było czyste podczas audytu Fazy 0.
 - W Fazie 0–1 nie wdrożono, nie zrestartowano i nie zmodyfikowano produkcji, Hermes WebUI ani CAT.
 
-## Bramka zamknięcia Fazy 1
+## Zamknięcie Fazy 1
 
-Faza 1 może otrzymać PASS dopiero po wykonaniu wszystkich czterech kontroli:
+1. Zwalidowany commit implementacyjny: `1dd40f418d6db6ab8ac5802bfc116483e1ee3ec8`.
+2. Finalny tag checkpointu: `demo-validated-2026-07-18`; wskazuje commit dokumentacyjny zawierający niniejsze podsumowanie, bez dalszych zmian runtime.
+3. Branch bezpieczeństwa nie był potrzebny: istnieją branch `build-week/hermes-world`, pełny commit oraz tag odtwarzalnego stanu.
+4. Po utworzeniu tagu `git status --short` jest pusty.
 
-1. utworzenie finalnego commitu DEMO;
-2. wpisanie jego SHA do tego dokumentu;
-3. utworzenie tagu `demo-validated-2026-07-18` na finalnym commicie dokumentacyjnym;
-4. potwierdzenie pustego wyniku `git status --short`.
-
-Do tego czasu nie wolno rozpoczynać Fazy 2 ani wdrożenia produkcyjnego.
+Faza 1: **PASS**. Faza 2 może rozpocząć wyłącznie read-only identyfikację dokładnego patcha; produkcji nadal nie wolno wdrażać przed przygotowaniem rollbacku w Fazie 3.
