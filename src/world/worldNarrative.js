@@ -69,8 +69,10 @@ export function describeCronResult(cron = {}) {
   const name = String(cron.name ?? 'Automatyzacja').trim() || 'Automatyzacja'
   const status = String(cron.lastCompletionStatus ?? cron.status ?? '').toLowerCase()
   return ['error', 'failed', 'fail'].includes(status)
-    ? `Automatyzacja „${name}” zakończyła się błędem.`
-    : `Automatyzacja „${name}” zakończyła cykl poprawnie.`
+    ? `Paź odnotował błąd crona „${name}”.`
+    : ['ok', 'success', 'completed', 'done'].includes(status)
+      ? `Paź odnotował wykonanie crona „${name}” — sukces.`
+      : `Paź odnotował wykonanie crona „${name}”.`
 }
 
 export function describeLogAlert(entry = {}, profile = null) {

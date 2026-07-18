@@ -991,3 +991,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Serwowany artifact: **PASS**, `index-B8Cd0i5g.js`.
 - Prawdziwa nowa wiadomość i ręczna kontrola cronów na telefonie: **MANUAL ACTION REQUIRED**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-071 — Realne crony z inventory schedulerów
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Read-only `hermes cron list`: **PASS** — 15 realnych, nazwanych zadań z informacją o ostatnim uruchomieniu; żadnego syntetycznego crona.
+- Kontrakt pustego `/crons/recent` + realnego `crons.jobs[].last_run_at`: **PASS** — wpisy powstają z prawdziwej nazwy, czasu i statusu inventory.
+- Priorytet pełnej historii nad fallbackiem inventory dla tego samego job+timestamp: **PASS**.
+- Narracja `Paź odnotował wykonanie crona „<nazwa>” — sukces`: **PASS**; brak twierdzenia, że Paź był wykonawcą bez dowodu.
+- Pełna regresja: **175/175 PASS**, 8 suites, 0 fail. ESLint: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, 875 modułów, 5,55 s; main JS 436,98 kB / 134,62 kB gzip.
+- Serwowany artifact demo: **PASS**, `index-DnsOKSiO.js` zgodny z `dist/index.html`.
+- Zalogowany telefon i wizualna kontrola prawdziwych nazw/czasów cronów: **MANUAL ACTION REQUIRED / GL-RL**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

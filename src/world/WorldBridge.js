@@ -181,21 +181,33 @@ function normaliseAgent(profile, tasks, skills, logs) {
 function normaliseCronHistory(completions, jobs) {
   const jobNames = new Map(jobs.map((job) => [String(job.id), job.name || String(job.id)]));
   const unique = new Map();
-  for (const completion of completions) {
+  const latestInventoryRuns = jobs.map((job) => ({
+    job_id: job?.id,
+    name: job?.name,
+    status: job?.last_status ?? job?.last_run_status ?? job?.lastResult?.status ?? job?.last_run?.status ?? 'completed',
+    completed_at: job?.last_run_at ?? job?.lastRunAt ?? job?.last_run?.completed_at ?? job?.last_run?.timestamp ?? null,
+    source: 'hermes-cron-inventory',
+    inventoryFallback: true,
+  }));
+  // The inventory is authoritative for the latest execution even when the
+  // optional /crons/recent history is empty. Explicit history is processed
+  // second and replaces an inventory fallback for the same job and timestamp.
+  for (const completion of [...latestInventoryRuns, ...completions]) {
     const jobId = String(completion?.job_id ?? completion?.jobId ?? '').trim();
     const completedAt = completion?.completed_at ?? completion?.completedAt ?? null;
     const completedAtMs = timestampMs(completedAt);
     const status = String(completion?.status ?? '').toLowerCase();
     if (!jobId || completedAtMs === null || !status) continue;
-    const id = String(completion?.id ?? `cron-${jobId}-${completedAt}-${status}`);
-    if (unique.has(id)) continue;
-    unique.set(id, {
+    const evidenceKey = `${jobId}:${completedAtMs}`;
+    if (completion.inventoryFallback && unique.has(evidenceKey)) continue;
+    const id = String(completion?.id ?? `cron-${jobId}-${completedAtMs}-${status}`);
+    unique.set(evidenceKey, {
       id,
       jobId,
       name: completion?.name || jobNames.get(jobId) || jobId,
       status,
       completedAt: new Date(completedAtMs).toISOString(),
-      source: 'hermes-cron-history',
+      source: completion?.source || 'hermes-cron-history',
     });
   }
   return [...unique.values()].sort((a, b) => b.completedAt.localeCompare(a.completedAt));

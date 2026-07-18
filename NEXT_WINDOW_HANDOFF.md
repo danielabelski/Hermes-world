@@ -1179,3 +1179,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Historyczne bezimienne gateway lifecycle nie są już pokazywane w czytelnym arkuszu; pozostają w surowym/audytowym kanale. Nazwane gateway eventy oraz crony pozostają widoczne.
 - Automatyczna walidacja: 174/174, ESLint i build PASS; demo serwuje `index-B8Cd0i5g.js`. Produkcja nietknięta.
 - Następny manualny gate: wysłać zupełnie nową nazwaną wiadomość do Hermesa i sprawdzić konkretną nazwę oraz listę cronów.
+
+## Aktualizacja handoffu — realne crony przy pustej historii recent
+
+- Ustalono pierwszy faktyczny punkt utraty cronów: `/crons/recent.completions` może być puste, mimo że autorytatywne inventory Hermesa zawiera 15 realnych zadań z `last_run_at` i statusem. WorldBridge nie wykorzystywał wcześniej tego dowodu do historii aktywności.
+- Demo tworzy teraz fallback z `crons.jobs[]`; pełniejsze completion history ma pierwszeństwo i deduplikuje ten sam job+timestamp. Nie ma fake cronów ani syntetycznych sukcesów.
+- Czytelny kanał używa etykiet `CRON · SUKCES/WYKONANO/BŁĄD` oraz konkretnej nazwy. Paź jedynie narracyjnie odnotowuje dowód, np. `Paź odnotował wykonanie crona „Build” — sukces.`
+- Automatyczna walidacja: 175/175 testów, ESLint, build i diff-check PASS. Demo serwuje `index-DnsOKSiO.js`. Produkcja nadal nietknięta na `958b9da`.
+- Następny gate: na zalogowanym telefonie otworzyć Aktywność Cytadeli, potwierdzić realne nazwy/czasy cronów, następnie wysłać nową nazwaną wiadomość i sprawdzić oddzielny lifecycle Pazia.

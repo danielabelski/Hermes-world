@@ -22,6 +22,25 @@ describe('real Hermes payload contracts', () => {
       assert.equal(snapshot.activity[0].cronStatus, 'success')
   })
 
+  it('uses authoritative cron inventory last runs when recent completion history is empty', () => {
+    const snapshot = createWorldSnapshot({
+      profiles,
+      crons: { jobs: [
+        { id: 'build', name: 'build-everyday', enabled: true, last_run_at: '2026-07-18T17:30:00+02:00', last_status: 'ok' },
+        { id: 'watchdog', name: 'kanban-requeue-watchdog', enabled: true, last_run_at: '2026-07-18T18:00:00+02:00' },
+      ] },
+      cronHistory: { completions: [] },
+    }, null, () => Date.parse('2026-07-18T18:05:00+02:00'))
+
+    assert.equal(snapshot.cronHistory.length, 2)
+    assert.equal(snapshot.activity.length, 2)
+    assert.equal(snapshot.activity[0].cronName, 'kanban-requeue-watchdog')
+    assert.equal(snapshot.activity[0].cronStatus, 'completed')
+    assert.match(snapshot.activity[0].message, /Paź odnotował wykonanie crona/)
+    assert.equal(snapshot.activity[1].cronName, 'build-everyday')
+    assert.equal(snapshot.activity[1].cronStatus, 'ok')
+  })
+
   it('retains real metric updates instead of a prior cached temperature', () => {
     const first = createWorldSnapshot({ profiles, metrics: { cpuPercent: 30, memoryPercent: 50, temperatureC: 60 } })
     const second = createWorldSnapshot({ profiles, metrics: { cpuPercent: 31, memoryPercent: 51, temperatureC: 73 } }, first)

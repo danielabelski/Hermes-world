@@ -21,16 +21,16 @@ function cronPresentation(item) {
   const failed = ERROR_STATUSES.has(status) || ['error', 'critical'].includes(clean(item.severity).toLowerCase())
   const succeeded = SUCCESS_STATUSES.has(status)
   return {
-    label: failed ? 'CRON · BŁĄD' : succeeded ? 'CRON · SUKCES' : `CRON · ${status ? status.toUpperCase() : 'WYNIK'}`,
+    label: failed ? 'CRON · BŁĄD' : succeeded ? 'CRON · SUKCES' : 'CRON · WYKONANO',
     message: failed
-      ? `${name} — wykonanie zakończone błędem.`
+      ? `Paź odnotował błąd crona „${name}”.`
       : succeeded
-        ? `${name} — wykonany pomyślnie.`
-        : `${name} — status: ${status || 'nieznany'}.`,
+        ? `Paź odnotował wykonanie crona „${name}” — sukces.`
+        : `Paź odnotował wykonanie crona „${name}”.`,
   }
 }
 
-/** A cron is never attributed to an agent without real evidence. */
+/** Paź narrates cron evidence; the copy does not claim he executed the job. */
 export function presentWorldActivity(item = {}) {
   const type = clean(item.type).toLowerCase()
   if (type === 'cron') return cronPresentation(item)

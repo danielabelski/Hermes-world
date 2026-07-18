@@ -24,11 +24,11 @@ import { getBuildingRefreshDomains } from './buildingEntryConfig.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
 
-test('cron activity names the real cron and never attributes it to Paź', () => {
+test('cron activity names the real cron and uses Paź as its evidence narrator', () => {
   const presentation = presentWorldActivity({ type: 'cron', entityId: 'morning-health', cronName: 'Morning health check', cronStatus: 'success', severity: 'info' })
   assert.equal(presentation.label, 'CRON · SUKCES')
   assert.match(presentation.message, /Morning health check/)
-  assert.doesNotMatch(presentation.message, /Paź/)
+  assert.match(presentation.message, /Paź odnotował/)
 })
 
 test('activity rotation surfaces a real cron before a burst of agent lifecycle messages', () => {

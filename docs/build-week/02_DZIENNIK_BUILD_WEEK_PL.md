@@ -956,3 +956,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie wykonano fałszywego backfillu i nie zmieniono historii źródłowej. Bezimienne historyczne lifecycle gateway pozostają w surowym/audytowym kanale, lecz nie wypierają z czytelnego arkusza nazwanych operacji i cronów.
 - Nowe gateway eventy z `task_title` pozostają widoczne. Crony i wszystkie niezależne wpisy pozostają nietknięte.
 - Walidacja: **174/174 testy PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 4,13 s, main 436,52 kB / 134,50 kB gzip. Serwer demo podaje `index-B8Cd0i5g.js`. Produkcja nietknięta.
+
+## BW-2026-07-18-020 — Realne crony w semantycznej Aktywności Cytadeli
+
+- Ręczny test autora ujawnił pustą Aktywność Cytadeli po odfiltrowaniu starych bezimiennych eventów gateway. Przyczyną nie był brak cronów w Hermesie: realne `hermes cron list` zwróciło 15 nazwanych zadań z czasem ostatniego wykonania i statusem. Bridge budował historię wyłącznie z opcjonalnego `/crons/recent.completions`, które w tym środowisku było puste, i ignorował autorytatywne `crons.jobs[].last_run_at`.
+- Demo tworzy teraz semantyczne wpisy z realnego inventory schedulerów, a pełniejsza historia `/crons/recent` — jeżeli jest dostępna — zastępuje fallback dla tego samego crona i czasu. Nie wygenerowano fikcyjnych cronów ani wyników.
+- Ustalona gramatyka: `CRON · SUKCES`, `CRON · WYKONANO`, `CRON · BŁĄD`; komunikat podaje prawdziwą nazwę, np. `Paź odnotował wykonanie crona „Build” — sukces.` Paź jest narratorem dowodu systemowego, a nie przedstawiany bezpodstawnie jako wykonawca crona.
+- Automatyczna walidacja: **175/175 testów PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 5,55 s, main JS 436,98 kB / 134,62 kB gzip. Działający serwer demo podaje dokładnie aktualny artifact `index-DnsOKSiO.js`.
+- Produkcja pozostała nietknięta. Rzeczywiste nazwy i chronologia na zalogowanym telefonie pozostają bramką ręczną GL/RL.
