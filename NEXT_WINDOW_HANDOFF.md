@@ -1145,3 +1145,4 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Focused contracts pass 45/45; full regression 168/168, ESLint, validator, diff check and build also pass. The authenticated phone visual check remains the next gate.
 - Production remains frozen; do not promote without a fresh explicit GL after manual demo acceptance.
 - The running demo on port 4176 serves the current build hash `index-BkzoAeZ2.js`. Post-change Git snapshot: `20260718T120201Z-git-snapshot.txt`.
+- The production promotion must follow `docs/build-week/evidence/submission-period/20260718_RELEASE_CANDIDATE_MANIFEST_PL.md`; never merge/copy the whole demo tree. Current main is clean and unchanged at `958b9da`.

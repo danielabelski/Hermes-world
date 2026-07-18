@@ -899,3 +899,4 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_SEMANTIC_HISTORY_AND_ATOMIC_ENTRY_PL.md`.
 - Serwer demo `127.0.0.1:4176` podaje dokładnie aktualny hash buildu `index-BkzoAeZ2.js`; root, manifest, Service Worker, JS, CSS i auth status zwracają HTTP 200. Produkcyjny `main` nadal jest czysty na `958b9da08bee9613900e902b3da558aadef826e8`.
 - Snapshot po commitach: `docs/build-week/evidence/git-snapshots/20260718T120201Z-git-snapshot.txt`.
+- Przygotowano read-only manifest przyszłej promocji: dziewięć logicznych commitów, lista wykluczeń, pliki konfliktowe, manualna bramka i rollback. Nie utworzono nowego kandydata i nie zmieniono produkcji. Plik: `docs/build-week/evidence/submission-period/20260718_RELEASE_CANDIDATE_MANIFEST_PL.md`.
