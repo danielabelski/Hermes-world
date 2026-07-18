@@ -1,7 +1,7 @@
 # FAZA 3 — kontekstowa historia operacyjna
 
-Data: 2026-07-18, Europe/Warsaw  
-Branch: `build-week/hermes-world`  
+Data: 2026-07-18, Europe/Warsaw
+Branch: `build-week/hermes-world`
 Zakres: wyłącznie demo
 
 ## Problem wykryty manualnie
