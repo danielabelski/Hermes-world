@@ -63,7 +63,8 @@ export function describeTaskTransition(task = {}) {
 
 export function describeCronResult(cron = {}) {
   const name = String(cron.name ?? 'Automatyzacja').trim() || 'Automatyzacja'
-  return cron.lastCompletionStatus === 'error'
+  const status = String(cron.lastCompletionStatus ?? cron.status ?? '').toLowerCase()
+  return ['error', 'failed', 'fail'].includes(status)
     ? `Automatyzacja „${name}” zakończyła się błędem.`
     : `Automatyzacja „${name}” zakończyła cykl poprawnie.`
 }

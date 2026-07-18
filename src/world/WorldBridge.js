@@ -205,9 +205,22 @@ function buildActivity({ tasks, cronCompletions, previousSnapshot, now }) {
   const previousTasks = new Map((previousSnapshot?.tasks ?? []).map((task) => [task.id, task]));
   const taskEvents = tasks.flatMap((task) => {
     const previous = previousTasks.get(task.id);
-    if (!previous || previous.status === task.status) return [];
+    const observedTransition = Boolean(previous) && previous.status !== task.status;
+    const createdAt = task.completedAt ?? task.startedAt ?? task.createdAt ?? (observedTransition ? now : null);
+    // The Kanban endpoint is authoritative for the task's current state. Show
+    // it after cold start/resync, but do not turn it into a movement edge.
+    if (!createdAt) return [];
     const severity = task.status === 'blocked' ? 'warning' : task.status === 'done' ? 'info' : 'info';
-    return [{ id: `task-${task.id}-${task.status}`, type: 'task', severity, entityType: 'task', entityId: task.id, message: describeTaskTransition(task), technicalMessage: `${task.title}: ${task.status}`, createdAt: task.completedAt ?? task.startedAt ?? now }];
+    return [{
+      id: `task-${task.id}-${task.status}`,
+      evidenceEventId: task.evidenceEventId ?? null,
+      correlationId: task.evidenceEventId ?? task.id,
+      type: 'task', severity, entityType: 'task', entityId: task.id,
+      message: describeTaskTransition(task),
+      technicalMessage: `${task.title}: ${task.status}`,
+      createdAt,
+      source: 'hermes-kanban',
+    }];
   });
   const cronEvents = cronCompletions.map((completion) => ({
     id: completion.id,
