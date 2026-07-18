@@ -964,3 +964,18 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Ustalona gramatyka: `CRON · SUKCES`, `CRON · WYKONANO`, `CRON · BŁĄD`; komunikat podaje prawdziwą nazwę, np. `Paź odnotował wykonanie crona „Build” — sukces.` Paź jest narratorem dowodu systemowego, a nie przedstawiany bezpodstawnie jako wykonawca crona.
 - Automatyczna walidacja: **175/175 testów PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 5,55 s, main JS 436,98 kB / 134,62 kB gzip. Działający serwer demo podaje dokładnie aktualny artifact `index-DnsOKSiO.js`.
 - Produkcja pozostała nietknięta. Rzeczywiste nazwy i chronologia na zalogowanym telefonie pozostają bramką ręczną GL/RL.
+
+## BW-2026-07-18-021 — Domknięcie live joinu cronów w Aktywności Cytadeli
+
+- Czas Europe/Warsaw: 2026-07-18 21:19–22:02; zakres wyłącznie DEMO `build-week/hermes-world`.
+- Audyt rozpoczęto od `b16478d`. Produkcyjny `main` pozostał czysty na `958b9da08bee9613900e902b3da558aadef826e8`; CAT i Hermes WebUI nie były modyfikowane ani restartowane.
+- Read-only wywołanie prawdziwego handlera `/api/crons/recent` zwróciło 16 completionów o kształcie `job_id/name/status/completed_at`, gdzie `completed_at` jest Unix seconds. Inventory zawiera 17 jobs; wszystkie wykonane identyfikatory pasują 1:1.
+- Przyczyną złej prezentacji nie był renderer. Zatwierdzony `?demo=1` nadal mógł uruchomić fixture, a niedokończony overlay CLI nadpisywał WebUI innym timestampem tego samego joba. Dodatkowo numeric seconds zachowywały mikrosekundy, których ISO nie zachowywało, przez co dedupe po dokładnym timestampie tworzył dwa wpisy.
+- Poprawka rozdziela środowisko DEMO od jawnego fixture, zachowuje WebUI jako źródło nadrzędne i używa CLI wyłącznie jako odpornego fallbacku. Historia recent wygrywa nad inventory dla tego samego joba w oknie 60 sekund; timestamp jest normalizowany do całkowitych ms.
+- Ważne warning/error z logów mają regresję potwierdzającą obecność w połączonym feedzie jako czytelne alerty; raw log pozostaje w górnym kanale. Cron `no-agent` nie budzi żadnego workera i nie tworzy fake Working.
+- Rzeczywisty E2E danych: 17 raw jobs, 16 raw completions, 17 znormalizowanych jobs, 16 historycznych wykonań, 16 wpisów cron w Aktywności, 0 duplikatów. Jedyny `null` to nigdy niewykonany `mcp-toolcheck` z `lastRunAt: null`.
+- Walidacja: focused 45/45 PASS; pełne testy 177/177 PASS; cron contract 2/2 PASS; ESLint PASS; World Life PASS; `git diff --check` PASS; build PASS, 875 modułów, main 437,39 kB / 134,79 kB gzip.
+- Runtime: jeden listener 4176, artifact `index-DCTdIYBq.js`; root/auth/world snapshot HTTP 200. Produkcja 4175, WebUI 8787 i CAT 8788 nadal odpowiadają HTTP 200.
+- Zalogowany automatyczny UI test nie mógł zostać wykonany, ponieważ kontroler przeglądarki zablokował lokalny/Tailscale URL polityką bezpieczeństwa. Manualny telefon pozostaje **MANUAL ACTION REQUIRED / GL-RL**; nie zapisano fałszywego PASS.
+- Sesja: `019f76b1-bba0-7400-9167-0fab397eabc8`; model: GPT-5.6.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_LIVE_CRON_JOIN_PL.md`.

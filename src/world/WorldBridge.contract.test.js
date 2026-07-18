@@ -22,6 +22,31 @@ describe('real Hermes payload contracts', () => {
       assert.equal(snapshot.activity[0].cronStatus, 'success')
   })
 
+  it('joins the exact live crons/recent shape and deduplicates its nearby inventory fallback', () => {
+    const snapshot = createWorldSnapshot({
+      profiles,
+      crons: { jobs: [{
+        id: '67b8294196c1',
+        name: 'job-scraper-morning',
+        enabled: true,
+        last_run_at: '2026-07-18T09:31:40.644559+02:00',
+        last_status: 'ok',
+      }] },
+      cronHistory: { completions: [{
+        job_id: '67b8294196c1',
+        name: 'job-scraper-morning',
+        status: 'ok',
+        completed_at: 1784359894.154202,
+        toast_notifications: true,
+      }] },
+    }, null, () => Date.parse('2026-07-18T22:00:00+02:00'))
+
+    assert.equal(snapshot.crons[0].lastCompletionStatus, 'ok')
+    assert.equal(snapshot.cronHistory.length, 1)
+    assert.equal(snapshot.activity.filter((item) => item.type === 'cron').length, 1)
+    assert.equal(snapshot.activity[0].source, 'hermes-cron-history')
+  })
+
   it('uses authoritative cron inventory last runs when recent completion history is empty', () => {
     const snapshot = createWorldSnapshot({
       profiles,
@@ -39,6 +64,28 @@ describe('real Hermes payload contracts', () => {
     assert.match(snapshot.activity[0].message, /Paź odnotował wykonanie crona/)
     assert.equal(snapshot.activity[1].cronName, 'build-everyday')
     assert.equal(snapshot.activity[1].cronStatus, 'ok')
+  })
+
+  it('records a no-agent cron without fabricating worker activity or movement', () => {
+    const snapshot = createWorldSnapshot({
+      profiles: { profiles: [{ name: 'coder', is_active: false }] },
+      tasks: { tasks: [] },
+      crons: { jobs: [{
+        id: 'scraper',
+        name: 'job-scraper-afternoon',
+        enabled: true,
+        last_run_at: '2026-07-18T16:02:48.060873+02:00',
+        last_status: 'ok',
+      }] },
+      cronHistory: { completions: [] },
+    }, null, () => Date.parse('2026-07-18T16:05:00+02:00'))
+
+    const coder = snapshot.agents.find((agent) => agent.profile === 'coder')
+    const cron = snapshot.activity.find((item) => item.type === 'cron')
+    assert.equal(coder.state, 'idle')
+    assert.equal(coder.carryingTaskId, null)
+    assert.equal(cron.cronName, 'job-scraper-afternoon')
+    assert.equal(cron.agentId, undefined)
   })
 
   it('retains real metric updates instead of a prior cached temperature', () => {

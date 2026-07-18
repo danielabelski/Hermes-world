@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { createWorldEventHub } from './server/worldEventHub.js';
+import { mergeHermesCronInventories, parseHermesCronList } from './server/hermesCronInventory.js';
 import { normalizeHermesWorldEvent, WorldEventValidationError } from './src/world/events/worldEventContract.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -749,6 +750,16 @@ const applySessionLimit = (payload, req) => {
   return { ...payload, sessions: payload.sessions.slice(0, limit), count: Math.min(payload.count ?? payload.sessions.length, limit) };
 };
 
+let cronCliCache = { at: 0, payload: { jobs: [] } };
+const getHermesCronInventory = async () => {
+  const now = Date.now();
+  if (now - cronCliCache.at < 15_000 && cronCliCache.payload.jobs.length) return cronCliCache.payload;
+  const stdout = await execHermesKanbanScript('hermes cron list');
+  const payload = parseHermesCronList(stdout);
+  cronCliCache = { at: now, payload };
+  return payload;
+};
+
 const panelJsonProxy = ({ cacheSeconds = 0, transform = (payload) => payload } = {}) => async (req, res) => {
   const backendPath = req.originalUrl.startsWith('/api') ? req.originalUrl : `/api${req.originalUrl}`;
   const cacheKey = `${req.headers.cookie || 'anon'} ${backendPath}`;
@@ -802,6 +813,37 @@ app.get('/api/models', panelJsonProxy({ cacheSeconds: 60 }));
 app.get('/api/profiles', panelJsonProxy({ cacheSeconds: 5, transform: dedupeProfiles }));
 app.get('/api/sessions', panelJsonProxy({ cacheSeconds: 2, transform: applySessionLimit }));
 app.get('/api/sessions/search', panelJsonProxy({ cacheSeconds: 2, transform: applySessionLimit }));
+app.get('/api/crons', async (req, res) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20_000);
+  try {
+    const upstream = await fetch(`${BACKEND_URL}/api/crons`, {
+      headers: { accept: 'application/json', cookie: req.headers.cookie || '' },
+      signal: controller.signal,
+    });
+    const bodyText = await upstream.text();
+    if (!upstream.ok) {
+      res.status(upstream.status);
+      res.setHeader('Content-Type', upstream.headers.get('content-type') || 'application/json; charset=utf-8');
+      return res.send(bodyText);
+    }
+    const primary = JSON.parse(bodyText || '{}');
+    let cli = { jobs: [] };
+    try {
+      cli = await getHermesCronInventory();
+    } catch (cliError) {
+      console.warn(`[Cron Inventory] CLI fallback unavailable: ${cliError.message}`);
+    }
+    const payload = mergeHermesCronInventories(primary, cli);
+    console.log(`[Cron Inventory] source=webui+cli-fallback jobs=${payload.jobs.length}`);
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.status(200).send(JSON.stringify(payload));
+  } catch (err) {
+    return res.status(502).json({ error: 'Hermes cron inventory unavailable', detail: err.message });
+  } finally {
+    clearTimeout(timer);
+  }
+});
 app.use(
   '/api',
   createProxyMiddleware({

@@ -1004,3 +1004,22 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Serwowany artifact demo: **PASS**, `index-DnsOKSiO.js` zgodny z `dist/index.html`.
 - Zalogowany telefon i wizualna kontrola prawdziwych nazw/czasów cronów: **MANUAL ACTION REQUIRED / GL-RL**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-072 — Live join i deduplikacja cronów w Aktywności Cytadeli
+
+- Data: 2026-07-18 22:02 Europe/Warsaw; branch `build-week/hermes-world`; DEMO only.
+- Surowy handler Hermes WebUI `/api/crons/recent`: **PASS** — 16 completionów, pola `job_id/name/status/completed_at`, wszystkie wykonane IDs zgodne z inventory.
+- Exact live shape przez `createWorldSnapshot`: **PASS** — status `ok`, prawdziwa nazwa, Unix seconds, source `hermes-cron-history`.
+- WebUI nadrzędne + CLI fallback: **PASS 2/2** — CLI uzupełnia brakujące pola/jobs i nie nadpisuje WebUI timestampu ani statusu.
+- Deduplikacja inventory + recent: **PASS** — 16 raw completions → 16 historii → 16 wpisów cron, 0 duplikatów.
+- Success/error: **PASS**; brak statusu pozostaje `null` wyłącznie dla nigdy niewykonanego joba: **PASS / bez fake wyniku**.
+- Cron `no-agent` nie aktywuje workera i nie tworzy ruchu: **PASS**.
+- Warning/error z realnego logu pozostaje w połączonej Aktywności jako domenowy alert, raw log pozostaje techniczny: **PASS**.
+- History + SSE, atomic reconnect/resync i pięć reconnectów bez duplikatów/listenerów: **PASS**.
+- Dwanaście agentów, kompletne trasy, wejścia i pięć cykli ruchu: **PASS**.
+- Focused: **45/45 PASS**. Pełne testy: **177/177 PASS**, 8 suites, 0 fail. Osobny cron contract: **2/2 PASS**.
+- ESLint: **PASS**. World Life validator: **PASS**. `node --check`: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 875 modułów, 15,06 s; main `index-DCTdIYBq.js` 437,39 kB / 134,79 kB gzip; CSS `index-BY3v_Mj2.css` 77,06 kB / 16,65 kB gzip.
+- Runtime: **PASS** — root, auth status i world snapshot HTTP 200; dokładnie jeden listener DEMO 4176. Produkcja 4175, WebUI 8787 i CAT 8788 odpowiadają HTTP 200.
+- Kontroler przeglądarki zablokował URL aplikacji polityką bezpieczeństwa; automatycznego UI PASS nie zapisano. Zalogowany telefon: **MANUAL ACTION REQUIRED / GL-RL**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

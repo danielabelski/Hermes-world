@@ -894,11 +894,15 @@ test('raw Hermes logs stay technical while the world narrative remains human-rea
   assert.equal(snapshot.activity.some((item) => item.type === 'log'), false)
   assert.equal(snapshot.alerts[0].message, 'Kowal zgłasza ostrzeżenie w Kuźni.')
   assert.equal(snapshot.alerts[0].technicalMessage, 'MCP keepalive failed')
+  const feedItems = mergeWorldActivityItems(snapshot.activity, snapshot.alerts)
+  assert.equal(feedItems.some((item) => item.source === 'log' && item.severity === 'warning'), true)
 })
 
 test('explicit observability focus enables deterministic demo runtime', () => {
-  assert.deepEqual(resolveDemoRuntimeMode('?focus=critical', false), { focus: 'critical', scenario: 'healthy', demoMode: true })
-  assert.deepEqual(resolveDemoRuntimeMode('?focus=auto', false), { focus: 'auto', scenario: 'healthy', demoMode: false })
+  assert.deepEqual(resolveDemoRuntimeMode('?focus=critical', false), { focus: 'critical', scenario: 'healthy', demoMode: true, environmentDemo: false })
+  assert.deepEqual(resolveDemoRuntimeMode('?focus=auto', false), { focus: 'auto', scenario: 'healthy', demoMode: false, environmentDemo: false })
+  assert.deepEqual(resolveDemoRuntimeMode('?demo=1', false), { focus: 'auto', scenario: 'healthy', demoMode: false, environmentDemo: true })
+  assert.equal(resolveDemoRuntimeMode('?fixture=1&scenario=warning', false).demoMode, true)
   assert.equal(resolveDemoRuntimeMode('?demo=1&focus=stable&scenario=warning', false).demoMode, true)
 })
 

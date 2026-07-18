@@ -9,3 +9,4 @@ Pełne logi testów bez sekretów. Nazwa pliku powinna zawierać czas UTC i kró
 - `20260718_PHASE_2_4_STATUS_SEPARATION_PL.md` — transport a status runtime.
 - `20260718_PHASE_2_5_EVENT_HISTORY_PL.md` — trwałość eventów i kompletność cronów.
 - `20260718_PHASE_2_6_MOVEMENT_RELEASE_GATE_PL.md` — pięciokrotny gate ruchu i pomiar DOM.
+- `20260718_PHASE_3_LIVE_CRON_JOIN_PL.md` — surowy kontrakt `crons/recent`, join WebUI/CLI, deduplikacja i realny E2E Aktywności Cytadeli.

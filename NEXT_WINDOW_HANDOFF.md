@@ -1,5 +1,43 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## ACTIVE HANDOFF — REALNA AKTYWNOŚĆ CYTADELI / CRON JOIN (2026-07-18 22:02 CEST)
+
+### Stan
+
+- Repo/branch DEMO: `hermes-os-living-world-demo` / `build-week/hermes-world`.
+- Checkpoint wejściowy: `b16478d57ef187c93f7218f18b7f92b1a717dfae`.
+- Produkcja: `main` / `958b9da08bee9613900e902b3da558aadef826e8`, czysta i nietknięta.
+- Dokładnie jeden listener DEMO działa na `0.0.0.0:4176`; produkcja 4175, Hermes WebUI 8787 i CAT 8788 pozostały uruchomione bez restartu.
+
+### Zamknięta diagnoza i poprawka
+
+- Read-only handler Hermes WebUI zwrócił rzeczywisty payload `/api/crons/recent`: 16 `completions` z polami `job_id`, `name`, `status`, `completed_at`; `completed_at` jest Unix seconds.
+- Inventory WebUI zawiera 17 jobs. Wszystkie 16 wykonanych `job_id` pasują 1:1. Jedyny job ze statusem `null`, `mcp-toolcheck`, naprawdę nie ma `last_run_at`; nie utworzono mu fikcyjnego wyniku.
+- `?demo=1` nie uruchamia już fixture i nie zastępuje uwierzytelnionej telemetrii. Fixture pozostaje jawnie dostępny przez `fixture=1` lub fokus testowy.
+- WebUI jest źródłem nadrzędnym dla nazwy, statusu i timestampu crona. CLI jedynie uzupełnia brakujące pola/jobs i nie może nadpisać poprawnego WebUI.
+- Unix seconds są normalizowane do całkowitych milisekund. `crons/recent` zastępuje inventory fallback tego samego `job_id` w oknie 60 s, co usuwa duplikaty wynikające z mikrosekund i kilkusekundowego opóźnienia persystencji.
+- Ważne warning/error z logów pozostają domenowymi alertami w Aktywności Cytadeli; surowy log nadal jest osobnym kanałem technicznym.
+- Nie zmieniono renderera, mapy, waypointów, tras, FSM, ruchu, sprite’ów, wnętrz ani produkcji.
+
+### Dowody
+
+- Focused: 45/45 PASS.
+- Pełne testy: 177/177 PASS.
+- Osobny cron inventory contract: 2/2 PASS.
+- ESLint: PASS. `validate:world-life`: PASS. `git diff --check`: PASS.
+- Build: PASS, 875 modułów, `index-DCTdIYBq.js` 437,39 kB / 134,79 kB gzip; CSS `index-BY3v_Mj2.css` 77,06 kB / 16,65 kB gzip.
+- Rzeczywisty read-only E2E danych: 17 raw jobs, 16 raw completions, 16 wpisów cron w Aktywności, 0 duplikatów.
+- Root DEMO, auth status i world snapshot: HTTP 200.
+- Automatyczny test UI został zablokowany przez politykę URL kontrolera przeglądarki, a nie przez aplikację. Zalogowany telefon pozostaje obowiązkową bramką manualną.
+
+### Następne działanie
+
+1. Autor otwiera `http://100.69.167.105:4176/?demo=1` i wykonuje checklistę manualną.
+2. RL: poprawić wyłącznie potwierdzony defekt Aktywności Cytadeli na DEMO.
+3. GL: przygotować zatwierdzony patch produkcyjny 1:1; nie wdrażać bez osobnego polecenia.
+
+---
+
 ## ACTIVE HANDOFF — MAP-PIXEL WATER GATE (2026-07-16 13:45 CEST)
 
 Ta sekcja zastępuje wcześniejszy aktywny opis wody. Produkcja pozostaje zamrożona.

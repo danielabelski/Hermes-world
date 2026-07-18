@@ -49,7 +49,7 @@ const timestampMs = (value) => {
   if (Number.isFinite(numeric) && value !== null && value !== '') {
     // Hermes WebUI returns cron completion timestamps as Unix seconds,
     // while newer adapters may use Unix milliseconds or ISO strings.
-    return numeric < 1e12 ? numeric * 1000 : numeric;
+    return Math.trunc(numeric < 1e12 ? numeric * 1000 : numeric);
   }
   const parsed = Date.parse(value ?? '');
   return Number.isFinite(parsed) ? parsed : null;
@@ -189,22 +189,35 @@ function normaliseCronHistory(completions, jobs) {
     source: 'hermes-cron-inventory',
     inventoryFallback: true,
   }));
-  // The inventory is authoritative for the latest execution even when the
-  // optional /crons/recent history is empty. Explicit history is processed
-  // second and replaces an inventory fallback for the same job and timestamp.
-  for (const completion of [...latestInventoryRuns, ...completions]) {
-    const jobId = String(completion?.job_id ?? completion?.jobId ?? '').trim();
-    const completedAt = completion?.completed_at ?? completion?.completedAt ?? null;
+  const explicitRuns = [];
+  const normalize = (completion) => {
+    const jobId = String(completion?.job_id ?? completion?.jobId ?? completion?.cron_id ?? completion?.cronId ?? completion?.job?.id ?? '').trim();
+    const completedAt = completion?.completed_at ?? completion?.completedAt ?? completion?.last_run_at ?? completion?.lastRunAt ?? null;
     const completedAtMs = timestampMs(completedAt);
-    const status = String(completion?.status ?? '').toLowerCase();
-    if (!jobId || completedAtMs === null || !status) continue;
+    const status = String(completion?.status ?? completion?.last_status ?? completion?.lastStatus ?? completion?.result?.status ?? '').trim().toLowerCase();
+    if (!jobId || completedAtMs === null || !status) return null;
+    return { completion, jobId, completedAtMs, status };
+  };
+  for (const completion of completions) {
+    const run = normalize(completion);
+    if (run) explicitRuns.push(run);
+  }
+  // Explicit /crons/recent evidence wins. Inventory is a fallback only; CLI
+  // and WebUI may report the same run a few seconds apart after persistence.
+  for (const completion of [...latestInventoryRuns, ...completions]) {
+    const run = normalize(completion);
+    if (!run) continue;
+    const { jobId, completedAtMs, status } = run;
+    if (completion.inventoryFallback && explicitRuns.some((explicit) => (
+      explicit.jobId === jobId
+      && Math.abs(explicit.completedAtMs - completedAtMs) <= 60_000
+    ))) continue;
     const evidenceKey = `${jobId}:${completedAtMs}`;
-    if (completion.inventoryFallback && unique.has(evidenceKey)) continue;
     const id = String(completion?.id ?? `cron-${jobId}-${completedAtMs}-${status}`);
     unique.set(evidenceKey, {
       id,
       jobId,
-      name: completion?.name || jobNames.get(jobId) || jobId,
+      name: completion?.name || completion?.job_name || completion?.job?.name || jobNames.get(jobId) || jobId,
       status,
       completedAt: new Date(completedAtMs).toISOString(),
       source: completion?.source || 'hermes-cron-history',
