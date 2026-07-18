@@ -173,6 +173,62 @@ test('Kowal exits before success, returns by road and settles at home without te
   assert.equal(inferredHome.journeyStage, 'idle')
 })
 
+test('five release movement runs keep the same worker, route, building entry and terminal home state', () => {
+  for (let run = 1; run <= 5; run += 1) {
+    const runStart = START + run * 100_000
+    const runningTask = Object.freeze({
+      ...runningCoderTask,
+      id: `forge-release-run-${run}`,
+      transitionStartedAt: iso(runStart),
+      transitionUntil: iso(runStart + 7_100),
+      startedAt: iso(runStart),
+    })
+    const resolveRun = (at, task = runningTask) => modelAt(at, task)
+    const outbound = []
+    for (let elapsed = 0; elapsed <= 7_100; elapsed += 250) outbound.push(resolveRun(runStart + elapsed))
+
+    assert.ok(outbound.every((model) => model.profileId === 'coder'), `run ${run}: wrong worker`)
+    assert.ok(outbound.every((model) => model.taskId === runningTask.id), `run ${run}: wrong task ownership`)
+    assert.ok(outbound.every((model) => model.buildingId === 'forge'), `run ${run}: wrong building`)
+    assert.ok(outbound.some((model) => model.journeyStage === 'road' && model.isMoving), `run ${run}: no road motion`)
+    assert.ok(outbound.some((model) => model.journeyStage === 'enter' && model.occupancyMode === 'facade-front'), `run ${run}: no Forge threshold`)
+
+    for (let index = 1; index < outbound.length; index += 1) {
+      const dx = outbound[index].worldX - outbound[index - 1].worldX
+      const dy = outbound[index].worldY - outbound[index - 1].worldY
+      assert.ok(Math.hypot(dx, dy) < 5, `run ${run}: outbound teleport at sample ${index}`)
+    }
+
+    const working = resolveRun(runStart + 7_100)
+    assert.equal(working.journeyStage, 'work', `run ${run}: missing work state`)
+    assert.equal(working.visualState, 'work', `run ${run}: work presentation mismatch`)
+    assert.equal(working.isInside, true, `run ${run}: worker did not enter Forge`)
+
+    const completedAt = runStart + 20_000
+    const doneTask = Object.freeze({
+      ...runningTask,
+      status: 'done',
+      visualCompletedAt: iso(completedAt),
+      completedAt: iso(completedAt),
+      returnUntil: iso(completedAt + 8_200),
+    })
+    const returning = []
+    for (let elapsed = 0; elapsed <= 8_250; elapsed += 250) returning.push(resolveRun(completedAt + elapsed, doneTask))
+    assert.ok(returning.some((model) => model.journeyStage === 'exit'), `run ${run}: no exit`)
+    assert.ok(returning.some((model) => model.journeyStage === 'success'), `run ${run}: no success acknowledgement`)
+    assert.ok(returning.some((model) => model.journeyStage === 'return' && model.isMoving), `run ${run}: no return motion`)
+    for (let index = 1; index < returning.length; index += 1) {
+      const dx = returning[index].worldX - returning[index - 1].worldX
+      const dy = returning[index].worldY - returning[index - 1].worldY
+      assert.ok(Math.hypot(dx, dy) < 5, `run ${run}: return teleport at sample ${index}`)
+    }
+    const home = resolveRun(completedAt + 8_201, doneTask)
+    assert.equal(home.journeyStage, 'idle', `run ${run}: terminal state is not idle`)
+    closeTo(home.worldX, 46)
+    closeTo(home.worldY, 36.5)
+  }
+})
+
 test('presentation timestamps survive polling and an active task outranks stale done work', () => {
   const now = START + 2_900
   const first = modelAt(now, runningCoderTask)

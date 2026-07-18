@@ -8,3 +8,4 @@ Pełne logi testów bez sekretów. Nazwa pliku powinna zawierać czas UTC i kró
 - `20260718_PHASE_2_3_BUILDING_REFRESH_PL.md` — świeże dane wnętrz.
 - `20260718_PHASE_2_4_STATUS_SEPARATION_PL.md` — transport a status runtime.
 - `20260718_PHASE_2_5_EVENT_HISTORY_PL.md` — trwałość eventów i kompletność cronów.
+- `20260718_PHASE_2_6_MOVEMENT_RELEASE_GATE_PL.md` — pięciokrotny gate ruchu i pomiar DOM.

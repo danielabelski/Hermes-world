@@ -865,3 +865,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - `/api/crons/recent` bez uwierzytelnienia: **PASS / 401 EXPECTED**.
 - Prawdziwy cron i pełna korelacja przez chronione API/SSE/UI: **MANUAL ACTION REQUIRED / FAZA 3**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-061 — Pięć pełnych przebiegów ruchu release
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Kowal `home → Forge → Working → exit → Success → home`: **PASS 5/5**.
+- Właściwy worker/task/building: **PASS 5/5**. Teleporty: **0**. Końcowy Idle/home: **PASS 5/5**.
+- Focused movement/interior: **PASS 39/39**.
+- Runtime DOM po fresh reload: **PASS** — 15 próbek, Zwiadowca 54.348/34.353 → 67/31.5, roster zawsze 12 total / 10 map / 2 inside / 0 invalid, asset ready 15/15.
+- Konsola runtime: **PASS**, 0 errors, 0 warnings.
+- Pełne testy: **PASS 164/164**, 7 suites, 0 fail, 0 skipped.
+- ESLint zmienionego testu: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, 874 moduły, main JS 432,61 kB / 133,21 kB gzip.
+- Ruch na prawdziwym evencie Hermes/iMessage pięć razy: **MANUAL ACTION REQUIRED / FAZA 3**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

@@ -1107,3 +1107,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Protected cron history correctly returns 401 without a session. The controlled real-cron correlation test remains part of Phase 3 and is not marked PASS prematurely.
 - Production remains untouched.
 - Next exact step: Phase 2.6 — run the accepted movement scenario five times and measure agent identity, route continuity, destination, building entry and terminal state. Change movement code only if this gate reproduces a concrete defect.
+
+### Phase 2.6 completed — accepted movement passed without implementation changes
+
+- Added only a five-run release regression contract; no movement, map, route, waypoint, placement or FSM code was changed.
+- All five Kowal runs retained the correct worker/task/building through road, Forge entry, Working, exit, Success, return and terminal Idle. No sampled outbound or return teleport occurred.
+- Fresh browser runtime confirmed continuous Scout movement from 54.348/34.353 to 67/31.5 while occupancy stayed 12/12 (`10 map + 2 interior`, 0 invalid) and assets stayed ready.
+- Validation: focused 39/39, full 164/164, changed-test ESLint, World Life validator, `git diff --check` and build PASS; browser console 0 errors/0 warnings.
+- Production remains untouched.
+- Next exact step: Phase 3 — execute the full demo release matrix, including controlled reconnect/resync, five building re-entries, background/foreground, and five authenticated Hermes/iMessage journeys. Any manual-only case must remain marked pending until actually observed.

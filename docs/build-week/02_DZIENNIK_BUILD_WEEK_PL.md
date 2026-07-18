@@ -857,3 +857,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: focused 11/11 PASS; pełny zestaw 163/163 PASS; ESLint, `node --check server.js`, world-life validator i `git diff --check` PASS; build PASS — 874 moduły, 10,07 s, main 432,61 kB / 133,21 kB gzip.
 - Chroniony endpoint cronów bez sesji zwraca 401 zgodnie z kontraktem. Pełny prawdziwy cron E2E pozostaje kontrolowanym testem FAZY 3; nie uruchomiono nieznanego joba bez potwierdzenia jego bezpieczeństwa.
 - Produkcja pozostała nietknięta. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_5_EVENT_HISTORY_PL.md`.
+
+## BW-2026-07-18-010 — Pięciokrotny release gate ruchu bez zmian implementacji
+
+- Zakres: wyłącznie walidacja demo. Zgodnie z release freeze nie zmieniono ruchu, waypointów, tras, pozycji, mapy ani FSM bez odtworzonego błędu.
+- Pięć deterministycznych przebiegów Kowala objęło: właściwy worker i task, droga, wejście do Kuźni, Working, wyjście, Success, powrót i końcowy Idle w home. Wynik 5/5 PASS, 0 teleportów i 0 błędnych przypisań.
+- Świeży pomiar DOM Zwiadowcy pokazał ciągłe przejście 54.348/34.353 → 67/31.5; przez 15 próbek roster pozostawał 12/12 (10 mapa + 2 wnętrza, 0 invalid), wszystkie assety były gotowe, konsola 0 errors/0 warnings.
+- Walidacja: focused 39/39 PASS; pełny zestaw 164/164 PASS; ESLint zmienionego testu, world-life validator i `git diff --check` PASS; build PASS, 874 moduły, main 432,61 kB / 133,21 kB gzip.
+- Produkcja pozostała nietknięta. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_6_MOVEMENT_RELEASE_GATE_PL.md`.
