@@ -235,7 +235,17 @@ function buildActivity({ tasks, cronCompletions, previousSnapshot, now }) {
     createdAt: completion.completedAt,
     source: completion.source,
   }));
-  return [...taskEvents, ...cronEvents]
+  // Polling snapshots must not erase authoritative events previously received
+  // through SSE. Keep the bounded semantic history and replace matching IDs
+  // with the freshest representation from the current API snapshot.
+  const previousActivity = (Array.isArray(previousSnapshot?.activity)
+    ? previousSnapshot.activity
+    : previousSnapshot?.activity?.items) ?? [];
+  const unique = new Map();
+  [...previousActivity, ...taskEvents, ...cronEvents]
+    .filter(Boolean)
+    .forEach((item, index) => unique.set(String(item.id ?? `${item.createdAt ?? now}-${index}`), item));
+  return [...unique.values()]
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
     .slice(0, MAX_ACTIVITY_ITEMS);
 }

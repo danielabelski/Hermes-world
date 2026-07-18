@@ -900,3 +900,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Serwer demo `127.0.0.1:4176` podaje dokładnie aktualny hash buildu `index-BkzoAeZ2.js`; root, manifest, Service Worker, JS, CSS i auth status zwracają HTTP 200. Produkcyjny `main` nadal jest czysty na `958b9da08bee9613900e902b3da558aadef826e8`.
 - Snapshot po commitach: `docs/build-week/evidence/git-snapshots/20260718T120201Z-git-snapshot.txt`.
 - Przygotowano read-only manifest przyszłej promocji: dziewięć logicznych commitów, lista wykluczeń, pliki konfliktowe, manualna bramka i rollback. Nie utworzono nowego kandydata i nie zmieniono produkcji. Plik: `docs/build-week/evidence/submission-period/20260718_RELEASE_CANDIDATE_MANIFEST_PL.md`.
+
+## BW-2026-07-18-014 — Kompletny dolny feed operacyjny
+
+- Czas zakończenia Europe/Warsaw: 2026-07-18 14:45; zakres: wyłącznie demo na `build-week/hermes-world`.
+- Ręczny test autora wykazał, że dolny kanał pokazywał komunikat o ukończeniu zadania przez Pazia, lecz nie pokazywał czterech dzisiejszych wykonań cronów, w tym ostatniego około 12:00.
+- Diagnoza wykazała dwa punkty utraty: snapshot pollingowy zastępował wcześniejsze semantyczne zdarzenia otrzymane przez SSE, a warstwa prezentacji ograniczała połączoną historię do pięciu/ośmiu pozycji i sortowała zwykłe zdarzenia według klasy efektu zamiast czasu.
+- Bridge scala teraz po stabilnym ID bieżące taski, każde trwałe ukończenie crona oraz wcześniejsze autorytatywne eventy SSE. Polling nie usuwa już delegacji, etapów workera ani wyników, a lista pozostaje ograniczona do 40 wpisów.
+- Dolny kanał rotuje realne zdarzenia z ostatnich 24 godzin, pokazuje godzinę oraz etykietę `CRON`; pełny arkusz aktywności mieści do 40 wpisów. Critical/Warning nadal natychmiast przerywa zwykłą chronologię.
+- Nie dodano fake eventów, nie wykonano backfillu z surowych logów i nie zmieniono event pipeline'u, FSM, ruchu, mapy, endpointów ani produkcji.
+- Walidacja: **170/170 PASS**, ESLint **PASS**, World Life validator **PASS**, `git diff --check` **PASS**, build **PASS** — 874 moduły, 5,00 s, main JS 433,92 kB / 133,65 kB gzip. Serwer demo podaje `index-D42vLeMo.js` (HTTP 200).
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_COMPLETE_OPERATIONAL_FEED_PL.md`.

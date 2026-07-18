@@ -918,3 +918,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Produkcyjny `main`: **UNCHANGED / CLEAN**, `958b9da08bee9613900e902b3da558aadef826e8`.
 - Realny bezpieczny cron E2E i wizualna kontrola na zalogowanym telefonie: **MANUAL ACTION REQUIRED**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-065 — Kompletność dolnego feedu operacyjnego
+
+- Data: 2026-07-18 14:45 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Cztery ukończenia cronów połączone z dwunastoma taskami: **PASS 4/4**, żaden cron nie został wypchnięty przez limit lub priorytet tasków.
+- Polling po wcześniejszym autorytatywnym evencie SSE: **PASS**, event workera i nowszy cron pozostają jednocześnie w snapshotcie, bez duplikatu.
+- Chronologia zwykłych zdarzeń: **PASS**; aktywny Critical/Warning nadal ma pierwszeństwo: **PASS**.
+- Pełne testy: **PASS 170/170**, 8 suites, 0 fail. ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, 874 moduły, 5,00 s, main JS 433,92 kB / 133,65 kB gzip. Serwowany demo bundle: **PASS / HTTP 200**, `index-D42vLeMo.js`.
+- Zalogowany test realnej historii dzisiejszych cronów na telefonie: **MANUAL ACTION REQUIRED / GL-RL**.
+- Produkcyjny `main`: **UNCHANGED / NOT TOUCHED**.

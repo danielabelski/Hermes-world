@@ -826,6 +826,25 @@ test('activity stream keeps alerts visible even when ordinary activity exists', 
   assert.deepEqual(items.map((item) => item.id), ['critical', 'success'])
 })
 
+test('activity stream keeps all cron completions alongside agent task events in chronological order', () => {
+  const taskEvents = Array.from({ length: 12 }, (_, index) => ({
+    id: `task-${index}`,
+    type: 'task',
+    message: `Agent zakończył zadanie ${index}`,
+    createdAt: `2026-07-18T${String(8 + Math.floor(index / 2)).padStart(2, '0')}:${index % 2 ? '30' : '00'}:00Z`,
+  }))
+  const cronEvents = [8, 9, 10, 12].map((hour) => ({
+    id: `cron-${hour}`,
+    type: 'cron',
+    message: `Automatyzacja ${hour} zakończyła cykl poprawnie`,
+    createdAt: `2026-07-18T${String(hour).padStart(2, '0')}:15:00Z`,
+  }))
+  const items = mergeWorldActivityItems([...taskEvents, ...cronEvents], [], 40)
+
+  assert.equal(items.filter((item) => item.type === 'cron').length, 4)
+  assert.equal(items.find((item) => item.type === 'cron').id, 'cron-12')
+})
+
 test('raw Hermes logs stay technical while the world narrative remains human-readable', () => {
   const now = Date.UTC(2026, 6, 16, 10, 0, 0)
   const rawLine = JSON.stringify({ timestamp: new Date(now - 1_000).toISOString(), level: 'warning', message: 'MCP keepalive failed', profile: 'coder' })

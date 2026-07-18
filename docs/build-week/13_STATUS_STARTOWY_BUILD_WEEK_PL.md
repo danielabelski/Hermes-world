@@ -180,3 +180,11 @@ Wykonaj trzyminutową procedurę z [12_PROCEDURA_PRACY_OD_TERAZ_PL.md](12_PROCED
 - Produkcja nadal nietknięta. Manualny test nowej wody na telefonie pozostaje jedynym otwartym gate tego passu.
 - Po GL wody następny meaningful zakres pozostaje na demo: wzmocnienie widocznego łańcucha jednego prawdziwego eventu oraz uczciwego ambientu. Nie generować fake Working/Success; nie budzić niewłaściwych agentów; zachować jeden `evidenceEventId` i istniejącą architekturę directorów.
 - Szczegółowe instrukcje wznowienia znajdują się na samej górze `NEXT_WINDOW_HANDOFF.md`.
+
+## Aktualizacja handoffu — 2026-07-18 14:45 Europe/Warsaw
+
+- Demo otrzymało minimalną naprawę kompletności dolnego feedu: taski agentów, wszystkie trwałe ukończenia cronów, delegacje/eventy SSE, warning/error i wyniki pozostają w jednej osi czasu zamiast wzajemnie się usuwać.
+- Ręczny symptom wejściowy: widoczny wyłącznie „Paź zakończył zadanie…”, brak czterech dzisiejszych cronów i ostatniego wykonania około 12:00.
+- Polling zachowuje teraz wcześniejsze autorytatywne eventy SSE, historia jest deduplikowana po ID i ograniczona do 40 pozycji. Dolny kanał rotuje realne wpisy z ostatnich 24 godzin i pokazuje godzinę; surowy górny ticker pozostaje osobnym kanałem.
+- Automatyczny gate: 170/170 testów, lint, validator, `git diff --check` i build PASS; bundle demo `index-D42vLeMo.js` odpowiada HTTP 200.
+- Produkcja pozostaje nietknięta na `958b9da08bee9613900e902b3da558aadef826e8`. Następny gate: autor otwiera demo i potwierdza, że widzi komunikat Pazia oraz wszystkie dzisiejsze crony w dolnej rotacji/arkuszu aktywności.

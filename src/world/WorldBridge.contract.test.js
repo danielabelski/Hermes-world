@@ -45,4 +45,31 @@ describe('real Hermes payload contracts', () => {
     assert.equal(snapshot.tasks.find((item) => item.id === 'task-running')?.motionEvidence, 'backend-timestamp')
     assert.equal(snapshot.tasks.find((item) => item.id === 'task-running')?.transitionStartedAt, null)
   })
+
+  it('retains prior authoritative SSE activity when a polling snapshot refreshes tasks and crons', () => {
+    const previous = createWorldSnapshot({
+      profiles,
+      tasks: { tasks: [] },
+      crons: { jobs: [] },
+      cronHistory: { completions: [] },
+    }, null, () => Date.parse('2026-07-18T10:00:00Z'))
+    previous.activity = [{
+      id: 'evt-worker-complete',
+      type: 'agent',
+      message: 'Paź zakończył zadanie i przekazuje rezultat.',
+      createdAt: '2026-07-18T10:05:00Z',
+      source: 'hermes-sse',
+    }]
+
+    const next = createWorldSnapshot({
+      profiles,
+      tasks: { tasks: [] },
+      crons: { jobs: [{ id: 'health', name: 'Health check', enabled: true }] },
+      cronHistory: { completions: [
+        { id: 'cron-health-1', job_id: 'health', status: 'success', completed_at: '2026-07-18T10:06:00Z' },
+      ] },
+    }, previous, () => Date.parse('2026-07-18T10:07:00Z'))
+
+    assert.deepEqual(next.activity.map((item) => item.id), ['cron-health-1', 'evt-worker-complete'])
+  })
 })

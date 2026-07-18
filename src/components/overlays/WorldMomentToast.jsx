@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWorldStore } from '../../world/store/worldStore.js'
 import { classifyWorldMoment, resolveWorldMoment } from '../../world/worldMomentPriority.js'
-import { mergeWorldActivityItems } from '../../world/worldActivityItems.js'
+import { mergeWorldActivityItems, recentWorldActivityItems } from '../../world/worldActivityItems.js'
 
 const TONE = Object.freeze({
   info: { icon: 'i', label: 'INFO', color: '#9fc7d8', border: 'rgba(159, 199, 216, .42)', background: 'rgba(28, 52, 65, .88)' },
@@ -37,8 +37,8 @@ function toneFor(item) {
 }
 
 /**
- * Short-lived acknowledgement for meaningful world changes. It observes the
- * activity stream but deliberately stays quiet on the first render.
+ * Rolling, human-readable history of meaningful operational changes. New
+ * events appear immediately; recent verified events remain inspectable.
  */
 export function WorldMomentToast() {
   const activity = useWorldStore((state) => state.activity?.items ?? state.activity ?? [])
@@ -46,23 +46,30 @@ export function WorldMomentToast() {
   const agents = useWorldStore((state) => state.agents ?? [])
   const openSheet = useWorldStore((state) => state.openSheet)
   const [moment, setMoment] = useState(null)
+  const [mountedAt] = useState(() => Date.now())
+  const activeIndexRef = useRef(0)
   const seenRef = useRef(new Set())
   const initializedRef = useRef(false)
-  const items = useMemo(() => mergeWorldActivityItems(activity, alerts), [activity, alerts])
+  const items = useMemo(() => recentWorldActivityItems(mergeWorldActivityItems(activity, alerts), mountedAt), [activity, alerts, mountedAt])
 
   useEffect(() => {
     const ids = items.map(itemId)
     if (!initializedRef.current) {
       ids.forEach((id) => seenRef.current.add(id))
       initializedRef.current = true
-      return undefined
+      if (!items.length) return undefined
+      const initialTimer = window.setTimeout(() => setMoment(resolveWorldMoment(items[0], alerts, agents)), 0)
+      return () => window.clearTimeout(initialTimer)
     }
 
     const fresh = items.find((item, index) => !seenRef.current.has(itemId(item, index)))
     ids.forEach((id) => seenRef.current.add(id))
     if (!fresh) return undefined
 
-    const showTimer = window.setTimeout(() => setMoment(resolveWorldMoment(fresh, alerts, agents)), 0)
+    const showTimer = window.setTimeout(() => {
+      activeIndexRef.current = Math.max(0, items.findIndex((item, index) => itemId(item, index) === itemId(fresh)))
+      setMoment(resolveWorldMoment(fresh, alerts, agents))
+    }, 0)
     return () => window.clearTimeout(showTimer)
   }, [items, alerts, agents])
 
@@ -75,22 +82,29 @@ export function WorldMomentToast() {
   }, [alerts, agents, moment])
 
   useEffect(() => {
-    if (!moment) return undefined
-    const hideTimer = window.setTimeout(() => setMoment(null), 4_800)
-    return () => window.clearTimeout(hideTimer)
-  }, [moment])
+    if (items.length < 2) return undefined
+    const rotateTimer = window.setInterval(() => {
+      const nextIndex = (activeIndexRef.current + 1) % items.length
+      activeIndexRef.current = nextIndex
+      setMoment(resolveWorldMoment(items[nextIndex], alerts, agents))
+    }, 5_500)
+    return () => window.clearInterval(rotateTimer)
+  }, [items, alerts, agents])
 
   if (!moment) return null
 
   const tone = TONE[toneFor(moment)]
   const message = shorten(moment.message ?? moment.title ?? moment.name)
+  const eventTime = new Date(moment.createdAt ?? moment.timestamp ?? '')
+  const timeLabel = Number.isNaN(eventTime.getTime()) ? '' : new Intl.DateTimeFormat('pl-PL', { hour: '2-digit', minute: '2-digit' }).format(eventTime)
+  const eventLabel = moment.type === 'cron' ? 'CRON' : tone.label
 
   return (
     <div className="world-moment-toast" style={ROOT_STYLE}>
       <button type="button" onClick={() => openSheet?.('activity')} aria-label={`${tone.label}: ${message}. Otwórz aktywność.`} style={{ display: 'grid', gridTemplateColumns: '28px minmax(0, 1fr) 18px', alignItems: 'center', gap: 9, width: 'min(430px, 100%)', minHeight: 52, padding: '8px 10px', border: `1px solid ${tone.border}`, borderRadius: 14, color: '#f5ead6', background: tone.background, boxShadow: '0 12px 30px rgba(1, 8, 4, .38)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', cursor: 'pointer', pointerEvents: 'auto', textAlign: 'left' }}>
         <span aria-hidden="true" style={{ display: 'grid', width: 26, height: 26, placeItems: 'center', border: `1px solid ${tone.color}66`, borderRadius: 9, color: tone.color, background: `${tone.color}1f`, fontSize: 16, fontWeight: 800 }}>{tone.icon}</span>
         <span style={{ display: 'grid', minWidth: 0, gap: 2 }}>
-          <span style={{ color: tone.color, fontSize: 9, fontWeight: 800, letterSpacing: '.12em' }}>{tone.label}</span>
+          <span style={{ color: tone.color, fontSize: 9, fontWeight: 800, letterSpacing: '.12em' }}>{eventLabel}{timeLabel ? ` · ${timeLabel}` : ''}</span>
           <span style={{ overflow: 'hidden', color: '#f2eee0', fontSize: 11, lineHeight: 1.3, textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{message}</span>
         </span>
         <span aria-hidden="true" style={{ color: 'rgba(245, 234, 214, .62)', fontSize: 15 }}>›</span>

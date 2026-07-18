@@ -56,7 +56,7 @@ function formatTime(value) {
 }
 
 /** Textual complement to visual signals; never the primary interface. */
-export function ActivityFeed({ limit = 8, showDemoFixture = true }) {
+export function ActivityFeed({ limit = 40, showDemoFixture = true }) {
   const activity = useWorldStore((state) => state.activity?.items ?? [])
   const alerts = useWorldStore((state) => state.alerts ?? [])
   const system = useWorldStore((state) => state.system ?? {})
