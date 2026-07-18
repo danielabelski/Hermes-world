@@ -1163,3 +1163,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Retencja semantycznego feedu wynosi 80 pozycji. Zmiana nie dodaje timerów, listenerów, transportu ani efektów wizualnych.
 - Automatyczna walidacja: 172/172 testów, 54/54 focused, ESLint i build PASS. Demo serwuje `index-B2WX7yfx.js`. Produkcja pozostaje czysta i nietknięta na `958b9da`.
 - Następny gate: na zalogowanym telefonie wywołać jedno nazwane polecenie i potwierdzić kolejno konkretną nazwę w etapach agenta oraz widoczność nazw dzisiejszych cronów.
+
+## Aktualizacja handoffu — 2026-07-18 17:29 Europe/Warsaw
+
+- Screenshot telefonu potwierdził, że realny gateway omijał wcześniejszą poprawkę publishera: adapter `hermes-gateway-world-adapter.py` nie pobierał nazwy wiadomości i emitował wyłącznie techniczne `run_id`.
+- Demo wyprowadza teraz bezpieczny `task_title` bez zapisu pełnej treści: pierwsza linia, limit 96 znaków oraz redakcja URL, e-maili, długich identyfikatorów i sekretów. Testy prywatności 4/4 oraz realny read-only E2E 3/3 przeszły.
+- Arkusz aktywności składa powtarzalne etapy tego samego lifecycle do najnowszego etapu. Nie usuwa cronów, alertów ani niezależnych operacji; underlying history i krótkie komunikaty live nadal zachowują etapy.
+- Stare wpisy bez nazwy pozostają uczciwie nienazwane; nie wykonywać syntetycznego backfillu. Nowa wiadomość wysłana po restarcie watchera powinna pokazać rzeczywisty tytuł.
+- Automatyczna walidacja: 173/173 testy, 55/55 focused, 4/4 Python, ESLint i build PASS. Demo serwuje `index-B-p9MTP9.js`; działa dokładnie jeden watcher PID 85084.
+- Produkcja nadal nietknięta i zamrożona na `958b9da`. Następny gate: jedna nowa nazwana wiadomość na demo oraz kontrola, że arkusz pokazuje pojedynczy czytelny wpis operacji i prawdziwe nazwy cronów.

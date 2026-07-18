@@ -938,3 +938,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: focused **54/54 PASS**, pełne testy **172/172 PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 4,76 s, main JS 436,33 kB / 134,44 kB gzip. Serwer demo podaje `index-B2WX7yfx.js`; produkcyjny `main` pozostaje czysty na `958b9da08bee9613900e902b3da558aadef826e8`.
 - Prawdziwe nazwy operacji i cronów na zalogowanym telefonie: **MANUAL ACTION REQUIRED / GL-RL**.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_CONTEXTUAL_OPERATIONAL_HISTORY_PL.md`.
+
+## BW-2026-07-18-018 — Nazwy prawdziwych operacji z adaptera gateway i redukcja duplikatów prezentacji
+
+- Czas zakończenia Europe/Warsaw: 2026-07-18 17:29; zakres wyłącznie demo na `build-week/hermes-world`.
+- Screenshot z telefonu ujawnił, że eventy z prawdziwego adaptera gateway nadal miały wyłącznie techniczne `run_id` (`operacja #...`). Przyczyną było zapytanie adaptera do `state.db`, które pobierało tylko długość wiadomości, a nie wyprowadzało bezpiecznego tytułu zadania.
+- Adapter odczytuje teraz treść tylko lokalnie i emituje wyłącznie zredagowany tytuł: pierwsza niepusta linia, maksymalnie 96 znaków, z redakcją URL, e-maili, długich identyfikatorów i przypisań sekretów. Pełna treść wiadomości nie trafia do JSONL ani eventu.
+- Arkusz aktywności zachowuje pełną historię autorytatywną, ale wizualnie pokazuje tylko najnowszy etap jednego `runId/taskId`. Crony, alerty i niezależne operacje nie są składane ani usuwane.
+- Stare operacje bez zachowanej nazwy nie są fałszywie backfillowane; otrzymują neutralny opis `zadanie bez zapisanej nazwy`. Nowe wiadomości po restarcie watchera mają prawdziwy tytuł.
+- Walidacja: testy prywatności adaptera **4/4 PASS**, realny read-only E2E z najnowszym rekordem `state.db` **PASS** (3 eventy, 3 tytuły, 0 pól pełnej treści), focused **55/55 PASS**, pełny zestaw **173/173 PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 3,69 s, main JS 436,45 kB / 134,47 kB gzip.
+- Serwer demo podaje aktualny artifact `index-B-p9MTP9.js`; watcher został zrestartowany kontrolowanie z jednej instancji PID 29626 do jednej instancji PID 85084. Produkcja pozostała nietknięta.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_REAL_GATEWAY_TITLES_PL.md`.

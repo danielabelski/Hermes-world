@@ -122,7 +122,7 @@ Rzeczywisty kanał zewnętrzny nie przechodzi przez publisher komponentu `ChatTa
 
 Aktualny, lekki przepływ demo:
 
-`Hermes state.db (read-only)` → `hermes-gateway-world-adapter.py` → `JSONL bez treści` → `hermes-world-event-adapter.mjs` → `/api/world/events` → `/api/world/events/stream` → `useWorldBridge` → istniejąca choreografia świata.
+`Hermes state.db (read-only)` → `hermes-gateway-world-adapter.py` → `JSONL bez pełnej treści wiadomości, wyłącznie z bezpiecznym tytułem zadania do 96 znaków` → `hermes-world-event-adapter.mjs` → `/api/world/events` → `/api/world/events/stream` → `useWorldBridge` → istniejąca choreografia świata.
 
 - Watcher czyta wyłącznie nowe rekordy po cursorze i nie obciąża telefonu pełnym inventory sesji.
 - `operationalState` nadal wynika z prawdziwych rekordów runtime; most nie emituje ambientowego Working ani Success.

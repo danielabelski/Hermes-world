@@ -967,3 +967,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Serwowany artifact demo: **PASS**, `index-B2WX7yfx.js`; root, Service Worker i auth endpoint HTTP 200.
 - Zalogowany telefon, prawdziwa nazwa polecenia i dzisiejszych cronów: **MANUAL ACTION REQUIRED**.
 - Produkcja: **UNCHANGED / CLEAN**, commit `958b9da08bee9613900e902b3da558aadef826e8`.
+
+## TEST-BW-069 — Prawdziwe tytuły gateway i zwinięta prezentacja lifecycle
+
+- Data: 2026-07-18 17:29 Europe/Warsaw; branch `build-week/hermes-world`; stan bazowy `418da8c`; demo only.
+- Python adapter title/privacy: **PASS 4/4**.
+- Read-only E2E na najnowszej prawdziwej wiadomości w Hermes `state.db`: **PASS** — `stream_start`, `reasoning`, `done`; 3/3 z tytułem; maksymalna długość 29; 0 pól `content/message/raw` w payloadzie.
+- Kontrakt zwijania lifecycle w arkuszu: **PASS** — najnowszy etap jednego runu pozostaje widoczny, cron i niezależny run pozostają zachowane.
+- Focused Node: **PASS 55/55**. Pełny zestaw: **PASS 173/173**. ESLint: **PASS**.
+- Build: **PASS**, 875 modułów, 3,69 s, main JS 436,45 kB / 134,47 kB gzip.
+- Serwowany artifact demo: **PASS / HTTP 200**, `index-B-p9MTP9.js`.
+- Watcher: przed zmianą dokładnie 1 proces PID 29626; po kontrolowanym restarcie dokładnie 1 proces PID 85084: **PASS**.
+- Ręczny test nowej nazwanej wiadomości na telefonie i widoczności cronów: **MANUAL ACTION REQUIRED / GL-RL**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

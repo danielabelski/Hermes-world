@@ -52,8 +52,7 @@ export function describeOperationalEvent(event = {}, definition = null) {
   const place = BUILDING_CASES[resolved?.buildingId] ?? { destination: 'swojego stanowiska', location: 'swoim subsystemie' }
   const render = OPERATIONAL_COPY[event.state]
   const title = String(event.taskTitle ?? event.payload?.task_title ?? '').trim().replace(/\s+/g, ' ').slice(0, 100)
-  const operationId = String(event.taskId ?? event.runId ?? '').trim()
-  const operation = title || (operationId ? `operacja #${operationId.slice(-8)}` : 'operacja bez identyfikatora')
+  const operation = title || 'zadanie bez zapisanej nazwy'
   const rawTool = String(event.payload?.tool_name ?? event.toolName ?? '').trim()
   const tool = rawTool ? `narzędzie ${rawTool.replace(/[_-]+/g, ' ')}` : ''
   return render ? render(name, place, operation, tool) : `${name} zaktualizował „${operation}”.`

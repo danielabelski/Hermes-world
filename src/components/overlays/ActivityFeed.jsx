@@ -1,6 +1,6 @@
 import { useWorldStore } from '../../world/store/worldStore.js'
 import { mergeWorldActivityItems } from '../../world/worldActivityItems.js'
-import { presentWorldActivity } from '../../world/worldActivityPresentation.js'
+import { collapseWorldActivityTimeline, presentWorldActivity } from '../../world/worldActivityPresentation.js'
 
 const DEMO_FIXTURE = Object.freeze([
   {
@@ -64,7 +64,7 @@ export function ActivityFeed({ limit = 80, showDemoFixture = true }) {
   const scenario = useWorldStore((state) => state.scenario)
   const isDemo = system.temperatureSource === 'demo' || scenario === 'demo'
   const semanticActivity = activity.filter((item) => item?.type !== 'log')
-  const liveItems = mergeWorldActivityItems(semanticActivity, alerts, limit)
+  const liveItems = collapseWorldActivityTimeline(mergeWorldActivityItems(semanticActivity, alerts, limit))
   const usingFixture = !liveItems.length && showDemoFixture && isDemo
   const items = usingFixture ? DEMO_FIXTURE : liveItems
 

@@ -71,3 +71,17 @@ export function orderWorldActivityRotation(items = []) {
   const selected = new Set([...urgent, ...representatives])
   return [...urgent, ...representatives, ...source.filter((item) => !selected.has(item))]
 }
+
+/** Keep the audit trail intact while showing only the newest stage per run in the sheet. */
+export function collapseWorldActivityTimeline(items = []) {
+  const source = Array.isArray(items) ? items.filter(Boolean) : []
+  const seenRuns = new Set()
+  return source.filter((item) => {
+    if (clean(item?.type).toLowerCase() !== 'agent') return true
+    const runKey = clean(item.runId ?? item.taskId)
+    if (!runKey) return true
+    if (seenRuns.has(runKey)) return false
+    seenRuns.add(runKey)
+    return true
+  })
+}

@@ -18,7 +18,7 @@ import { getNumberedRouteNodes, shortRouteNodeLabel } from './routeDebugPresenta
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
 import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
 import { mergeWorldActivityItems } from './worldActivityItems.js'
-import { orderWorldActivityRotation, presentWorldActivity } from './worldActivityPresentation.js'
+import { collapseWorldActivityTimeline, orderWorldActivityRotation, presentWorldActivity } from './worldActivityPresentation.js'
 import { applyWorldSceneScript } from './WorldSceneScript.js'
 import { getBuildingRefreshDomains } from './buildingEntryConfig.js'
 
@@ -38,6 +38,17 @@ test('activity rotation surfaces a real cron before a burst of agent lifecycle m
   const ordered = orderWorldActivityRotation([agentOne, agentTwo, cron])
   assert.equal(ordered[0], cron)
   assert.equal(ordered.length, 3)
+})
+
+test('activity sheet keeps the newest lifecycle stage per run and preserves independent crons', () => {
+  const items = [
+    { id: 'done', type: 'agent', runId: 'run-1', operationalState: 'success' },
+    { id: 'thinking', type: 'agent', runId: 'run-1', operationalState: 'thinking' },
+    { id: 'assigned', type: 'agent', runId: 'run-1', operationalState: 'assigned' },
+    { id: 'cron', type: 'cron', cronName: 'Morning health check', cronStatus: 'success' },
+    { id: 'other-run', type: 'agent', runId: 'run-2', operationalState: 'working' },
+  ]
+  assert.deepEqual(collapseWorldActivityTimeline(items).map((item) => item.id), ['done', 'cron', 'other-run'])
 })
 const iso = (time) => new Date(time).toISOString()
 const closeTo = (actual, expected, tolerance = 0.08) => assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} ≉ ${expected}`)
