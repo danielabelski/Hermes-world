@@ -68,9 +68,11 @@ export default function App() {
         ...(bridge.snapshot.lifecycle ?? {}),
         source: bridge.source,
         connection: bridge.connection,
+        transport: bridge.transport,
+        resyncing: bridge.resyncing,
       },
     })
-  }, [applySnapshot, bridge.connection, bridge.snapshot, bridge.source])
+  }, [applySnapshot, bridge.connection, bridge.resyncing, bridge.snapshot, bridge.source, bridge.transport])
 
   useEffect(() => {
     const handleUnauthorized = () => {

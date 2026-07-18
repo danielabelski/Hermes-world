@@ -815,3 +815,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build: **PASS**, Vite 8.0.16, 874 moduły, 13,15 s; main JS 428,55 kB / 132,06 kB gzip.
 - Ograniczenie: autorytatywny resync i UI stanu transportu są zakresem kolejnych faz, nie są oznaczone jako wykonane.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-057 — Atomowy resync i ciągłość rosteru
+
+- Czas: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Test-first: **EXPECTED FAIL 2/2** — częściowa emisja nie zachowywała istniejącego agenta, a wymuszony sync przed upływem cache cadence nie odczytywał ponownie domen.
+- Szybkie metryki + wolne profile po wcześniejszym pełnym snapshotcie: **PASS**, agent `coder` obecny w 100% emisji.
+- `sync({ force: true, atomic: true })`: **PASS** — wszystkie domeny odczytane, 0 emisji częściowych, 1 kompletna emisja.
+- Reconnect podczas aktywnego pollingu: **PASS** — brak drugiego równoległego pollingu; po jego końcu wykonany osobny świeży atomic resync.
+- Event odebrany w trakcie resyncu: **PASS** — zachowany po nałożeniu autorytatywnego snapshotu, bez regresji stanu agenta.
+- Focused bridge/hook/runtime: **PASS 39/39**.
+- Pełne `npm test`: **PASS 158/158**, 7 suites, 0 fail, 0 skipped.
+- ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Pierwsza próba builda: **ENVIRONMENTAL RETRY**, Windows `EPERM` dla jednorazowego `.vite-temp`; bez zmiany kodu lub konfiguracji. Druga identyczna próba: **PASS**, 874 moduły, 2,99 s, main JS 430,66 kB / 132,59 kB gzip.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

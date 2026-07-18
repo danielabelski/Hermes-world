@@ -530,11 +530,96 @@ test('production bridge keeps domain cadence and exposes stale recovery honestly
   assert.equal(recovered.lifecycle.domains.metrics.state, 'live')
 })
 
-test('production bridge publishes real metrics before an unrelated slow domain finishes', async () => {
-  let releaseProfiles
-  const profiles = new Promise((resolve) => { releaseProfiles = resolve })
+test('production bridge publishes real metrics without clearing a previously confirmed roster', async () => {
+  let now = Date.UTC(2026, 6, 18, 6, 0, 0)
+  let cpuPercent = 37
+  let profilesResponse = Promise.resolve({ profiles: [{ name: 'coder', is_active: false }] })
   const apiClient = {
-    getProfiles: async () => profiles,
+    getProfiles: async () => profilesResponse,
+    async getSystemMetrics() { return { ok: true, cpuPercent, memoryPercent: 51, temperatureC: 56 } },
+    async getKanbanTasks() { return { tasks: [] } },
+    async getLogs() { return { lines: [] } },
+    async getCrons() { return { jobs: [] } },
+    async getCronHistory() { return { completions: [] } },
+    async getSessions() { return { sessions: [] } },
+    async getSkills() { return { skills: [] } },
+    async getModels() { return { groups: [] } },
+    async getMemory() { return { memory: '' } },
+  }
+  const bridge = createWorldBridge({ apiClient, now: () => now })
+  const emissions = []
+  bridge.subscribe((snapshot) => emissions.push(snapshot))
+
+  const initial = await bridge.sync()
+  assert.equal(initial.agents.some((agent) => agent.profile === 'coder'), true)
+  emissions.length = 0
+
+  let releaseProfiles
+  profilesResponse = new Promise((resolve) => { releaseProfiles = resolve })
+  cpuPercent = 41
+  now += 15_000
+  const pending = bridge.sync()
+  await new Promise((resolve) => setTimeout(resolve, 0))
+
+  assert.equal(emissions.some((snapshot) => snapshot.system.cpuPercent === 41), true)
+  assert.equal(emissions.every((snapshot) => snapshot.agents.some((agent) => agent.profile === 'coder')), true)
+
+  releaseProfiles({ profiles: [{ name: 'coder', is_active: false }] })
+  const finalSnapshot = await pending
+  assert.equal(finalSnapshot.agents.some((agent) => agent.profile === 'coder'), true)
+  assert.equal(finalSnapshot.lifecycle.source, 'live')
+})
+
+test('forced atomic bridge sync refreshes every domain and emits only the complete snapshot', async () => {
+  let now = Date.UTC(2026, 6, 18, 6, 0, 0)
+  let releaseProfiles = null
+  let profileCalls = 0
+  let metricCalls = 0
+  const apiClient = {
+    async getProfiles() {
+      profileCalls += 1
+      if (releaseProfiles) return new Promise((resolve) => { releaseProfiles.resolve = resolve })
+      return { profiles: [{ name: 'coder', is_active: false }] }
+    },
+    async getSystemMetrics() { metricCalls += 1; return { ok: true, cpuPercent: 37, memoryPercent: 51, temperatureC: 56 } },
+    async getKanbanTasks() { return { tasks: [] } },
+    async getLogs() { return { lines: [] } },
+    async getCrons() { return { jobs: [] } },
+    async getCronHistory() { return { completions: [] } },
+    async getSessions() { return { sessions: [] } },
+    async getSkills() { return { skills: [] } },
+    async getModels() { return { groups: [] } },
+    async getMemory() { return { memory: '' } },
+  }
+  const bridge = createWorldBridge({ apiClient, now: () => now })
+  await bridge.sync()
+  const emissions = []
+  bridge.subscribe((snapshot) => emissions.push(snapshot))
+
+  releaseProfiles = {}
+  now += 1_000
+  const resync = bridge.sync({ force: true, atomic: true })
+  await new Promise((resolve) => setTimeout(resolve, 0))
+  assert.equal(profileCalls, 2)
+  assert.equal(metricCalls, 2)
+  assert.equal(emissions.length, 0)
+
+  releaseProfiles.resolve({ profiles: [{ name: 'coder', is_active: true }] })
+  const complete = await resync
+  assert.equal(emissions.length, 1)
+  assert.equal(complete.agents.find((agent) => agent.profile === 'coder').isActive, true)
+})
+
+test('forced reconnect resync waits for an in-flight poll and then performs a fresh atomic read', async () => {
+  let now = Date.UTC(2026, 6, 18, 6, 0, 0)
+  let profileCalls = 0
+  let releasePollingProfiles
+  const apiClient = {
+    async getProfiles() {
+      profileCalls += 1
+      if (profileCalls === 2) return new Promise((resolve) => { releasePollingProfiles = resolve })
+      return { profiles: [{ name: 'coder', is_active: profileCalls >= 3 }] }
+    },
     async getSystemMetrics() { return { ok: true, cpuPercent: 37, memoryPercent: 51, temperatureC: 56 } },
     async getKanbanTasks() { return { tasks: [] } },
     async getLogs() { return { lines: [] } },
@@ -545,20 +630,20 @@ test('production bridge publishes real metrics before an unrelated slow domain f
     async getModels() { return { groups: [] } },
     async getMemory() { return { memory: '' } },
   }
-  const bridge = createWorldBridge({ apiClient })
-  const emissions = []
-  bridge.subscribe((snapshot) => emissions.push(snapshot))
+  const bridge = createWorldBridge({ apiClient, now: () => now })
+  await bridge.sync()
+  now += 15_000
 
-  const pending = bridge.sync()
+  const polling = bridge.sync()
   await new Promise((resolve) => setTimeout(resolve, 0))
+  const reconnectResync = bridge.sync({ force: true, atomic: true })
+  assert.equal(profileCalls, 2)
 
-  assert.equal(emissions.some((snapshot) => snapshot.system.cpuPercent === 37), true)
-  assert.equal(emissions.some((snapshot) => snapshot.agents.length > 0), false)
-
-  releaseProfiles({ profiles: [{ name: 'coder', is_active: false }] })
-  const finalSnapshot = await pending
-  assert.equal(finalSnapshot.agents.some((agent) => agent.profile === 'coder'), true)
-  assert.equal(finalSnapshot.lifecycle.source, 'live')
+  releasePollingProfiles({ profiles: [{ name: 'coder', is_active: false }] })
+  await polling
+  const complete = await reconnectResync
+  assert.equal(profileCalls, 3)
+  assert.equal(complete.agents.find((agent) => agent.profile === 'coder').isActive, true)
 })
 
 test('concurrent resume and polling reuse one in-flight domain synchronization', async () => {

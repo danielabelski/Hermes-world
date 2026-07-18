@@ -815,3 +815,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: 5/5 kontrolowanych reconnectów PASS; 1 aktywne źródło po każdym cyklu; 0 timerów i 0 listenerów po cleanup; heartbeat timeout PASS; hidden/foreground i offline/online PASS.
 - Pełny zestaw: 155/155 PASS; ESLint PASS; World Life validator PASS; build PASS — 874 moduły, 13,15 s, main JS 428,55 kB / 132,06 kB gzip.
 - Produkcja pozostaje zamrożona na `958b9da08bee9613900e902b3da558aadef826e8`.
+
+## BW-2026-07-18-006 — Autorytatywny resync bez znikania rosteru
+
+- Zakres: FAZA 2.2 wyłącznie na demo; bez zmian UI wizualnego, ruchu, pozycji, tras, FSM, produkcji lub infrastruktury.
+- Test-first odtworzył dwa błędy: progresywny snapshot po szybkiej domenie metryk usuwał wcześniej potwierdzony roster oraz `sync()` nie obsługiwał wymuszonego, atomowego odczytu po reconnect.
+- `WorldBridge` zachowuje teraz ostatnie potwierdzone domeny podczas progresywnego odświeżania. Szybka telemetria może pojawić się natychmiast, ale wolniejszy profil/tasks nie zostaje zastąpiony pustą kolekcją.
+- Dodano `sync({ force: true, atomic: true })`: po reconnect wszystkie domeny są odczytywane ponownie i publikowany jest jeden kompletny snapshot. Jeśli zwykły poll już trwa, resync czeka na niego, a następnie wykonuje własny świeży odczyt.
+- `useWorldBridge` odbiera stan transportu z jednego SSE, pokazuje `resyncing`, zachowuje ostatni poprawny snapshot i po zakończeniu nakłada eventy, które nadeszły podczas odczytu. Stary/niepełny payload nie czyści już świata.
+- Dodano logi RESYNC STARTED i RESYNC COMPLETE oraz generacyjny guard, który nie pozwala starszemu resyncowi wygrać po kolejnym zerwaniu.
+- Testy: event odebrany w trakcie resync zachowany; forced atomic read wszystkich domen; brak emisji częściowych; force po in-flight poll; roster zachowany w każdej emisji — PASS.
+- Pełny zestaw: 158/158 PASS; ESLint PASS; World Life validator PASS; build PASS po jednym środowiskowym retry `EPERM` — 874 moduły, 2,99 s, main JS 430,66 kB / 132,59 kB gzip.
+- Produkcja pozostaje nietknięta.

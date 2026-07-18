@@ -1073,3 +1073,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Deterministic validation passed five consecutive disconnect/reconnect cycles, heartbeat timeout, hidden/foreground and offline/online transitions, with no duplicate delivery or accumulating resources.
 - Validation: 155/155 tests, ESLint, World Life validator and build PASS. Production remains untouched.
 - Next exact step: Phase 2.2 — connect `onStatus` to `useWorldBridge`, perform authoritative forced sync after reconnect, buffer/replay concurrent events, and prevent partial snapshots from clearing a previously confirmed roster.
+
+### Phase 2.2 completed — authoritative reconnect resync
+
+- `WorldBridge.sync({ force: true, atomic: true })` refreshes every domain after reconnect and emits one complete result. A forced resync arriving during ordinary polling queues behind it and then performs a fresh read.
+- Progressive ordinary polling now seeds each in-progress result with the last confirmed domains, so fresh metrics never replace a valid 12-agent roster with an empty intermediate snapshot.
+- `useWorldBridge` exposes transport/resync state, preserves the last trustworthy snapshot, and reapplies events received during the atomic read. Generation guards prevent an obsolete resync from winning after another disconnect.
+- Validation: 158/158 tests, ESLint, World Life validator and build PASS. Production remains untouched.
+- Next exact step: Phase 2.3 — define the minimal domain set per existing building and force those domains fresh on every entry, with a five-entry regression test and no visual/interior redesign.

@@ -313,6 +313,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
   let running = false;
   let timer = null;
   let syncPromise = null;
+  let syncForce = false;
   let lastSuccessfulAt = null;
   const lastPayloadByDomain = new Map();
   const lastAttemptByDomain = new Map();
@@ -345,7 +346,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     memory: POLL_INTERVALS.slow,
   });
 
-  async function fetchPayloads({ onProgress } = {}) {
+  async function fetchPayloads({ onProgress, force = false } = {}) {
     const observedAt = now();
     if (demoMode) {
       return {
@@ -357,10 +358,22 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     const entries = Object.entries(domainReaders);
     const payloads = {};
     const domains = {};
-    let liveCount = 0;
-    let cachedCount = 0;
+    for (const [id, cached] of lastPayloadByDomain) {
+      const failure = lastFailureByDomain.get(id);
+      payloads[id] = cached.value;
+      domains[id] = {
+        state: failure ? 'stale' : 'live',
+        updatedAt: new Date(cached.updatedAt).toISOString(),
+        ageMs: Math.max(0, observedAt - cached.updatedAt),
+        reused: true,
+        ...(failure ? { error: failure.message } : {}),
+      };
+    }
 
     const buildResult = () => {
+      const domainStates = Object.values(domains);
+      const liveCount = domainStates.filter((domain) => domain.state === 'live').length;
+      const cachedCount = domainStates.filter((domain) => domain.state === 'stale').length;
       if (liveCount > 0) lastSuccessfulAt = observedAt;
       const source = liveCount === entries.length ? 'live' : liveCount > 0 || cachedCount > 0 ? 'stale' : 'unknown';
       const oldestAge = Math.max(0, ...Object.values(domains).map((domain) => Number(domain.ageMs) || 0));
@@ -388,8 +401,6 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
         const failure = lastFailureByDomain.get(id);
         const state = failure ? 'stale' : 'live';
         domains[id] = { state, updatedAt: new Date(resolved.updatedAt).toISOString(), ageMs, reused: resolved.reused, ...(failure ? { error: failure.message } : {}) };
-        if (state === 'live') liveCount += 1;
-        else cachedCount += 1;
         return;
       }
       lastFailureByDomain.set(id, { message: result.reason?.message ?? 'Domain unavailable', failedAt: observedAt });
@@ -397,7 +408,6 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
       if (cached) {
         payloads[id] = cached.value;
         domains[id] = { state: 'stale', updatedAt: new Date(cached.updatedAt).toISOString(), ageMs: Math.max(0, observedAt - cached.updatedAt), error: result.reason?.message ?? 'Domain unavailable' };
-        cachedCount += 1;
       } else {
         domains[id] = { state: 'unknown', updatedAt: null, ageMs: null, error: result.reason?.message ?? 'Domain unavailable' };
       }
@@ -406,7 +416,7 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     await Promise.allSettled(entries.map(async ([id, read]) => {
       const cached = lastPayloadByDomain.get(id);
       const lastAttempt = lastAttemptByDomain.get(id) ?? 0;
-      const due = !cached || observedAt - lastAttempt >= domainIntervals[id];
+      const due = force || !cached || observedAt - lastAttempt >= domainIntervals[id];
       try {
         const resolved = due
           ? (() => {
@@ -428,20 +438,30 @@ export function createWorldBridge({ apiClient = api, demoMode = false, now = Dat
     return buildResult();
   }
 
-  function sync() {
-    if (syncPromise) return syncPromise;
-    syncPromise = (async () => {
+  function sync({ force = false, atomic = false } = {}) {
+    if (syncPromise) {
+      if (!force || syncForce) return syncPromise;
+      return syncPromise.catch(() => null).then(() => sync({ force, atomic }));
+    }
+    syncForce = force;
+    const operation = (async () => {
       let emitted = false;
       const publish = ({ payloads, provenance }) => {
         snapshot = createWorldSnapshot(payloads, snapshot, now, provenance);
         emit(snapshot);
         emitted = true;
       };
-      const result = await fetchPayloads({ onProgress: publish });
-      if (!emitted) publish(result);
+      const result = await fetchPayloads({ onProgress: atomic ? undefined : publish, force });
+      if (atomic || !emitted) publish(result);
       return snapshot;
     })();
-    return syncPromise.finally(() => { syncPromise = null; });
+    syncPromise = operation;
+    return operation.finally(() => {
+      if (syncPromise === operation) {
+        syncPromise = null;
+        syncForce = false;
+      }
+    });
   }
 
   function schedule() {

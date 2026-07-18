@@ -48,6 +48,15 @@ export function reconcileWorldEventHistory(liveSnapshot, events = []) {
   return abandonedRuns.size ? events.filter((event) => !abandonedRuns.has(String(event?.runId ?? ''))) : events;
 }
 
+export async function resyncWorldSnapshot(bridge, getEvents = () => []) {
+  const liveSnapshot = await bridge.sync({ force: true, atomic: true });
+  const events = reconcileWorldEventHistory(liveSnapshot, getEvents());
+  return {
+    events,
+    snapshot: events.length ? applyWorldEventsToSnapshot(liveSnapshot, events) : liveSnapshot,
+  };
+}
+
 /**
  * A snapshot made from empty API fallbacks is not a trustworthy representation
  * of Hermes. The current api.js deliberately swallows network errors and
@@ -85,12 +94,17 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
   const sceneScriptRef = useRef(null);
   const eventDrivenRef = useRef(false);
   const eventHistoryRef = useRef([]);
+  const transportRef = useRef(demoMode ? 'live' : 'connecting');
+  const resyncingRef = useRef(false);
+  const resyncGenerationRef = useRef(0);
   const demoSceneStartedAtRef = useRef(Date.now());
   const mountedRef = useRef(false);
   const [state, setState] = useState(() => ({
     snapshot: demoMode ? demoSnapshot : null,
     source: demoMode ? 'demo' : 'unknown',
     connection: demoMode ? 'online' : 'connecting',
+    transport: demoMode ? 'live' : 'connecting',
+    resyncing: false,
     error: null,
   }));
 
@@ -106,20 +120,31 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     if (hasUsableHermesData(liveSnapshot)) {
       eventHistoryRef.current = reconcileWorldEventHistory(liveSnapshot, eventHistoryRef.current);
       const resolvedSnapshot = eventHistoryRef.current.length ? applyWorldEventsToSnapshot(liveSnapshot, eventHistoryRef.current) : liveSnapshot;
-      const source = eventDrivenRef.current ? 'live' : liveSnapshot.lifecycle?.source ?? 'live';
-      setState({
+      const source = liveSnapshot.lifecycle?.source ?? 'live';
+      setState((previous) => ({
+        ...previous,
         snapshot: resolvedSnapshot,
         source,
-        connection: eventDrivenRef.current ? 'online' : liveSnapshot.lifecycle?.connection ?? 'online',
+        connection: liveSnapshot.lifecycle?.connection ?? 'online',
+        transport: transportRef.current,
+        resyncing: resyncingRef.current,
         error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
-      });
+      }));
       return;
     }
     const error = new Error('Hermes API is unavailable or returned no trustworthy world data.');
-    setState({ snapshot: liveSnapshot, source: liveSnapshot.lifecycle?.source ?? 'unknown', connection: liveSnapshot.lifecycle?.connection ?? 'offline', error });
+    setState((previous) => ({
+      ...previous,
+      snapshot: previous.snapshot ?? liveSnapshot,
+      source: previous.snapshot ? 'stale' : liveSnapshot.lifecycle?.source ?? 'unknown',
+      connection: liveSnapshot.lifecycle?.connection ?? 'offline',
+      transport: transportRef.current,
+      resyncing: resyncingRef.current,
+      error,
+    }));
   }, []);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (options = {}) => {
     if (demoMode) return demoSnapshotRef.current;
     if (!enabled) return null;
     if (!bridgeRef.current) {
@@ -128,12 +153,15 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     }
 
     try {
-      const liveSnapshot = await bridgeRef.current.sync();
+      const liveSnapshot = await bridgeRef.current.sync({
+        force: options?.force === true,
+        atomic: options?.atomic === true,
+      });
       applyLiveSnapshot(liveSnapshot);
       return liveSnapshot;
     } catch (error) {
       if (mountedRef.current) {
-        setState((previous) => ({ ...previous, source: previous.snapshot ? 'stale' : 'unknown', connection: 'offline', error }));
+        setState((previous) => ({ ...previous, source: previous.snapshot ? 'stale' : 'unknown', connection: 'offline', transport: transportRef.current, error }));
       }
       return null;
     }
@@ -144,12 +172,14 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     clearRetry();
 
     if (demoMode) {
-      setState({ snapshot: demoSnapshotRef.current, source: 'demo', connection: 'online', error: null });
+      transportRef.current = 'live';
+      setState({ snapshot: demoSnapshotRef.current, source: 'demo', connection: 'online', transport: 'live', resyncing: false, error: null });
       return () => { mountedRef.current = false; };
     }
 
     if (!enabled) {
-      setState({ snapshot: null, source: 'unknown', connection: 'offline', error: null });
+      transportRef.current = 'disconnected';
+      setState({ snapshot: null, source: 'unknown', connection: 'offline', transport: 'disconnected', resyncing: false, error: null });
       return () => { mountedRef.current = false; };
     }
 
@@ -163,6 +193,8 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
     return () => {
       cancelled = true;
       mountedRef.current = false;
+      resyncGenerationRef.current += 1;
+      resyncingRef.current = false;
       clearRetry();
       bridgeUnsubscribeRef.current?.();
       bridgeUnsubscribeRef.current = null;
@@ -182,9 +214,10 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       setState((previous) => {
         const base = previous.snapshot ?? demoSnapshotRef.current;
         return {
+          ...previous,
           snapshot: applyWorldEventsToSnapshot(base, events),
-          source: 'live',
-          connection: 'online',
+          source: previous.source === 'unknown' ? 'live' : previous.source,
+          transport: transportRef.current,
           error: null,
         };
       });
@@ -194,14 +227,70 @@ export function useWorldBridge({ enabled = true, demoMode = false, demoScenario 
       eventDrivenRef.current = true;
       sceneScriptRef.current?.stop?.();
       setState((previous) => ({
+        ...previous,
         snapshot: applyWorldEventToSnapshot(previous.snapshot ?? demoSnapshotRef.current, event),
-        source: 'live',
-        connection: 'online',
+        source: previous.source === 'unknown' ? 'live' : previous.source,
+        transport: transportRef.current,
         error: null,
       }));
     };
-    return subscribeWorldEventStream({ onSnapshot: applyEvents, onEvent: handleEvent });
-  }, [enabled]);
+    const handleStreamStatus = ({ state: nextTransport, reason }) => {
+      transportRef.current = nextTransport;
+      if (!mountedRef.current) return;
+
+      if (nextTransport !== 'live' || reason !== 'reconnected' || demoMode || !bridgeRef.current) {
+        if (nextTransport !== 'live' && resyncingRef.current) {
+          resyncGenerationRef.current += 1;
+          resyncingRef.current = false;
+        }
+        setState((previous) => ({
+          ...previous,
+          transport: nextTransport,
+          resyncing: resyncingRef.current,
+        }));
+        return;
+      }
+
+      const generation = resyncGenerationRef.current + 1;
+      resyncGenerationRef.current = generation;
+      resyncingRef.current = true;
+      transportRef.current = 'resyncing';
+      console.info('[Hermes World SSE] RESYNC STARTED', { reason });
+      setState((previous) => ({ ...previous, transport: 'resyncing', resyncing: true }));
+
+      void resyncWorldSnapshot(bridgeRef.current, () => eventHistoryRef.current)
+        .then(({ snapshot, events }) => {
+          if (!mountedRef.current || generation !== resyncGenerationRef.current) return;
+          eventHistoryRef.current = events;
+          resyncingRef.current = false;
+          transportRef.current = 'live';
+          console.info('[Hermes World SSE] RESYNC COMPLETE', { eventCount: events.length });
+          const source = snapshot.lifecycle?.source ?? 'live';
+          setState((previous) => ({
+            ...previous,
+            snapshot,
+            source,
+            connection: snapshot.lifecycle?.connection ?? 'online',
+            transport: 'live',
+            resyncing: false,
+            error: source === 'unknown' ? new Error('Hermes data is currently unavailable.') : null,
+          }));
+        })
+        .catch((error) => {
+          if (!mountedRef.current || generation !== resyncGenerationRef.current) return;
+          resyncingRef.current = false;
+          transportRef.current = 'live';
+          setState((previous) => ({
+            ...previous,
+            source: previous.snapshot ? 'stale' : 'unknown',
+            transport: 'live',
+            resyncing: false,
+            error,
+          }));
+        });
+    };
+    return subscribeWorldEventStream({ onSnapshot: applyEvents, onEvent: handleEvent, onStatus: handleStreamStatus });
+  }, [applyLiveSnapshot, demoMode, enabled]);
 
   useEffect(() => {
     if (!enabled || demoMode) return undefined;
