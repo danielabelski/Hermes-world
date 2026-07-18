@@ -1116,3 +1116,13 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Validation: focused 39/39, full 164/164, changed-test ESLint, World Life validator, `git diff --check` and build PASS; browser console 0 errors/0 warnings.
 - Production remains untouched.
 - Next exact step: Phase 3 — execute the full demo release matrix, including controlled reconnect/resync, five building re-entries, background/foreground, and five authenticated Hermes/iMessage journeys. Any manual-only case must remain marked pending until actually observed.
+
+### Phase 3 automated gate in progress
+
+- Regression remains green: 164/164 tests, ESLint, World Life validator and build PASS; production remains frozen at `958b9da08bee9613900e902b3da558aadef826e8`.
+- Five controlled SSE connections returned HTTP 200 with identical replay size; exactly one listener 4176 remains.
+- Five Archive re-entries on 393×852 read fresh Hermes runtime data with stable 1/40/0 metrics and no console errors.
+- Controlled demo cold start reached map/agent readiness in 1903 ms with 12 total / 10 map / 2 interior / 0 invalid.
+- A 30-minute continuous SSE soak passed: HTTP 200 for 1800 seconds, 120 chunks, regular heartbeat, one listener after completion, stable thread count and no resource-growth signal.
+- Remaining release blockers are manual and real-data-only: authenticated phone cold start, background/foreground, Wi‑Fi/LTE reconnect/resync, one real cron correlation and five complete iMessage/Hermes worker journeys.
+- Do not touch production or prepare a promotion commit until these blockers pass and the author issues explicit GL.

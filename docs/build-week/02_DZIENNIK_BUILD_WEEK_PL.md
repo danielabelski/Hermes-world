@@ -865,3 +865,15 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Świeży pomiar DOM Zwiadowcy pokazał ciągłe przejście 54.348/34.353 → 67/31.5; przez 15 próbek roster pozostawał 12/12 (10 mapa + 2 wnętrza, 0 invalid), wszystkie assety były gotowe, konsola 0 errors/0 warnings.
 - Walidacja: focused 39/39 PASS; pełny zestaw 164/164 PASS; ESLint zmienionego testu, world-life validator i `git diff --check` PASS; build PASS, 874 moduły, main 432,61 kB / 133,21 kB gzip.
 - Produkcja pozostała nietknięta. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_6_MOVEMENT_RELEASE_GATE_PL.md`.
+
+## BW-2026-07-18-011 — Automatyczna część macierzy odbioru demo
+
+- Zakres: FAZA 3 na branchu `build-week/hermes-world`; bez zmian kodu aplikacji i bez dotykania produkcji.
+- Pełna regresja: 164/164 testów PASS; ESLint PASS; World Life validator PASS; build PASS (874 moduły, main 432,61 kB / 133,21 kB gzip).
+- Pięć kontrolowanych połączeń SSE: 5/5 HTTP 200, identyczny replay 47 454 B, jeden listener 4176 po testach.
+- Pięć wejść do Archiwum na 393×852: 5/5 odczytów z Hermes runtime, spójne metryki 1/40/0, konsola bez błędów.
+- Cold start kontrolowanego demo: 1903 ms do gotowej mapy i agentów; roster 12/12 (10 mapa + 2 wnętrza, 0 invalid).
+- Lokalny HTTP: HTML 3,2–3,9 ms, main JS 5,0–7,5 ms, CSS 4,0–6,1 ms, mapa mobile 5,3–8,3 ms. Nie przedstawiać tych wartości jako benchmarku LTE/Safari.
+- 30-minutowy soak jednego streamu SSE: PASS — HTTP 200 przez 1800 s, 120 chunków, 50 667 B, regularny heartbeat; po teście jeden listener, 13 wątków, private memory +0,10 MB i uchwyty 238→235. Brak oznaki wycieku.
+- Ręczne testy telefonu, Wi‑Fi/LTE, tła i pięciu prawdziwych lifecycle'ów pozostają BLOCKEREM; produkcja nie może zostać zmieniona przed ich PASS oraz osobnym GL autora.
+- Pełna macierz: `docs/build-week/evidence/tests/20260718_PHASE_3_DEMO_RELEASE_MATRIX_PL.md`.

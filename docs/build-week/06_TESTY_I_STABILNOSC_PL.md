@@ -879,3 +879,15 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build: **PASS**, 874 moduły, main JS 432,61 kB / 133,21 kB gzip.
 - Ruch na prawdziwym evencie Hermes/iMessage pięć razy: **MANUAL ACTION REQUIRED / FAZA 3**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-062 — Automatyczna bramka pełnego demo
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Pełne testy: **PASS 164/164**. ESLint: **PASS**. World Life validator: **PASS**. Build: **PASS**, 874 moduły, main 432,61 kB / 133,21 kB gzip.
+- Kontrolowane połączenia SSE: **PASS 5/5**, HTTP 200, 47 454 B replay na próbę; po testach jeden listener 4176.
+- Archiwum 393×852: **PASS 5/5**, źródło `Hermes runtime`, metryki 1/40/0, 0 błędów konsoli.
+- Cold start fixture 393×852: **PASS 1903 ms**, roster 12/12, 10 map + 2 interior + 0 invalid.
+- Root i pięć wnętrz: **PASS HTTP 200**. Manifest i Service Worker v5: **PASS**.
+- Soak pojedynczego SSE przez 30 minut: **PASS** — HTTP 200 przez 1800 s, 120 chunków, 50 667 B; jeden listener po teście; private memory +0,10 MB, uchwyty 238→235, wątki 13→13.
+- Zalogowany telefon, background/foreground, Wi‑Fi/LTE i pięć prawdziwych lifecycle'ów iMessage/Hermes: **MANUAL ACTION REQUIRED / BLOCKER**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

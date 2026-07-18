@@ -1,0 +1,75 @@
+HERMES WORLD — BUILD WEEK GIT SNAPSHOT
+UTC: 2026-07-18T09:45:21Z
+Europe/Warsaw: 2026-07-18T11:45:21+02:00
+Session ID: 019f4f11-14e9-70e0-8d61-26226257864c
+Cel: Phase 3 automated demo release gate
+Branch: build-week/hermes-world
+HEAD: 09a115ee7cd4a49a13a922c077294d4422f135a2
+Baseline ref: demo-release-audit-start-2026-07-18
+
+== git status --short ==
+ M NEXT_WINDOW_HANDOFF.md
+ M docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+ M docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+?? docs/build-week/evidence/tests/20260718_PHASE_3_DEMO_RELEASE_MATRIX_PL.md
+
+== Zmienione pliki (bez treści) ==
+ M NEXT_WINDOW_HANDOFF.md
+ M docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+ M docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+?? docs/build-week/evidence/tests/20260718_PHASE_3_DEMO_RELEASE_MATRIX_PL.md
+M	NEXT_WINDOW_HANDOFF.md
+M	docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md
+M	docs/build-week/06_TESTY_I_STABILNOSC_PL.md
+
+
+== Diff stat: working tree ==
+ NEXT_WINDOW_HANDOFF.md                       | 10 ++++++++++
+ docs/build-week/02_DZIENNIK_BUILD_WEEK_PL.md | 12 ++++++++++++
+ docs/build-week/06_TESTY_I_STABILNOSC_PL.md  | 12 ++++++++++++
+ 3 files changed, 34 insertions(+)
+
+== Diff stat: staged ==
+
+
+== Ostatnie commity ==
+09a115ee7cd4a49a13a922c077294d4422f135a2	2026-07-18T10:34:14+02:00	2026-07-18T10:34:14+02:00	chore(build-week): record movement gate evidence
+2d6dbb77f0d69f27761635dbc7b81b2e9810f417	2026-07-18T10:33:46+02:00	2026-07-18T10:33:46+02:00	test(build-week): lock five-run movement gate
+89f1ae89d888648b292ad8ee75b538b8b99849be	2026-07-18T10:16:56+02:00	2026-07-18T10:16:56+02:00	chore(build-week): record event history evidence
+9c32bd9083f26bc45ece6934cd44a83acc65cff0	2026-07-18T10:16:25+02:00	2026-07-18T10:16:25+02:00	fix(build-week): preserve complete event history
+1967af2539f959efbdb752accf2007fa10652f91	2026-07-18T07:09:52+02:00	2026-07-18T07:09:52+02:00	chore(build-week): record status separation evidence
+774df0012446ac8d77ef002c8a0a06ccba740318	2026-07-18T07:09:24+02:00	2026-07-18T07:09:24+02:00	fix(build-week): separate transport from runtime status
+d72c987b47356adcb7e0dd337044bec118d63330	2026-07-18T06:54:15+02:00	2026-07-18T06:54:15+02:00	chore(build-week): record building refresh evidence
+0fd8d50072ac5f149ba566f13eca3e0a8f847c6d	2026-07-18T06:52:48+02:00	2026-07-18T06:52:48+02:00	fix(build-week): refresh building data on entry
+93892d1c8af851157608fc73ff4deae392d27602	2026-07-18T06:41:00+02:00	2026-07-18T06:41:00+02:00	chore(build-week): record reconnect resync evidence snapshot
+2d8a3ae02792318f078a48e239afc01e133c2008	2026-07-18T06:40:45+02:00	2026-07-18T06:40:45+02:00	fix(build-week): resync authoritative world state after reconnect
+fcb650906e9f5fc5481e7af65f8b5dc0a0f0e772	2026-07-18T06:28:21+02:00	2026-07-18T06:28:21+02:00	chore(build-week): record SSE lifecycle evidence snapshot
+cd5e651226a5d31eb8a5f0486d75ae0e814aa37a	2026-07-18T06:27:34+02:00	2026-07-18T06:27:34+02:00	fix(build-week): harden shared world event stream lifecycle
+214db43c04f5ebf50481ff50ca8648abf958ede1	2026-07-18T06:17:05+02:00	2026-07-18T06:17:05+02:00	docs(build-week): record demo release diagnosis
+24d05880635c3986c747cd7375eb09109165ff16	2026-07-18T06:07:46+02:00	2026-07-18T06:07:46+02:00	docs(build-week): checkpoint release audit start
+01df5476a77988f0ed9f6d03c11f295b32093ba8	2026-07-18T00:49:45+02:00	2026-07-18T00:49:45+02:00	chore(build-week): record scripted patrol evidence
+76b0a54bfe7812018c265473dc1f166fe6b8b1a9	2026-07-18T00:49:01+02:00	2026-07-18T00:49:01+02:00	fix(build-week): advance scripted patrol along route
+af4c0323e3c4a7eaa9da0785f082002e54866424	2026-07-18T00:21:04+02:00	2026-07-18T00:21:04+02:00	fix(build-week): restore approved agent placement
+afc8911a33b447415d23ea4ceabc18ab6f837ef3	2026-07-17T19:48:56+02:00	2026-07-17T19:48:56+02:00	chore(build-week): record mobile crowd correction
+52527cb9da5b73ab7750edce581508fb4dd06d3b	2026-07-17T19:47:57+02:00	2026-07-17T19:47:57+02:00	fix(build-week): separate crowded mobile agents
+bb6ab6328f7740dea6a5b07521f8f35fecf31464	2026-07-17T19:12:55+02:00	2026-07-17T19:12:55+02:00	chore(build-week): record agent visibility verification
+
+== Commity od baseline ==
+09a115ee7cd4a49a13a922c077294d4422f135a2	2026-07-18T10:34:14+02:00	2026-07-18T10:34:14+02:00	chore(build-week): record movement gate evidence
+2d6dbb77f0d69f27761635dbc7b81b2e9810f417	2026-07-18T10:33:46+02:00	2026-07-18T10:33:46+02:00	test(build-week): lock five-run movement gate
+89f1ae89d888648b292ad8ee75b538b8b99849be	2026-07-18T10:16:56+02:00	2026-07-18T10:16:56+02:00	chore(build-week): record event history evidence
+9c32bd9083f26bc45ece6934cd44a83acc65cff0	2026-07-18T10:16:25+02:00	2026-07-18T10:16:25+02:00	fix(build-week): preserve complete event history
+1967af2539f959efbdb752accf2007fa10652f91	2026-07-18T07:09:52+02:00	2026-07-18T07:09:52+02:00	chore(build-week): record status separation evidence
+774df0012446ac8d77ef002c8a0a06ccba740318	2026-07-18T07:09:24+02:00	2026-07-18T07:09:24+02:00	fix(build-week): separate transport from runtime status
+d72c987b47356adcb7e0dd337044bec118d63330	2026-07-18T06:54:15+02:00	2026-07-18T06:54:15+02:00	chore(build-week): record building refresh evidence
+0fd8d50072ac5f149ba566f13eca3e0a8f847c6d	2026-07-18T06:52:48+02:00	2026-07-18T06:52:48+02:00	fix(build-week): refresh building data on entry
+93892d1c8af851157608fc73ff4deae392d27602	2026-07-18T06:41:00+02:00	2026-07-18T06:41:00+02:00	chore(build-week): record reconnect resync evidence snapshot
+2d8a3ae02792318f078a48e239afc01e133c2008	2026-07-18T06:40:45+02:00	2026-07-18T06:40:45+02:00	fix(build-week): resync authoritative world state after reconnect
+fcb650906e9f5fc5481e7af65f8b5dc0a0f0e772	2026-07-18T06:28:21+02:00	2026-07-18T06:28:21+02:00	chore(build-week): record SSE lifecycle evidence snapshot
+cd5e651226a5d31eb8a5f0486d75ae0e814aa37a	2026-07-18T06:27:34+02:00	2026-07-18T06:27:34+02:00	fix(build-week): harden shared world event stream lifecycle
+214db43c04f5ebf50481ff50ca8648abf958ede1	2026-07-18T06:17:05+02:00	2026-07-18T06:17:05+02:00	docs(build-week): record demo release diagnosis
+24d05880635c3986c747cd7375eb09109165ff16	2026-07-18T06:07:46+02:00	2026-07-18T06:07:46+02:00	docs(build-week): checkpoint release audit start
+
+== Tagi Build Week ==
+pre-build-week-baseline-2026-07-13	36c0f2ab0d4fc9274031afd5c4bede9cc5fa59e9	2026-07-13T22:02:28+02:00	Hermes World verified pre-Submission baseline.
+production-correct-v1-before-build-week-promotion-2026-07-15	b455c01064fbe683a6d4120476b53ba75f6d932d	2026-07-15T14:24:19+02:00	Hermes Citadel production Correct v1 immediately before approved Build Week promotion on 2026-07-15.
