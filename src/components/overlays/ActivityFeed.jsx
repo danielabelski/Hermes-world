@@ -1,5 +1,6 @@
 import { useWorldStore } from '../../world/store/worldStore.js'
 import { mergeWorldActivityItems } from '../../world/worldActivityItems.js'
+import { presentWorldActivity } from '../../world/worldActivityPresentation.js'
 
 const DEMO_FIXTURE = Object.freeze([
   {
@@ -75,12 +76,16 @@ export function ActivityFeed({ limit = 40, showDemoFixture = true }) {
         const severity = item.severity ?? item.level ?? 'healthy'
         const type = item.type ?? (severity === 'warning' || severity === 'error' || severity === 'critical' ? 'alert' : 'system')
         const meta = EVENT_META[type] ?? EVENT_META.system
+        const presentation = presentWorldActivity(item)
         const color = SEVERITY_COLOR[severity] ?? SEVERITY_COLOR.info
         return (
           <li className="activity-feed__item" data-severity={severity} data-type={type} key={item.id ?? `${item.createdAt ?? item.timestamp ?? 'event'}-${index}`} style={{ display: 'grid', gridTemplateColumns: '20px 42px minmax(0, 1fr)', alignItems: 'start', gap: 7, padding: '8px 0', borderBottom: '1px solid rgba(242, 219, 154, .12)' }}>
-            <span aria-hidden="true" title={meta.label} style={{ display: 'grid', width: 18, height: 18, placeItems: 'center', border: `1px solid ${color}66`, borderRadius: 6, color, background: `${color}1f`, fontSize: 11, fontWeight: 800 }}>{meta.icon}</span>
+            <span aria-hidden="true" title={presentation.label ?? meta.label} style={{ display: 'grid', width: 18, height: 18, placeItems: 'center', border: `1px solid ${color}66`, borderRadius: 6, color, background: `${color}1f`, fontSize: 11, fontWeight: 800 }}>{meta.icon}</span>
             <time dateTime={item.createdAt ?? item.timestamp} style={{ paddingTop: 2, color: 'rgba(245, 234, 214, .57)', fontSize: 10, fontVariantNumeric: 'tabular-nums' }}>{formatTime(item.createdAt ?? item.timestamp)}</time>
-            <span style={{ color: severity === 'critical' || severity === 'error' ? '#ffd0c0' : '#e8eadb', fontSize: 11, lineHeight: 1.35 }}>{item.message ?? item.title ?? item.name ?? 'Zdarzenie systemowe'}</span>
+            <span style={{ display: 'grid', gap: 2, color: severity === 'critical' || severity === 'error' ? '#ffd0c0' : '#e8eadb', fontSize: 11, lineHeight: 1.35 }}>
+              <strong style={{ color, fontSize: 9, letterSpacing: '.08em' }}>{presentation.label}</strong>
+              <span>{presentation.message}</span>
+            </span>
           </li>
         )
       })}

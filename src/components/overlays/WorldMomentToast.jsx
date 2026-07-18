@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useWorldStore } from '../../world/store/worldStore.js'
 import { classifyWorldMoment, resolveWorldMoment } from '../../world/worldMomentPriority.js'
 import { mergeWorldActivityItems, recentWorldActivityItems } from '../../world/worldActivityItems.js'
+import { orderWorldActivityRotation, presentWorldActivity } from '../../world/worldActivityPresentation.js'
 
 const TONE = Object.freeze({
   info: { icon: 'i', label: 'INFO', color: '#9fc7d8', border: 'rgba(159, 199, 216, .42)', background: 'rgba(28, 52, 65, .88)' },
@@ -50,7 +51,7 @@ export function WorldMomentToast() {
   const activeIndexRef = useRef(0)
   const seenRef = useRef(new Set())
   const initializedRef = useRef(false)
-  const items = useMemo(() => recentWorldActivityItems(mergeWorldActivityItems(activity, alerts), mountedAt), [activity, alerts, mountedAt])
+  const items = useMemo(() => orderWorldActivityRotation(recentWorldActivityItems(mergeWorldActivityItems(activity, alerts), mountedAt)), [activity, alerts, mountedAt])
 
   useEffect(() => {
     const ids = items.map(itemId)
@@ -94,10 +95,11 @@ export function WorldMomentToast() {
   if (!moment) return null
 
   const tone = TONE[toneFor(moment)]
-  const message = shorten(moment.message ?? moment.title ?? moment.name)
+  const presentation = presentWorldActivity(moment)
+  const message = shorten(presentation.message)
   const eventTime = new Date(moment.createdAt ?? moment.timestamp ?? '')
   const timeLabel = Number.isNaN(eventTime.getTime()) ? '' : new Intl.DateTimeFormat('pl-PL', { hour: '2-digit', minute: '2-digit' }).format(eventTime)
-  const eventLabel = moment.type === 'cron' ? 'CRON' : tone.label
+  const eventLabel = presentation.label || tone.label
 
   return (
     <div className="world-moment-toast" style={ROOT_STYLE}>

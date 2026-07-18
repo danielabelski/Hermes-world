@@ -940,3 +940,16 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Lokalny serwer demo: 20 odpowiedzi HTTP 200; średnio 38,08 ms, minimum 28,21 ms, maksimum/p95 152,64 ms.
 - Wynik: **PASS** — brak mierzalnej regresji renderowania lub transportu wynikającej z tej poprawki.
 - Ograniczenie: końcowa płynność i kompletność czterech historycznych cronów wymaga ręcznego GL/RL na zalogowanym telefonie.
+
+## TEST-BW-067 — Typowana historia operacyjna
+
+- Manualny wynik wejściowy: **FAIL** — komunikaty Pazia nie identyfikowały cronów, nazwy cronów nie były widoczne.
+- Kontrakt `cronName` / `cronStatus` / `completedAt`: **PASS**.
+- Cron bez nieprawdziwego przypisania do Pazia: **PASS**.
+- Rozróżnienie `ZADANIE` / `ANALIZA` / `PRACA` / `UKOŃCZONE`: **PASS**.
+- Alerty przed zwykłą rotacją, następnie cron/task/agent: **PASS**.
+- Pełny zestaw: **172/172 PASS**; focused po finalnej korekcie: **38/38 PASS**; ESLint i build: **PASS**.
+- Build: 875 modułów, 2,97 s, main 435,95 kB / 134,32 kB gzip.
+- Mikrobenchmark 100 000 iteracji / 40 wpisów: **0,014107 ms/operację**.
+- Zalogowany telefon i prawdziwe nazwy dzisiejszych cronów: **MANUAL ACTION REQUIRED**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

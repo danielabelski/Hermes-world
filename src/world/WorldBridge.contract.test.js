@@ -17,7 +17,9 @@ describe('real Hermes payload contracts', () => {
     assert.equal(snapshot.raw.cronHistory.length, 1)
     assert.equal(snapshot.raw.cronHistory[0].completedAt, '2026-07-17T21:00:00.000Z')
     assert.equal(snapshot.crons[0].lastCompletionStatus, 'success')
-    assert.equal(snapshot.activity[0].source, 'hermes-cron-history')
+      assert.equal(snapshot.activity[0].source, 'hermes-cron-history')
+      assert.equal(snapshot.activity[0].cronName, 'Nightly health')
+      assert.equal(snapshot.activity[0].cronStatus, 'success')
   })
 
   it('retains real metric updates instead of a prior cached temperature', () => {

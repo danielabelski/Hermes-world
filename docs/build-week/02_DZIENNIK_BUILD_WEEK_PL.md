@@ -919,3 +919,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Merge 40 pozycji kosztuje średnio 0,1474 ms; build 4,54 s; główny bundle 433,92 kB / 133,65 kB gzip.
 - Walidacja: testy 170/170 PASS, lint PASS, build PASS, 20/20 lokalnych odpowiedzi HTTP 200.
 - Produkcja pozostała nietknięta. Następny krok: ręczny test na telefonie, czy dolny kanał pokazuje zadanie Pazia, wszystkie cztery dzisiejsze crony i kolejne ważne realne zdarzenia.
+
+## BW-2026-07-18-016 — Korekta semantyki: cron nie jest lifecycle'em Pazia
+
+- Czas zakończenia Europe/Warsaw: 2026-07-18 15:27; zakres wyłącznie demo.
+- Ręczny odbiór poprzedniego etapu ujawnił, że wpisy 14:31 były etapami Pazia, a nie cronami; nazwy cronów nie były widoczne. Poprzedni manualny gate nie przeszedł.
+- Cron pokazuje rzeczywistą nazwę, wynik i czas; agent pokazuje osobno zadanie, analizę, pracę i ukończenie. Cron nie jest przypisywany agentowi bez dowodu.
+- Warning/Critical nadal ma pierwszeństwo, następnie rotacja eksponuje najnowszy cron, task i event agenta. Nie usunięto prawdziwych eventów i nie dodano danych syntetycznych.
+- Walidacja: 172/172 pełnych testów PASS, 38/38 focused PASS; ESLint, build i `git diff --check` PASS. Build 2,97 s, main 435,95 kB / 134,32 kB gzip; prezentacja 0,014107 ms/operację. Produkcja nietknięta; prawdziwe crony wymagają manualnego GL.

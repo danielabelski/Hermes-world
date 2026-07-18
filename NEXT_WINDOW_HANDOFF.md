@@ -1146,3 +1146,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Production remains frozen; do not promote without a fresh explicit GL after manual demo acceptance.
 - The running demo on port 4176 serves the current build hash `index-BkzoAeZ2.js`. Post-change Git snapshot: `20260718T120201Z-git-snapshot.txt`.
 - The production promotion must follow `docs/build-week/evidence/submission-period/20260718_RELEASE_CANDIDATE_MANIFEST_PL.md`; never merge/copy the whole demo tree. Current main is clean and unchanged at `958b9da`.
+
+## Aktualizacja handoffu — 2026-07-18 15:27 Europe/Warsaw
+
+- Poprzedni manualny gate ujawnił błąd semantyczny: wpisy 14:31 były etapami Pazia, a nie cronami; nazwy cronów nie były widoczne. Nie traktować poprzedniego odbioru jako cron E2E PASS.
+- Demo ma osobny kontrakt prezentacji: cron = rzeczywista nazwa + wynik + `completedAt`; agent = osobne etykiety zadania, analizy, pracy i ukończenia. Cron nigdy nie jest przypisywany Paziowi bez dowodu.
+- Rotacja chroni Warning/Critical, następnie eksponuje najnowszy cron, task i event agenta. Pełny feed nadal przechowuje do 40 prawdziwych pozycji.
+- Automatyczna walidacja: 172/172 pełnych testów PASS, 38/38 focused PASS po finalnej korekcie, lint/build/diff-check PASS. Artifact demo: `index-Cc-0oBZW.js`; koszt prezentacji 0,014107 ms/operację.
+- Produkcja pozostaje nietknięta. Następny gate: zalogowany telefon ma pokazać nazwy rzeczywistych cronów i ich poprawne czasy.

@@ -18,10 +18,27 @@ import { getNumberedRouteNodes, shortRouteNodeLabel } from './routeDebugPresenta
 import { applyDemoObservabilityFocus, resolveDemoObservabilityFocus } from './data/demoObservabilityFocus.js'
 import { resolveDemoRuntimeMode } from './demoRuntimeMode.js'
 import { mergeWorldActivityItems } from './worldActivityItems.js'
+import { orderWorldActivityRotation, presentWorldActivity } from './worldActivityPresentation.js'
 import { applyWorldSceneScript } from './WorldSceneScript.js'
 import { getBuildingRefreshDomains } from './buildingEntryConfig.js'
 
 const START = Date.UTC(2026, 6, 11, 12, 0, 0)
+
+test('cron activity names the real cron and never attributes it to Paź', () => {
+  const presentation = presentWorldActivity({ type: 'cron', entityId: 'morning-health', cronName: 'Morning health check', cronStatus: 'success', severity: 'info' })
+  assert.equal(presentation.label, 'CRON · SUKCES')
+  assert.match(presentation.message, /Morning health check/)
+  assert.doesNotMatch(presentation.message, /Paź/)
+})
+
+test('activity rotation surfaces a real cron before a burst of agent lifecycle messages', () => {
+  const agentOne = { id: 'agent-1', type: 'agent', operationalState: 'assigned' }
+  const agentTwo = { id: 'agent-2', type: 'agent', operationalState: 'thinking' }
+  const cron = { id: 'cron-1', type: 'cron', cronName: 'Backup', cronStatus: 'success' }
+  const ordered = orderWorldActivityRotation([agentOne, agentTwo, cron])
+  assert.equal(ordered[0], cron)
+  assert.equal(ordered.length, 3)
+})
 const iso = (time) => new Date(time).toISOString()
 const closeTo = (actual, expected, tolerance = 0.08) => assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} ≉ ${expected}`)
 
