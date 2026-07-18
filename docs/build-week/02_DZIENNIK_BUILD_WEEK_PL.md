@@ -979,3 +979,33 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Zalogowany automatyczny UI test nie mógł zostać wykonany, ponieważ kontroler przeglądarki zablokował lokalny/Tailscale URL polityką bezpieczeństwa. Manualny telefon pozostaje **MANUAL ACTION REQUIRED / GL-RL**; nie zapisano fałszywego PASS.
 - Sesja: `019f76b1-bba0-7400-9167-0fab397eabc8`; model: GPT-5.6.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_LIVE_CRON_JOIN_PL.md`.
+
+## BW-2026-07-18-022 — Ciągłość ruchu przy przejęciu realnego workera
+
+- Czas Europe/Warsaw: 2026-07-18 22:15–22:33; zakres wyłącznie DEMO `build-week/hermes-world`.
+- Autor potwierdził GL dla cold startu, Wi-Fi/LTE, 12/12 agentów, pięciu cykli, wywołania workera, cronów, innych zdarzeń, budynków, reconnectu i logów. Jedynym RL UX była około 2–3-sekundowa pozorna pauza aktywnego ruchu przy rozpoczęciu realnego zadania.
+- Read-only audyt prawdziwego runu `gateway-20260718_221532_2bf368-40612`: 43 eventy, `stuck=0`, `warning=0`, `critical=0`, terminal `success`; `assigned → thinking` w 12 ms, pierwszy `working` po 3788 ms.
+- Przyczyną nie był renderer. Realny `thinking` natychmiast zastępował `assigned`, a director usuwał ambientową akcję celu wraz z partnerem rozmowy. Na scenie z maksymalnie trzema akcjami wyglądało to jak globalne zatrzymanie.
+- Minimalna korekta zachowuje pozycję i ruch workera podczas prawdziwego `thinking`, bez zmiany etykiety na `working`, oraz nie zatrzymuje partnera ani niezwiązanych agentów. Nie zmieniono danych, FSM, tras, mapy, cronów, feedu, API, CAT ani produkcji.
+- Test-first: 19/20 expected FAIL → 20/20 PASS. Focused 66/66 PASS; pełne testy 178/178 PASS; ESLint, validator, syntax i `git diff --check` PASS.
+- Build PASS: 875 modułów, 3,01 s, `index-D-EekdwD.js` 437,53 kB / 134,82 kB gzip. Jeden serwer DEMO podaje artifact; root/auth/world snapshot HTTP 200.
+- Nowy manualny retest jednego realnego workera: **MANUAL ACTION REQUIRED / GL-RL**. Produkcja pozostaje zamrożona.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_WORKER_HANDOFF_CONTINUITY_PL.md`.
+
+## BW-2026-07-18-023 — Faza 0 release: feature freeze i raport startowy
+
+- Czas Europe/Warsaw: 2026-07-18 22:54; bez zmian produkcji.
+- Ustanowiono feature freeze zgodny z finalnym promptem release: brak nowych funkcji, kosmetyki, eksperymentów, refaktorów i zmian architektury.
+- Świeży audyt potwierdził DEMO `build-week/hermes-world` na bazie `5f74847` z jednym sklasyfikowanym patchem presentation-only i jego dowodami oraz produkcyjny `main` czysty na `958b9da`.
+- Produkcja 4175, DEMO 4176, Hermes WebUI 8787 i CAT 8788 odpowiadały HTTP 200. Nie restartowano ani nie modyfikowano żadnego procesu.
+- Raport uczciwie wskazuje, że poprawiony kandydat DEMO nie ma jeszcze finalnego SHA/tagu i nie jest odtwarzalnym checkpointem. To obowiązkowa bramka Fazy 1.
+- Faza 0: **PASS**. Produkcja pozostaje zamrożona do zakończenia identyfikacji patcha i rollbacku w Fazach 1–3.
+- Raport: `docs/release/RELEASE_START_REPORT.md`.
+
+## BW-2026-07-18-024 — Przygotowanie checkpointu DEMO i blocker sandboxu Git
+
+- Czas Europe/Warsaw: 2026-07-18; zakres wyłącznie DEMO, bez zmian produkcji.
+- Zweryfikowano dokładny zakres zatwierdzonego kandydata: cztery pliki directorów/testu oraz dokumentacja i evidence wynikające z poprawki worker handoff i rozpoczęcia release.
+- Przygotowano `docs/release/DEMO_VALIDATION_SUMMARY.md` z wynikami 178/178 testów, walidacją builda, manualnym gate'em autora, ograniczeniami nieblokującymi i izolacją produkcji.
+- Trzy kontrolowane próby stagingu nie zapisały indeksu: środowisko wykonawcze odmówiło utworzenia `.git/worktrees/hermes-os-living-world-demo/index.lock` także po przyznaniu precyzyjnego dostępu. `git diff --cached --name-only` pozostał pusty; nie utworzono commitu ani tagu.
+- Faza 1 pozostaje **BLOCKED technicznie** do czasu utworzenia finalnego commitu, wpisania SHA, utworzenia tagu `demo-validated-2026-07-18` i potwierdzenia czystego working tree. Faza 2 i produkcja nie zostały rozpoczęte.

@@ -36,11 +36,11 @@ export function applyWorldDirectorPresentation(presentations, { choreography, am
   return Object.freeze(sortMapAgentPresentations(presentations.map((model) => {
     const routeHandoff = handoffByAgent[model.profileId]
     const sameRun = !routeHandoff?.runId || !model.taskId || routeHandoff.runId === model.taskId
-    if (routeHandoff && sameRun && ['walking-to-work', 'arriving'].includes(model.phase)) {
+    if (routeHandoff && sameRun && ['walking-to-work', 'arriving', 'thinking'].includes(model.phase)) {
       const sampled = sampleMapAgentRoute(routeHandoff.route, routeHandoff.progress)
       return Object.freeze(applyMotion(model, {
         ...sampled,
-        visualState: 'walk',
+        visualState: model.phase === 'thinking' ? 'thinking' : 'walk',
         isMoving: true,
         evidenceEventId: routeHandoff.evidenceEventId,
       }, 'operational-handoff'))

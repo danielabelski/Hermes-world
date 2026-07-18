@@ -76,8 +76,11 @@ function nextDelay(seed) {
   return Math.round(AMBIENT_SELECTION_MIN_MS + unit(seed) * (AMBIENT_SELECTION_MAX_MS - AMBIENT_SELECTION_MIN_MS))
 }
 
-export function interruptAmbientAgent(state, profileId, now = Date.now()) {
-  const actions = state.actions.filter((action) => action.profileId !== profileId && action.partnerId !== profileId)
+export function interruptAmbientAgent(state, profileId, now = Date.now(), { preservePartnerMotion = false } = {}) {
+  const actions = state.actions.filter((action) => (
+    action.profileId !== profileId
+    && (preservePartnerMotion || action.partnerId !== profileId)
+  ))
   if (actions.length === state.actions.length) return state
   return freeze({ ...state, actions: freeze(actions), interruptedAt: now })
 }

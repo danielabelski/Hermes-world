@@ -1023,3 +1023,18 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Runtime: **PASS** — root, auth status i world snapshot HTTP 200; dokładnie jeden listener DEMO 4176. Produkcja 4175, WebUI 8787 i CAT 8788 odpowiadają HTTP 200.
 - Kontroler przeglądarki zablokował URL aplikacji polityką bezpieczeństwa; automatycznego UI PASS nie zapisano. Zalogowany telefon: **MANUAL ACTION REQUIRED / GL-RL**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-073 — Ciągłość realnego worker handoffu
+
+- Data: 2026-07-18 22:33 Europe/Warsaw; branch `build-week/hermes-world`; DEMO only.
+- Manualny gate wejściowy: cold start, Wi-Fi/LTE, 12/12, pięć cykli, worker, crony, zdarzenia, budynki, reconnect i logi **GL**; pozorna pauza ruchu przy workerze **UX RL**.
+- Prawdziwy run `gateway-20260718_221532_2bf368-40612`: 43 eventy, 0 stuck, 0 warning, 0 critical, terminal success: **PASS**.
+- Timing: publish start 1269 ms; `assigned → thinking` 12 ms; `assigned → working` 3788 ms. Potwierdzono reasoning/handoff, nie renderer freeze.
+- Test regresyjny przed poprawką: **EXPECTED FAIL 19/20** — `thinking` nie korzystał z operational handoffu.
+- Po poprawce: worker zachowuje pozycję nóg, porusza się podczas `thinking`, pozostaje opisany jako `thinking`, a partner ambientowy nie jest zatrzymywany: **PASS 20/20**.
+- Focused directors + movement + events: **66/66 PASS**. Pełne testy: **178/178 PASS**, 8 suites, 0 fail.
+- ESLint: **PASS**. World Life validator: **PASS**. `node --check`: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 875 modułów, 3,01 s; main `index-D-EekdwD.js` 437,53 kB / 134,82 kB gzip.
+- Runtime: dokładnie jeden listener DEMO 4176; root, auth i world snapshot HTTP 200: **PASS**.
+- Manualny retest realnego workera po poprawce: **MANUAL ACTION REQUIRED / GL-RL**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

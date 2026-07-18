@@ -67,7 +67,12 @@ export function useWorldDirectors({ agents = [], now = 0, layout = 'desktop', en
         evidenceEventId: event.eventId,
       })
       if (handoff) setHandoffs((current) => [...current.filter((candidate) => candidate.profileId !== handoff.profileId && candidate.endsAt >= receivedAt), handoff])
-      setAmbientState((state) => interruptAmbientAgent(interruptAmbientAgent(state, event.agentId, receivedAt), 'orchestrator', receivedAt))
+      setAmbientState((state) => interruptAmbientAgent(
+        interruptAmbientAgent(state, event.agentId, receivedAt, { preservePartnerMotion: true }),
+        'orchestrator',
+        receivedAt,
+        { preservePartnerMotion: true },
+      ))
       setChoreographyState((state) => reduceChoreographyEvent(state, event, receivedAt))
       window.requestAnimationFrame(() => {
         requestPresentationClockTick()

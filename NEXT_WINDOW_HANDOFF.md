@@ -1,5 +1,61 @@
 # HERMES WORLD — CHECKPOINT PIERWSZEJ DZIAŁAJĄCEJ WERSJI
 
+## ACTIVE RELEASE HANDOFF — FAZA 1 / BLOKADA ZAPISU GIT (2026-07-18)
+
+- Kod, testy, build, raport startowy i `docs/release/DEMO_VALIDATION_SUMMARY.md` są przygotowane zgodnie z feature freeze.
+- Zatwierdzony kandydat obejmuje wyłącznie patch ciągłości worker handoff oraz jego testy i dokumentację; produkcja pozostaje nietknięta.
+- Trzy próby `git add` zakończyły się przed stagingiem: sandbox odmówił utworzenia `.git/worktrees/hermes-os-living-world-demo/index.lock`, również po przyznaniu dostępu katalogowego i dostępu do konkretnego pliku.
+- Nie powstał commit ani tag; `git diff --cached --name-only` pozostał pusty. Nie wolno przedstawiać Fazy 1 jako PASS.
+- Następne działanie: utworzyć finalny commit DEMO poza blokującym sandboxem, wpisać SHA do podsumowania, wykonać finalny commit dokumentacyjny, utworzyć tag `demo-validated-2026-07-18` i potwierdzić czyste drzewo.
+- Nie rozpoczynać Fazy 2 ani nie dotykać produkcji przed zamknięciem tej bramki.
+
+---
+
+## ACTIVE RELEASE HANDOFF — FAZA 0 / FEATURE FREEZE (2026-07-18 22:54 CEST)
+
+- Feature freeze obowiązuje. Zakazane są nowe funkcje, kosmetyka, refaktory i zmiany architektury.
+- DEMO: `build-week/hermes-world`, baza `5f74847f3039047b7f1945eaed30d0e161a2dd19` plus dokładnie sklasyfikowany patch worker handoff i dokumentacja.
+- Produkcja: `main` / `958b9da08bee9613900e902b3da558aadef826e8`, working tree czysty, runtime 4175 HTTP 200; bez zmian i restartu.
+- Raport startowy: `docs/release/RELEASE_START_REPORT.md`.
+- Faza 0: PASS. Faza 1 ma utworzyć odtwarzalny finalny commit/tag DEMO i `DEMO_VALIDATION_SUMMARY.md`.
+- Nie wdrażać produkcji przed ukończeniem identyfikacji patcha i rollbacku w Fazach 2–3.
+
+---
+
+## ACTIVE HANDOFF — PŁYNNY REALNY WORKER HANDOFF (2026-07-18 22:33 CEST)
+
+### Stan
+
+- Repo/branch DEMO: `hermes-os-living-world-demo` / `build-week/hermes-world`; checkpoint wejściowy `5f74847f3039047b7f1945eaed30d0e161a2dd19`.
+- Autor nadał GL: cold start, Wi-Fi/LTE, 12/12 workerów, pięć cykli, realny worker lifecycle, crony, inne zdarzenia, budynki, reconnect i logi.
+- Jedyny RL UX: po wywołaniu realnego workera aktywny ruch wyglądał na zatrzymany przez około 2–3 s przed rozpoczęciem cyklu.
+- Produkcja pozostaje czysta na `958b9da08bee9613900e902b3da558aadef826e8`; CAT, Hermes WebUI, API, mapa, trasy, FSM, crony i Aktywność Cytadeli nie zostały zmienione.
+
+### Diagnoza i minimalna poprawka
+
+- Rzeczywisty run `gateway-20260718_221532_2bf368-40612` miał 43 eventy, `stuck=0`, `warning=0`, `critical=0`, terminal `success`.
+- `assigned` został opublikowany 1269 ms po timestampie źródłowym, `thinking` 12 ms później, a pierwszy `working` po 3788 ms. Nie był to renderer freeze ani prawdziwy stan `stuck`.
+- `thinking` nadpisywał krótkie `assigned`, a przejęcie realnego eventu usuwało ambientowy ruch workera oraz jego partnera rozmowy. Przy maksymalnie trzech ambientowych akcjach wyglądało to jak zatrzymanie aktywnej grupy.
+- Handoff zachowuje teraz aktualną pozycję nóg i ruch wywołanego workera także podczas prawdziwego `thinking`, pozostawiając mu wizualny stan `thinking`; `working` nadal wymaga prawdziwego eventu.
+- Partner i wszyscy niezwiązani agenci zachowują ruch ambientowy. Nie dodano fake Working, nie skrócono prawdziwego reasoning i nie zmieniono żadnej trasy.
+
+### Walidacja
+
+- Test-first: przed poprawką 19/20, oczekiwany FAIL na braku `operational-handoff`; po poprawce 20/20 PASS.
+- Focused directors + movement + events: 66/66 PASS.
+- Pełne testy: 178/178 PASS, 8 suites, 0 fail.
+- ESLint, World Life validator, `node --check` i `git diff --check`: PASS.
+- Build: PASS, 875 modułów, 3,01 s; `index-D-EekdwD.js` 437,53 kB / 134,82 kB gzip.
+- Jeden listener DEMO 4176 podaje nowy artifact; root, auth i world snapshot HTTP 200.
+
+### Następne działanie
+
+1. Autor wykonuje jeden realny retest workera na `http://100.69.167.105:4176/?demo=1`.
+2. GL: zapisać finalny manualny gate i dopiero po osobnym poleceniu przygotować promocję.
+3. RL: poprawić wyłącznie potwierdzony defekt tego handoffu; bez nowych usprawnień.
+
+---
+
 ## ACTIVE HANDOFF — REALNA AKTYWNOŚĆ CYTADELI / CRON JOIN (2026-07-18 22:02 CEST)
 
 ### Stan

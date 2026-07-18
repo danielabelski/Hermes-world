@@ -226,6 +226,43 @@ test('a real event takes over an ambient walker at the exact visible foot positi
   assert.notEqual(working.presentationSource, 'operational-handoff')
 })
 
+test('thinking keeps the real worker moving from its ambient foot position without stopping its partner', () => {
+  const agents = idleAgents()
+  const ambientState = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'handoff' }), { agents, now: START + 2_400, layout: 'mobile' })
+  const action = ambientState.actions[0]
+  const takeoverAt = START + 7_200
+  const ambientBefore = deriveAmbientPresentation(ambientState, { now: takeoverAt }).actionByAgent[action.profileId]
+  const before = sampleMapAgentRoute(ambientBefore.route, ambientBefore.progress)
+  const handoff = createAmbientRouteHandoff(action, { now: takeoverAt, layout: 'mobile', runId: 'real-run', evidenceEventId: 'real-run:0' })
+  const thinkingModel = {
+    ...idleModel(action.profileId),
+    phase: 'thinking',
+    visualState: 'thinking',
+    isMoving: false,
+    active: true,
+    isActive: true,
+    taskId: 'real-run',
+  }
+
+  const [thinking] = applyWorldDirectorPresentation([thinkingModel], {
+    handoff: deriveAmbientHandoffPresentation([handoff], { now: takeoverAt + 100 }),
+  })
+  assert.equal(thinking.presentationSource, 'operational-handoff')
+  assert.equal(thinking.visualState, 'thinking')
+  assert.equal(thinking.isMoving, true)
+  assert.ok(Math.hypot(thinking.worldX - before.worldX, thinking.worldY - before.worldY) > 0)
+
+  const paired = {
+    ...createAmbientDirectorState({ now: START }),
+    actions: Object.freeze([
+      Object.freeze({ id: 'left', profileId: action.profileId, partnerId: 'developer', behavior: 'converse', endsAt: START + 20_000 }),
+      Object.freeze({ id: 'right', profileId: 'developer', partnerId: action.profileId, behavior: 'converse', endsAt: START + 20_000 }),
+    ]),
+  }
+  const interrupted = interruptAmbientAgent(paired, action.profileId, takeoverAt, { preservePartnerMotion: true })
+  assert.deepEqual(interrupted.actions.map((candidate) => candidate.profileId), ['developer'])
+})
+
 test('ambient behavior does not repeat for the same profile on its next selection', () => {
   const agents = idleAgents()
   let state = advanceAmbientDirector(createAmbientDirectorState({ now: START, seed: 'history' }), { agents, now: START + 2_400, layout: 'desktop' })

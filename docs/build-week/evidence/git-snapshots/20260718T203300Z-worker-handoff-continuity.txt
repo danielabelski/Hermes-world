@@ -1,0 +1,40 @@
+HERMES WORLD DEMO — WORKER HANDOFF PRE-COMMIT SNAPSHOT
+Captured: 2026-07-18 22:33 Europe/Warsaw / 20:33 UTC
+
+DEMO
+branch: build-week/hermes-world
+input HEAD: 5f74847f3039047b7f1945eaed30d0e161a2dd19
+scope: presentation-only ambient → thinking handoff continuity
+
+PRODUCTION
+branch: main
+HEAD: 958b9da08bee9613900e902b3da558aadef826e8
+status: clean / unchanged
+
+REAL RUN
+id: gateway-20260718_221532_2bf368-40612
+events: 43
+stuck/warning/critical: 0/0/0
+terminal: success
+assigned publish delay: 1269 ms
+assigned to thinking: 12 ms
+assigned to first working: 3788 ms
+
+VALIDATION
+test-first: 19/20 expected FAIL
+targeted after patch: 20/20 PASS
+focused movement/events: 66/66 PASS
+full tests: 178/178 PASS
+ESLint: PASS
+World Life validator: PASS
+node --check: PASS
+git diff --check: PASS
+build: PASS, 875 modules, 3.01 s
+artifact: index-D-EekdwD.js
+
+RUNTIME
+DEMO 4176: exactly one listener
+root/auth/world snapshot: HTTP 200
+
+MANUAL GATE
+One authenticated-phone worker retest remains required. No production promotion was performed.
