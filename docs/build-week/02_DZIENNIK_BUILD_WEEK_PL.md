@@ -949,3 +949,10 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Walidacja: testy prywatności adaptera **4/4 PASS**, realny read-only E2E z najnowszym rekordem `state.db` **PASS** (3 eventy, 3 tytuły, 0 pól pełnej treści), focused **55/55 PASS**, pełny zestaw **173/173 PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 3,69 s, main JS 436,45 kB / 134,47 kB gzip.
 - Serwer demo podaje aktualny artifact `index-B-p9MTP9.js`; watcher został zrestartowany kontrolowanie z jednej instancji PID 29626 do jednej instancji PID 85084. Produkcja pozostała nietknięta.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_REAL_GATEWAY_TITLES_PL.md`.
+
+## BW-2026-07-18-019 — Usunięcie historycznych bezimiennych gateway lifecycle z kanału semantycznego
+
+- Ręczny test telefonu pokazał wpis `Paź ukończył zadanie „zadanie bez zapisanej nazwy”`. Diagnoza potwierdziła, że był to historyczny event `gateway-...-40514` zapisany przed wdrożeniem bezpiecznych tytułów; live cursor był prawidłowo na 40515, watcher działał, a w `state.db` nie było jeszcze nowszej wiadomości.
+- Nie wykonano fałszywego backfillu i nie zmieniono historii źródłowej. Bezimienne historyczne lifecycle gateway pozostają w surowym/audytowym kanale, lecz nie wypierają z czytelnego arkusza nazwanych operacji i cronów.
+- Nowe gateway eventy z `task_title` pozostają widoczne. Crony i wszystkie niezależne wpisy pozostają nietknięte.
+- Walidacja: **174/174 testy PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 4,13 s, main 436,52 kB / 134,50 kB gzip. Serwer demo podaje `index-B8Cd0i5g.js`. Produkcja nietknięta.

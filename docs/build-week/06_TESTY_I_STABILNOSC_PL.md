@@ -980,3 +980,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Watcher: przed zmianą dokładnie 1 proces PID 29626; po kontrolowanym restarcie dokładnie 1 proces PID 85084: **PASS**.
 - Ręczny test nowej nazwanej wiadomości na telefonie i widoczności cronów: **MANUAL ACTION REQUIRED / GL-RL**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-070 — Historyczne bezimienne gateway eventy nie zasłaniają cronów
+
+- Data: 2026-07-18 Europe/Warsaw; demo only.
+- Historyczny gateway run bez `taskTitle`: ukryty wyłącznie w semantycznym arkuszu: **PASS**.
+- Nowy gateway run z prawdziwym `taskTitle`: zachowany: **PASS**.
+- Niezależny cron z nazwą i wynikiem: zachowany: **PASS**.
+- Pełna regresja: **174/174 PASS**. ESLint: **PASS**. Build: **PASS**, 875 modułów, 4,13 s.
+- Serwowany artifact: **PASS**, `index-B8Cd0i5g.js`.
+- Prawdziwa nowa wiadomość i ręczna kontrola cronów na telefonie: **MANUAL ACTION REQUIRED**.
+- Produkcja: **UNCHANGED / NOT TOUCHED**.

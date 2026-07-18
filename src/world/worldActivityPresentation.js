@@ -79,6 +79,11 @@ export function collapseWorldActivityTimeline(items = []) {
   return source.filter((item) => {
     if (clean(item?.type).toLowerCase() !== 'agent') return true
     const runKey = clean(item.runId ?? item.taskId)
+    const taskTitle = clean(item.taskTitle ?? item.payload?.task_title)
+    // Legacy gateway records were persisted before the adapter carried a safe
+    // task title. They remain available in the raw/audit channel, but are not
+    // useful enough to displace named crons and operations in the semantic UI.
+    if (runKey.startsWith('gateway-') && !taskTitle) return false
     if (!runKey) return true
     if (seenRuns.has(runKey)) return false
     seenRuns.add(runKey)

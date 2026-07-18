@@ -50,6 +50,15 @@ test('activity sheet keeps the newest lifecycle stage per run and preserves inde
   ]
   assert.deepEqual(collapseWorldActivityTimeline(items).map((item) => item.id), ['done', 'cron', 'other-run'])
 })
+
+test('activity sheet hides legacy unnamed gateway runs without hiding named gateway work or crons', () => {
+  const items = [
+    { id: 'legacy', type: 'agent', runId: 'gateway-session-40514', operationalState: 'success' },
+    { id: 'named', type: 'agent', runId: 'gateway-session-40516', taskTitle: 'Sprawdź stan systemu', operationalState: 'success' },
+    { id: 'cron', type: 'cron', cronName: 'Morning health check', cronStatus: 'success' },
+  ]
+  assert.deepEqual(collapseWorldActivityTimeline(items).map((item) => item.id), ['named', 'cron'])
+})
 const iso = (time) => new Date(time).toISOString()
 const closeTo = (actual, expected, tolerance = 0.08) => assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} ≉ ${expected}`)
 

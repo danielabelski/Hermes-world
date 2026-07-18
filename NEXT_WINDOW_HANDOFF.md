@@ -1172,3 +1172,10 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Stare wpisy bez nazwy pozostają uczciwie nienazwane; nie wykonywać syntetycznego backfillu. Nowa wiadomość wysłana po restarcie watchera powinna pokazać rzeczywisty tytuł.
 - Automatyczna walidacja: 173/173 testy, 55/55 focused, 4/4 Python, ESLint i build PASS. Demo serwuje `index-B-p9MTP9.js`; działa dokładnie jeden watcher PID 85084.
 - Produkcja nadal nietknięta i zamrożona na `958b9da`. Następny gate: jedna nowa nazwana wiadomość na demo oraz kontrola, że arkusz pokazuje pojedynczy czytelny wpis operacji i prawdziwe nazwy cronów.
+
+## Aktualizacja handoffu — historyczny fallback usunięty z kanału semantycznego
+
+- Ręczny ekran `zadanie bez zapisanej nazwy` pochodził ze starego eventu gateway ID 40514, a nie z nowej wiadomości przetworzonej poprawionym adapterem.
+- Historyczne bezimienne gateway lifecycle nie są już pokazywane w czytelnym arkuszu; pozostają w surowym/audytowym kanale. Nazwane gateway eventy oraz crony pozostają widoczne.
+- Automatyczna walidacja: 174/174, ESLint i build PASS; demo serwuje `index-B8Cd0i5g.js`. Produkcja nietknięta.
+- Następny manualny gate: wysłać zupełnie nową nazwaną wiadomość do Hermesa i sprawdzić konkretną nazwę oraz listę cronów.
