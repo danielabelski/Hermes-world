@@ -897,3 +897,5 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie zmieniono waypointów, współrzędnych, geometrii mapy, FSM, statusów ani źródeł danych.
 - Focused contract suite: **45/45 PASS**; pełny zestaw **168/168 PASS**; ESLint, World Life validator i `git diff --check` **PASS**; build **PASS** — 874 moduły, 3,05 s, main JS 433,05 kB / 133,34 kB gzip.
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_SEMANTIC_HISTORY_AND_ATOMIC_ENTRY_PL.md`.
+- Serwer demo `127.0.0.1:4176` podaje dokładnie aktualny hash buildu `index-BkzoAeZ2.js`; root, manifest, Service Worker, JS, CSS i auth status zwracają HTTP 200. Produkcyjny `main` nadal jest czysty na `958b9da08bee9613900e902b3da558aadef826e8`.
+- Snapshot po commitach: `docs/build-week/evidence/git-snapshots/20260718T120201Z-git-snapshot.txt`.

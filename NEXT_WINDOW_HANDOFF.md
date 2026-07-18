@@ -1144,3 +1144,4 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Forge and Archive sprites switch as a complete figure to `facade-front` at the final mapped approach segment and remain there through the first exit segment. Coordinates, routes and map geometry are unchanged.
 - Focused contracts pass 45/45; full regression 168/168, ESLint, validator, diff check and build also pass. The authenticated phone visual check remains the next gate.
 - Production remains frozen; do not promote without a fresh explicit GL after manual demo acceptance.
+- The running demo on port 4176 serves the current build hash `index-BkzoAeZ2.js`. Post-change Git snapshot: `20260718T120201Z-git-snapshot.txt`.

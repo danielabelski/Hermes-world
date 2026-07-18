@@ -914,5 +914,7 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Pełne testy: **PASS 168/168**, 8 suites, 0 fail.
 - ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
 - Build: **PASS**, 874 moduły, 3,05 s, main JS 433,05 kB / 133,34 kB gzip.
+- Bieżący serwer demo podaje hash aktualnego buildu: **PASS** (`index-BkzoAeZ2.js`). Root, manifest, Service Worker, JS, CSS i auth status: **HTTP 200**.
+- Produkcyjny `main`: **UNCHANGED / CLEAN**, `958b9da08bee9613900e902b3da558aadef826e8`.
 - Realny bezpieczny cron E2E i wizualna kontrola na zalogowanym telefonie: **MANUAL ACTION REQUIRED**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
