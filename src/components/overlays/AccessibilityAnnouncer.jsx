@@ -21,8 +21,7 @@ const visuallyHidden = {
   border: 0,
 }
 
-function severityFor(system, lifecycle, scenario) {
-  if (lifecycle?.connection === 'offline') return 'offline'
+function severityFor(system, scenario) {
   return system?.severity ?? system?.healthStatus ?? (scenario === 'critical' ? 'critical' : scenario === 'warning' ? 'warning' : 'healthy')
 }
 
@@ -40,11 +39,11 @@ export function AccessibilityAnnouncer() {
   const previous = useRef(null)
 
   const summary = useMemo(() => {
-    const severity = severityFor(system, lifecycle, scenario)
+    const severity = severityFor(system, scenario)
     const activeAgents = system.activeAgentCount ?? agents.filter((agent) => agent.active ?? agent.isActive).length
     const totalAgents = system.totalAgentCount ?? agents.length
     const urgentAlerts = alerts.filter((alert) => ['critical', 'error', 'warning'].includes(alert.severity)).length
-    return { severity, activeAgents, totalAgents, urgentAlerts, connection: lifecycle.connection ?? 'online' }
+    return { severity, activeAgents, totalAgents, urgentAlerts, transport: lifecycle.transport ?? 'live' }
   }, [agents, alerts, lifecycle, scenario, system])
 
   useEffect(() => {
@@ -55,8 +54,8 @@ export function AccessibilityAnnouncer() {
       return
     }
 
-    if (before.connection !== summary.connection) {
-      setAnnouncement(summary.connection === 'offline' ? 'Hermes OS utracił bieżące połączenie. Pokazywany jest ostatni znany stan świata.' : 'Połączenie z Hermes OS zostało przywrócone.')
+    if (before.transport !== summary.transport) {
+      setAnnouncement(summary.transport === 'live' ? 'Połączenie aplikacji zostało przywrócone i dane są synchronizowane.' : 'Aplikacja ponownie łączy się. Pokazywany jest ostatni potwierdzony stan Hermesa.')
       return
     }
     if (before.severity !== summary.severity) {

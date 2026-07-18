@@ -57,3 +57,19 @@ test('raw log ticker uses a stable empty selector before the first live snapshot
   assert.match(ticker, /state\.raw\?\.logs \?\? EMPTY_RAW_LOGS/)
   assert.doesNotMatch(ticker, /state\.raw\?\.logs \?\? \[\]/)
 })
+
+test('client transport loss cannot fabricate Hermes or worker offline', () => {
+  const agentPresentation = readFileSync(new URL('./world/mapAgentPresentation.js', import.meta.url), 'utf8')
+  const buildingPresentation = readFileSync(new URL('./world/buildingInteriorPresentation.js', import.meta.url), 'utf8')
+  const statusBar = readFileSync(new URL('./components/overlays/StatusBar.jsx', import.meta.url), 'utf8')
+  const ribbon = readFileSync(new URL('./components/overlays/HealthRibbon.jsx', import.meta.url), 'utf8')
+  const badge = readFileSync(new URL('./components/overlays/WorldStatusBadge.jsx', import.meta.url), 'utf8')
+
+  assert.doesNotMatch(agentPresentation, /explicitlyOffline[^\n]+lifecycle\?\.(connection|phase)/)
+  assert.match(agentPresentation, /lifecycle\?\.hermesStatus === 'offline'/)
+  assert.match(buildingPresentation, /lifecycle\.hermesStatus \?\? lifecycle\.runtimeStatus/)
+  assert.doesNotMatch(statusBar, /lifecycle\?\.connection === 'offline'/)
+  assert.doesNotMatch(ribbon, /lifecycle\?\.connection === 'offline'/)
+  assert.match(badge, /\['connecting', 'reconnecting', 'resyncing'\]\.includes\(transport\)/)
+  assert.match(badge, /ostatni potwierdzony stan Hermesa/)
+})

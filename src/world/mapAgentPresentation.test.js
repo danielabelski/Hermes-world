@@ -370,11 +370,20 @@ test('map status contract separates movement, work, success, waiting, warning, s
   assert.equal(incident.visualState, 'alert')
   assert.equal(incident.severity, 'critical')
 
-  const offline = resolveMapAgentPresentation({
-    agent: { ...coder, state: 'idle', isActive: false },
+  const transportLoss = resolveMapAgentPresentation({
+    agent: { ...coder, state: 'idle', isActive: false, presence: 'online' },
     tasks: [],
     alerts: [],
-    lifecycle: { phase: 'unavailable', connection: 'offline' },
+    lifecycle: { phase: 'unavailable', connection: 'offline', transport: 'reconnecting' },
+    now: START,
+  })
+  assert.notEqual(transportLoss.visualState, 'offline')
+
+  const offline = resolveMapAgentPresentation({
+    agent: { ...coder, state: 'idle', isActive: false, presence: 'offline' },
+    tasks: [],
+    alerts: [],
+    lifecycle: { phase: 'ready', connection: 'online', transport: 'live' },
     now: START,
   })
   assert.equal(offline.visualState, 'offline')

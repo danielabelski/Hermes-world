@@ -14,6 +14,8 @@ const SOURCE = Object.freeze({
   demo: { label: 'DEMO', color: '#f4d785' },
   degraded: { label: 'DEGRADED', color: '#efc36a' },
   offline: { label: 'OFFLINE', color: '#ff9b80' },
+  reconnecting: { label: 'ŁĄCZENIE', color: '#efc36a' },
+  disconnected: { label: 'ROZŁĄCZONO', color: '#efc36a' },
 })
 
 const PANEL_STYLE = {
@@ -32,7 +34,9 @@ const PANEL_STYLE = {
   WebkitBackdropFilter: 'blur(9px)',
 }
 
-function sourceFor({ explicitSource, connection, system, raw }) {
+function sourceFor({ explicitSource, connection, transport, system, raw }) {
+  if (['connecting', 'reconnecting', 'resyncing'].includes(transport)) return 'reconnecting'
+  if (transport === 'disconnected') return 'disconnected'
   if (connection === 'offline') return 'offline'
   if (connection === 'degraded') return 'degraded'
   if (explicitSource === 'live' || explicitSource === 'demo') return explicitSource
@@ -42,7 +46,7 @@ function sourceFor({ explicitSource, connection, system, raw }) {
 }
 
 function severityFor(system, lifecycle) {
-  if (lifecycle.connection === 'offline') return 'offline'
+  if (lifecycle.hermesStatus === 'offline' || lifecycle.runtimeStatus === 'offline') return 'offline'
   return system.severity ?? system.health?.severity ?? 'healthy'
 }
 
@@ -62,7 +66,7 @@ export function WorldInsightPanel() {
 
   const severity = severityFor(system, lifecycle)
   const health = HEALTH[severity] ?? HEALTH.healthy
-  const sourceKey = useMemo(() => sourceFor({ explicitSource, connection: lifecycle.connection, system, raw }), [explicitSource, lifecycle.connection, raw, system])
+  const sourceKey = useMemo(() => sourceFor({ explicitSource, connection: lifecycle.connection, transport: lifecycle.transport, system, raw }), [explicitSource, lifecycle.connection, lifecycle.transport, raw, system])
   const source = SOURCE[sourceKey]
   const activeAgents = Number.isFinite(Number(system.activeAgentCount)) ? Number(system.activeAgentCount) : agents.filter((agent) => agent.active ?? agent.isActive).length
   const totalAgents = Number.isFinite(Number(system.totalAgentCount)) ? Number(system.totalAgentCount) : agents.length

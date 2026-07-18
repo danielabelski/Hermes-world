@@ -836,3 +836,13 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Pięć kolejnych wejść do Archiwum: 5/5 PASS; cztery właściwe domeny odczytane pięć razy, pozostałe bez dodatkowych żądań, dokładnie jedna emisja na wejście.
 - Walidacja: 160/160 testów PASS; ESLint PASS; World Life validator PASS; `git diff --check` PASS; build PASS — 874 moduły, 2,45 s, main 431,20 kB / 132,77 kB gzip.
 - Nie zmieniono wnętrz, agentów, mapy, ruchu, routingu, FSM, event pipeline'u ani produkcji. Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_3_BUILDING_REFRESH_PL.md`.
+
+## BW-2026-07-18-008 — Transport klienta nie fałszuje statusu offline
+
+- Czas zakończenia etapu Europe/Warsaw: 2026-07-18 07:07; zakres: wyłącznie demo na `build-week/hermes-world`.
+- Potwierdzono, że wcześniejsza prezentacja mieszała błąd transportu EventSource z autorytatywnym stanem Hermesa i workerów.
+- Rozdzielono kanały informacji: `lifecycle.transport` opisuje połączenie aplikacji, a offline Hermesa/workera wymaga jawnego dowodu z runtime (`hermesStatus`, `runtimeStatus`, `presence`, `online` albo `state`).
+- Podczas reconnect UI pokazuje „Łączenie”/„Rozłączono” i ostatni potwierdzony stan zamiast fałszywego system-wide offline. Snapshot, roster i aktywne zadania nie są czyszczone.
+- Nie zmieniono mapy, tras, waypointów, ruchu, FSM, event pipeline'u, backendu ani produkcji.
+- Walidacja: **161/161 PASS**, ESLint **PASS**, World Life validator **PASS**, `git diff --check` **PASS**, build **PASS** — 874 moduły, 2,18 s, main JS 431,96 kB / 132,97 kB gzip.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_2_4_STATUS_SEPARATION_PL.md`.

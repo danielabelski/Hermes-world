@@ -36,8 +36,7 @@ function weatherFor(system, weather, scenario) {
   return 'unknown'
 }
 
-function severityFor(system, lifecycle, scenario) {
-  if (lifecycle?.connection === 'offline') return 'offline'
+function severityFor(system, scenario) {
   return system?.severity ?? system?.healthStatus ?? (scenario === 'critical' ? 'critical' : scenario === 'warning' ? 'warning' : 'healthy')
 }
 
@@ -45,14 +44,13 @@ function severityFor(system, lifecycle, scenario) {
 export function StatusBar() {
   const system = useWorldStore((state) => state.system)
   const weather = useWorldStore((state) => state.weather)
-  const lifecycle = useWorldStore((state) => state.lifecycle)
   const scenario = useWorldStore((state) => state.scenario)
   const agents = useWorldStore((state) => state.agents ?? [])
   const openSheet = useWorldStore((state) => state.openSheet)
 
   const kind = weatherFor(system, weather, scenario)
   const weatherMeta = WEATHER[kind]
-  const severity = severityFor(system, lifecycle, scenario)
+  const severity = severityFor(system, scenario)
   const activeAgents = system?.activeAgentCount ?? agents.filter((agent) => agent.active ?? agent.isActive).length
   const totalAgents = system?.totalAgentCount ?? agents.length
   const healthLabel = HEALTH_LABELS[severity] ?? HEALTH_LABELS.unknown

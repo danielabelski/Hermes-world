@@ -125,7 +125,7 @@ function visualStateForPhase(phase) {
 }
 
 function buildBaseModel({ agent, living, task, lifecycle }) {
-  const explicitlyOffline = agent.presence === 'offline' || agent.online === false || agent.state === 'offline' || lifecycle?.connection === 'offline' || lifecycle?.phase === 'unavailable'
+  const explicitlyOffline = agent.presence === 'offline' || agent.online === false || agent.state === 'offline' || lifecycle?.hermesStatus === 'offline' || lifecycle?.runtimeStatus === 'offline'
   const evidenceEventId = task?.evidenceEventId ?? agent.lastEventId ?? null
   return {
     profileId: agent.profile,

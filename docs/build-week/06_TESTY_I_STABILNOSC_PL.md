@@ -839,3 +839,15 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Testy: **PASS 160/160**. ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
 - Build: **PASS**, 874 moduły, 2,45 s, main 431,20 kB / 132,77 kB gzip. Oficjalny `--configLoader runner` ominął środowiskowy `EPERM` standardowego loadera bez zmiany kodu.
 - Ręczny test z realnym API: **PENDING / FAZA 3**. Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-059 — Transport aplikacji a autorytatywny status runtime
+
+- Data: 2026-07-18 Europe/Warsaw; branch `build-week/hermes-world`; zakres **demo only**.
+- Utrata transportu przy ostatnim potwierdzonym `agent.presence: online`: **PASS** — agent nie jest przedstawiany jako offline.
+- Jawny `agent.presence: offline` albo `lifecycle.hermesStatus: offline`: **PASS** — offline pozostaje natychmiast czytelny.
+- Wnętrze podczas `transport: reconnecting`: **PASS** — zachowuje evidence-backed Working zamiast fałszywego offline.
+- Komunikacja UI reconnect: **PASS** — osobne etykiety „Łączenie” i „Rozłączono”, bez wyzerowania świata.
+- Pełny zestaw: **PASS 161/161**, 7 suites, 0 fail, 0 skipped.
+- ESLint: **PASS**. World Life validator: **PASS**. `git diff --check`: **PASS**.
+- Build: **PASS**, Vite 8.0.16, 874 moduły, 2,18 s; main JS 431,96 kB / 132,97 kB gzip.
+- Ręczny mobile transport-loss/reconnect: **PENDING / FAZA 3**. Produkcja: **UNCHANGED / NOT TOUCHED**.

@@ -8,6 +8,8 @@ const SOURCE_META = Object.freeze({
   unknown: { label: 'UNKNOWN', detail: 'Brak potwierdzonego stanu Hermesa — niczego nie zgadujemy', color: '#c5cbd3', background: 'rgba(43, 49, 58, .86)', border: 'rgba(197, 203, 211, .38)' },
   degraded: { label: 'DEGRADED', detail: 'Część danych jest nieaktualna; pokazujemy ostatni znany stan', color: '#efc36a', background: 'rgba(79, 57, 24, .84)', border: 'rgba(239, 195, 106, .44)' },
   offline: { label: 'OFFLINE', detail: 'Brak połączenia — stan świata może być nieaktualny', color: '#ff9b80', background: 'rgba(82, 36, 33, .86)', border: 'rgba(255, 139, 118, .46)' },
+  reconnecting: { label: 'ŁĄCZENIE', detail: 'Aplikacja ponownie łączy się — pokazujemy ostatni potwierdzony stan Hermesa', color: '#efc36a', background: 'rgba(79, 57, 24, .84)', border: 'rgba(239, 195, 106, .44)' },
+  disconnected: { label: 'ROZŁĄCZONO', detail: 'Transport aplikacji jest rozłączony — status Hermesa pozostaje ostatnim potwierdzonym stanem', color: '#efc36a', background: 'rgba(79, 57, 24, .84)', border: 'rgba(239, 195, 106, .44)' },
 })
 
 function hasLiveSnapshot(raw) {
@@ -17,8 +19,10 @@ function hasLiveSnapshot(raw) {
   return profiles > 0 || metrics > 0
 }
 
-function sourceFor({ explicitSource, connection, system, raw }) {
+function sourceFor({ explicitSource, connection, transport, system, raw }) {
   if (explicitSource === 'demo') return 'demo'
+  if (['connecting', 'reconnecting', 'resyncing'].includes(transport)) return 'reconnecting'
+  if (transport === 'disconnected') return 'disconnected'
   if (explicitSource === 'stale') return 'stale'
   if (explicitSource === 'unknown') return 'unknown'
   if (connection === 'offline') return 'offline'
@@ -36,7 +40,7 @@ export function WorldStatusBadge() {
   const raw = useWorldStore((state) => state.raw)
   const explicitSource = useWorldStore((state) => state.source ?? state.lifecycle?.source)
   const openSheet = useWorldStore((state) => state.openSheet)
-  const source = useMemo(() => sourceFor({ explicitSource, connection: lifecycle.connection, system, raw }), [explicitSource, lifecycle.connection, raw, system])
+  const source = useMemo(() => sourceFor({ explicitSource, connection: lifecycle.connection, transport: lifecycle.transport, system, raw }), [explicitSource, lifecycle.connection, lifecycle.transport, raw, system])
   const meta = SOURCE_META[source]
 
   return (

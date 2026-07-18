@@ -93,7 +93,7 @@ export function applyDemoObservabilityFocus(snapshot, focus = 'auto', now = Date
   if (resolved === 'offline') {
     return freeze({
       ...base,
-      lifecycle: { ...base.lifecycle, connection: 'offline', phase: 'unavailable' },
+      lifecycle: { ...base.lifecycle, connection: 'offline', phase: 'unavailable', hermesStatus: 'offline' },
       alerts: [],
     })
   }

@@ -9,18 +9,16 @@ const COPY = {
   offline: 'Brak bieżącego połączenia',
 }
 
-function severityFor(system, lifecycle, scenario) {
-  if (lifecycle?.connection === 'offline') return 'offline'
+function severityFor(system, scenario) {
   return system?.severity ?? system?.healthStatus ?? (scenario === 'critical' ? 'critical' : scenario === 'warning' ? 'warning' : 'healthy')
 }
 
 export function HealthRibbon() {
   const system = useWorldStore((state) => state.system)
-  const lifecycle = useWorldStore((state) => state.lifecycle)
   const scenario = useWorldStore((state) => state.scenario)
   const alerts = useWorldStore((state) => state.alerts ?? [])
   const openSheet = useWorldStore((state) => state.openSheet)
-  const severity = severityFor(system, lifecycle, scenario)
+  const severity = severityFor(system, scenario)
   const incidentCount = countLocalIncidents(alerts)
   const label = resolveHealthSummaryLabel({ severity, baseLabel: COPY[severity] ?? COPY.healthy, incidentCount })
 

@@ -63,7 +63,10 @@ export function deriveBuildingInteriorPresentation(buildingId, context = {}) {
   const warningAlert = relevantAlerts.find((alert) => stateOf(alert.severity) === 'warning')
   const activeTask = relevantTasks.find((task) => ACTIVE_TASK_STATES.has(stateOf(task.status)))
   const blockedTask = relevantTasks.find((task) => WARNING_TASK_STATES.has(stateOf(task.status)))
-  const connected = !['offline', 'stale'].includes(stateOf(lifecycle.connection))
+  const connected = stateOf(lifecycle.hermesStatus ?? lifecycle.runtimeStatus) !== 'offline'
+    && stateOf(agent?.presence) !== 'offline'
+    && agent?.online !== false
+    && stateOf(agent?.state) !== 'offline'
   const phase = !connected ? 'offline' : criticalAlert ? 'critical' : warningAlert || blockedTask ? 'warning' : activeTask ? 'working' : 'standby'
   const latestActivity = activityItems.find((item) => matchesInterior(item, config)) ?? null
 

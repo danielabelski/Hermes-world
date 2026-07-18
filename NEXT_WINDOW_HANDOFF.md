@@ -1088,3 +1088,11 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Five consecutive Archive re-entries passed: its four domains refreshed five times, unrelated domains made no extra requests, and every entry produced exactly one complete emission.
 - Validation: 160/160 tests, ESLint, World Life validator, `git diff --check` and build PASS. Production remains untouched.
 - Next exact step: Phase 2.4 — separate client transport state from authoritative Hermes and worker presence so a broken EventSource reports reconnecting/stale data without fabricating system-wide offline.
+
+### Phase 2.4 completed — transport state is not runtime presence
+
+- EventSource loss now changes only `lifecycle.transport`. It no longer marks Hermes, every worker or every interior offline and no longer clears the last confirmed world state.
+- Runtime offline requires explicit authoritative evidence: `lifecycle.hermesStatus`, `lifecycle.runtimeStatus`, `agent.presence`, `agent.online` or `agent.state`.
+- Reconnecting and disconnected UI copy explicitly says that the app transport is recovering and the displayed Hermes state is the last confirmed one.
+- Validation: 161/161 tests, ESLint, World Life validator, `git diff --check` and build PASS. Production remains untouched.
+- Next exact step: Phase 2.5 — trace cron/task events from source through domain event creation, persistence, history API, SSE merge and UI; fix only the first proven loss point and never fabricate unavailable history.

@@ -59,7 +59,7 @@ export function DemoLegend({ defaultExpanded = false }) {
     ? Number(system.totalAgentCount)
     : agents.length
   const weatherLabel = weather.kind === 'storm' ? 'burza' : weather.kind === 'rain' ? 'deszcz' : weather.kind === 'cloudy' ? 'chmury' : 'słońce'
-  const connectionLabel = lifecycle.connection === 'offline' ? 'offline' : isDemo ? 'scena demonstracyjna' : 'połączono'
+  const connectionLabel = isDemo ? 'scena demonstracyjna' : lifecycle.transport === 'live' ? 'połączono' : 'ponowne łączenie'
 
   return (
     <aside className="demo-legend" style={PANEL_STYLE} data-expanded={expanded} aria-label="Jak czytać żywy świat Hermesa">

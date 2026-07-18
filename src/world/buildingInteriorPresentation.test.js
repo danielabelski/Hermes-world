@@ -29,7 +29,12 @@ describe('Forge interior presentation', () => {
     })
     assert.equal(critical.phase, 'critical')
     assert.equal(critical.evidenceEventId, 'incident-7')
-    assert.equal(deriveForgeInteriorPresentation({ lifecycle: { connection: 'offline' } }).phase, 'offline')
+    assert.equal(deriveForgeInteriorPresentation({ lifecycle: { hermesStatus: 'offline', transport: 'live' } }).phase, 'offline')
+    assert.equal(deriveForgeInteriorPresentation({
+      lifecycle: { connection: 'offline', transport: 'reconnecting' },
+      agent: { profile: 'coder', presence: 'online' },
+      tasks: [{ assignee: 'coder', status: 'running' }],
+    }).phase, 'working')
   })
 })
 
