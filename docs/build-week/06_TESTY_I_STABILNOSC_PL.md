@@ -929,3 +929,14 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Build: **PASS**, 874 moduły, 5,00 s, main JS 433,92 kB / 133,65 kB gzip. Serwowany demo bundle: **PASS / HTTP 200**, `index-D42vLeMo.js`.
 - Zalogowany test realnej historii dzisiejszych cronów na telefonie: **MANUAL ACTION REQUIRED / GL-RL**.
 - Produkcyjny `main`: **UNCHANGED / NOT TOUCHED**.
+## TEST-BW-066 — Wydajność kompletnego feedu operacyjnego
+
+- Data: 2026-07-18 14:54 Europe/Warsaw; branch `build-week/hermes-world`; commit `ef8a129`.
+- Zakres: regresja szybkości po zachowaniu 40 realnych zdarzeń i rotacji dolnego komunikatu.
+- Build produkcyjny: **PASS**, 874 moduły, 4,54 s; główny JS 433,92 kB / 133,65 kB gzip.
+- Testy kontraktowe: **PASS 170/170**; ESLint: **PASS**.
+- Mikrobenchmark merge + filtr 40 zdarzeń: 10 000 iteracji w 1473,60 ms, średnio **0,1474 ms** na pełne przeliczenie.
+- Timery/listenery: jeden współdzielony timer rotacji co 5,5 s; brak nowych listenerów, połączeń SSE i timerów per event.
+- Lokalny serwer demo: 20 odpowiedzi HTTP 200; średnio 38,08 ms, minimum 28,21 ms, maksimum/p95 152,64 ms.
+- Wynik: **PASS** — brak mierzalnej regresji renderowania lub transportu wynikającej z tej poprawki.
+- Ograniczenie: końcowa płynność i kompletność czterech historycznych cronów wymaga ręcznego GL/RL na zalogowanym telefonie.

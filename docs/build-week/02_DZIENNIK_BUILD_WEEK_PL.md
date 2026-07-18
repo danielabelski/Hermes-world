@@ -911,3 +911,11 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Nie dodano fake eventów, nie wykonano backfillu z surowych logów i nie zmieniono event pipeline'u, FSM, ruchu, mapy, endpointów ani produkcji.
 - Walidacja: **170/170 PASS**, ESLint **PASS**, World Life validator **PASS**, `git diff --check` **PASS**, build **PASS** — 874 moduły, 5,00 s, main JS 433,92 kB / 133,65 kB gzip. Serwer demo podaje `index-D42vLeMo.js` (HTTP 200).
 - Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_COMPLETE_OPERATIONAL_FEED_PL.md`.
+## BW-2026-07-18-015 — Kontrola wydajności kompletnego feedu
+
+- Czas Europe/Warsaw: 2026-07-18 14:54.
+- Po poprawce kompletności tasków, cronów i zdarzeń SSE wykonano niezależną kontrolę wydajności przed przekazaniem demo do GL/RL.
+- Potwierdzono jeden współdzielony timer rotacji, brak nowych listenerów i brak dodatkowych połączeń SSE.
+- Merge 40 pozycji kosztuje średnio 0,1474 ms; build 4,54 s; główny bundle 433,92 kB / 133,65 kB gzip.
+- Walidacja: testy 170/170 PASS, lint PASS, build PASS, 20/20 lokalnych odpowiedzi HTTP 200.
+- Produkcja pozostała nietknięta. Następny krok: ręczny test na telefonie, czy dolny kanał pokazuje zadanie Pazia, wszystkie cztery dzisiejsze crony i kolejne ważne realne zdarzenia.
