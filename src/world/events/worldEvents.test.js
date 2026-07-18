@@ -48,9 +48,11 @@ test('reduces a real Watcher run into route, observation, success and return', (
   const success = normalizeHermesWorldEvent(raw(12, 'done'))
 
   const outbound = applyWorldEventToSnapshot(base, assigned)
-  assert.equal(outbound.activity.items[0].message, 'Zwiadowca otrzymał zadanie i zmierza do punktu obserwacyjnego.')
+  assert.equal(outbound.activity.items[0].message, 'Zwiadowca przyjął zadanie „Sprawdź północny szlak”.')
   assert.equal(outbound.activity.items[0].technicalMessage, 'Sprawdź północny szlak')
   assert.equal(outbound.activity.items[0].type, 'agent')
+  assert.equal(outbound.activity.items[0].taskTitle, 'Sprawdź północny szlak')
+  assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).title, 'Sprawdź północny szlak')
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).evidenceEventId, assigned.eventId)
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).buildingId, 'scout-lodge')
   assert.equal(outbound.tasks.find((task) => task.id === assigned.taskId).motionEvidence, 'observed-edge')
@@ -60,6 +62,7 @@ test('reduces a real Watcher run into route, observation, success and return', (
   assert.equal(outboundModel.isMoving, true)
 
   const thinkingSnapshot = applyWorldEventToSnapshot(outbound, thinking)
+  assert.equal(thinkingSnapshot.activity.items[0].message, 'Zwiadowca analizuje zadanie „Sprawdź północny szlak”.')
   const thinkingAgent = thinkingSnapshot.agents.find((agent) => agent.profile === 'prospecting')
   assert.equal(resolveMapAgentPresentation({ agent: thinkingAgent, tasks: thinkingSnapshot.tasks, now: Date.parse(at) + 2_000 }).visualState, 'thinking')
 
@@ -70,6 +73,8 @@ test('reduces a real Watcher run into route, observation, success and return', (
   assert.equal(observingModel.journeyStage, 'observe')
 
   const completed = applyWorldEventToSnapshot(observingSnapshot, success)
+  assert.equal(completed.activity.items[0].message, 'Zwiadowca zakończył zadanie „Sprawdź północny szlak” i przekazał rezultat.')
+  assert.equal(completed.activity.items[0].taskTitle, 'Sprawdź północny szlak')
   const completedAgent = completed.agents.find((agent) => agent.profile === 'prospecting')
   const successModel = resolveMapAgentPresentation({ agent: completedAgent, tasks: completed.tasks, now: Date.parse(success.occurredAt) + 1_000 })
   assert.equal(successModel.visualState, 'success')

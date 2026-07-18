@@ -37,6 +37,7 @@ export function createChatWorldEventPublisher({
   runId,
   sessionId = null,
   profile = 'default',
+  taskTitle = null,
   publish = publishThroughPanel,
   now = () => new Date().toISOString(),
   retryDelaysMs = Object.freeze([160, 420]),
@@ -47,6 +48,7 @@ export function createChatWorldEventPublisher({
   let queue = Promise.resolve()
   const emitted = new Set()
   const pending = new Set()
+  const boundedTaskTitle = String(taskTitle ?? '').trim().replace(/\s+/g, ' ').slice(0, 140)
 
   const publishWithRetry = async (event) => {
     for (let attempt = 0; attempt <= retryDelaysMs.length; attempt += 1) {
@@ -76,7 +78,7 @@ export function createChatWorldEventPublisher({
       profile,
       message: EVENT_MESSAGES[eventType] ?? 'Hermes zaktualizował stan.',
       source: 'hermes-chat-sse',
-      payload,
+      payload: { ...(boundedTaskTitle ? { task_title: boundedTaskTitle } : {}), ...payload },
     }
     const operation = queue.then(async () => {
       const accepted = await publishWithRetry(event)

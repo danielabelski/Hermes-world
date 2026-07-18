@@ -8,6 +8,7 @@ test('publishes one ordered evidence chain from confirmed Hermes SSE edges', asy
     runId: 'stream-real-42',
     sessionId: 'session-7',
     profile: 'coder',
+    taskTitle: 'Sprawdź stan serwera produkcyjnego',
     now: () => '2026-07-15T12:00:00.000Z',
     publish: async (event) => { events.push(event); return true },
   })
@@ -31,6 +32,7 @@ test('publishes one ordered evidence chain from confirmed Hermes SSE edges', asy
     'stream-real-42:0', 'stream-real-42:1', 'stream-real-42:2', 'stream-real-42:3',
   ])
   assert.equal(events[2].payload.tool_name, 'shell_command')
+  assert.ok(events.every((event) => event.payload.task_title === 'Sprawdź stan serwera produkcyjnego'))
 })
 
 test('critical is terminal and never becomes a fake success', async () => {

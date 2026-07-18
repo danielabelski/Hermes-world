@@ -73,6 +73,8 @@ export function normalizeHermesWorldEvent(input, { receivedAt = new Date().toISO
   const rawAgent = input.agentId ?? input.agent_id ?? input.profile ?? input.worker ?? payload.agent_id ?? payload.profile ?? payload.worker
   const agentId = resolveWorldAgentId(rawAgent)
   const eventId = clean(input.eventId ?? input.event_id) || (runId && Number.isInteger(seq) ? `${runId}:${seq}` : '')
+  const startEvent = ['assigned', 'run_started', 'run_start', 'stream_start'].includes(eventType.replace(/-/g, '_'))
+  const taskTitleSource = input.taskTitle ?? input.task_title ?? payload.task_title ?? payload.title ?? payload.prompt ?? (startEvent ? input.message ?? payload.message ?? payload.text : null)
 
   if (!eventId || eventId.length > 180) throw new WorldEventValidationError('invalid_event_id', 'event_id is required and must be at most 180 characters.')
   if (!runId || runId.length > 140) throw new WorldEventValidationError('invalid_run_id', 'run_id is required and must be at most 140 characters.')
@@ -102,6 +104,7 @@ export function normalizeHermesWorldEvent(input, { receivedAt = new Date().toISO
     eventType,
     occurredAt: new Date(occurredAt).toISOString(),
     taskId: clean(input.taskId ?? input.task_id ?? payload.task_id) || runId,
+    taskTitle: clean(taskTitleSource).replace(/\s+/g, ' ').slice(0, 140) || null,
     buildingId: clean(input.buildingId ?? input.building_id ?? payload.building_id) || null,
     severity: state === 'critical' ? 'critical' : ['warning', 'stuck'].includes(state) ? 'warning' : 'none',
     message: clean(input.message ?? payload.message ?? payload.text).slice(0, 320) || null,

@@ -51,7 +51,7 @@ export function WorldMomentToast() {
   const activeIndexRef = useRef(0)
   const seenRef = useRef(new Set())
   const initializedRef = useRef(false)
-  const items = useMemo(() => orderWorldActivityRotation(recentWorldActivityItems(mergeWorldActivityItems(activity, alerts), mountedAt)), [activity, alerts, mountedAt])
+  const items = useMemo(() => orderWorldActivityRotation(recentWorldActivityItems(mergeWorldActivityItems(activity, alerts, 80), mountedAt)), [activity, alerts, mountedAt])
 
   useEffect(() => {
     const ids = items.map(itemId)

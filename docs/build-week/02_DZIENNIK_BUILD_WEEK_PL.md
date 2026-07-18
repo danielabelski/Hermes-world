@@ -927,3 +927,14 @@ Dokument append-only. Korekty są nowymi wpisami, a nie cichą zmianą historii.
 - Cron pokazuje rzeczywistą nazwę, wynik i czas; agent pokazuje osobno zadanie, analizę, pracę i ukończenie. Cron nie jest przypisywany agentowi bez dowodu.
 - Warning/Critical nadal ma pierwszeństwo, następnie rotacja eksponuje najnowszy cron, task i event agenta. Nie usunięto prawdziwych eventów i nie dodano danych syntetycznych.
 - Walidacja: 172/172 pełnych testów PASS, 38/38 focused PASS; ESLint, build i `git diff --check` PASS. Build 2,97 s, main 435,95 kB / 134,32 kB gzip; prezentacja 0,014107 ms/operację. Produkcja nietknięta; prawdziwe crony wymagają manualnego GL.
+
+## BW-2026-07-18-017 — Zachowanie konkretnej nazwy operacji w całym lifecycle
+
+- Czas zakończenia Europe/Warsaw: 2026-07-18 16:02; zakres wyłącznie demo na `build-week/hermes-world`.
+- Manualny odbiór wykazał, że samo rozróżnienie typu zdarzenia nie wystarczało: etapy Pazia nadal miały ogólne teksty, ponieważ nazwa polecenia użytkownika nie przechodziła przez cały kontrakt eventu, a reducer nadpisywał tytuł komunikatem technicznym.
+- Publisher przekazuje teraz ograniczony do 140 znaków `task_title` przy każdym potwierdzonym etapie jednego prawdziwego lifecycle. Kontrakt normalizuje tytuł, reducer zachowuje go w tasku i kolejnych eventach, a narracja pokazuje konkretną operację w etapach: przyjęcie, analiza, praca, oczekiwanie, błąd, ukończenie i powrót.
+- Cron pozostaje niezależnym typem: `CRON · SUKCES/BŁĄD` + rzeczywista nazwa crona + wynik + czas. Nie przypisano crona Paziowi bez dowodu. Historia została rozszerzona z 40 do 80 autorytatywnych pozycji, aby seria etapów agenta nie wypierała wcześniejszych wykonań cronów z tego samego dnia.
+- Nie dodano fake eventów, timerów, listenerów ani połączeń. Nie zmieniono mapy, ruchu, endpointów, FSM ani produkcji.
+- Walidacja: focused **54/54 PASS**, pełne testy **172/172 PASS**, ESLint **PASS**, build **PASS** — 875 modułów, 4,76 s, main JS 436,33 kB / 134,44 kB gzip. Serwer demo podaje `index-B2WX7yfx.js`; produkcyjny `main` pozostaje czysty na `958b9da08bee9613900e902b3da558aadef826e8`.
+- Prawdziwe nazwy operacji i cronów na zalogowanym telefonie: **MANUAL ACTION REQUIRED / GL-RL**.
+- Dowód: `docs/build-week/evidence/tests/20260718_PHASE_3_CONTEXTUAL_OPERATIONAL_HISTORY_PL.md`.

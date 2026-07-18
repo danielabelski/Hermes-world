@@ -1112,6 +1112,7 @@ export default function ChatTab({ agents, availableModels = [], onUpdateAgent, o
         runId: streamId,
         sessionId: currentSessionId,
         profile,
+        taskTitle: userText,
       });
       void worldLifecycle.started();
       const source = new EventSource(`${getApiUrl()}/chat/stream?stream_id=${encodeURIComponent(streamId)}`);

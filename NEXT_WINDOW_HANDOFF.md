@@ -1154,3 +1154,12 @@ Scope: demo only, branch `build-week/hermes-world`. Production is frozen and unc
 - Rotacja chroni Warning/Critical, następnie eksponuje najnowszy cron, task i event agenta. Pełny feed nadal przechowuje do 40 prawdziwych pozycji.
 - Automatyczna walidacja: 172/172 pełnych testów PASS, 38/38 focused PASS po finalnej korekcie, lint/build/diff-check PASS. Artifact demo: `index-Cc-0oBZW.js`; koszt prezentacji 0,014107 ms/operację.
 - Produkcja pozostaje nietknięta. Następny gate: zalogowany telefon ma pokazać nazwy rzeczywistych cronów i ich poprawne czasy.
+
+## Aktualizacja handoffu — 2026-07-18 16:02 Europe/Warsaw
+
+- Manualny odbiór ujawnił drugi punkt utraty semantyki: kontrakt rozpoznawał typ eventu, ale konkretny tytuł polecenia nie był zachowywany przez cały lifecycle, a reducer nadpisywał go tekstem technicznym.
+- Demo przekazuje teraz `task_title` z prawdziwej wiadomości użytkownika przez publisher → event contract → reducer → task/activity → narrację. Kolejne etapy pokazują tę samą konkretną nazwę operacji.
+- Cron ma odrębną prezentację `CRON · wynik — rzeczywista nazwa`; nie wolno przypisywać go agentowi bez realnego `workerId/profile`.
+- Retencja semantycznego feedu wynosi 80 pozycji. Zmiana nie dodaje timerów, listenerów, transportu ani efektów wizualnych.
+- Automatyczna walidacja: 172/172 testów, 54/54 focused, ESLint i build PASS. Demo serwuje `index-B2WX7yfx.js`. Produkcja pozostaje czysta i nietknięta na `958b9da`.
+- Następny gate: na zalogowanym telefonie wywołać jedno nazwane polecenie i potwierdzić kolejno konkretną nazwę w etapach agenta oraz widoczność nazw dzisiejszych cronów.

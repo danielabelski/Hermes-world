@@ -8,7 +8,7 @@ import { getWorldLifeJourney } from './data/roadGraph.js';
 import { describeCronResult, describeLogAlert, describeTaskTransition } from './worldNarrative.js';
 
 const POLL_INTERVALS = Object.freeze({ metrics: 5_000, live: 15_000, slow: 60_000 });
-const MAX_ACTIVITY_ITEMS = 40;
+const MAX_ACTIVITY_ITEMS = 80;
 const INCIDENT_FRESHNESS_MS = 5 * 60_000;
 const KNOWN_PROFILE_IDS = Object.freeze(Object.keys(AGENT_DEFINITIONS));
 

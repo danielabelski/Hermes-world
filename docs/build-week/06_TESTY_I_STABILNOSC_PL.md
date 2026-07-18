@@ -953,3 +953,17 @@ Każdy test musi podać czas, commit, branch, środowisko, dokładną komendę, 
 - Mikrobenchmark 100 000 iteracji / 40 wpisów: **0,014107 ms/operację**.
 - Zalogowany telefon i prawdziwe nazwy dzisiejszych cronów: **MANUAL ACTION REQUIRED**.
 - Produkcja: **UNCHANGED / NOT TOUCHED**.
+
+## TEST-BW-068 — Kontekstowa historia operacyjna
+
+- Data: 2026-07-18 16:02 Europe/Warsaw; branch `build-week/hermes-world`; demo only.
+- Zachowanie `task_title` od publishera przez kontrakt, reducer, task i cztery etapy lifecycle: **PASS**.
+- Regresja przeciw nadpisaniu tytułu komunikatem technicznym: **PASS**.
+- Cron z prawdziwą nazwą i bez nieudowodnionego przypisania do agenta: **PASS**.
+- Retencja 80 autorytatywnych pozycji w bridge/feed/toast: **PASS**.
+- Focused: **54/54 PASS**. Pełny zestaw: **172/172 PASS**. ESLint: **PASS**.
+- Build: **PASS**, 875 modułów, 4,76 s, main JS 436,33 kB / 134,44 kB gzip.
+- Mikrobenchmark merge + prezentacja pełnego feedu 80 pozycji: 20 000 iteracji, średnio **0,24311 ms** na pełny feed.
+- Serwowany artifact demo: **PASS**, `index-B2WX7yfx.js`; root, Service Worker i auth endpoint HTTP 200.
+- Zalogowany telefon, prawdziwa nazwa polecenia i dzisiejszych cronów: **MANUAL ACTION REQUIRED**.
+- Produkcja: **UNCHANGED / CLEAN**, commit `958b9da08bee9613900e902b3da558aadef826e8`.

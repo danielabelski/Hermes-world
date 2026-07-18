@@ -1,15 +1,15 @@
 import { getAgentDefinition } from './data/agentDefinitions.js'
 
 const OPERATIONAL_COPY = Object.freeze({
-  assigned: (name, place) => `${name} otrzymał zadanie i zmierza do ${place.destination}.`,
-  thinking: (name) => `${name} analizuje zadanie i przygotowuje plan działania.`,
-  working: (name, place) => `${name} wykonuje zadanie w ${place.location}.`,
-  waiting: (name) => `${name} czeka na dane lub decyzję potrzebną do dalszej pracy.`,
-  stuck: (name) => `${name} nie może kontynuować zadania i wymaga odblokowania.`,
-  warning: (name, place) => `${name} zgłasza ostrzeżenie w ${place.location}.`,
-  critical: (name, place) => `${name} napotkał krytyczny problem w ${place.location}.`,
-  success: (name) => `${name} zakończył zadanie i przekazuje rezultat.`,
-  idle: (name) => `${name} wrócił do swojego stanowiska.`,
+  assigned: (name, _place, operation) => `${name} przyjął zadanie „${operation}”.`,
+  thinking: (name, _place, operation) => `${name} analizuje zadanie „${operation}”.`,
+  working: (name, place, operation, tool) => `${name} wykonuje „${operation}” w ${place.location}${tool ? ` · ${tool}` : ''}.`,
+  waiting: (name, _place, operation) => `${name} czeka na dane do zadania „${operation}”.`,
+  stuck: (name, _place, operation) => `${name} utknął podczas zadania „${operation}”.`,
+  warning: (name, place, operation) => `${name} zgłasza ostrzeżenie podczas „${operation}” w ${place.location}.`,
+  critical: (name, place, operation) => `${name} napotkał błąd podczas „${operation}” w ${place.location}.`,
+  success: (name, _place, operation) => `${name} zakończył zadanie „${operation}” i przekazał rezultat.`,
+  idle: (name, _place, operation) => `${name} zakończył cykl „${operation}” i wrócił do stanowiska.`,
 })
 
 const TASK_COPY = Object.freeze({
@@ -51,7 +51,12 @@ export function describeOperationalEvent(event = {}, definition = null) {
   const name = resolved?.displayName ?? 'Agent'
   const place = BUILDING_CASES[resolved?.buildingId] ?? { destination: 'swojego stanowiska', location: 'swoim subsystemie' }
   const render = OPERATIONAL_COPY[event.state]
-  return render ? render(name, place) : `${name} zmienił stan operacyjny.`
+  const title = String(event.taskTitle ?? event.payload?.task_title ?? '').trim().replace(/\s+/g, ' ').slice(0, 100)
+  const operationId = String(event.taskId ?? event.runId ?? '').trim()
+  const operation = title || (operationId ? `operacja #${operationId.slice(-8)}` : 'operacja bez identyfikatora')
+  const rawTool = String(event.payload?.tool_name ?? event.toolName ?? '').trim()
+  const tool = rawTool ? `narzędzie ${rawTool.replace(/[_-]+/g, ' ')}` : ''
+  return render ? render(name, place, operation, tool) : `${name} zaktualizował „${operation}”.`
 }
 
 export function describeTaskTransition(task = {}) {
