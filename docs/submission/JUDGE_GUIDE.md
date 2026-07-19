@@ -2,16 +2,16 @@
 
 ## Fastest evaluation path
 
-1. Open **https://hermes-os-panel.tail03d525.ts.net:10000/**.
-2. Authenticate with the credentials supplied privately in Devpost.
-3. Confirm that the configured agent roster and the Citadel are visible together.
-4. Trigger or observe one real Hermes worker operation.
+1. Open **https://hermes-os-panel.tail03d525.ts.net:8443/**.
+2. Confirm the visible **Judge Sandbox / sample data** provenance indicator.
+3. Confirm that the representative agent roster and the Citadel are visible together.
+4. Observe one complete sample worker operation.
 5. Follow the lifecycle: assignment → travel → reasoning/tool work → completion → return.
 6. Open **Citadel Activity** and inspect the named task, important runtime events and cron success/error results.
 7. Enter subsystem buildings and compare their focused state with the global world.
 8. Refresh or reconnect and confirm that the client restores authoritative state.
 
-Allow a few seconds after authentication for independent telemetry domains and the live-event stream to synchronize. The product distinguishes live, stale and unavailable information rather than inventing activity.
+The public instance is intentionally fixture-only and read-only. It contains no private Hermes profiles, sessions, logs, credentials or writable event transport. The submission video demonstrates the corresponding real end-to-end Hermes lifecycle.
 
 ## What proves this is a developer tool
 
@@ -24,9 +24,9 @@ Allow a few seconds after authentication for independent telemetry domains and t
 
 ## Safe test
 
-Send a normal, non-destructive instruction through the configured Hermes channel and ask Hermes to delegate one bounded research or review task to a worker. Observe the worker lifecycle in the Citadel and inspect the corresponding Activity entry.
+Open the sandbox and allow its deterministic timeline to complete one worker cycle. Enter each building, inspect Citadel Activity and test desktop/mobile layout. No account, command or write operation is required.
 
-Do not change server configuration, event bridge settings or service-worker state during ordinary evaluation. The `/reset-client.html` page is only a recovery tool if a browser has cached an older PWA build.
+The `/reset-client.html` page is only a recovery tool if a browser has cached an older PWA build.
 
 ## Technical review path
 
@@ -37,6 +37,7 @@ Do not change server configuration, event bridge settings or service-worker stat
 - `server/worldEventHub.js` — bounded history and SSE fan-out
 - `scripts/hermes-gateway-world-adapter.py` — source watcher
 - `scripts/hermes-world-event-adapter.mjs` — journal forwarder
+- `scripts/judge-sandbox-server.mjs` — fixture-only, read-only judge runtime
 - `src/**/*.test.js` — contract and regression tests
 - `docs/build-week/` — dated engineering and evidence record
 

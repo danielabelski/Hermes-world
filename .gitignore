@@ -1,6 +1,7 @@
 node_modules/
 .npm-cache/
 dist/
+dist-judge/
 data/*.json
 .env
 .env.*

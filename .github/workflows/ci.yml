@@ -34,3 +34,9 @@ jobs:
 
       - name: Build production bundle
         run: npm run build
+
+      - name: Build privacy-safe judge sandbox
+        run: npm run build:judge
+
+      - name: Test judge sandbox isolation
+        run: npm run test:judge

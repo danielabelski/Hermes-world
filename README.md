@@ -2,11 +2,13 @@
 
 **Live observability for AI agents, rendered as a living Citadel.**
 
-[Try the deployed product](https://hermes-os-panel.tail03d525.ts.net:10000/) · [Judge guide](docs/submission/JUDGE_GUIDE.md) · [Build Week disclosure](docs/submission/BUILD_WEEK.md) · [Architecture record](docs/build-week/05_ARCHITEKTURA_I_ZMIANY_PL.md) · [Test record](docs/build-week/06_TESTY_I_STABILNOSC_PL.md)
+[Try the privacy-safe Judge Sandbox](https://hermes-os-panel.tail03d525.ts.net:8443/) · [Judge guide](docs/submission/JUDGE_GUIDE.md) · [Build Week disclosure](docs/submission/BUILD_WEEK.md) · [Architecture record](docs/build-week/05_ARCHITEKTURA_I_ZMIANY_PL.md) · [Test record](docs/build-week/06_TESTY_I_STABILNOSC_PL.md)
 
 ![Hermes OS desktop validation view](artifacts/validation/desktop-1440.png)
 
 Hermes OS is a mobile-first observability and operations interface for a real multi-agent Hermes runtime. It turns workers, delegated tasks, reasoning, tool use, cron outcomes, logs, system telemetry and event lifecycles into a spatial interface called the Citadel.
+
+The public URL is a clearly labelled, privacy-safe **Judge Sandbox** built from the validated application. It uses deterministic sample data and exposes no private Hermes profiles, sessions, logs, credentials or writable event endpoints. The real end-to-end Hermes integration is demonstrated in the submission video and documented in this repository.
 
 **This is not an RPG or a scripted game scene.** A character represents a configured worker. A journey represents an observed task lifecycle. A building represents a real subsystem. Citadel Activity is built from named tasks, important runtime events and actual cron success/error results.
 
@@ -16,15 +18,17 @@ Operating several AI agents usually means correlating profiles, logs, task board
 
 The core rule is simple: **the world must not invent system activity**. When authoritative data is unavailable, Hermes OS shows an unavailable or stale state instead of fabricating work.
 
-## What judges can see
+## What judges can see in the sandbox
 
-- A real roster of configured Hermes workers.
-- End-to-end worker choreography: task assigned → travel → reasoning/tool work → completion → return.
+- A representative twelve-worker roster using documented fixture data.
+- The complete worker choreography: task assigned → travel → reasoning/tool work → completion → return.
 - Citadel Activity containing semantic task events, important logs and cron success/error outcomes.
 - Buildings that expose focused subsystem state rather than decorative interiors.
 - Live, stale, unavailable and reconnect states with explicit provenance.
 - Mobile-first operation with the same world model on desktop.
-- A production event bridge, durable event history, SSE replay and reconnect resynchronization.
+- The same production UI, state model, buildings and interaction design without access to the private runtime.
+
+The repository and submission video provide the evidence for the production event bridge, durable event history, SSE replay and reconnect resynchronization.
 
 ## Live architecture
 
@@ -86,6 +90,8 @@ npm ci
 npm test
 npm run lint
 npm run build
+npm run build:judge
+npm run test:judge
 ```
 
 ### Start the production server
@@ -95,6 +101,15 @@ npm start
 ```
 
 The default production port is `4175`. Override it with the `PORT` environment variable.
+
+### Start the privacy-safe Judge Sandbox
+
+```bash
+npm run build:judge
+npm run start:judge
+```
+
+The sandbox listens only on `127.0.0.1:4190` by default. It serves fixture data, an empty read-only SSE transport and static assets. Private API routes return `404`; event-ingestion requests return `405`. Override the loopback host or port only through `HERMES_JUDGE_HOST` and `HERMES_JUDGE_PORT` when you understand the exposure boundary.
 
 ### Useful environment variables
 
@@ -110,7 +125,7 @@ Copy `.env.example` and provide secrets only through your local environment. Nev
 | `HERMES_WEBUI_COOKIE` | Local forwarder authentication cookie; never commit it |
 | `VITE_ENABLE_PIXI_WORLD` | Enables the optional PixiJS enhancement |
 
-The hosted judge instance is already configured. Credentials are supplied privately in the Devpost testing instructions and are intentionally absent from this repository.
+The hosted Judge Sandbox requires no credentials and contains no private runtime data. Production credentials and personal Hermes data are intentionally never distributed with the submission.
 
 ## Live-event bridge
 
@@ -156,7 +171,7 @@ Supporting final-release session: `019f76b1-bba0-7400-9167-0fab397eabc8`
 
 ## Known boundaries
 
-- The hosted judge experience requires credentials supplied privately.
+- The public judge experience is explicitly a deterministic, privacy-safe sandbox rather than the author's private live runtime.
 - The live bridge currently targets the author's Windows + WSL Hermes installation.
 - A newly invoked worker may take roughly 2–4 seconds to become visually active while the real lifecycle is handed off.
 - Signals without authoritative Hermes endpoints are intentionally absent rather than simulated.
@@ -166,6 +181,7 @@ Supporting final-release session: `019f76b1-bba0-7400-9167-0fab397eabc8`
 - `src/` — React interface, renderer-neutral world model, reducers and tests
 - `server/` and `server.js` — authenticated gateway, event ingestion, history and SSE
 - `scripts/` — live Hermes watcher, journal forwarder and validation utilities
+- `scripts/judge-sandbox-server.mjs` — loopback-only, read-only public review runtime
 - `public/` — runtime visual assets and PWA files
 - `docs/build-week/` — provenance, journal, Codex sessions, decisions, tests and evidence
 - `docs/submission/` — concise English judge documentation

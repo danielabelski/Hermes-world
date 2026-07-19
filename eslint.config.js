@@ -6,7 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 export default [
   js.configs.recommended,
   {
-    ignores: ['dist/**', 'node_modules/**', '.npm-cache/**', 'checkpoints/**', 'artifacts/**', 'server.js', 'public/**', 'src/components/ChatTab.jsx'],
+    ignores: ['dist/**', 'dist-judge/**', 'node_modules/**', '.npm-cache/**', 'checkpoints/**', 'artifacts/**', 'server.js', 'public/**', 'src/components/ChatTab.jsx'],
   },
   {
     files: ['**/*.{js,jsx}'],
